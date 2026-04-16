@@ -45,7 +45,7 @@ php bin/run-sniff-tests.php
 
 ## Conventions
 
-Located in `doc/`:
+Located in `docs/`:
 
 - **Principles** — values, code style
 - **Core Patterns** — DTO, Entity, Value Object, Factory, Service, etc.
