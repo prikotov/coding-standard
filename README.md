@@ -1,12 +1,12 @@
 # prikotov/coding-standard
 
-PHP coding standard with PHPCS sniffs and DDD conventions documentation.
+PHP CodeSniffer standard with custom sniffs and DDD conventions documentation.
 
 ## What is it
 
 Two parts:
 
-1. **PHPCS Sniffs** — automated code style checks (PHP CodeSniffer)
+1. **PHPCS Sniffs** — automated structural checks via PHP CodeSniffer 4.x
 2. **Conventions** — DDD conventions documentation (layers, patterns, principles, testing)
 
 ## Sniffs
@@ -14,12 +14,33 @@ Two parts:
 | Sniff | Description |
 |---|---|
 | `DtoStructureSniff` | Enforces `final readonly` DTO classes with empty promoted constructor |
+| `EnumStructureSniff` | Enforces pure enums (no methods, constants, traits) with camelCase cases |
+| `CommandQueryStructureSniff` | Enforces Command/Query DTO structure (constructor-only, no properties/methods) |
+| `CommandHandlerStructureSniff` | Enforces CommandHandler structure (`__invoke` only, no public properties) |
+| `UseCaseNamingSniff` | Enforces UseCase naming conventions (suffix, filename, namespace match path) |
+| `GlobalFunctionCallStyleSniff` | Forbids `use function` imports and `\func()` calls for global functions |
 
-Usage in your `phpcs.xml.dist`:
+## Installation
+
+```bash
+composer require --dev prikotov/coding-standard
+```
+
+## Usage
+
+In your `phpcs.xml.dist`:
 
 ```xml
 <config name="installed_paths" value="vendor/prikotov/coding-standard"/>
 <rule ref="PrikotovCodingStandard"/>
+```
+
+## Sniff tests
+
+```bash
+composer sniff-test
+# or
+php bin/run-sniff-tests.php
 ```
 
 ## Conventions
@@ -33,12 +54,6 @@ Located in `doc/`:
 - **Testing** — test conventions
 - **Configuration** — Symfony configuration
 - **Symfony** — folder structure, applications
-
-## Installation
-
-```bash
-composer require --dev prikotov/coding-standard
-```
 
 ## License
 

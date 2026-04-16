@@ -1,6 +1,7 @@
 {
     "name": "prikotov/coding-standard",
     "description": "PHP CodeSniffer coding standard with custom sniffs",
+    "type": "phpcodesniffer-standard",
     "version": "1.0.0",
     "license": "MIT",
     "keywords": ["phpcs", "coding-standard", "sniffs"],
@@ -14,7 +15,12 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.4",
-        "squizlabs/php_codesniffer": "^3.7"
+        "squizlabs/php_codesniffer": "^4.0",
+        "slevomat/coding-standard": "^8.0"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
+        "phpunit/phpunit": "^10.5"
     },
     "autoload": {
         "psr-4": {
@@ -22,7 +28,17 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "scripts": {
+        "sniff-test": "php bin/run-sniff-tests.php",
+        "check": [
+            "@sniff-test",
+            "phpcs src/"
+        ]
     },
     "extra": {
         "branch-alias": {
