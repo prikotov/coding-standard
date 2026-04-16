@@ -2,7 +2,6 @@
     "name": "prikotov/coding-standard",
     "description": "PHP CodeSniffer coding standard with custom sniffs",
     "type": "phpcodesniffer-standard",
-    "version": "1.0.0",
     "license": "MIT",
     "keywords": ["phpcs", "coding-standard", "sniffs"],
     "authors": [
