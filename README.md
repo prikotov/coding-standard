@@ -26,7 +26,7 @@ Two parts:
 composer require --dev prikotov/coding-standard
 ```
 
-## Usage
+## PHPCS setup
 
 In your `phpcs.xml.dist`:
 
@@ -34,6 +34,24 @@ In your `phpcs.xml.dist`:
 <config name="installed_paths" value="vendor/prikotov/coding-standard"/>
 <rule ref="PrikotovCodingStandard"/>
 ```
+
+## Initialisation (conventions docs)
+
+To copy conventions documentation into your project:
+
+```bash
+php vendor/bin/coding-standard-init
+```
+
+Or specify a target directory:
+
+```bash
+php vendor/bin/coding-standard-init /path/to/project
+```
+
+This copies `docs/` into `docs/conventions/` in your project. Existing files are never overwritten.
+
+> **Note:** The init command copies documentation only. PHPCS sniffs work from `vendor/` without init.
 
 ## Sniff tests
 
@@ -43,7 +61,7 @@ composer sniff-test
 php bin/run-sniff-tests.php
 ```
 
-## Conventions
+## Reference (in package)
 
 Located in `docs/`:
 
