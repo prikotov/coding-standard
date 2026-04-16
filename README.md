@@ -24,7 +24,7 @@ Usage in your `phpcs.xml.dist`:
 
 ## Conventions
 
-Located in `docs/`:
+Located in `doc/`:
 
 - **Principles** — values, code style
 - **Core Patterns** — DTO, Entity, Value Object, Factory, Service, etc.
