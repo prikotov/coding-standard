@@ -30,9 +30,30 @@ final class EnumStructureSniff implements Sniff
         $scopeStart = $tokens[$stackPtr]['scope_opener'];
         $scopeEnd   = $tokens[$stackPtr]['scope_closer'];
 
-        $this->assertNoTokens($phpcsFile, $stackPtr, $scopeStart, $scopeEnd, [T_FUNCTION], 'Enums must not declare methods.');
-        $this->assertNoTokens($phpcsFile, $stackPtr, $scopeStart, $scopeEnd, [T_CONST], 'Enums must not declare constants.');
-        $this->assertNoTokens($phpcsFile, $stackPtr, $scopeStart, $scopeEnd, [T_USE], 'Enums must not use traits.');
+        $this->assertNoTokens(
+            $phpcsFile,
+            $stackPtr,
+            $scopeStart,
+            $scopeEnd,
+            [T_FUNCTION],
+            'Enums must not declare methods.',
+        );
+        $this->assertNoTokens(
+            $phpcsFile,
+            $stackPtr,
+            $scopeStart,
+            $scopeEnd,
+            [T_CONST],
+            'Enums must not declare constants.',
+        );
+        $this->assertNoTokens(
+            $phpcsFile,
+            $stackPtr,
+            $scopeStart,
+            $scopeEnd,
+            [T_USE],
+            'Enums must not use traits.',
+        );
 
         $this->assertCasesCamelCase($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
     }

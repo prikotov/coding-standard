@@ -157,8 +157,22 @@ final class CommandQueryStructureSniff implements Sniff
             );
         }
 
-        $this->assertNoTokens($phpcsFile, $classPtr, $scopeStart, $scopeEnd, [T_CONST], 'Command/Query classes must not declare constants.');
-        $this->assertNoTokens($phpcsFile, $classPtr, $scopeStart, $scopeEnd, [T_USE], 'Command/Query classes must not use traits.');
+        $this->assertNoTokens(
+            $phpcsFile,
+            $classPtr,
+            $scopeStart,
+            $scopeEnd,
+            [T_CONST],
+            'Command/Query classes must not declare constants.',
+        );
+        $this->assertNoTokens(
+            $phpcsFile,
+            $classPtr,
+            $scopeStart,
+            $scopeEnd,
+            [T_USE],
+            'Command/Query classes must not use traits.',
+        );
     }
 
     /**

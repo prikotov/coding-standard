@@ -147,8 +147,22 @@ final class DtoStructureSniff implements Sniff
             );
         }
 
-        $this->assertNoTokens($phpcsFile, $classPtr, $scopeStart, $scopeEnd, [T_CONST], 'DTO classes must not declare constants.');
-        $this->assertNoTokens($phpcsFile, $classPtr, $scopeStart, $scopeEnd, [T_USE], 'DTO classes must not use traits.');
+        $this->assertNoTokens(
+            $phpcsFile,
+            $classPtr,
+            $scopeStart,
+            $scopeEnd,
+            [T_CONST],
+            'DTO classes must not declare constants.',
+        );
+        $this->assertNoTokens(
+            $phpcsFile,
+            $classPtr,
+            $scopeStart,
+            $scopeEnd,
+            [T_USE],
+            'DTO classes must not use traits.',
+        );
     }
 
     private function belongsToClass(array $tokens, int $tokenPtr, int $classPtr): bool
