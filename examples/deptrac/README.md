@@ -78,11 +78,11 @@ exclude_files:
 
 ### `layers`
 
-Namespace patterns in `collectors` use `Common\Module` — find & replace with your base module namespace. Example:
+Namespace patterns in `collectors` follow the conventions from `docs/conventions/`. If your project uses a different module namespace, adjust the patterns accordingly:
 
 ```
-Before: ^Common\Module\.*\Domain\.*
-After:  ^MyProject\Module\.*\Domain\.*
+Default:  ^Common\Module\.*\Domain\.*
+Yours:    ^MyProject\Module\.*\Domain\.*
 ```
 
 ### `ruleset`

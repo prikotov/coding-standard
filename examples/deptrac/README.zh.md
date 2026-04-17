@@ -78,11 +78,11 @@ exclude_files:
 
 ### `layers`
 
-`collectors` 中的命名空间模式使用 `Common\Module` — 查找并替换为你的基础模块命名空间。示例：
+`collectors` 中的命名空间模式遵循 `docs/conventions/` 中的约定。如果你的项目使用不同的模块命名空间，请相应调整模式：
 
 ```
-替换前：^Common\Module\.*\Domain\.*
-替换后：^MyProject\Module\.*\Domain\.*
+默认：^Common\Module\.*\Domain\.*
+你的：^MyProject\Module\.*\Domain\.*
 ```
 
 ### `ruleset`

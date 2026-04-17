@@ -78,11 +78,11 @@ exclude_files:
 
 ### `layers`
 
-Namespace-паттерны в `collectors` используют `Common\Module` — найдите и замените на ваш базовый namespace модулей. Пример:
+Namespace-паттерны в `collectors` следуют конвенциям из `docs/conventions/`. Если ваш проект использует другой namespace модулей, скорректируйте паттерны:
 
 ```
-Было:  ^Common\Module\.*\Domain\.*
-Стало: ^MyProject\Module\.*\Domain\.*
+По умолчанию:  ^Common\Module\.*\Domain\.*
+Ваш проект:    ^MyProject\Module\.*\Domain\.*
 ```
 
 ### `ruleset`

@@ -1,8 +1,7 @@
 # Deptrac — DDD project on Symfony
 #
-# ⚠️ Replace namespace patterns for your project:
-#   - Find & replace `Common\Module` with your base module namespace
-#   - Adjust `paths` and `exclude_files` to match your project structure
+# ⚠️ Adjust namespace patterns to match your project's module structure.
+#   The default patterns follow the conventions from docs/conventions/.
 #
 # See README.md for layer descriptions and dependency rules.
 
