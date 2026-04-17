@@ -1,7 +1,7 @@
 # Deptrac — DDD project on Symfony
 #
-# ⚠️ Adjust namespace patterns to match your project's module structure.
-#   The default patterns follow the conventions from docs/conventions/.
+# Default namespace patterns follow the conventions from docs/conventions/.
+# Adjust only if your project uses a different module structure.
 #
 # See README.md for layer descriptions and dependency rules.
 
