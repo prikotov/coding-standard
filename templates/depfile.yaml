@@ -1,0 +1,287 @@
+# Deptrac — DDD-проект на Symfony
+#
+# Этот конфиг проверяет архитектурные границы между слоями DDD:
+# Domain → Application → Infrastructure → Integration → Presentation
+#
+# ⚠️ ЗАМЕНИТЕ namespace-паттерны под свой проект:
+#   - Найдите и замените `Common\Module` на ваш базовый namespace модулей
+#   - Скорректируйте `paths` и `exclude_files` под структуру проекта
+#
+# Подробнее: docs/conventions/deptrac/index.md (после init)
+
+deptrac:
+  paths:
+    - ./src
+    - ./apps
+
+  exclude_files:
+    - '#.*tests.*#'
+
+  layers:
+    # --- Слои модулей ---
+
+    - name: Domain
+      collectors:
+        - type: bool
+          must:
+            - type: classLike
+              value: .*\\Module\\.*\\Domain\\.*
+          must_not:
+            - type: classLike
+              value: ^Common\\Module\\.*\\Domain\\(Entity\\)?ValueObject\\.*Vo$
+            - type: classLike
+              value: ^Common\\Module\\.*\\Domain\\Enum\\.*
+            - type: classLike
+              value: ^Common\\Module\\.*\\Domain\\.*Dto$
+
+    - name: Application
+      collectors:
+        - type: bool
+          must:
+            - type: classLike
+              value: .*\\Module\\.*\\Application\\.*
+          must_not:
+            - type: classLike
+              value: ^Common\\Module\\.*\\Application\\.*Dto$
+            - type: classLike
+              value: ^Common\\Module\\.*\\Application\\Enum\\.*
+            - type: classLike
+              value: ^Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*Command$
+            - type: classLike
+              value: ^Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*CommandHandler$
+            - type: classLike
+              value: ^Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*Query$
+            - type: classLike
+              value: ^Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*QueryHandler$
+
+    - name: IntegrationListener
+      collectors:
+        - type: classLike
+          value: .*\\Module\\.*\\Integration\\Listener\\.*
+
+    - name: Infrastructure
+      collectors:
+        - type: bool
+          must:
+            - type: classLike
+              value: .*\\Module\\.*\\Infrastructure\\(?!Model|Listener).*$
+          must_not:
+            - type: classLike
+              value: ^Common\\Module\\.*\\Infrastructure\\.*Dto$
+            - type: classLike
+              value: ^Common\\Module\\.*\\Infrastructure\\Component\\.*
+            - type: classLike
+              value: ^Common\\Module\\.*\\Infrastructure\\Enum\\.*
+
+    - name: InfrastructureComponent
+      collectors:
+        - type: bool
+          must:
+            - type: classLike
+              value: ^Common\\Module\\.*\\Infrastructure\\Component\\.*(Component|ComponentInterface)$
+
+    - name: Integration
+      collectors:
+        - type: bool
+          must:
+            - type: classLike
+              value: .*\\Module\\.*\\Integration\\.*
+          must_not:
+            - type: classLike
+              value: .*\\Module\\.*\\Integration\\Listener\\.*
+            - type: classLike
+              value: ^Common\\Module\\.*\\Integration\\.*Dto$
+
+    - name: Presentation
+      collectors:
+        - type: classLike
+          value: .*\\Module\\.*\\Controller\\.*
+        - type: classLike
+          value: .*apps.*\\Controller\\.*
+        - type: classLike
+          value: ^Api\\v1\\Module\\.*
+        - type: classLike
+          value: ^Console\\Module\\.*\\Command\\.*
+        - type: classLike
+          value: ^Console\\Module\\.*\\EventSubscriber\\.*
+
+    # --- Тонкие слои: DTO, VO, Enum ---
+
+    - name: DomainVo
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Domain\\(Entity\\)?ValueObject\\.*Vo$
+
+    - name: DomainEnum
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Domain\\Enum\\.*
+
+    - name: DomainDto
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Domain\\.*Dto$
+
+    - name: ApplicationDto
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Application\\.*Dto$
+
+    - name: ApplicationEnum
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Application\\Enum\\.*
+
+    - name: ApplicationCommonDto
+      collectors:
+        - type: classLike
+          value: ^Common\\Application\\Dto\\.*Dto$
+
+    - name: IntegrationDto
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Integration\\.*Dto$
+
+    - name: InfrastructureDto
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Infrastructure\\.*Dto$
+
+    - name: InfrastructureEnum
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Infrastructure\\Enum\\.*
+
+    # --- Command/Query артефакты ---
+
+    - name: ApplicationCommand
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*Command$
+
+    - name: ApplicationCommandHandler
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*CommandHandler$
+
+    - name: ApplicationQuery
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*Query$
+
+    - name: ApplicationQueryHandler
+      collectors:
+        - type: classLike
+          value: ^Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*QueryHandler$
+
+  ruleset:
+    # --- DTO boundary rules ---
+    Domain:
+      - Domain
+      - DomainDto
+      - DomainEnum
+      - DomainVo
+    DomainVo:
+      - Domain
+      - DomainEnum
+      - DomainVo
+    DomainEnum:
+      - DomainEnum
+    ApplicationDto:
+      - ApplicationDto
+      - ApplicationCommonDto
+      - ApplicationEnum
+    ApplicationCommonDto:
+      - ApplicationCommonDto
+    IntegrationDto:
+      - Integration
+      - IntegrationDto
+    InfrastructureDto:
+      - Domain
+      - DomainDto
+      - DomainEnum
+      - DomainVo
+      - Infrastructure
+      - InfrastructureComponent
+      - InfrastructureDto
+    DomainDto:
+      - Domain
+      - DomainDto
+      - DomainEnum
+      - DomainVo
+
+    # --- Command/Query rules ---
+    ApplicationCommand:
+      - Application
+      - ApplicationDto
+      - ApplicationCommonDto
+      - ApplicationEnum
+    ApplicationQuery:
+      - Application
+      - ApplicationDto
+      - ApplicationCommonDto
+      - ApplicationEnum
+    ApplicationCommandHandler:
+      - Application
+      - +ApplicationCommand
+      - Domain
+      - DomainDto
+      - DomainEnum
+      - DomainVo
+    ApplicationQueryHandler:
+      - Application
+      - +ApplicationQuery
+      - Domain
+      - DomainDto
+      - DomainEnum
+      - DomainVo
+
+    # --- Layer dependency rules ---
+    Presentation:
+      - Application
+      - +ApplicationCommand
+      - +ApplicationQuery
+      - ApplicationCommandHandler
+      - ApplicationQueryHandler
+    Application:
+      - Application
+      - +ApplicationCommandHandler
+      - +ApplicationQueryHandler
+    Integration:
+      - Integration
+      - IntegrationDto
+      - Application
+      - ApplicationCommand
+      - ApplicationQuery
+      - ApplicationCommandHandler
+      - ApplicationQueryHandler
+      - ApplicationDto
+      - ApplicationCommonDto
+      - ApplicationEnum
+      - Domain
+      - DomainDto
+      - DomainEnum
+      - DomainVo
+    Infrastructure:
+      - Infrastructure
+      - InfrastructureComponent
+      - InfrastructureDto
+      - InfrastructureEnum
+      - Domain
+      - DomainDto
+      - DomainEnum
+      - DomainVo
+    InfrastructureEnum:
+      - InfrastructureEnum
+    InfrastructureComponent:
+      - InfrastructureComponent
+      - InfrastructureDto
+    IntegrationListener:
+      - IntegrationListener
+      - Integration
+      - IntegrationDto
+      - Application
+      - +ApplicationCommand
+      - +ApplicationQuery
+      - ApplicationCommandHandler
+      - ApplicationQueryHandler

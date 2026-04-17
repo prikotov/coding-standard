@@ -4,21 +4,24 @@
 declare(strict_types=1);
 
 /**
- * coding-standard-init — copy conventions documentation into the project.
+ * coding-standard-init — copy conventions documentation and config into the project.
  *
  * Usage:
- *   php vendor/bin/coding-standard-init [target-dir] [--docs-path=<path>] [--force]
+ *   php vendor/bin/coding-standard-init [target-dir] [--docs-path=<path>] [--deptrac-path=<path>] [--force]
  *
- *   target-dir   — project root (default: current working directory).
- *   --docs-path  — relative path where docs will be copied (default: docs/conventions/).
- *   --force      — overwrite existing files with fresh copies from the package.
+ *   target-dir    — project root (default: current working directory).
+ *   --docs-path   — relative path where docs will be copied (default: docs/conventions).
+ *   --deptrac-path — relative path where depfile.yaml will be copied (default: depfile.yaml).
+ *                    Set to empty string (--deptrac-path=) to skip deptrac config.
+ *   --force       — overwrite existing files with fresh copies from the package.
  */
 
 // ── Parse arguments ────────────────────────────────────────────────────────
 
-$force     = false;
-$targetArg = null;
-$docsPath  = null;
+$force       = false;
+$targetArg   = null;
+$docsPath    = null;
+$deptracPath = null;
 
 foreach ($argv as $i => $arg) {
     if ($i === 0) {
@@ -28,6 +31,8 @@ foreach ($argv as $i => $arg) {
         $force = true;
     } elseif (str_starts_with($arg, '--docs-path=')) {
         $docsPath = substr($arg, strlen('--docs-path='));
+    } elseif (str_starts_with($arg, '--deptrac-path=')) {
+        $deptracPath = substr($arg, strlen('--deptrac-path='));
     } else {
         $targetArg = $arg;
     }
@@ -43,9 +48,11 @@ if ($targetDir === false || !is_dir($targetDir)) {
     exit(1);
 }
 
-$sourceDocs = $packageRoot . '/docs';
-$docsPath   = $docsPath ?? 'docs/conventions';
-$targetDocs = $targetDir . '/' . $docsPath;
+$sourceDocs   = $packageRoot . '/docs';
+$sourceTemplates = $packageRoot . '/templates';
+$docsPath     = $docsPath ?? 'docs/conventions';
+$deptracPath  = $deptracPath ?? 'depfile.yaml';
+$targetDocs   = $targetDir . '/' . $docsPath;
 
 if (!is_dir($sourceDocs)) {
     fwrite(STDERR, "Error: package docs/ not found at $sourceDocs" . PHP_EOL);
@@ -56,7 +63,7 @@ if ($force) {
     echo "  ⚠  --force: existing files will be overwritten." . PHP_EOL;
 }
 
-// ── Copy docs ──────────────────────────────────────────────────────────────
+// ── 1. Copy docs ───────────────────────────────────────────────────────────
 
 $copied   = 0;
 $skipped  = 0;
@@ -99,11 +106,39 @@ foreach ($iterator as $item) {
     $copied++;
 }
 
-// ── Update .gitignore ─────────────────────────────────────────────────────
+// ── 2. Copy depfile.yaml template ──────────────────────────────────────────
 
-$gitignore     = $targetDir . '/docs/.gitignore';
-$gitignoreDir  = dirname($docsPath) === 'docs' ? basename($docsPath) . '/' : $docsPath;
-$entry         = $gitignoreDir;
+if ($deptracPath !== '') {
+    $deptracSource = $sourceTemplates . '/depfile.yaml';
+    $deptracTarget = $targetDir . '/' . $deptracPath;
+
+    if (file_exists($deptracSource)) {
+        if (file_exists($deptracTarget)) {
+            if ($force) {
+                copy($deptracSource, $deptracTarget);
+                echo "  Updated  $deptracPath" . PHP_EOL;
+                $updated++;
+            } else {
+                echo "  Skip     $deptracPath (already exists)" . PHP_EOL;
+                $skipped++;
+            }
+        } else {
+            $deptracDir = dirname($deptracTarget);
+            if (!is_dir($deptracDir)) {
+                mkdir($deptracDir, 0755, true);
+            }
+            copy($deptracSource, $deptracTarget);
+            echo "  Copied   $deptracPath" . PHP_EOL;
+            $copied++;
+        }
+    }
+}
+
+// ── 3. Update .gitignore ──────────────────────────────────────────────────
+
+$gitignore    = $targetDir . '/docs/.gitignore';
+$gitignoreDir = dirname($docsPath) === 'docs' ? basename($docsPath) . '/' : $docsPath;
+$entry        = $gitignoreDir;
 
 if (file_exists($gitignore)) {
     $content = file_get_contents($gitignore);
@@ -129,3 +164,6 @@ echo "Next steps:" . PHP_EOL;
 echo "  1. Add this line to your project's AGENTS.md:" . PHP_EOL;
 echo "     * \`Конвенции\` — [$docsPath/index.md]($docsPath/index.md)." . PHP_EOL;
 echo "  2. Add PHPCS config to your project (phpcs.xml.dist) with installed_paths pointing to this package." . PHP_EOL;
+if ($deptracPath !== '') {
+    echo "  3. Review and adapt $deptracPath — replace namespace patterns for your project." . PHP_EOL;
+}
