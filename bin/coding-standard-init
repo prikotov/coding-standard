@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  *   target-dir    — project root (default: current working directory).
  *   --docs-path   — relative path where docs will be copied (default: docs/conventions).
- *   --deptrac-path — relative path where depfile.yaml will be copied (default: depfile.yaml).
+ *   --deptrac-path — relative path where depfile.yaml example will be copied (default: depfile.yaml).
  *                    Set to empty string (--deptrac-path=) to skip deptrac config.
  *   --force       — overwrite existing files with fresh copies from the package.
  */
@@ -48,8 +48,8 @@ if ($targetDir === false || !is_dir($targetDir)) {
     exit(1);
 }
 
-$sourceDocs   = $packageRoot . '/docs';
-$sourceTemplates = $packageRoot . '/templates';
+$sourceDocs     = $packageRoot . '/docs';
+$sourceExamples = $packageRoot . '/examples';
 $docsPath     = $docsPath ?? 'docs/conventions';
 $deptracPath  = $deptracPath ?? 'depfile.yaml';
 $targetDocs   = $targetDir . '/' . $docsPath;
@@ -106,10 +106,10 @@ foreach ($iterator as $item) {
     $copied++;
 }
 
-// ── 2. Copy depfile.yaml template ──────────────────────────────────────────
+// ── 2. Copy depfile.yaml example ───────────────────────────────────────────
 
 if ($deptracPath !== '') {
-    $deptracSource = $sourceTemplates . '/depfile.yaml';
+    $deptracSource = $sourceExamples . '/deptrac/depfile.yaml.example';
     $deptracTarget = $targetDir . '/' . $deptracPath;
 
     if (file_exists($deptracSource)) {
