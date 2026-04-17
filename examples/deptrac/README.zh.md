@@ -1,5 +1,7 @@
 # Deptrac — Symfony DDD 项目的配置示例
 
+📄 [English](README.md) · [Русский](README.ru.md)
+
 ## 这是什么
 
 `depfile.yaml.example` — 一个 [Deptrac](https://github.com/qossmic/deptrac) 配置示例，它对约定（`docs/conventions/`）中描述的架构规则实施**确定性验证**：

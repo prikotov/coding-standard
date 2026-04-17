@@ -1,76 +1,76 @@
-# Deptrac — пример конфига для DDD-проекта на Symfony
+# Deptrac — DDD project config example for Symfony
 
-📄 [English](README.en.md) · [中文](README.zh.md)
+📄 [Русский](README.ru.md) · [中文](README.zh.md)
 
-## Что здесь
+## What's here
 
-`depfile.yaml.example` — пример конфига [Deptrac](https://github.com/qossmic/deptrac), который реализует **детерминированную верификацию** архитектурных правил, описанных в конвенциях (`docs/conventions/`):
+`depfile.yaml.example` — an example [Deptrac](https://github.com/qossmic/deptrac) config that implements **deterministic verification** of architectural rules described in the conventions (`docs/conventions/`):
 
 ```
 Presentation → Application → Domain
-Infrastructure → Domain (реализует интерфейсы)
+Infrastructure → Domain (implements interfaces)
 Integration → Application + Domain
 ```
 
-### Зачем верификация, если есть конвенции
+### Why verification if conventions exist
 
-Конвенции описывают правила текстом. Но кодовые AI-агенты не всегда строго им следуют — даже при наличии AGENTS.md и ролевой модели агент может случайно:
+Conventions describe rules as text. But AI coding agents don't always follow them strictly — even with AGENTS.md and role-based prompts, an agent may accidentally:
 
-- Заинжектить зависимость от Infrastructure в Domain
-- Обратиться к Infrastructure из Application напрямую, минуя абстракцию
-- Положить DTO не в тот слой
-- Создать связь между модулями в обход Integration
+- Inject an Infrastructure dependency into Domain
+- Access Infrastructure from Application directly, bypassing abstractions
+- Place a DTO in the wrong layer
+- Create a cross-module coupling bypassing Integration
 
-Deptrac ловит такие нарушения **детерминированно** — в CI, на каждый коммит. Это не «совет», а hard check: CI красный — код не попадает в main.
+Deptrac catches such violations **deterministically** — in CI, on every commit. This is not "advice" but a hard check: CI red — code doesn't reach main.
 
-## Слои
+## Layers
 
-| Слой | Описание |
+| Layer | Description |
 |---|---|
-| `Domain` | Сущности, VO, интерфейсы репозиториев |
+| `Domain` | Entities, VOs, repository interfaces |
 | `DomainVo` | Value Objects (→ Domain, Enum) |
-| `DomainEnum` | Enum домена (замкнут) |
-| `DomainDto` | DTO домена (→ Domain, VO, Enum) |
-| `Application` | Use cases, сервисы |
-| `ApplicationDto` | DTO приложения (→ DTO, Enum) |
+| `DomainEnum` | Domain enum (closed) |
+| `DomainDto` | Domain DTOs (→ Domain, VO, Enum) |
+| `Application` | Use cases, services |
+| `ApplicationDto` | Application DTOs (→ DTO, Enum) |
 | `ApplicationCommand` | Command (CQRS) |
 | `ApplicationQuery` | Query (CQRS) |
-| `ApplicationCommandHandler` | Обработчик команд |
-| `ApplicationQueryHandler` | Обработчик запросов |
-| `Infrastructure` | Репозитории, внешние сервисы |
-| `InfrastructureComponent` | Компоненты инфраструктуры |
-| `Integration` | Внешние API, события |
-| `IntegrationListener` | Слушатели событий |
-| `Presentation` | Контроллеры, консольные команды |
+| `ApplicationCommandHandler` | Command handler |
+| `ApplicationQueryHandler` | Query handler |
+| `Infrastructure` | Repositories, external services |
+| `InfrastructureComponent` | Infrastructure components |
+| `Integration` | External APIs, events |
+| `IntegrationListener` | Event listeners |
+| `Presentation` | Controllers, console commands |
 
-## Правила зависимостей
+## Dependency rules
 
-- **Domain** не знает ни о ком, кроме себя (DTO, VO, Enum)
-- **Application** → Domain, но не Infrastructure
-- **Infrastructure** реализует интерфейсы Domain, не зависит от Application
-- **Command/Query** — чистые DTO без логики
-- **Handler** — единственная точка входа в use case
+- **Domain** knows nothing but itself (DTO, VO, Enum)
+- **Application** → Domain, but not Infrastructure
+- **Infrastructure** implements Domain interfaces, doesn't depend on Application
+- **Command/Query** — pure DTOs without logic
+- **Handler** — single entry point to a use case
 - **Presentation** → Application (Command/Query + Handler)
-- **IntegrationListener** слушает события, диспатчит Command/Query
+- **IntegrationListener** listens to events, dispatches Command/Query
 
-## Адаптация под проект
+## Adapting for your project
 
-Пример использует `Common\Module\*`. Для своего проекта:
+The example uses `Common\Module\*`. For your project:
 
-1. Замените `Common\Module` на ваш базовый namespace модулей
-2. Скорректируйте `paths` — где искать исходники
-3. Скорректируйте `exclude_files` — что исключить
-4. При необходимости добавьте/удалите слои
+1. Replace `Common\Module` with your base module namespace
+2. Adjust `paths` — where to look for source code
+3. Adjust `exclude_files` — what to exclude from analysis
+4. Add/remove layers as needed
 
-## Запуск
+## Running
 
-Напрямую:
+Directly:
 
 ```bash
 vendor/bin/deptrac analyse
 ```
 
-Через Makefile:
+Via Makefile:
 
 ```makefile
 .PHONY: deptrac
@@ -78,13 +78,13 @@ deptrac:
 	vendor/bin/deptrac analyse --no-progress
 ```
 
-В CI:
+In CI:
 
 ```yaml
 - run: vendor/bin/deptrac analyse --no-progress
 ```
 
-В составе `make check`:
+As part of `make check`:
 
 ```makefile
 .PHONY: check
