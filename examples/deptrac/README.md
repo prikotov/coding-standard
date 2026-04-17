@@ -2,7 +2,7 @@
 
 ## Что здесь
 
-`depfile.yaml.example` — пример конфига [Deptrac](https://github.com/qossmic/deptrac), который проверяет архитектурные границы между слоями DDD:
+`depfile.yaml.example` — пример конфига [Deptrac](https://github.com/qossmic/deptrac), который реализует **детерминированную верификацию** архитектурных правил, описанных в конвенциях (`docs/conventions/`):
 
 ```
 Presentation → Application → Domain
@@ -10,7 +10,16 @@ Infrastructure → Domain (реализует интерфейсы)
 Integration → Application + Domain
 ```
 
-Deptrac делает конвенции DDD **исполняемыми** — нарушение ловится в CI.
+### Зачем верификация, если есть конвенции
+
+Конвенции описывают правила текстом. Но кодовые AI-агенты не всегда строго им следуют — даже при наличии AGENTS.md и ролевой модели агент может случайно:
+
+- Заинжектить зависимость от Infrastructure в Domain
+- Обратиться к Infrastructure из Application напрямую, минуя абстракцию
+- Положить DTO не в тот слой
+- Создать связь между модулями в обход Integration
+
+Deptrac ловит такие нарушения **детерминированно** — в CI, на каждый коммит. Это не «совет», а hard check: CI красный — код не попадает в main.
 
 ## Слои
 
