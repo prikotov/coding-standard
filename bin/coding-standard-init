@@ -48,7 +48,7 @@ if ($targetDir === false || !is_dir($targetDir)) {
     exit(1);
 }
 
-$sourceDocs     = $packageRoot . '/docs';
+$sourceDocs     = $packageRoot . '/docs/conventions';
 $sourceExamples = $packageRoot . '/examples';
 $docsPath     = $docsPath ?? 'docs/conventions';
 $deptracPath  = $deptracPath ?? 'depfile.yaml';
