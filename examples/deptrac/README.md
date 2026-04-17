@@ -55,12 +55,50 @@ Deptrac catches such violations **deterministically** — in CI, on every commit
 
 ## Adapting for your project
 
-The example uses `Common\Module\*`. For your project:
+The example uses `Common\Module\*` as base namespace. For your project:
 
-1. Replace `Common\Module` with your base module namespace
-2. Adjust `paths` — where to look for source code
-3. Adjust `exclude_files` — what to exclude from analysis
-4. Add/remove layers as needed
+### `paths`
+
+Source directories to scan:
+
+```yaml
+paths:
+  - ./src
+  - ./apps
+```
+
+### `exclude_files`
+
+Regex patterns for files to skip:
+
+```yaml
+exclude_files:
+  - '#.*tests.*#'
+```
+
+### `layers`
+
+Namespace patterns in `collectors` use `Common\Module` — find & replace with your base module namespace. Example:
+
+```
+Before: ^Common\Module\.*\Domain\.*
+After:  ^MyProject\Module\.*\Domain\.*
+```
+
+### `ruleset`
+
+Dependency rules between layers — usually don't need changes unless you add/remove layers.
+
+### `Presentation` collectors
+
+Application entry points (controllers, console commands) — adjust to match your namespace:
+
+```yaml
+- type: classLike
+  value: ^Api\v1\Module\.*        # REST API
+- type: classLike
+  value: ^Console\Module\.*\Command\.*  # CLI commands
+```
 
 ## Running
 

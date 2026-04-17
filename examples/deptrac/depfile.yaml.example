@@ -1,13 +1,10 @@
-# Deptrac — DDD-проект на Symfony
+# Deptrac — DDD project on Symfony
 #
-# Этот конфиг проверяет архитектурные границы между слоями DDD:
-# Domain → Application → Infrastructure → Integration → Presentation
+# ⚠️ Replace namespace patterns for your project:
+#   - Find & replace `Common\Module` with your base module namespace
+#   - Adjust `paths` and `exclude_files` to match your project structure
 #
-# ⚠️ ЗАМЕНИТЕ namespace-паттерны под свой проект:
-#   - Найдите и замените `Common\Module` на ваш базовый namespace модулей
-#   - Скорректируйте `paths` и `exclude_files` под структуру проекта
-#
-# Подробнее: docs/conventions/deptrac/index.md (после init)
+# See README.md for layer descriptions and dependency rules.
 
 deptrac:
   paths:
@@ -18,7 +15,7 @@ deptrac:
     - '#.*tests.*#'
 
   layers:
-    # --- Слои модулей ---
+    # --- Main layers ---
 
     - name: Domain
       collectors:
@@ -105,7 +102,7 @@ deptrac:
         - type: classLike
           value: ^Console\\Module\\.*\\EventSubscriber\\.*
 
-    # --- Тонкие слои: DTO, VO, Enum ---
+    # --- Fine-grained: DTO, VO, Enum ---
 
     - name: DomainVo
       collectors:
@@ -152,7 +149,7 @@ deptrac:
         - type: classLike
           value: ^Common\\Module\\.*\\Infrastructure\\Enum\\.*
 
-    # --- Command/Query артефакты ---
+    # --- CQRS artifacts ---
 
     - name: ApplicationCommand
       collectors:
@@ -175,7 +172,7 @@ deptrac:
           value: ^Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*QueryHandler$
 
   ruleset:
-    # --- DTO boundary rules ---
+    # DTO boundary
     Domain:
       - Domain
       - DomainDto
@@ -210,7 +207,7 @@ deptrac:
       - DomainEnum
       - DomainVo
 
-    # --- Command/Query rules ---
+    # CQRS
     ApplicationCommand:
       - Application
       - ApplicationDto
@@ -236,7 +233,7 @@ deptrac:
       - DomainEnum
       - DomainVo
 
-    # --- Layer dependency rules ---
+    # Layer dependencies
     Presentation:
       - Application
       - +ApplicationCommand
