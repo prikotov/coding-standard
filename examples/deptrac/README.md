@@ -1,5 +1,7 @@
 # Deptrac — пример конфига для DDD-проекта на Symfony
 
+📄 [English](README.en.md) · [中文](README.zh.md)
+
 ## Что здесь
 
 `depfile.yaml.example` — пример конфига [Deptrac](https://github.com/qossmic/deptrac), который реализует **детерминированную верификацию** архитектурных правил, описанных в конвенциях (`docs/conventions/`):
