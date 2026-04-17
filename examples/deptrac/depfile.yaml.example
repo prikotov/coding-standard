@@ -1,7 +1,6 @@
 # Deptrac — DDD project on Symfony
 #
-# Default namespace patterns follow the conventions from docs/conventions/.
-# Adjust only if your project uses a different module structure.
+# Implements deterministic verification of architectural rules from docs/conventions/.
 #
 # See README.md for layer descriptions and dependency rules.
 
