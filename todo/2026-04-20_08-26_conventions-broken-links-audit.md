@@ -42,10 +42,10 @@
 
 **Суть:** Файл существует в `docs/conventions/`, но относительный путь от исходного файла указывает мимо.
 
-- [ ] `layers/application.md:45` — `[Use Cases](use_case.md)` — файл в `layers/application/use_case.md` → заменить на `application/use_case.md`
-- [ ] `layers/application.md:64` — `[Command и CommandHandler](command_handler.md)` — аналогично → заменить на `application/command_handler.md`
-- [ ] `layers/application.md:82` — `[Query и Query Handler](query_handler.md)` — аналогично → заменить на `application/query_handler.md`
-- [ ] `principles/values.md:8` — `[Code Conventions](README.md)` — файл `principles/README.md` не существует; вероятно, ссылка на `index.md` или `code_style.md` → уточнить у upstream
+- [x] `layers/application.md:45` — `[Use Cases](use_case.md)` — файл в `layers/application/use_case.md` → заменить на `application/use_case.md`
+- [x] `layers/application.md:64` — `[Command и CommandHandler](command_handler.md)` — аналогично → заменить на `application/command_handler.md`
+- [x] `layers/application.md:82` — `[Query и Query Handler](query_handler.md)` — аналогично → заменить на `application/query_handler.md`
+- [x] `principles/values.md:8` — `[Code Conventions](README.md)` — файл `principles/README.md` не существует; вероятно, ссылка на `index.md` или `code_style.md` → заменить на `../index.md`
 
 ---
 
