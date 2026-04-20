@@ -20,7 +20,7 @@ Common\Module\{ModuleName}\Application\UseCase\Command\{CommandGroup}\{CommandNa
 
 - Создаётся только для изменения состояния модуля **по внешнему бизнес-запросу** (например: от контроллера, очереди,
   cron-задачи).
-- Command — это [DTO](../../guides/dto.md), реализующее интерфейс `CommandInterface<ReturnType>`. Оно описывает входные данные,
+- Command — это [DTO](../../core_patterns/dto.md), реализующее интерфейс `CommandInterface<ReturnType>`. Оно описывает входные данные,
   необходимые для выполнения бизнес-действия в Command Handler.
 - Допустимы лёгкие guard-проверки в конструкторе команды (например, проверка batch size > 0), чтобы не строить
   заведомо некорректный DTO. Основная бизнес-валидация остаётся на Command Handler/Domain-слое.
@@ -31,7 +31,7 @@ Common\Module\{ModuleName}\Application\UseCase\Command\{CommandGroup}\{CommandNa
     - возвращает `void` или идентификатор созданной сущности (например, `int`, `Uuid`). DTO допустим только если нужно
       вернуть несколько связанных идентификаторов (например, пару `int id` + `uuid` через `Common\Application\Dto\IdDto`).
     - **события должны dispatch'ся ПОСЛЕ `flush()`**, когда данные уже записаны в БД.
-      Подробнее: [Events & Transactions — взаимодействие событий и транзакций БД](../../../architecture/events/transactions.md).
+      Подробнее: [Events & Transactions — взаимодействие событий и транзакций БД](../../architecture/events/transactions.md).
 - Command Handler должен **выполнять только одну логическую транзакцию**.
 - **Запрещено** вызывать другие UseCase внутри CommandHandler, включая вызов через `__invoke()` другого `*Handler` и запуск через `CommandBus`/`QueryBus`.
 

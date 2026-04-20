@@ -15,7 +15,7 @@
 * Событие может реализовывать интерфейс, если необходимо объединить обработку нескольких однотипных событий одним
   Listener'ом. Пример: `ChatMessageReceivedEventInterface`.
 * События должны **dispatch'ся ПОСЛЕ `flush()`**, когда данные уже записаны в БД.
-  Подробнее: [Events & Transactions — взаимодействие событий и транзакций БД](../../../architecture/events/transactions.md).
+  Подробнее: [Events & Transactions — взаимодействие событий и транзакций БД](../../architecture/events/transactions.md).
 
 ## Расположение
 

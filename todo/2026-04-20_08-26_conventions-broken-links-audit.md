@@ -53,29 +53,29 @@
 
 **Суть:** Целевые документы не существуют ни в проекте, ни в `docs/conventions/`. upstream нужно либо создать документы, либо удалить ссылки.
 
-### 3.1. `guides/dto.md` — не существует (4 ссылки)
+### 3.1. `guides/dto.md` → `core_patterns/dto.md` (4 ссылки)
 
-- [ ] `layers/application.md:100` — `[DTO](../guides/dto.md)`
-- [ ] `layers/application/command_handler.md:23` — `[DTO](../../guides/dto.md)`
-- [ ] `layers/application/query_handler.md:20` — `[DTO](../../guides/dto.md)`
-- [ ] `layers/application/query_handler.md:21` — `[DTO](../../guides/dto.md)` — дубликат на той же строке
+- [x] `layers/application.md:100` — `[DTO](../guides/dto.md)` → `[DTO](../core_patterns/dto.md)`
+- [x] `layers/application/command_handler.md:23` — `[DTO](../../guides/dto.md)` → `[DTO](../../core_patterns/dto.md)`
+- [x] `layers/application/query_handler.md:20` — `[DTO](../../guides/dto.md)` → `[DTO](../../core_patterns/dto.md)`
+- [x] `layers/application/query_handler.md:21` — `[DTO](../../guides/dto.md)` → `[DTO](../../core_patterns/dto.md)`
 
-### 3.2. `guides/enum.md` — не существует (1 ссылка)
+### 3.2. `guides/enum.md` → `core_patterns/enum.md` (1 ссылка)
 
-- [ ] `layers/application/query_handler.md:21` — `[Enum](../../guides/enum.md)`
+- [x] `layers/application/query_handler.md:21` — `[Enum](../../guides/enum.md)` → `[Enum](../../core_patterns/enum.md)`
 
-### 3.3. `architecture/events/transactions.md` — не существует (2 ссылки)
+### 3.3. `architecture/events/transactions.md` — создан документ (2 ссылки)
 
-- [ ] `layers/application/command_handler.md:34` — `[Events & Transactions...](../../../architecture/events/transactions.md)`
-- [ ] `layers/application/event.md:18` — `[Events & Transactions...](../../../architecture/events/transactions.md)`
+- [x] `layers/application/command_handler.md:34` — `[Events & Transactions...](../../../architecture/events/transactions.md)` → документ создан, ссылка восстановлена
+- [x] `layers/application/event.md:18` — `[Events & Transactions...](../../../architecture/events/transactions.md)` → документ создан, ссылка восстановлена
 
-### 3.4. `modules/index.md` — не существует (1 ссылка)
+### 3.4. `modules/index.md` → `modules/configuration.md` (1 ссылка)
 
-- [ ] `index.md:33` — `[Модули](modules/index.md)` — есть только `modules/configuration.md`
+- [x] `index.md:33` — `[Модули](modules/index.md)` → `[Модули](modules/configuration.md)`
 
-### 3.5. `layers/theme/README.md` — не существует (1 ссылка)
+### 3.5. `layers/theme/README.md` → внешний URL Bootstrap (1 ссылка)
 
-- [ ] `layers/presentation/view.md:3` — `[Bootstrap 5 Phoenix](../theme/README.md)` — тема не перенесена из upstream
+- [x] `layers/presentation/view.md:3` — `[Bootstrap 5 Phoenix](../theme/README.md)` → внешняя ссылка на Bootstrap docs
 
 ---
 

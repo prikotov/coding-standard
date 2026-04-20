@@ -17,8 +17,8 @@ Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{Q
 ## Как создаем
 
 - Создаются только для обработки внешних бизнес-запросов на чтение данных.
-- Query — это [DTO](../../guides/dto.md), реализующее интерфейс `QueryInterface<ReturnType>`. Оно описывает входные параметры запроса.
-- Может возвращать: [DTO](../../guides/dto.md), [Enum](../../guides/enum.md), скалярное значение.
+- Query — это [DTO](../../core_patterns/dto.md), реализующее интерфейс `QueryInterface<ReturnType>`. Оно описывает входные параметры запроса.
+- Может возвращать: [DTO](../../core_patterns/dto.md), [Enum](../../core_patterns/enum.md), скалярное значение.
 - Входные и возвращаемые объекты должны находиться в слое Application текущего модуля.
 - Query Handler не должен изменять состояние приложения.
 - Запрещено вызывать другие UseCase внутри QueryHandler, включая вызов через `__invoke()` другого `*Handler` и запуск через `CommandBus`/`QueryBus`.
