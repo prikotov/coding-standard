@@ -251,4 +251,4 @@ final class InMemoryServiceStatusRepository implements ServiceStatusRepositoryIn
 3. **Идеально для тестов** — изоляция от БД, детерминированные результаты.
 4. **Ключ хранилища** — выбирается на основе бизнес-логики (например, уникальное имя сервиса).
 
-Полный пример: [`InMemoryServiceStatusRepository.php`](../../../src/Module/Health/Infrastructure/Repository/ServiceStatus/InMemoryServiceStatusRepository.php)
+Полный пример: [`InMemoryServiceStatusRepository.php`](examples/InMemoryServiceStatusRepository.md)

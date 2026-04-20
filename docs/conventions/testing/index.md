@@ -748,11 +748,11 @@ public function testSomeScenario(): void
 
 | Файл | Описание |
 |------|----------|
-| [`UserFixtures.php`](../../src/DataFixtures/UserFixtures.php) | Создаёт тестовых пользователей (test-user, test-user2, test-admin-user) |
-| [`UserRoleFixture.php`](../../src/DataFixtures/UserRoleFixture.php) | Создаёт роли для пользователей (user, admin) |
-| [`ProjectFixtures.php`](../../src/DataFixtures/ProjectFixtures.php) | Создаёт проекты с разными статусами (closed, new, active) |
-| [`TeamFixtures.php`](../../src/DataFixtures/TeamFixtures.php) | Создаёт команды |
-| [`UserAccessTokenFixture.php`](../../src/DataFixtures/UserAccessTokenFixture.php) | Создаёт токены доступа пользователей |
+| `UserFixtures.php` | Создаёт тестовых пользователей (test-user, test-user2, test-admin-user) |
+| `UserRoleFixture.php` | Создаёт роли для пользователей (user, admin) |
+| `ProjectFixtures.php` | Создаёт проекты с разными статусами (closed, new, active) |
+| `TeamFixtures.php` | Создаёт команды |
+| `UserAccessTokenFixture.php` | Создаёт токены доступа пользователей |
 
 ### E2E-тесты
 
@@ -844,7 +844,7 @@ make psalm
 
 Статический анализ архитектуры кода для проверки соблюдения слоистой архитектуры и модульной изоляции.
 
-**Конфигурация:** [`depfile.yaml`](../../depfile.yaml)
+**Конфигурация:** `depfile.yaml`
 
 **Запуск:**
 
@@ -856,7 +856,7 @@ make deptrac
 
 Проверка стиля кода на соответствие PSR-12 и дополнительным правилам проекта.
 
-**Конфигурация:** [`phpcs.xml.dist`](../../phpcs.xml.dist)
+**Конфигурация:** `phpcs.xml.dist`
 
 **Основные настройки:**
 - Базовый стандарт: PSR-12
@@ -1107,10 +1107,10 @@ tests/
 |---------------------|-----------------------------------------------|
 | [`phpunit.xml.dist`](../../phpunit.xml.dist) | Конфигурация PHPUnit                         |
 | [`psalm.xml`](../../psalm.xml)             | Конфигурация Psalm                          |
-| [`phpcs.xml.dist`](../../phpcs.xml.dist)   | Конфигурация PHP_CodeSniffer                |
-| [`phpmd.xml`](../../phpmd.xml)             | Конфигурация PHP Mess Detector              |
-| [`Makefile`](../../Makefile)               | Makefile с командами для запуска проверок  |
-| [`depfile.yaml`](../../depfile.yaml)       | Конфигурация Deptrac                        |
+| `phpcs.xml.dist`   | Конфигурация PHP_CodeSniffer                |
+| `phpmd.xml`             | Конфигурация PHP Mess Detector              |
+| `Makefile`               | Makefile с командами для запуска проверок  |
+| `depfile.yaml`       | Конфигурация Deptrac                        |
 
 ## Дополнительные ресурсы
 
@@ -1121,9 +1121,9 @@ tests/
 
 ## Связанная документация
 
-- [`docs/testing/e2e.md`](../../docs/testing/e2e.md) — детальное руководство по E2E тестированию
-- [`tests/AGENTS.md`](../../tests/AGENTS.md) — детальные правила тестирования (источник истины для тестов)
-- [`AGENTS.md`](../../AGENTS.md) — общие правила проекта, включая раздел Tests and Validation
-- [`Makefile`](../../Makefile) — команды для запуска тестов и проверок
+- `docs/testing/e2e.md` — детальное руководство по E2E тестированию
+- `tests/AGENTS.md` — детальные правила тестирования (источник истины для тестов)
+- `AGENTS.md` — общие правила проекта, включая раздел Tests and Validation
+- `Makefile` — команды для запуска тестов и проверок
 
-> **Примечание:** Данный документ (`docs/conventions/testing/index.md`) является полным руководством по тестированию в проекте. Для получения наиболее актуальной информации о правилах тестирования используйте [`tests/AGENTS.md`](../../tests/AGENTS.md) как источник истины.
+> **Примечание:** Данный документ является полным руководством по тестированию.

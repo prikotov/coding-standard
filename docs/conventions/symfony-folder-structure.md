@@ -5,7 +5,7 @@
 ## Общие правила
 
 - Проект использует модульную архитектуру с четырьмя слоями (Domain, Application, Infrastructure, Integration).
-- Каждое приложение находится в `apps/<app_name>/` и наследуется от общего [`Common\Kernel`](src/Kernel.php).
+- Каждое приложение находится в `apps/<app_name>/` и наследуется от общего [`Common\Kernel`](examples/Kernel.php).
 - Все модули размещаются в `src/Module/{ModuleName}/`.
 - Конфигурация разделена на общую (`config/`) и приложения (`apps/<app_name>/config/`).
 - Тесты разделены по типам: Unit (`tests/Unit/`), Integration (`tests/Integration/`), E2E (`apps/*/tests/`).

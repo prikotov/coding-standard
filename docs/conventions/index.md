@@ -34,9 +34,7 @@
 - [Конфигурирование модулей](modules/configuration.md)
 
 ## Операционные практики
-- [Fixes](ops/fixes.md)
-- [Smoke Commands](ops/smoke-commands.md)
-- [Обоснованные подавления PHPMD](ops/phpmd-suppressions-guidelines.md)
+- [Операционные практики](ops/index.md)
 
 ## Слои Архитектуры
 
