@@ -348,4 +348,4 @@ return [
 - [ ] Unit-тесты находятся в `tests/Unit/`.
 - [ ] Integration-тесты находятся в `tests/Integration/`.
 - [ ] Миграции находятся в `migrations/` и следуют формату `VersionYYYYMMDDHHMMSS.php`.
-- [ ] Документация соответствует правилам doc-writing.
+- [ ] Документация соответствует правилам из `docs/conventions/doc-writing-rules.md`.

@@ -248,4 +248,4 @@ return [
 - [ ] Тесты приложения находятся в `apps/<app_name>/tests/`.
 - [ ] Нет дублирования модулей между `config/modules.php` и `apps/<app_name>/config/modules.php`.
 - [ ] Кэш и логи разделены по идентификатору приложения.
-- [ ] Документация соответствует правилам doc-writing.
+- [ ] Документация соответствует правилам из `docs/conventions/doc-writing-rules.md`.

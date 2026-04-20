@@ -138,6 +138,7 @@ apps/
 - [Консольная команда (Console Command)](console_command.md)
 - [Формы (Forms)](forms.md)
 - [Маршруты (Route)](route.md)
+- [Ограничение частоты запросов (Rate Limiter)](rate-limiter.md)
 - [Twig-компонент (Twig Component)](twig_component.md)
 - [Twig-расширение (Twig Extension)](twig_extension.md)
 - [Представление (View)](view.md)
