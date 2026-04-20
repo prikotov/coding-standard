@@ -42,10 +42,10 @@ final class BillingModule implements ModuleInterface, DoctrineInterface
 Каждый модуль должен иметь `Resource/config/services.yaml`. В нём объявляются параметры и сервисы модуля. Подробности: [Symfony Service Container](https://symfony.com/doc/current/service_container.html).
 
 - Используйте параметры вида `module.<module_name>.<context>`, чтобы избежать конфликтов имён. Подробности: [Service Parameters](https://symfony.com/doc/current/service_container.html#service-parameters).
-- Для импорта каталога с сервисами применяйте `resource: '%module.<module_name>.module_dir%/'` с исключениями (`exclude`) для сущностей и вспомогательных директорий, чтобы Doctrine сама управляла жизненным циклом сущностей. Подробности: [Importing Configuration Files](https://symfony.com/doc/current/service_container/imports.html).
+- Для импорта каталога с сервисами применяйте `resource: '%module.<module_name>.module_dir%/'` с исключениями (`exclude`) для всех несервисных структурных типов. Обязательный минимум: `Domain/Entity`, `Resource`, `<ModuleName>Module.php`. Если в модуле есть отдельные каталоги с `Enum`, `ValueObject`, `Application/Dto`, `Application/Event` или другими payload/value типами, исключайте и их тоже, чтобы контейнер не регистрировал их как сервисы. Подробности: [Importing Configuration Files](https://symfony.com/doc/current/service_container/imports.html).
 - Значения из переменных окружения подключайте через `%env()%`. Старайтесь документировать обязательные переменные в `.env.dist` или AGENTS.md соответствующего модуля. Подробности: [Environment Variables](https://symfony.com/doc/current/configuration.html#environment-variables).
 
-Пример (`src/Module/Billing/Resource/config/services.yaml`):
+Рекомендуемый пример модульного `services.yaml`:
 
 ```yaml
 parameters:
@@ -60,11 +60,16 @@ services:
     resource: '%module.billing.module_dir%/'
     exclude:
       - '%module.billing.module_dir%/Domain/Entity/'
+      - '%module.billing.module_dir%/Domain/Enum/'
+      - '%module.billing.module_dir%/Domain/ValueObject/'
+      - '%module.billing.module_dir%/Application/Dto/'
+      - '%module.billing.module_dir%/Application/Event/'
+      - '%module.billing.module_dir%/Application/Enum/'
       - '%module.billing.module_dir%/Resource/'
       - '%module.billing.module_dir%/BillingModule.php'
 ```
 
-Такой конфиг подключает все классы модуля и одновременно исключает сущности из автоконфигурации, чтобы ими управлял Doctrine. Подробности: [Autowiring](https://symfony.com/doc/current/service_container/autowiring.html).
+Такой конфиг подключает все классы модуля и одновременно исключает из автоконфигурации несервисные типы: сущности, enum, value object, DTO, event payload и служебные файлы модуля. Благодаря этому контейнер содержит только реальные сервисы, а Doctrine продолжает сама управлять жизненным циклом сущностей. Подробности: [Autowiring](https://symfony.com/doc/current/service_container/autowiring.html).
 
 ## Конфигурация работы с Doctrine-сущностями
 
@@ -94,6 +99,7 @@ services:
 
 3. **Настройте сервисы Doctrine.**
     - Не регистрируйте сущности как сервисы в `services.yaml`. Исключения в разделе `exclude` защищают от автоконфигурации, чтобы Doctrine создавала сущности сама.
+    - Не регистрируйте как сервисы и другие несервисные структурные типы модуля: `Enum`, `ValueObject`, `DTO`, `Application Event` и аналогичные payload/value классы. Если такие каталоги выделены отдельно, добавляйте их в `exclude`.
     - Репозитории внедряйте через интерфейсы (`Domain\Repository`) и реализации в `Infrastructure\Repository`. Сами реализации автоматически загружаются благодаря `resource` в `services.yaml`.
     - Если модулю нужен отдельный `EntityManager`, добавьте конфигурацию в `Resource/config/doctrine.yaml` (по умолчанию проект использует общий manager, поэтому файл необязателен).
 
@@ -104,7 +110,7 @@ services:
 ### Чек-лист
 
 - [ ] Модуль реализует `DoctrineInterface` и возвращает корректные пути к сущностям.
-- [ ] В `services.yaml` сущности исключены из автоконфигурации.
+- [ ] В `services.yaml` из автоконфигурации исключены сущности и остальные несервисные структурные типы модуля.
 - [ ] Репозитории регистрируются через интерфейсы и лежат в `Infrastructure\Repository`.
 - [ ] Все обязательные параметры описаны и привязаны к `%env()%`.
 - [ ] Добавлены миграции для новых таблиц.

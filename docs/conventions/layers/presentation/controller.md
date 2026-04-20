@@ -13,6 +13,7 @@
 - Внедряем только публичные интерфейсы Application-слоя (CommandBus, QueryBus, DTO-мапперы) и сервисы Presentation.
 - Все данные из запроса валидируем до вызова Application (DTO, формы, атрибуты `#[MapQueryString]`).
 - Flash-сообщения отправляем через `$this->addFlash()` с переводами, редирект выполняем сразу после успешного действия.
+- Rate limiting для web controller выполняем явно в presentation-коде до вызова Application (см. [«Ограничение частоты запросов»](rate-limiter.md)).
 
 ## Зависимости
 

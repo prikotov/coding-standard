@@ -71,5 +71,6 @@
     - [Twig-компонент (Twig Component)](layers/presentation/twig_component.md)
     - [Twig Extension](layers/presentation/twig_extension.md)
     - [Правило (Rule)](layers/presentation/rule.md)
+    - [Ограничение частоты запросов (Rate Limiter)](layers/presentation/rate-limiter.md)
     - [Представление (View)](layers/presentation/view.md)
     - [Голосователь (Voter)](layers/presentation/voter.md)
