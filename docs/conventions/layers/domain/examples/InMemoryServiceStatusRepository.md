@@ -1,6 +1,6 @@
 # InMemoryServiceStatusRepository — пример In-memory реализации
 
-> Полный пример in-memory репозитория, иллюстрирующий паттерны, описанные в [repository.md](repository.md).
+> Полный пример in-memory репозитория, иллюстрирующий паттерны, описанные в [repository.md](../repository.md).
 
 ```php
 <?php

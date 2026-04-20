@@ -23,7 +23,7 @@
 
 ## Расположение
 
-- VO [слоя Domain](docs/conventions/layers/domain.md):
+- VO [слоя Domain](../layers/domain.md):
 
 ```
 Common\Module\{ModuleName}\Domain\ValueObject\{Name}Vo
@@ -35,14 +35,14 @@ Common\Module\{ModuleName}\Domain\ValueObject\{Name}Vo
 Common\Module\{ModuleName}\Domain\Entity\ValueObject\{Name}Vo
 ```
 
-- VO [слоя Application](docs/conventions/layers/application.md) (для представления сложных типов данных и инкапсуляции форматов представления, без бизнес-логики домена):
+- VO [слоя Application](../layers/application.md) (для представления сложных типов данных и инкапсуляции форматов представления, без бизнес-логики домена):
 
 ```
 Common\Module\{ModuleName}\Application\ValueObject\{Name}Vo
 Common\Module\{ModuleName}\Application\Dto\{Name}DtoVo
 ```
 
-- VO [слоя Presentation](docs/conventions/layers/presentation.md) (если необходимы объекты представления):
+- VO [слоя Presentation](../layers/presentation.md) (если необходимы объекты представления):
 
 ```
 Web\\Module\\{ModuleName}\\...\\ValueObject\\{Name}Vo
@@ -50,7 +50,7 @@ Api\\v1\\Module\\{ModuleName}\\...\\ValueObject\\{Name}Vo
 Console\\Module\\{ModuleName}\\...\\ValueObject\\{Name}Vo
 ```
 
-- VO [слоя Infrastructure](docs/conventions/layers/infrastructure.md) (служебные VO для компонентов/адаптеров):
+- VO [слоя Infrastructure](../layers/infrastructure.md) (служебные VO для компонентов/адаптеров):
 
 ```
 Common\\Module\\{ModuleName}\\Infrastructure\\Component\\{Component}\\Vo\\{Name}Vo
