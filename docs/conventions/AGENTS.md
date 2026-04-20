@@ -1,8 +1,10 @@
-# Правила для AI-агентов по работе с документацией и конвенциями (Documentation and Conventions Guidelines for AI Agents)
+# Правила для AI-агентов по работе с конвенциями (Conventions Guidelines for AI Agents)
 
 ## Назначение
 
-Данный документ содержит обязательные правила для AI-агентов (Codex, OpenCode, Roo, Kilo Code и др.) по работе с документацией проекта TasK, расположенной в директории `docs/conventions/`.
+Обязательные правила для AI-агентов (Codex, OpenCode, Roo, Kilo Code, Pi и др.) по работе с конвенциями проекта, расположенными в директории `docs/conventions/`.
+
+---
 
 ## Общие принципы
 
@@ -11,24 +13,6 @@
 - **Структура**: каждый документ описывает один подход или одну сущность.
 - **Источники**: используем ссылки на официальные источники (Wikipedia, Symfony docs, книги по DDD и Clean Code).
 - **Код**: PHP 8.4 с использованием Symfony 8.0, строго типизированный.
-
----
-
-## Структура директории docs/conventions/
-
-```
-docs/conventions/
-├── AGENTS.md                 # Этот файл — правила для AI-агентов
-├── doc-writing-rules.md      # Правила написания документации
-├── layers/                   # Документация по слоям архитектуры
-│   ├── domain/
-│   ├── application/
-│   ├── infrastructure/
-│   └── integration/
-├── patterns/                 # Документация по паттернам
-├── naming/                   # Конвенции именования
-└── ...                       # Другие категории документации
-```
 
 ---
 
@@ -166,8 +150,8 @@ final readonly class ExampleSpecification
 
 Определите категорию документа:
 - `layers/` — если документ описывает слой архитектуры.
-- `patterns/` — если документ описывает паттерн проектирования.
-- `naming/` — если документ описывает конвенции именования.
+- `core_patterns/` — если документ описывает базовый паттерн.
+- `modules/` — если документ описывает модульную архитектуру.
 - Создайте новую категорию при необходимости.
 
 ### 3. Именование файла
@@ -177,7 +161,7 @@ final readonly class ExampleSpecification
 
 ### 4. Обновление индекса
 
-При создании нового документа добавьте ссылку на него в соответствующий индексный файл (если он существует).
+При создании нового документа добавьте ссылку на него в `docs/conventions/index.md`.
 
 ---
 
@@ -191,7 +175,6 @@ final readonly class ExampleSpecification
 ### 2. Версионирование
 
 - Значительные изменения в конвенциях должны быть задокументированы в `CHANGELOG.md`.
-- Указывайте дату последнего обновления в документе (опционально).
 
 ### 3. Проверка ссылок
 
@@ -225,35 +208,11 @@ final readonly class ExampleSpecification
 
 ---
 
-## Примеры категорий документов
-
-### Слои архитектуры (layers/)
-
-- `layers/domain/entity.md` — Сущность (Entity)
-- `guides/value-object.md` — Объект-значение (Value Object)
-- `layers/domain/repository-interface.md` — Интерфейс репозитория
-- `layers/application/use-case.md` — Use Case
-- `layers/infrastructure/repository.md` — Репозиторий
-
-### Паттерны (patterns/)
-
-- `patterns/specification.md` — Спецификация (Specification pattern)
-- `patterns/strategy.md` — Стратегия (Strategy pattern)
-- `patterns/factory.md` — Фабрика (Factory pattern)
-
-### Именование (naming/)
-
-- `naming/classes.md` — Именование классов
-- `naming/methods.md` — Именование методов
-- `naming/variables.md` — Именование переменных
-
----
-
-## Интеграция с AGENTS.md
+## Интеграция с корневым AGENTS.md
 
 Данный документ дополняет корневой файл `AGENTS.md` в корне проекта. При конфликте правил:
 - Приоритет имеет корневой `AGENTS.md`.
-- Этот документ (`docs/conventions/AGENTS.md`) специализируется на работе с документацией в `docs/conventions/`.
+- Этот документ (`docs/conventions/AGENTS.md`) специализируется на работе с конвенциями.
 
 ---
 
@@ -266,5 +225,5 @@ final readonly class ExampleSpecification
 - [ ] Использованы реальные примеры кода из проекта
 - [ ] Добавлены ссылки на официальные источники
 - [ ] Проверены все ссылки в документе
-- [ ] Обновлен индекс (если применимо)
+- [ ] Обновлен `index.md`
 - [ ] Документ написан на русском с английскими терминами

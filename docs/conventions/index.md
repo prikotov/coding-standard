@@ -3,8 +3,6 @@
 ## Принципы и Стандарты
 - [Ценности](principles/values.md)
 - [Стиль кода (Code Style)](principles/code_style.md)
-- [Правила написания документации](doc-writing-rules.md)
-
 ## Базовые паттерны (Core Patterns)
 - [Компонент (Component)](core_patterns/component.md)
 - [Список (List)](core_patterns/list.md)
