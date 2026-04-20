@@ -1,12 +1,12 @@
 # Слушатель (Listener)
 
-**Слушатель (Listener)** — элемент слоя интеграций, подписанный через конфигурацию на конкретное [событие](../application/events.md) и
+**Слушатель (Listener)** — элемент слоя интеграций, подписанный через конфигурацию на конкретное [событие](../application/event.md) и
 запускающий реакцию в границах **своего** модуля. Слушатель не зависит от источника события. Если обработка зависит от
 инициатора, используйте **Шину команд (Command Bus)**. Применяется в составе **Шины событий (Event Bus)**.
 
 ## Общие правила
 
-- **Назначение**: связывает событие с конкретным действием в [Use Case](../application/use_cases.md) своего модуля.
+- **Назначение**: связывает событие с конкретным действием в [Use Case](../application/use_case.md) своего модуля.
 - **Единая точка входа:** публичный `__invoke(Event $event): void`.
 - **Именование:** `{Action}On{EventName}Listener`. Пример: `TrackOnReceivedListener`.
 - **Границы модуля:** слушатель делегирует только в Use Case своего модуля (напрямую или через компонент шины команд
@@ -15,7 +15,7 @@
 
 ## Зависимости
 
-- **Разрешено:** [Use Case](../application/use_cases.md) ([CommandHandler](../application/command_handler.md)/[QueryHandler](../application/query_handler.md))
+- **Разрешено:** [Use Case](../application/use_case.md) ([CommandHandler](../application/command_handler.md)/[QueryHandler](../application/query_handler.md))
   **своего** модуля, сервисы интеграций, мапперы/фабрики.
 - **Запрещено:**
     - Прямой доступ к БД/HTTP/очередям.
@@ -23,7 +23,7 @@
 
 ## Расположение
 
-- В слое [Integration](integration.md):
+- В слое [Integration](../integration.md):
 
 ```php
 Common\Module\{ModuleName}\Integration\Listener\{Context?}\{Action}On{EventName}Listener

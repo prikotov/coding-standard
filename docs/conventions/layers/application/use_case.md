@@ -8,7 +8,7 @@
 - [CommandHandler](command_handler.md) — изменяют состояние (данные) приложения;
 - [QueryHandler](query_handler.md) — возвращают данные.
 
-UseCase-ы являются частью слоя [Application](application_layer.md) и могут располагаться только там.
+UseCase-ы являются частью слоя [Application](../application.md) и могут располагаться только там.
 
 # Структура UseCase-ов
 
