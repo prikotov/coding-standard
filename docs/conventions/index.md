@@ -46,6 +46,8 @@
     - [Обработчик Команд (Command Handler)](layers/application/command_handler.md)
     - [Обработчик Запросов (Query Handler)](layers/application/query_handler.md)
     - [Событие (Event)](layers/application/event.md)
+- [Архитектура](architecture/index.md)
+    - [События и транзакции БД](architecture/events/transactions.md)
 - [Слой Домена (Domain)](layers/domain.md)
     - [Сущность (Entity)](layers/domain/entity.md)
     - [Критерий (Criteria)](layers/domain/criteria.md)

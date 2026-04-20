@@ -1,6 +1,6 @@
 # Представление (View)
 
-**Представление (View)** — слой, отвечающий за отображение данных пользователю через HTML-шаблоны, использующие Twig и Bootstrap 5 Phoenix. Подробнее см. руководство [Symfony Twig](https://symfony.com/doc/current/templates.html), [Symfony UX TwigComponent](https://symfony.com/bundles/ux-twig-component/current/index.html) и документацию [Bootstrap 5 Phoenix](../theme/README.md).
+**Представление (View)** — слой, отвечающий за отображение данных пользователю через HTML-шаблоны, использующие Twig. Подробнее см. руководство [Symfony Twig](https://symfony.com/doc/current/templates.html) и [Symfony UX TwigComponent](https://symfony.com/bundles/ux-twig-component/current/index.html).
 
 ## Общие правила
 
