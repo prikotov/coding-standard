@@ -10,4 +10,9 @@
 
 ## Примеры
 
-- [phpmd.xml](examples/phpmd.md) — пример конфигурации PHPMD для проекта
+Примеры конфигураций инструментов доступны в [examples/](../examples/):
+- [phpmd.xml](../examples/phpmd.xml) — конфигурация PHPMD
+- [phpunit.xml.dist](../examples/phpunit.xml.dist) — конфигурация PHPUnit
+- [psalm.xml](../examples/psalm.xml) — конфигурация Psalm
+- [phpcs.xml.dist](../examples/phpcs.xml.dist) — конфигурация PHP_CodeSniffer
+- [Makefile](../examples/Makefile) — Makefile с командами проверок

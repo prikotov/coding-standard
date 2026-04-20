@@ -1,9 +1,3 @@
-# Пример phpmd.xml
-
-> Пример конфигурации PHP Mess Detector для проекта на Symfony.
-> Полное описание suppressions и обоснований — в [phpmd-suppressions-guidelines.md](../phpmd-suppressions-guidelines.md).
-
-```xml
 <?xml version="1.0"?>
 <ruleset name="Project PHPMD Ruleset"
          xmlns="https://phpmd.org/schema/phpmd.xsd">
@@ -74,7 +68,6 @@
     </rule>
     <rule ref="rulesets/cleancode.xml/StaticAccess">
         <properties>
-            <!-- Добавьте FQCN stateless-классов, для которых статический вызов обоснован -->
             <property name="exceptions" value="Symfony\Component\Uid\Uuid,Symfony\Component\Mime\MimeTypes,Firebase\JWT\JWT"/>
             <property name="ignorepattern" value="/^(create|createFrom|from|tryFrom|cases|normalize|parse|build|format|clean)/"/>
         </properties>
@@ -124,4 +117,3 @@
     </rule>
     <rule ref="rulesets/unusedcode.xml"/>
 </ruleset>
-```

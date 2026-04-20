@@ -127,16 +127,16 @@
 
 ---
 
-## Раздел 5. Существующие файлы с неверным относительным путём (5 ссылок)
+## Раздел 5. Существующие файлы с неверным относительным путём (6 ссылок)
 
-**Суть:** Целевой файл существует в корне проекта, но относительный путь из `docs/conventions/testing/` указывает неверно (не хватает одного `../`).
+**Суть:** Целевые файлы не существуют в пакете — ссылки убраны, имена файлов оставлены как текст.
 
-- [ ] `testing/index.md:776` — `[phpunit.xml.dist](../../phpunit.xml.dist)` → исправить на `../../../phpunit.xml.dist`
-- [ ] `testing/index.md:1107` — `[phpunit.xml.dist](../../phpunit.xml.dist)` → исправить на `../../../phpunit.xml.dist`
-- [ ] `testing/index.md:829` — `[psalm.xml](../../psalm.xml)` → исправить на `../../../psalm.xml`
-- [ ] `testing/index.md:1108` — `[psalm.xml](../../psalm.xml)` → исправить на `../../../psalm.xml`
-- [ ] `testing/index.md:889` — `[AGENTS.md](../../AGENTS.md)` → исправить на `../../../AGENTS.md`
-- [ ] `testing/index.md:1125` — `[AGENTS.md](../../AGENTS.md)` → исправить на `../../../AGENTS.md`
+- [x] `testing/index.md:777` — `[phpunit.xml.dist](../../phpunit.xml.dist)` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:1108` — `[phpunit.xml.dist](../../phpunit.xml.dist)` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:830` — `[psalm.xml](../../psalm.xml)` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:1109` — `[psalm.xml](../../psalm.xml)` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:890` — `[AGENTS.md](../../AGENTS.md)` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:1126` — `[AGENTS.md](../../AGENTS.md)` → убрана ссылка, оставлен текст
 
 > **Уточнение:** `AGENTS.md` в корне существует, дубликат на строке 1125 — итого 6 ссылок в этом разделе (5 уникальных файлов-источников, но 6 вхождений).
 
