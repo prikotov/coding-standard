@@ -85,47 +85,45 @@
 
 ### 4.1. `src/DataFixtures/*` — DataFixtures не используются (5 ссылок)
 
-- [ ] `testing/index.md:750` — `[UserFixtures.php](../../src/DataFixtures/UserFixtures.php)`
-- [ ] `testing/index.md:751` — `[UserRoleFixture.php](../../src/DataFixtures/UserRoleFixture.php)`
-- [ ] `testing/index.md:752` — `[ProjectFixtures.php](../../src/DataFixtures/ProjectFixtures.php)`
-- [ ] `testing/index.md:753` — `[TeamFixtures.php](../../src/DataFixtures/TeamFixtures.php)`
-- [ ] `testing/index.md:754` — `[UserAccessTokenFixture.php](../../src/DataFixtures/UserAccessTokenFixture.php)`
+- [x] `testing/index.md:750` — `UserFixtures.php` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:751` — `UserRoleFixture.php` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:752` — `ProjectFixtures.php` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:753` — `TeamFixtures.php` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:754` — `UserAccessTokenFixture.php` → убрана ссылка, оставлен текст
 
 ### 4.2. `src/Kernel.php` — структура проекта отличается (3 ссылки)
 
-- [ ] `symfony-applications.md:8` — `[Common\Kernel](src/Kernel.php)`
-- [ ] `symfony-applications.md:100` — `[Common\Kernel](src/Kernel.php)`
-- [ ] `symfony-folder-structure.md:8` — `[Common\Kernel](src/Kernel.php)`
+- [x] `symfony-applications.md:8` — `Common\Kernel` → убрана ссылка, оставлен текст
+- [x] `symfony-applications.md:100` — `Common\Kernel` → убрана ссылка, оставлен текст
+- [x] `symfony-folder-structure.md:8` — `Common\Kernel` → убрана ссылка, оставлен текст
 
 ### 4.3. `src/Module/Health/...` — пример из другого проекта (1 ссылка)
 
-- [ ] `layers/domain/repository.md:254` — `[InMemoryServiceStatusRepository.php](../../../src/Module/Health/Infrastructure/Repository/ServiceStatus/InMemoryServiceStatusRepository.php)`
+- [x] `layers/domain/repository.md:254` — `InMemoryServiceStatusRepository.php` → убрана ссылка, оставлен текст
 
 ### 4.4. Конфигурационные файлы, отсутствующие в проекте (8 ссылок)
 
-- [ ] `testing/index.md:858` — `[phpcs.xml.dist](../../phpcs.xml.dist)` — файл отсутствует
-- [ ] `testing/index.md:1109` — `[phpcs.xml.dist](../../phpcs.xml.dist)` — дубликат
-- [ ] `ops/phpmd-suppressions-guidelines.md:30` — `[phpmd.xml](../../../phpmd.xml)` — файл отсутствует
-- [ ] `testing/index.md:1110` — `[phpmd.xml](../../phpmd.xml)` — дубликат
-- [ ] `ops/phpmd-suppressions-guidelines.md:31` — `[phpmd.baseline.xml](../../../phpmd.baseline.xml)` — файл отсутствует
-- [ ] `ops/phpmd-suppressions-guidelines.md:179` — `[ExcessiveMethodLength](../../../phpmd.xml)` — из `criteria-mapper.md` (в задаче указано как `criteria-mapper.md:179`, уточнить)
-
-> **Уточнение:** ссылка `phpmd.xml` из `layers/infrastructure/criteria-mapper.md:179` — это тоже ссылка на отсутствующий файл, относится к той же категории.
+- [x] `testing/index.md:858` — `phpcs.xml.dist` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:1109` — `phpcs.xml.dist` → убрана ссылка, оставлен текст
+- [x] `ops/phpmd-suppressions-guidelines.md:30` — `phpmd.xml` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:1110` — `phpmd.xml` → убрана ссылка, оставлен текст
+- [x] `ops/phpmd-suppressions-guidelines.md:31` — `phpmd.baseline.xml` → убрана ссылка, оставлен текст
+- [x] `layers/infrastructure/criteria-mapper.md:179` — `ExcessiveMethodLength` → убрана ссылка, оставлен текст
 
 ### 4.5. `Makefile` — отсутствует (3 ссылки)
 
-- [ ] `ops/phpmd-suppressions-guidelines.md:32` — `[Makefile](../../../Makefile)`
-- [ ] `testing/index.md:1111` — `[Makefile](../../Makefile)`
-- [ ] `testing/index.md:1126` — `[Makefile](../../Makefile)`
+- [x] `ops/phpmd-suppressions-guidelines.md:32` — `Makefile` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:1111` — `Makefile` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:1126` — `Makefile` → убрана ссылка, оставлен текст
 
 ### 4.6. `depfile.yaml` — отсутствует (2 ссылки)
 
-- [ ] `testing/index.md:846` — `[depfile.yaml](../../depfile.yaml)`
-- [ ] `testing/index.md:1112` — `[depfile.yaml](../../depfile.yaml)`
+- [x] `testing/index.md:846` — `depfile.yaml` → убрана ссылка, оставлен текст
+- [x] `testing/index.md:1112` — `depfile.yaml` → убрана ссылка, оставлен текст
 
 ### 4.7. `tests/AGENTS.md` — отсутствует (1 ссылка)
 
-- [ ] `testing/index.md:1124` — `[tests/AGENTS.md](../../tests/AGENTS.md)`
+- [x] `testing/index.md:1124` — `tests/AGENTS.md` → убрана ссылка, оставлен текст
 
 ---
 

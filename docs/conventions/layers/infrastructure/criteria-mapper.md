@@ -176,7 +176,7 @@ final readonly class ModelFindCriteriaMapper
 - Смешиваются разные типы фильтров: scope, search, attributes, date ranges, relations
 - Появляются дублирующиеся JOIN-паттерны
 
-> **Жёсткое ограничение:** PHPMD [`ExcessiveMethodLength`](../../../phpmd.xml) не позволит создать метод длиннее 80 строк. Декомпозиция на 40 строках — best practice для предотвращения предупреждений анализатора.
+> **Жёсткое ограничение:** PHPMD `ExcessiveMethodLength` не позволит создать метод длиннее 80 строк (см. пример [phpmd.xml](../../ops/examples/phpmd.md)). Декомпозиция на 40 строках — best practice для предотвращения предупреждений анализатора.
 
 ### Структура декомпозированного `map()`
 

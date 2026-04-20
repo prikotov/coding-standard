@@ -27,9 +27,9 @@
 
 ## Зависимости
 
-- Конфигурация PHPMD для CI: [`phpmd.xml`](../../../phpmd.xml)
-- Baseline rollout: [`phpmd.baseline.xml`](../../../phpmd.baseline.xml)
-- CI/check pipeline: [`Makefile`](../../../Makefile) (`make check`, `make phpmd-fast`)
+- Конфигурация PHPMD для CI: `phpmd.xml` ([пример](examples/phpmd.md))
+- Baseline rollout: `phpmd.baseline.xml`
+- CI/check pipeline: `Makefile` (`make check`, `make phpmd-fast`)
 - Рабочий контекст задач: см. `todo/` для актуальных задач по PHPMD
 
 ## Расположение
