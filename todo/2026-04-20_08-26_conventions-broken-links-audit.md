@@ -25,16 +25,16 @@
 
 **Суть:** Файл существует, но ссылка указывает на старое/неверное имя.
 
-- [ ] `layers/application/command_handler.md:3` — `[Use Case](use_cases.md)` — множественное число вместо единственного → заменить на `use_case.md`
-- [ ] `layers/application/command_handler.md:12` — `[Application](application_layer.md)` — старое имя файла → заменить на `../application.md`
-- [ ] `layers/application/query_handler.md:3` — `[Use Case](use_cases.md)` — множественное число → заменить на `use_case.md`
-- [ ] `layers/application/query_handler.md:10` — `[Application](application_layer.md)` — старое имя файла → заменить на `../application.md`
-- [ ] `layers/application/use_case.md:11` — `[Application](application_layer.md)` — старое имя файла → заменить на `../application.md`
-- [ ] `layers/domain/repository.md:29` — `[criteria.md](../infrastructure/criteria.md)` — файл называется `criteria-mapper.md` → заменить на `../infrastructure/criteria-mapper.md`
-- [ ] `layers/integration/listener.md:3` — `[событие](../application/events.md)` — файл называется `event.md` → заменить на `../application/event.md`
-- [ ] `layers/integration/listener.md:9` — `[Use Case](../application/use_cases.md)` — множественное число → заменить на `../application/use_case.md`
-- [ ] `layers/integration/listener.md:18` — `[Use Case](../application/use_cases.md)` — дубликат → заменить на `../application/use_case.md`
-- [ ] `layers/integration/listener.md:26` — `[Integration](integration.md)` — путь без `../` → заменить на `../integration.md`
+- [x] `layers/application/command_handler.md:3` — `[Use Case](use_cases.md)` — множественное число вместо единственного → заменить на `use_case.md`
+- [x] `layers/application/command_handler.md:12` — `[Application](application_layer.md)` — старое имя файла → заменить на `../application.md`
+- [x] `layers/application/query_handler.md:3` — `[Use Case](use_cases.md)` — множественное число → заменить на `use_case.md`
+- [x] `layers/application/query_handler.md:10` — `[Application](application_layer.md)` — старое имя файла → заменить на `../application.md`
+- [x] `layers/application/use_case.md:11` — `[Application](application_layer.md)` — старое имя файла → заменить на `../application.md`
+- [x] `layers/domain/repository.md:29` — `[criteria.md](../infrastructure/criteria.md)` — файл называется `criteria-mapper.md` → заменить на `../infrastructure/criteria-mapper.md`
+- [x] `layers/integration/listener.md:3` — `[событие](../application/events.md)` — файл называется `event.md` → заменить на `../application/event.md`
+- [x] `layers/integration/listener.md:9` — `[Use Case](../application/use_cases.md)` — множественное число → заменить на `../application/use_case.md`
+- [x] `layers/integration/listener.md:18` — `[Use Case](../application/use_cases.md)` — дубликат → заменить на `../application/use_case.md`
+- [x] `layers/integration/listener.md:26` — `[Integration](integration.md)` — путь без `../` → заменить на `../integration.md`
 
 ---
 

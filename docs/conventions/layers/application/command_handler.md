@@ -1,6 +1,6 @@
 # Command и CommandHandler
 
-**Команда (Command)** — разновидность [Use Case](use_cases.md), описывающая намерение изменить состояние приложения (
+**Команда (Command)** — разновидность [Use Case](use_case.md), описывающая намерение изменить состояние приложения (
 модуля).
 Представляет собой DTO, передаваемое в Command Handler.
 
@@ -9,7 +9,7 @@
 
 ## Где размещаются
 
-- [Application](application_layer.md).
+- [Application](../application.md).
 
 ```php
 Common\Module\{ModuleName}\Application\UseCase\Command\{CommandGroup}\{CommandName}\{CommandName}Command

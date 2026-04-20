@@ -1,13 +1,13 @@
 # Query и Query Handler
 
-**Запрос (Query)** — разновидность [Use Case](use_cases.md), описывающая намерение получить состояние приложения (модуля).
+**Запрос (Query)** — разновидность [Use Case](use_case.md), описывающая намерение получить состояние приложения (модуля).
 Представляет собой DTO, передаваемое в Query Handler и описывающее сам запрос.
 
 **Обработчик запроса (Query Handler)** — реализует получение данных, оркестрируя доступ к доменной логике, сервисам и инфраструктуре.
 
 ## Где размещаются
 
-- [Application](application_layer.md)
+- [Application](../application.md)
 
 ```php
 Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{QueryName}Query
