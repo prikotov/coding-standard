@@ -78,12 +78,7 @@ exclude_files:
 
 ### `layers`
 
-Namespace patterns in `collectors` follow the conventions from `docs/conventions/`. If your project uses a different module namespace, adjust the patterns accordingly:
-
-```
-Default:  ^Common\Module\.*\Domain\.*
-Yours:    ^MyProject\Module\.*\Domain\.*
-```
+Namespace patterns in `collectors` follow the conventions from `docs/conventions/`. The example uses an optional universal prefix `(?:[A-Za-z_]+\\)?` that matches any root namespace — so the same config works for both `Common\Module\...` and `TaskOrchestrator\Common\Module\...` without modification.
 
 ### `ruleset`
 
@@ -91,14 +86,14 @@ Dependency rules between layers — usually don't need changes unless you add/re
 
 ### `Presentation` collectors
 
-Application entry points (controllers, console commands) — adjust to match your namespace:
+The Presentation layer uses a single regex that matches any application-level namespace (Api, Console, Web, Blog, Docs):
 
 ```yaml
 - type: classLike
-  value: ^Api\v1\Module\.*        # REST API
-- type: classLike
-  value: ^Console\Module\.*\Command\.*  # CLI commands
+  value: ^(?:[A-Za-z_]+\\)?(?:Api|Console|Web|Blog|Docs)\\Module\\.*
 ```
+
+The optional prefix `(?:[A-Za-z_]+\\)?` handles both `Console\Module\...` and `TaskOrchestrator\Console\Module\...`. Add your app namespaces to the alternation if needed.
 
 ## Running
 
