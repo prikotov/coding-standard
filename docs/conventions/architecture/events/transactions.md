@@ -143,5 +143,5 @@ framework:
 ## Связанные документы
 
 - [События (Event)](../../layers/application/event.md)
-- [Обработчик Команд (Command Handler)](../../layers/application/command_handler.md)
-- [Внешние сервисы](../../core_patterns/external-service.md)
+- [Обработчик Команд (Command Handler)](../../layers/application/command-handler.md)
+- [Внешние сервисы](../../core-patterns/external-service.md)

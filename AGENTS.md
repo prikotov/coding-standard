@@ -20,7 +20,7 @@
 - **Стабильность**: покрывайте ключевую логику тестами, низкая связанность.
 - **Умеренность**: не добавляйте технологии и абстракции без необходимости.
 
-Подробнее: [Ценности](docs/conventions/principles/values.md) | [Code Style](docs/conventions/principles/code_style.md).
+Подробнее: [Ценности](docs/conventions/principles/values.md) | [Code Style](docs/conventions/principles/code-style.md).
 
 ---
 
@@ -105,7 +105,7 @@ declare(strict_types=1);
 ## Правила создания/обновления документов
 
 1. **Проверьте существование** — нет ли уже документа на тему в `docs/conventions/`.
-2. **Выберите категорию**: `layers/`, `core_patterns/`, `modules/`, `ops/`, `testing/`, `principles/`, или создайте новую.
+2. **Выберите категорию**: `layers/`, `core-patterns/`, `modules/`, `ops/`, `testing/`, `principles/`, или создайте новую.
 3. **Именование файла**: lowercase с дефисами (`value-object.md`).
 4. **Обновите индекс** — добавьте ссылку в `docs/conventions/index.md`.
 5. **Проверьте ссылки** — все относительные ссылки должны быть актуальны.

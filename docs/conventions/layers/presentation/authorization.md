@@ -19,8 +19,8 @@ Controller / Template
 
 | Компонент | Назначение | Документация |
 |-----------|------------|--------------|
-| **PermissionEnum** | Определяет роли `ROLE_*` для модуля | [permission_enum.md](permission_enum.md) |
-| **ActionEnum** | Определяет атрибуты для `isGranted()` | [action_enum.md](action_enum.md) |
+| **PermissionEnum** | Определяет роли `ROLE_*` для модуля | [permission-enum.md](permission-enum.md) |
+| **ActionEnum** | Определяет атрибуты для `isGranted()` | [action-enum.md](action-enum.md) |
 | **Rule** | Инкапсулирует логику проверки прав | [rule.md](rule.md) |
 | **Voter** | Принимает решение о доступе, делегирует в Rule | [voter.md](voter.md) |
 | **Grant** | Удобная обёртка для частых проверок в контроллерах/шаблонах | [grant.md](grant.md) |
@@ -79,8 +79,8 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/
 
 ## Как используем
 
-1. Определяем [Permission Enum](permission_enum.md) и добавляем значения в `security.yaml`.
-2. Определяем [Action Enum](action_enum.md) с атрибутами действий (view, edit, delete...).
+1. Определяем [Permission Enum](permission-enum.md) и добавляем значения в `security.yaml`.
+2. Определяем [Action Enum](action-enum.md) с атрибутами действий (view, edit, delete...).
 3. Реализуем [Rule](rule.md) для проверки прав.
 4. Создаём [Voter](voter.md), который делегирует проверку в Rule.
 5. При необходимости создаём [Grant](grant.md) для удобных проверок.

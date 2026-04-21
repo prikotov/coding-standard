@@ -2,7 +2,7 @@
 
 **CriteriaMapper** — инфраструктурный класс, изолирующий логику фильтрации от [Репозитория](repository.md). Преобразует доменный [Criteria](../domain/criteria.md) в Doctrine `QueryBuilder`.
 
-> См. также: [Критерий (Criteria)](../domain/criteria.md), [Репозиторий (Repository)](repository.md), [Маппер (Mapper)](../../core_patterns/mapper.md)
+> См. также: [Критерий (Criteria)](../domain/criteria.md), [Репозиторий (Repository)](repository.md), [Маппер (Mapper)](../../core-patterns/mapper.md)
 
 ## Структура
 

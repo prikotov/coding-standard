@@ -3,7 +3,7 @@
 ## Определение
 
 **Twig-расширение (Twig Extension)** — presentation-механизм Twig для выноса повторяющихся вычислений и форматирования в единое место.
-Детали по механике см. в [Symfony Twig Extensions](https://symfony.com/doc/current/templating/twig_extension.html).
+Детали по механике см. в [Symfony Twig Extensions](https://symfony.com/doc/current/templating/twig-extension.html).
 
 Цель Twig Extension:
 - уменьшить дублирование presentation-логики в шаблонах;
@@ -45,7 +45,7 @@ apps/<app>/tests/Unit/Component/Twig/Extension/<Name>ExtensionTest.php
 - Когда повторяются Twig-выражения (`normalize`, `format`, `map`, route-aware подготовка данных) и их нужно вынести из разметки.
 - Когда основной результат — данные (`string`, `bool`, `array`, число) или служебный HTML малого объёма.
 - Когда требуется единый контракт функции/фильтра для presentation-логики без создания отдельного UI-блока.
-- Для правил по Twig Component используем документ [Twig-компонент (Twig Component)](twig_component.md).
+- Для правил по Twig Component используем документ [Twig-компонент (Twig Component)](twig-component.md).
 
 ### Быстрый decision checklist
 

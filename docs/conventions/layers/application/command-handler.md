@@ -1,6 +1,6 @@
 # Command и CommandHandler
 
-**Команда (Command)** — разновидность [Use Case](use_case.md), описывающая намерение изменить состояние приложения (
+**Команда (Command)** — разновидность [Use Case](use-case.md), описывающая намерение изменить состояние приложения (
 модуля).
 Представляет собой DTO, передаваемое в Command Handler.
 
@@ -20,7 +20,7 @@ Common\Module\{ModuleName}\Application\UseCase\Command\{CommandGroup}\{CommandNa
 
 - Создаётся только для изменения состояния модуля **по внешнему бизнес-запросу** (например: от контроллера, очереди,
   cron-задачи).
-- Command — это [DTO](../../core_patterns/dto.md), реализующее интерфейс `CommandInterface<ReturnType>`. Оно описывает входные данные,
+- Command — это [DTO](../../core-patterns/dto.md), реализующее интерфейс `CommandInterface<ReturnType>`. Оно описывает входные данные,
   необходимые для выполнения бизнес-действия в Command Handler.
 - Допустимы лёгкие guard-проверки в конструкторе команды (например, проверка batch size > 0), чтобы не строить
   заведомо некорректный DTO. Основная бизнес-валидация остаётся на Command Handler/Domain-слое.

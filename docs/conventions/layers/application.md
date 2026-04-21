@@ -42,7 +42,7 @@ Use Case (сценарий использования) — реализует к
 - **Command** — изменяет состояние приложения (создание, обновление, удаление)
 - **Query** — возвращает данные из приложения без изменения состояния
 
-Подробнее: [Use Cases](application/use_case.md) | [Symfony Messenger](https://symfony.com/doc/current/messenger.html)
+Подробнее: [Use Cases](application/use-case.md) | [Symfony Messenger](https://symfony.com/doc/current/messenger.html)
 
 ### Command Handlers
 
@@ -61,7 +61,7 @@ Use Case (сценарий использования) — реализует к
 - Выполняет только одну логическую транзакцию
 - Запрещено вызывать другие Use Case внутри CommandHandler
 
-Подробнее: [Command и CommandHandler](application/command_handler.md)
+Подробнее: [Command и CommandHandler](application/command-handler.md)
 
 ### Query Handlers
 
@@ -79,7 +79,7 @@ Use Case (сценарий использования) — реализует к
 - Название запроса должно начинаться с глагола (например: `GetCustomerQuery`)
 - Класс обработчика должен иметь постфикс `QueryHandler`
 
-Подробнее: [Query и Query Handler](application/query_handler.md)
+Подробнее: [Query и Query Handler](application/query-handler.md)
 
 ### DTOs (Data Transfer Objects)
 
@@ -97,7 +97,7 @@ Use Case (сценарий использования) — реализует к
 - Никаких сервисов внутри DTO
 - Конструктор не содержит логики и преобразований
 
-Подробнее: [DTO](../core_patterns/dto.md)
+Подробнее: [DTO](../core-patterns/dto.md)
 
 ### Mappers
 
