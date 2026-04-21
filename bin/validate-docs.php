@@ -9,7 +9,11 @@ declare(strict_types=1);
  * Checks:
  *   1. Internal markdown links point to existing files.
  *   2. Naming: files and directories use kebab-case (no underscores).
- *   3. Required sections present (depends on document category).
+ *   3. Required sections present in rule documents (index files are exempt).
+ *
+ * Two document types (see AGENTS.md):
+ *   - Index files (index.md) — list of links, no section requirements.
+ *   - Rule documents (everything else) — must follow the template structure.
  *
  * Usage:
  *   php bin/validate-docs.php [path]
@@ -26,133 +30,24 @@ declare(strict_types=1);
 $docsDir = $argv[1] ?? 'docs/conventions';
 $errors = [];
 
-/** Documents exempt from section checks (index, README, AGENTS, meta). */
-$EXEMPT_BASENAMES = ['index.md', 'readme.md', 'agents.md', '.gitkeep'];
+/** Filenames that are index/overview documents — exempt from section checks. */
+const INDEX_FILES = ['index.md'];
 
-/** Required sections per category. Key = path prefix, value = list of required ## headings. */
-$REQUIRED_SECTIONS = [
-    // Core patterns & most layer docs: full structure
-    'default' => ['Общие правила', 'Пример'],
-    // Index/overview files (e.g. layers/domain.md, layers/presentation.md)
-    'overview' => ['Общие правила'],
-];
-
-/** Directories whose .md files are overview/index-like (require only minimal sections). */
-$OVERVIEW_PATHS = [
-    'layers/' => true,
-    'layers/domain/' => false,      // domain.md is overview, but domain/*.md are not
-    'layers/application/' => false,
-    'layers/infrastructure/' => false,
-    'layers/integration/' => false,
-    'layers/presentation/' => false,
+/** Required ## headings in every rule document (see AGENTS.md template). */
+const REQUIRED_SECTIONS = [
+    'Общие правила',
+    'Пример',
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
-/**
- * Check if a file (by relative path) is an overview document.
- * Overview = directly in a category dir (e.g. layers/domain.md) not in a subdir.
- */
-function isOverviewFile(string $relativePath): bool
+function isIndexFile(string $filePath): bool
 {
-    $dir = dirname($relativePath);
-    if ($dir === '.') {
-        return false;
-    }
-    // File directly in layers/, but not in layers/subdir/
-    $parent = dirname($dir);
-    if ($parent === '.' && basename($dir) === 'layers') {
-        return true;
-    }
-    // e.g. layers/domain.md (dir=layers, file directly in it)
-    // Already handled above. Let's check: is the file directly under a category?
-    // layers.md, domain.md inside layers/ — yes
-    // We check if the file sits at depth 2 from conventions root (e.g. layers/domain.md)
-    $depth = substr_count(trim($relativePath, '/'), '/');
-    if ($depth === 1) {
-        return true;
-    }
-
-    return false;
-}
-
-/**
- * Determine required sections for a file based on its path and type.
- *
- * @return string[]
- */
-function getRequiredSections(string $relativePath): array
-{
-    // Special cases: testing, ops, configuration, modules, symfony-*, architecture
-    // These have varying structures — require only what's common.
-    if (str_starts_with($relativePath, 'testing/')) {
-        return []; // testing docs have free-form structure
-    }
-    if (str_starts_with($relativePath, 'ops/')) {
-        return []; // ops docs vary (index, fixes, smoke, phpmd)
-    }
-    if (str_starts_with($relativePath, 'modules/')) {
-        return [];
-    }
-    if (str_starts_with($relativePath, 'configuration/')) {
-        return [];
-    }
-    if (str_starts_with($relativePath, 'architecture/')) {
-        return [];
-    }
-    if (str_starts_with($relativePath, 'symfony-')) {
-        return ['Общие правила', 'Пример'];
-    }
-    if (str_starts_with($relativePath, 'principles/')) {
-        return [];
-    }
-
-    // Tiny summary / overview files
-    if (str_contains($relativePath, 'use-case.md')) {
-        return [];
-    }
-
-    // Handler docs use "Пример команды/запроса" instead of plain "Пример"
-    if (str_contains($relativePath, 'command-handler.md') || str_contains($relativePath, 'query-handler.md')) {
-        return [];
-    }
-
-    // Authorization has no code example section
-    if (str_contains($relativePath, 'authorization.md')) {
-        return ['Общие правила'];
-    }
-
-    // Presentation.md is an overview/index of the layer
-    if (str_contains($relativePath, 'presentation/presentation.md')) {
-        return ['Общие правила'];
-    }
-
-    // event.md
-    if (str_contains($relativePath, '/event.md')) {
-        return ['Общие правила', 'Пример'];
-    }
-
-    // Layer overview files (layers/domain.md, layers/infrastructure.md, etc.)
-    if (isOverviewFile($relativePath)) {
-        return [];
-    }
-
-    // Examples directory
-    if (str_contains($relativePath, '/examples/')) {
-        return [];
-    }
-
-    // criteria-mapper has "Пример: ..." headings
-    if (str_contains($relativePath, 'criteria-mapper.md')) {
-        return ['Общие правила'];
-    }
-
-    return ['Общие правила', 'Пример'];
+    return in_array(strtolower(basename($filePath)), INDEX_FILES, true);
 }
 
 /**
  * Extract all internal markdown links from content.
- * Returns array of ['text' => string, 'target' => string, 'line' => int].
  *
  * @return array<int, array{text: string, target: string, line: int}>
  */
@@ -162,18 +57,15 @@ function extractInternalLinks(string $content): array
     $lines = explode("\n", $content);
 
     foreach ($lines as $lineNum => $line) {
-        // Match [text](target) — skip external URLs and anchors
         if (!preg_match_all('/\[([^\]]+)\]\(([^)]+)\)/', $line, $matches, PREG_SET_ORDER)) {
             continue;
         }
 
         foreach ($matches as $match) {
             $target = $match[2];
-            // Skip external URLs, mailto:, anchors, images
             if (preg_match('/^(https?:|mailto:|#|tel:)/', $target)) {
                 continue;
             }
-            // Skip template placeholders
             if (str_contains($target, '{')) {
                 continue;
             }
@@ -210,15 +102,13 @@ function extractHeadings(string $content): array
  */
 function resolveLinkTarget(string $sourceDir, string $target): string
 {
-    // Remove anchor
     $path = preg_replace('/#.*/', '', $target);
     if ($path === '') {
-        return ''; // pure anchor
+        return '';
     }
 
     $resolved = rtrim($sourceDir, '/') . '/' . $path;
 
-    // Normalize ../
     $parts = explode('/', $resolved);
     $normalized = [];
     foreach ($parts as $part) {
@@ -230,6 +120,27 @@ function resolveLinkTarget(string $sourceDir, string $target): string
     }
 
     return implode('/', $normalized);
+}
+
+/**
+ * Check if a heading matches a required section (case-insensitive).
+ */
+function headingMatches(string $heading, string $required): bool
+{
+    $h = mb_strtolower(rtrim($heading, ' .'));
+    $r = mb_strtolower(rtrim($required, ' .'));
+
+    // Exact match
+    if ($h === $r) {
+        return true;
+    }
+
+    // Prefix match: "Пример: ..." matches "Пример"
+    if (str_starts_with($h, $r . ':') || str_starts_with($h, $r . ' ')) {
+        return true;
+    }
+
+    return false;
 }
 
 // ── Collect files ──────────────────────────────────────────────────────────
@@ -258,7 +169,6 @@ $namingErrors = 0;
 
 foreach ($iterator as $item) {
     $basename = $item->getFilename();
-    // Check files and directories for underscores (excluding vendor-ish names)
     if (str_contains($basename, '_') && $basename !== '.gitkeep') {
         $relativePath = substr($item->getPathname(), strlen($docsDir) + 1);
         $type = $item->isDir() ? 'directory' : 'file';
@@ -291,7 +201,7 @@ foreach ($mdFiles as $filePath) {
     foreach ($links as $link) {
         $resolved = resolveLinkTarget($sourceDir, $link['target']);
         if ($resolved === '') {
-            continue; // pure anchor
+            continue;
         }
 
         if (!file_exists($resolved)) {
@@ -314,15 +224,9 @@ $sectionErrors = 0;
 
 foreach ($mdFiles as $filePath) {
     $relativePath = substr($filePath, strlen($docsDir) + 1);
-    $basename = strtolower(basename($filePath));
 
-    // Skip exempt files
-    if (in_array($basename, $EXEMPT_BASENAMES, true)) {
-        continue;
-    }
-
-    $required = getRequiredSections($relativePath);
-    if (empty($required)) {
+    // Skip index files
+    if (isIndexFile($filePath)) {
         continue;
     }
 
@@ -333,22 +237,18 @@ foreach ($mdFiles as $filePath) {
 
     $headings = extractHeadings($content);
 
-    foreach ($required as $heading) {
-        // Check for exact match or match ignoring trailing punctuation differences
+    foreach (REQUIRED_SECTIONS as $required) {
         $found = false;
-        foreach ($headings as $h) {
-            // Normalize: remove trailing punctuation variations
-            $normalizedH = rtrim($h, ' .');
-            $normalizedRequired = rtrim($heading, ' .');
-            if (mb_strtolower($normalizedH) === mb_strtolower($normalizedRequired)) {
+        foreach ($headings as $heading) {
+            if (headingMatches($heading, $required)) {
                 $found = true;
                 break;
             }
         }
 
         if (!$found) {
-            echo "  ✗ {$relativePath}: missing section \"## {$heading}\"\n";
-            $errors[] = "section: {$relativePath} missing \"## {$heading}\"";
+            echo "  ✗ {$relativePath}: missing \"## {$required}\"\n";
+            $errors[] = "section: {$relativePath} missing \"## {$required}\"";
             $sectionErrors++;
         }
     }
@@ -366,8 +266,8 @@ $totalErrors = count($errors);
 if ($totalErrors > 0) {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
     echo "✗ Found {$totalErrors} error(s)\n";
-    echo "  Naming:  {$namingErrors}\n";
-    echo "  Links:   {$linkErrors}\n";
+    echo "  Naming:   {$namingErrors}\n";
+    echo "  Links:    {$linkErrors}\n";
     echo "  Sections: {$sectionErrors}\n";
     exit(1);
 }
