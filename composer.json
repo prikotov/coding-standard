@@ -35,8 +35,10 @@
     },
     "scripts": {
         "sniff-test": "php bin/run-sniff-tests.php",
+        "validate-docs": "php bin/validate-docs.php",
         "check": [
             "@sniff-test",
+            "@validate-docs",
             "phpcs src/"
         ]
     },
