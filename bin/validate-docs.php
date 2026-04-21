@@ -36,7 +36,11 @@ const INDEX_FILES = ['index.md'];
 /** Required ## headings in every rule document (see AGENTS.md template). */
 const REQUIRED_SECTIONS = [
     'Общие правила',
+    'Зависимости',
+    'Расположение',
+    'Как используем',
     'Пример',
+    'Чек-лист для проведения ревью кода',
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────
