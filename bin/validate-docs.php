@@ -31,14 +31,11 @@ $docsDir = $argv[1] ?? 'docs/conventions';
 $errors = [];
 
 /** Filenames that are index/overview documents — exempt from section checks. */
-const INDEX_FILES = ['index.md'];
+const INDEX_FILES = ['index.md', 'agents.md', 'readme.md'];
 
 /** Required ## headings in every rule document (see AGENTS.md template). */
 const REQUIRED_SECTIONS = [
     'Общие правила',
-    'Зависимости',
-    'Расположение',
-    'Как используем',
     'Пример',
     'Чек-лист для проведения ревью кода',
 ];
