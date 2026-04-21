@@ -136,6 +136,8 @@ if ($deptracPath !== '') {
 
 // ── 3. Update .gitignore ──────────────────────────────────────────────────
 
+// 3a. docs/.gitignore — exclude copied conventions documentation
+
 $gitignore    = $targetDir . '/docs/.gitignore';
 $gitignoreDir = dirname($docsPath) === 'docs' ? basename($docsPath) . '/' : $docsPath;
 $entry        = $gitignoreDir;
@@ -155,6 +157,25 @@ if (file_exists($gitignore)) {
     echo "  Updated docs/.gitignore (+ $entry)" . PHP_EOL;
 }
 
+// 3b. Root .gitignore — exclude depfile.yaml (copied from package, not project code)
+
+if ($deptracPath !== '') {
+    $rootGitignore = $targetDir . '/.gitignore';
+    $deptracEntry  = $deptracPath;
+
+    if (file_exists($rootGitignore)) {
+        $content = file_get_contents($rootGitignore);
+        if (!str_contains($content, $deptracEntry)) {
+            $content = rtrim($content) . PHP_EOL . $deptracEntry . PHP_EOL;
+            file_put_contents($rootGitignore, $content);
+            echo "  Updated .gitignore (+ $deptracEntry)" . PHP_EOL;
+        }
+    } else {
+        file_put_contents($rootGitignore, $deptracEntry . PHP_EOL);
+        echo "  Updated .gitignore (+ $deptracEntry)" . PHP_EOL;
+    }
+}
+
 // ── Summary ────────────────────────────────────────────────────────────────
 
 echo PHP_EOL;
@@ -165,5 +186,5 @@ echo "  1. Add this line to your project's AGENTS.md:" . PHP_EOL;
 echo "     * \`Конвенции\` — [$docsPath/index.md]($docsPath/index.md)." . PHP_EOL;
 echo "  2. Add PHPCS config to your project (phpcs.xml.dist) with installed_paths pointing to this package." . PHP_EOL;
 if ($deptracPath !== '') {
-    echo "  3. Review and adapt $deptracPath — replace namespace patterns for your project." . PHP_EOL;
+    echo "  3. Run \`vendor/bin/deptrac analyse\` to verify architectural rules." . PHP_EOL;
 }

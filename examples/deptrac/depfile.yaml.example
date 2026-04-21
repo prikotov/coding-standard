@@ -20,154 +20,150 @@ deptrac:
         - type: bool
           must:
             - type: classLike
-              value: .*\\Module\\.*\\Domain\\.*
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\.*
           must_not:
             - type: classLike
-              value: ^Common\\Module\\.*\\Domain\\(Entity\\)?ValueObject\\.*Vo$
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\(Entity\\)?ValueObject\\.*Vo$
             - type: classLike
-              value: ^Common\\Module\\.*\\Domain\\Enum\\.*
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Enum\\.*
             - type: classLike
-              value: ^Common\\Module\\.*\\Domain\\.*Dto$
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\.*Dto$
 
     - name: Application
       collectors:
         - type: bool
           must:
             - type: classLike
-              value: .*\\Module\\.*\\Application\\.*
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\.*
           must_not:
             - type: classLike
-              value: ^Common\\Module\\.*\\Application\\.*Dto$
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\.*Dto$
             - type: classLike
-              value: ^Common\\Module\\.*\\Application\\Enum\\.*
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\Enum\\.*
             - type: classLike
-              value: ^Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*Command$
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*Command$
             - type: classLike
-              value: ^Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*CommandHandler$
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*CommandHandler$
             - type: classLike
-              value: ^Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*Query$
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*Query$
             - type: classLike
-              value: ^Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*QueryHandler$
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*QueryHandler$
 
     - name: IntegrationListener
       collectors:
         - type: classLike
-          value: .*\\Module\\.*\\Integration\\Listener\\.*
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Integration\\Listener\\.*
 
     - name: Infrastructure
       collectors:
         - type: bool
           must:
             - type: classLike
-              value: .*\\Module\\.*\\Infrastructure\\(?!Model|Listener).*$
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Infrastructure\\(?!Model|Listener).*$
           must_not:
             - type: classLike
-              value: ^Common\\Module\\.*\\Infrastructure\\.*Dto$
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Infrastructure\\.*Dto$
             - type: classLike
-              value: ^Common\\Module\\.*\\Infrastructure\\Component\\.*
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Infrastructure\\Component\\.*
             - type: classLike
-              value: ^Common\\Module\\.*\\Infrastructure\\Enum\\.*
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Infrastructure\\Enum\\.*
 
     - name: InfrastructureComponent
       collectors:
         - type: bool
           must:
             - type: classLike
-              value: ^Common\\Module\\.*\\Infrastructure\\Component\\.*(Component|ComponentInterface)$
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Infrastructure\\Component\\.*(Component|ComponentInterface)$
 
     - name: Integration
       collectors:
         - type: bool
           must:
             - type: classLike
-              value: .*\\Module\\.*\\Integration\\.*
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Integration\\.*
           must_not:
             - type: classLike
-              value: .*\\Module\\.*\\Integration\\Listener\\.*
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Integration\\Listener\\.*
             - type: classLike
-              value: ^Common\\Module\\.*\\Integration\\.*Dto$
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Integration\\.*Dto$
+            # Domain\\Service\\Integration — ports (interfaces), stay in Domain layer
+            - type: classLike
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Service\\Integration\\.*
 
     - name: Presentation
       collectors:
+        # Matches app-level namespaces (Console, Api, Web, etc.)
         - type: classLike
-          value: .*\\Module\\.*\\Controller\\.*
-        - type: classLike
-          value: .*apps.*\\Controller\\.*
-        - type: classLike
-          value: ^Api\\v1\\Module\\.*
-        - type: classLike
-          value: ^Console\\Module\\.*\\Command\\.*
-        - type: classLike
-          value: ^Console\\Module\\.*\\EventSubscriber\\.*
+          value: ^(?:[A-Za-z_]+\\)?(?:Api|Console|Web|Blog|Docs)\\Module\\.*
 
     # --- Fine-grained: DTO, VO, Enum ---
 
     - name: DomainVo
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Domain\\(Entity\\)?ValueObject\\.*Vo$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\(Entity\\)?ValueObject\\.*Vo$
 
     - name: DomainEnum
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Domain\\Enum\\.*
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Enum\\.*
 
     - name: DomainDto
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Domain\\.*Dto$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\.*Dto$
 
     - name: ApplicationDto
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Application\\.*Dto$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\.*Dto$
 
     - name: ApplicationEnum
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Application\\Enum\\.*
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\Enum\\.*
 
     - name: ApplicationCommonDto
       collectors:
         - type: classLike
-          value: ^Common\\Application\\Dto\\.*Dto$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Application\\Dto\\.*Dto$
 
     - name: IntegrationDto
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Integration\\.*Dto$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Integration\\.*Dto$
 
     - name: InfrastructureDto
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Infrastructure\\.*Dto$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Infrastructure\\.*Dto$
 
     - name: InfrastructureEnum
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Infrastructure\\Enum\\.*
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Infrastructure\\Enum\\.*
 
     # --- CQRS artifacts ---
 
     - name: ApplicationCommand
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*Command$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*Command$
 
     - name: ApplicationCommandHandler
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*CommandHandler$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\UseCase\\Command\\.*\\.*CommandHandler$
 
     - name: ApplicationQuery
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*Query$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*Query$
 
     - name: ApplicationQueryHandler
       collectors:
         - type: classLike
-          value: ^Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*QueryHandler$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Application\\UseCase\\Query\\.*\\.*QueryHandler$
 
   ruleset:
     # DTO boundary
