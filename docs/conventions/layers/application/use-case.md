@@ -5,8 +5,8 @@
 
 **Состоят из:**
 
-- [CommandHandler](command_handler.md) — изменяют состояние (данные) приложения;
-- [QueryHandler](query_handler.md) — возвращают данные.
+- [CommandHandler](command-handler.md) — изменяют состояние (данные) приложения;
+- [QueryHandler](query-handler.md) — возвращают данные.
 
 UseCase-ы являются частью слоя [Application](../application.md) и могут располагаться только там.
 

@@ -6,7 +6,7 @@
 
 ## Общие правила
 
-- **Назначение**: связывает событие с конкретным действием в [Use Case](../application/use_case.md) своего модуля.
+- **Назначение**: связывает событие с конкретным действием в [Use Case](../application/use-case.md) своего модуля.
 - **Единая точка входа:** публичный `__invoke(Event $event): void`.
 - **Именование:** `{Action}On{EventName}Listener`. Пример: `TrackOnReceivedListener`.
 - **Границы модуля:** слушатель делегирует только в Use Case своего модуля (напрямую или через компонент шины команд
@@ -15,7 +15,7 @@
 
 ## Зависимости
 
-- **Разрешено:** [Use Case](../application/use_case.md) ([CommandHandler](../application/command_handler.md)/[QueryHandler](../application/query_handler.md))
+- **Разрешено:** [Use Case](../application/use-case.md) ([CommandHandler](../application/command-handler.md)/[QueryHandler](../application/query-handler.md))
   **своего** модуля, сервисы интеграций, мапперы/фабрики.
 - **Запрещено:**
     - Прямой доступ к БД/HTTP/очередям.

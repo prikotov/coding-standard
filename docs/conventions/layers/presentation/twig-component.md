@@ -46,7 +46,7 @@ apps/web/tests/Unit/Component/Twig/<Namespace>/<Component>Test.php
 - Когда визуальный блок имеет собственное presentation-состояние (props, `mount(...)`, вычисляемые методы).
 - Когда нужно централизовать повторяющуюся верстку и поведение блока в `templates/components/...`.
 - Когда блок должен вызываться как полноценный компонент шаблона, а не как helper-вычисление.
-- Для правил по Twig Extension используем документ [Twig Extension](twig_extension.md).
+- Для правил по Twig Extension используем документ [Twig Extension](twig-extension.md).
 
 ### Быстрый decision checklist
 

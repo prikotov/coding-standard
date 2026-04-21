@@ -1,6 +1,6 @@
 # Query и Query Handler
 
-**Запрос (Query)** — разновидность [Use Case](use_case.md), описывающая намерение получить состояние приложения (модуля).
+**Запрос (Query)** — разновидность [Use Case](use-case.md), описывающая намерение получить состояние приложения (модуля).
 Представляет собой DTO, передаваемое в Query Handler и описывающее сам запрос.
 
 **Обработчик запроса (Query Handler)** — реализует получение данных, оркестрируя доступ к доменной логике, сервисам и инфраструктуре.
@@ -17,8 +17,8 @@ Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{Q
 ## Как создаем
 
 - Создаются только для обработки внешних бизнес-запросов на чтение данных.
-- Query — это [DTO](../../core_patterns/dto.md), реализующее интерфейс `QueryInterface<ReturnType>`. Оно описывает входные параметры запроса.
-- Может возвращать: [DTO](../../core_patterns/dto.md), [Enum](../../core_patterns/enum.md), скалярное значение.
+- Query — это [DTO](../../core-patterns/dto.md), реализующее интерфейс `QueryInterface<ReturnType>`. Оно описывает входные параметры запроса.
+- Может возвращать: [DTO](../../core-patterns/dto.md), [Enum](../../core-patterns/enum.md), скалярное значение.
 - Входные и возвращаемые объекты должны находиться в слое Application текущего модуля.
 - Query Handler не должен изменять состояние приложения.
 - Запрещено вызывать другие UseCase внутри QueryHandler, включая вызов через `__invoke()` другого `*Handler` и запуск через `CommandBus`/`QueryBus`.

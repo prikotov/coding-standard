@@ -32,12 +32,12 @@ apps/{web|api|console}/src/...
 
 - Controller: `apps/<app>/src/Module/<ModuleName>/Controller`. [Контроллер](presentation/controller.md)
 - ListController: специализированные контроллеры списков. [Контроллер списка](presentation/list-controller.md)
-- ConsoleCommand: консольные команды Presentation. [Консольная команда](presentation/console_command.md)
+- ConsoleCommand: консольные команды Presentation. [Консольная команда](presentation/console-command.md)
 - Route: генераторы URL и имён маршрутов. [Маршруты](presentation/route.md)
-- TwigExtension: презентационные функции/фильтры для Twig-шаблонов. [Twig Extension](presentation/twig_extension.md)
-- TwigComponent: переиспользуемые UI-компоненты Symfony UX. [Twig Component](presentation/twig_component.md)
+- TwigExtension: презентационные функции/фильтры для Twig-шаблонов. [Twig Extension](presentation/twig-extension.md)
+- TwigComponent: переиспользуемые UI-компоненты Symfony UX. [Twig Component](presentation/twig-component.md)
 - Forms: `FormType` и `FormModel` для валидации входа. [Формы](presentation/forms.md)
-- Authorization: `PermissionEnum`, `ActionEnum`, `Rule`, `Voter`, `Grant`. [Авторизация](presentation/authorization.md), [Permission Enum](presentation/permission_enum.md), [Правило](presentation/rule.md), [Voter](presentation/voter.md), [Grant](presentation/grant.md)
+- Authorization: `PermissionEnum`, `ActionEnum`, `Rule`, `Voter`, `Grant`. [Авторизация](presentation/authorization.md), [Permission Enum](presentation/permission-enum.md), [Правило](presentation/rule.md), [Voter](presentation/voter.md), [Grant](presentation/grant.md)
 
 ## Уведомления (Notification) в Presentation
 
@@ -55,12 +55,12 @@ apps/{web|api|console}/src/...
 
 - [Контроллеры](presentation/controller.md)
 - [Проверка прав](presentation/authorization.md)
-- [Перечисление прав](presentation/permission_enum.md)
+- [Перечисление прав](presentation/permission-enum.md)
 - [Грант-сервис](presentation/grant.md)
 - [Правило доступа](presentation/rule.md)
 - [Голосующий объект](presentation/voter.md)
 - [Формы](presentation/forms.md)
 - [Контроллер списка](presentation/list-controller.md)
 - [Маршруты](presentation/route.md)
-- [Twig Component](presentation/twig_component.md)
-- [Twig Extension](presentation/twig_extension.md)
+- [Twig Component](presentation/twig-component.md)
+- [Twig Extension](presentation/twig-extension.md)

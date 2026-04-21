@@ -50,7 +50,7 @@ Common\Module\{ModuleName}\{Layer}\Map\{Name}Map
 
 - Внедряем в потребителей через DI.
 - Используем для получения текстового представления значений (enum, констант) в UI, логах, уведомлениях.
-- Не используем для фильтрации или бизнес-логики — для этого существуют [List-классы](list.md), [Specification](../layers/domain/specification.md), [Query](../layers/application/query_handler.md).
+- Не используем для фильтрации или бизнес-логики — для этого существуют [List-классы](list.md), [Specification](../layers/domain/specification.md), [Query](../layers/application/query-handler.md).
 - Запрещено использовать Map напрямую для формирования UI-списков (dropdown). Для этого используйте [Mapper-классы](mapper.md), которые используют Map и List вместе.
 
 ## Правила именования
