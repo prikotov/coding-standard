@@ -7,13 +7,15 @@ declare(strict_types=1);
  * validate-docs — validate conventions documentation.
  *
  * Checks:
- *   1. Internal markdown links point to existing files.
- *   2. Naming: files and directories use kebab-case (no underscores).
- *   3. Required sections present in rule documents (index files are exempt).
+ *   1. YAML front matter present with required fields (name, description, type).
+ *   2. Internal markdown links point to existing files.
+ *   3. Naming: files and directories use kebab-case (no underscores).
+ *   4. Required sections present in rule documents.
  *
- * Two document types (see AGENTS.md):
- *   - Index files (index.md) — list of links, no section requirements.
- *   - Rule documents (everything else) — must follow the template structure.
+ * Document types (set in front matter):
+ *   - rule  — must have required sections.
+ *   - index — list of links, no section checks.
+ *   - meta  — package-level files, no section checks.
  *
  * Usage:
  *   php bin/validate-docs.php [path]
@@ -30,21 +32,61 @@ declare(strict_types=1);
 $docsDir = $argv[1] ?? 'docs/conventions';
 $errors = [];
 
-/** Filenames that are index/overview documents — exempt from section checks. */
-const INDEX_FILES = ['index.md', 'agents.md', 'readme.md'];
+/** Required fields in YAML front matter. */
+const REQUIRED_FRONT_MATTER = ['name', 'type', 'description'];
 
-/** Required ## headings in every rule document (see AGENTS.md template). */
+/** Valid document types. */
+const VALID_TYPES = ['rule', 'index', 'meta'];
+
+/** Required ## headings in rule documents (see AGENTS.md template). */
 const REQUIRED_SECTIONS = [
     'Общие правила',
-    'Пример',
+    'Расположение',
     'Чек-лист для проведения ревью кода',
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
-function isIndexFile(string $filePath): bool
+/**
+ * Parse YAML front matter from markdown content.
+ * Returns ['fields' => [...], 'body' => string] or null if no front matter.
+ *
+ * @return array{fields: array<string, string>, body: string}|null
+ */
+function parseFrontMatter(string $content): ?array
 {
-    return in_array(strtolower(basename($filePath)), INDEX_FILES, true);
+    if (!str_starts_with($content, "---\n")) {
+        return null;
+    }
+
+    $end = strpos($content, "\n---\n", 4);
+    if ($end === false) {
+        return null;
+    }
+
+    $yaml = substr($content, 4, $end - 4);
+    $body = substr($content, $end + 5);
+
+    $fields = [];
+    foreach (explode("\n", $yaml) as $line) {
+        $line = trim($line);
+        if ($line === '' || str_starts_with($line, '#')) {
+            continue;
+        }
+        $colon = strpos($line, ':');
+        if ($colon === false) {
+            continue;
+        }
+        $key = trim(substr($line, 0, $colon));
+        $value = trim(substr($line, $colon + 1));
+        // Remove surrounding quotes
+        if (preg_match('/^["\'](.*)["\']\s*$/', $value, $m)) {
+            $value = $m[1];
+        }
+        $fields[$key] = $value;
+    }
+
+    return ['fields' => $fields, 'body' => $body];
 }
 
 /**
@@ -124,20 +166,20 @@ function resolveLinkTarget(string $sourceDir, string $target): string
 }
 
 /**
- * Check if a heading matches a required section (case-insensitive).
+ * Check if a heading matches a required section (case-insensitive, prefix).
  */
 function headingMatches(string $heading, string $required): bool
 {
     $h = mb_strtolower(rtrim($heading, ' .'));
     $r = mb_strtolower(rtrim($required, ' .'));
 
-    // Exact match
     if ($h === $r) {
         return true;
     }
 
-    // Prefix match: "Пример: ..." matches "Пример"
-    if (str_starts_with($h, $r . ':') || str_starts_with($h, $r . ' ')) {
+    // "Чек-лист код-ревью" matches "Чек-лист для проведения ревью кода"
+    // Use prefix match for "Чек-лист"
+    if (str_starts_with($h, explode(' ', $r)[0])) {
         return true;
     }
 
@@ -163,7 +205,57 @@ sort($mdFiles);
 
 echo "Validating " . count($mdFiles) . " markdown files in {$docsDir}/\n\n";
 
-// ── Check 1: Naming (kebab-case) ──────────────────────────────────────────
+// ── Check 1: Front matter ─────────────────────────────────────────────────
+
+echo "## Front matter\n";
+$fmErrors = 0;
+$fileTypes = []; // filePath => type
+
+foreach ($mdFiles as $filePath) {
+    $relativePath = substr($filePath, strlen($docsDir) + 1);
+    $content = file_get_contents($filePath);
+    if ($content === false) {
+        continue;
+    }
+
+    $parsed = parseFrontMatter($content);
+
+    if ($parsed === null) {
+        echo "  ✗ {$relativePath}: missing front matter\n";
+        $errors[] = "front-matter: {$relativePath} missing";
+        $fmErrors++;
+        $fileTypes[$filePath] = null;
+        continue;
+    }
+
+    $fields = $parsed['fields'];
+
+    // Check required fields
+    foreach (REQUIRED_FRONT_MATTER as $field) {
+        if (!isset($fields[$field]) || trim($fields[$field]) === '') {
+            echo "  ✗ {$relativePath}: missing field \"{$field}\"\n";
+            $errors[] = "front-matter: {$relativePath} missing \"{$field}\"";
+            $fmErrors++;
+        }
+    }
+
+    // Check type is valid
+    $type = $fields['type'] ?? '';
+    if (!in_array($type, VALID_TYPES, true)) {
+        echo "  ✗ {$relativePath}: invalid type \"{$type}\" (valid: " . implode(', ', VALID_TYPES) . ")\n";
+        $errors[] = "front-matter: {$relativePath} invalid type \"{$type}\"";
+        $fmErrors++;
+    }
+
+    $fileTypes[$filePath] = $type;
+}
+
+if ($fmErrors === 0) {
+    echo "  ✓ All files have valid front matter\n";
+}
+echo "\n";
+
+// ── Check 2: Naming (kebab-case) ──────────────────────────────────────────
 
 echo "## Naming (kebab-case)\n";
 $namingErrors = 0;
@@ -184,7 +276,7 @@ if ($namingErrors === 0) {
 }
 echo "\n";
 
-// ── Check 2: Internal links ───────────────────────────────────────────────
+// ── Check 3: Internal links ───────────────────────────────────────────────
 
 echo "## Internal links\n";
 $linkErrors = 0;
@@ -195,9 +287,13 @@ foreach ($mdFiles as $filePath) {
         continue;
     }
 
+    // Get body without front matter
+    $parsed = parseFrontMatter($content);
+    $body = $parsed['body'] ?? $content;
+
     $sourceDir = dirname($filePath);
     $relativePath = substr($filePath, strlen($docsDir) + 1);
-    $links = extractInternalLinks($content);
+    $links = extractInternalLinks($body);
 
     foreach ($links as $link) {
         $resolved = resolveLinkTarget($sourceDir, $link['target']);
@@ -218,25 +314,28 @@ if ($linkErrors === 0) {
 }
 echo "\n";
 
-// ── Check 3: Required sections ────────────────────────────────────────────
+// ── Check 4: Required sections (rule documents only) ──────────────────────
 
 echo "## Required sections\n";
 $sectionErrors = 0;
 
 foreach ($mdFiles as $filePath) {
-    $relativePath = substr($filePath, strlen($docsDir) + 1);
+    $type = $fileTypes[$filePath] ?? null;
 
-    // Skip index files
-    if (isIndexFile($filePath)) {
+    // Only rule documents need sections
+    if ($type !== 'rule') {
         continue;
     }
 
+    $relativePath = substr($filePath, strlen($docsDir) + 1);
     $content = file_get_contents($filePath);
     if ($content === false) {
         continue;
     }
 
-    $headings = extractHeadings($content);
+    $parsed = parseFrontMatter($content);
+    $body = $parsed['body'] ?? $content;
+    $headings = extractHeadings($body);
 
     foreach (REQUIRED_SECTIONS as $required) {
         $found = false;
@@ -267,9 +366,10 @@ $totalErrors = count($errors);
 if ($totalErrors > 0) {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
     echo "✗ Found {$totalErrors} error(s)\n";
-    echo "  Naming:   {$namingErrors}\n";
-    echo "  Links:    {$linkErrors}\n";
-    echo "  Sections: {$sectionErrors}\n";
+    echo "  Front matter: {$fmErrors}\n";
+    echo "  Naming:       {$namingErrors}\n";
+    echo "  Links:        {$linkErrors}\n";
+    echo "  Sections:     {$sectionErrors}\n";
     exit(1);
 }
 
