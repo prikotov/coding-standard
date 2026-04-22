@@ -171,10 +171,11 @@ final readonly class DeepSeekComponent implements DeepSeekComponentInterface
 
 ## Расположение
 
-- Порт (интерфейс): `Common\Module\{Module}\Domain\Service\Integration\{ServiceName}Interface`
-- Компонент (реализация): `Common\Module\{Module}\Infrastructure\Component\{Vendor}\{ServiceName}Component`
-- DTO: `Common\Module\{Module}\Infrastructure\Component\{Vendor}\Dto\`
-- Маппер: `Common\Module\{Module}\Infrastructure\Component\{Vendor}\Mapper\`
+- [Компонент](component.md) (реализация): `Common\Module\{Module}\Infrastructure\Component\{Vendor}\{ServiceName}Component`
+- [Сервис](service.md) (порт-интерфейс): `Common\Module\{Module}\Domain\Service\Integration\{ServiceName}Interface`
+- [Исключение](exception.md): `Common\Exception\InfrastructureException`
+- [Слушатель](../layers/integration/listener.md): `Common\Module\{Module}\Integration\Listener\{EventName}Listener`
+- [Middleware](../layers/integration/middleware.md): `Common\Module\{Module}\Integration\Middleware\{MiddlewareName}`
 
 ## Чек-лист для проведения ревью кода
 
