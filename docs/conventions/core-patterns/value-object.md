@@ -1,5 +1,5 @@
 ---
-name: Объект-значение
+name: Value Object
 type: rule
 description: Правила создания и использования объектов-значений
 ---

@@ -1,5 +1,5 @@
 ---
-name: Map-класс
+name: Map
 type: rule
 description: Правила создания map-классов для сопоставления значений
 ---

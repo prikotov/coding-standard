@@ -1,5 +1,5 @@
 ---
-name: Взаимодействие слоёв
+name: Layer Interaction
 type: rule
 description: Правила зависимостей между слоями архитектуры на основе Clean Architecture
 ---

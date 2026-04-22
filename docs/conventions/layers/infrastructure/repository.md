@@ -1,5 +1,5 @@
 ---
-name: Репозиторий (Infrastructure)
+name: Infrastructure Repository
 type: rule
 description: Правила реализации инфраструктурных репозиториев
 ---

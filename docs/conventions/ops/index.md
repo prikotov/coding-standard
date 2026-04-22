@@ -1,5 +1,5 @@
 ---
-name: Операционные практики
+name: Operations
 type: index
 description: Правила и гайды по операционным практикам: suppressions, фиксы, smoke-тесты
 ---

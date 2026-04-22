@@ -1,5 +1,5 @@
 ---
-name: Спецификация
+name: Specification
 type: rule
 description: Правила использования паттерна Specification для формализации бизнес-правил
 ---

@@ -1,5 +1,5 @@
 ---
-name: Исключение
+name: Exception
 type: rule
 description: Правила проектирования и использования исключений
 ---

@@ -1,5 +1,5 @@
 ---
-name: Внешний сервис
+name: External Service
 type: rule
 description: Правила работы с внешними сервисами, API и SDK
 ---

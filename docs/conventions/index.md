@@ -1,5 +1,5 @@
 ---
-name: Содержание
+name: Table of Contents
 type: index
 description: Индекс всех конвенций проекта
 ---

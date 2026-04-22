@@ -1,5 +1,5 @@
 ---
-name: Перечисление
+name: Enum
 type: rule
 description: Правила использования нативных PHP-перечислений
 ---

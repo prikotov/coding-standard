@@ -1,5 +1,5 @@
 ---
-name: Фабрика
+name: Factory
 type: rule
 description: Правила создания и использования фабрик
 ---

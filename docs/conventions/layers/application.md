@@ -1,5 +1,5 @@
 ---
-name: Application слой
+name: Application Layer
 type: rule
 description: Слой приложения: оркестрация бизнес-операций и сценарии использования
 ---

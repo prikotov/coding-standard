@@ -1,5 +1,5 @@
 ---
-name: Стиль кода
+name: Code Style
 type: rule
 description: Стандарты оформления кода в проекте
 ---

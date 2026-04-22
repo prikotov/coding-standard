@@ -1,5 +1,5 @@
 ---
-name: Сервис
+name: Service
 type: rule
 description: Правила создания и использования сервисов
 ---

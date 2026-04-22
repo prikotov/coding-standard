@@ -1,5 +1,5 @@
 ---
-name: Слой интеграций
+name: Integration Layer
 type: rule
 description: Слой интеграций: взаимодействие с внешними системами и событиями
 ---

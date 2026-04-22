@@ -1,5 +1,5 @@
 ---
-name: Presentation слой
+name: Presentation Layer
 type: rule
 description: Слой представления: приём/отдача данных через публичные интерфейсы
 ---

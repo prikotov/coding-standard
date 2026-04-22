@@ -1,5 +1,5 @@
 ---
-name: Ценности
+name: Values
 type: rule
 description: Базовые ценности и принципы разработки в проекте
 ---

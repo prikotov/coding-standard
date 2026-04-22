@@ -1,5 +1,5 @@
 ---
-name: Модульная структура
+name: Module Structure
 type: index
 description: Собрание правил устройства модулей и их конфигурации
 ---

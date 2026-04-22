@@ -1,5 +1,5 @@
 ---
-name: Правила для AI-агентов
+name: AI Agent Guidelines
 type: meta
 description: Правила для AI-агентов по работе с конвенциями проекта
 ---

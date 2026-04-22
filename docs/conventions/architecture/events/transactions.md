@@ -1,5 +1,5 @@
 ---
-name: События и транзакции БД
+name: Events and DB Transactions
 type: rule
 description: Правила работы с доменными событиями и транзакциями базы данных
 ---

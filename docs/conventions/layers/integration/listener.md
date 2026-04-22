@@ -1,5 +1,5 @@
 ---
-name: Слушатель
+name: Listener
 type: rule
 description: Правила создания и использования слушателей событий
 ---

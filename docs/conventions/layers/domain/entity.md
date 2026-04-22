@@ -1,5 +1,5 @@
 ---
-name: Сущность
+name: Entity
 type: rule
 description: Правила проектирования доменных сущностей
 ---
