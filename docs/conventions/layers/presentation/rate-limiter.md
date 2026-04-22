@@ -1,3 +1,9 @@
+---
+name: Rate Limiter
+type: rule
+description: Правила ограничения частоты запросов
+---
+
 # Ограничение частоты запросов (Rate Limiter)
 
 **Ограничение частоты запросов (Rate Limiter)** — presentation-механизм защиты публичных и чувствительных endpoint'ов от abuse, enumeration и burst-нагрузки на базе Symfony RateLimiter.

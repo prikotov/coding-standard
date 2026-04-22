@@ -1,6 +1,26 @@
+---
+name: E2E Tests
+type: rule
+description: Правила написания E2E-тестов с Symfony Panther
+---
+
 # E2E Tests
 
 End-to-End (E2E) тестирование в проекте выполняется с помощью **Symfony Panther** — библиотеки для тестирования JavaScript-интерактивных сценариев в реальном браузере.
+
+## Общие правила
+
+- E2E-тесты используют Symfony Panther для реального браузера.
+- API E2E используют `ApiTestCase` без накладных расходов на браузер.
+- Тесты располагаются в `apps/*/tests/E2E/`.
+- E2E-тесты не зависят от внутренней структуры модулей.
+- Каждый тест независим и воспроизводим.
+
+## Расположение
+
+- Web E2E: `apps/web/tests/E2E/`
+- API E2E: `apps/api/tests/E2E/`
+- Хелперы и трейты: `apps/*/tests/Support/`
 
 ## Оглавление
 
@@ -381,3 +401,13 @@ Smoke E2E используются как быстрый пред-проверо
 - [Symfony Panther Documentation](https://symfony.com/doc/current/testing/panther.html)
 - [Turbo Handbook](https://turbo.hotwired.dev/handbook/drive)
 - [Stimulus Handbook](https://stimulus.hotwired.dev/)
+
+## Чек-лист для проведения ревью кода
+
+- [ ] E2E-тест расположен в `apps/*/tests/E2E/`.
+- [ ] Тест использует Panther для Web-сценариев или `ApiTestCase` для API.
+- [ ] Тест независим от других тестов и воспроизводим.
+- [ ] Используются хелперы из `tests/Support/`, а не дублируется код.
+- [ ] Ожидания (waiting) используются вместо `sleep()`.
+- [ ] Тест покрывает реальный пользовательский сценарий.
+

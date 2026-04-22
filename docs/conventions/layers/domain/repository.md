@@ -1,3 +1,9 @@
+---
+name: Domain Repository
+type: rule
+description: Правила создания доменных контрактов репозиториев
+---
+
 # Репозиторий (Repository)
 
 **Репозиторий (Repository)** — контракт для сохранения и извлечения доменных сущностей из хранилища по доменным критериям.
@@ -251,4 +257,4 @@ final class InMemoryServiceStatusRepository implements ServiceStatusRepositoryIn
 3. **Идеально для тестов** — изоляция от БД, детерминированные результаты.
 4. **Ключ хранилища** — выбирается на основе бизнес-логики (например, уникальное имя сервиса).
 
-Полный пример: [`InMemoryServiceStatusRepository.php`](examples/InMemoryServiceStatusRepository.md)
+Полный пример: [`InMemoryServiceStatusRepository.php`](examples/InMemoryServiceStatusRepository.php)

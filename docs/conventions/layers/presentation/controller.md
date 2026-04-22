@@ -1,3 +1,9 @@
+---
+name: Controller
+type: rule
+description: Правила создания контроллеров презентационного слоя
+---
+
 # Контроллер презентационного слоя (Presentation Controller)
 
 ## Определение

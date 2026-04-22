@@ -1,3 +1,9 @@
+---
+name: Permission Enum
+type: rule
+description: Правила создания перечислений прав
+---
+
 # Перечисление прав (Permission Enum)
 
 ## Определение

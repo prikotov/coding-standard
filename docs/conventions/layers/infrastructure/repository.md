@@ -1,6 +1,12 @@
+---
+name: Repository
+type: rule
+description: Правила реализации репозиториев
+---
+
 # Репозиторий (Repository)
 
-**Репозиторий** — инфраструктурная реализация доменного репозитория, которая скрывает работу с ORM/БД.
+**Репозиторий** — инфраструктурная реализация доменного репозитория, которая скрывает работу с БД.
 
 > **Фильтрация:** Для изоляции условий выборки используется [CriteriaMapper](criteria-mapper.md).
 
@@ -9,7 +15,7 @@
 1. Каждый репозиторий наследует `ServiceEntityRepository` и реализует доменный интерфейс `{EntityName}RepositoryInterface`.
 2. Репозиторий не содержит условных запросов напрямую; все фильтры строятся через [CriteriaMapper](criteria-mapper.md).
 3. Репозиторий оперирует только доменными сущностями и критериями; никаких зависимостей из Application/Presentation.
-4. Исключения ORM маппятся в `NotFoundException` или `InfrastructureException`.
+4. Исключения Doctrine маппятся в `NotFoundException` или `InfrastructureException`.
 
 ## Зависимости
 
@@ -125,3 +131,10 @@ final class ProjectRepository extends ServiceEntityRepository implements Project
     }
 }
 ```
+
+## Чек-лист для проведения ревью кода
+
+- [ ] Репозиторий реализует доменный интерфейс (контракт).
+- [ ] Маппинг критериев изолирован (CriteriaMapper или аналогичный).
+- [ ] Нет утечек Doctrine QueryBuilder за пределы репозитория.
+- [ ] Транзакции управляются на уровне Application-слоя, а не в репозитории.

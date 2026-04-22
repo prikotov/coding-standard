@@ -1,4 +1,30 @@
+---
+name: Integration Layer
+type: rule
+description: Слой интеграций: взаимодействие с внешними системами и событиями
+---
+
 # Слой интеграций (Integration)
+
+**Слой интеграций (Integration Layer)** — отвечает за межмодульное взаимодействие, обработку событий и адаптацию внешних transports.
+
+## Общие правила
+
+- Координирует работу между модулями.
+- Реагирует на доменные события.
+- Адаптирует внешний framework/transport context перед входом в Application.
+- Не содержит бизнес-логики.
+- Использует Application слой для выполнения операций.
+
+## Расположение
+
+```
+src/Module/{ModuleName}/Integration/
+├── Listener/
+│   └── {EventName}Listener.php
+└── Middleware/
+    └── {MiddlewareName}.php
+```
 
 ## Описание
 
@@ -23,3 +49,12 @@ Integration слой отвечает за межмодульное взаимо
 
 - [Domain Layer](domain.md)
 - [Application Layer](application.md)
+
+## Чек-лист для проведения ревью кода
+
+- [ ] Integration не содержит бизнес-логику.
+- [ ] Listener обрабатывает события через Application-слой.
+- [ ] Middleware адаптирует транспортный контекст, не реализуя бизнес-правила.
+- [ ] Нет прямых вызовов к Domain/Infrastructure из Listener.
+- [ ] Межмодульное взаимодействие идёт через Application-контракты.
+

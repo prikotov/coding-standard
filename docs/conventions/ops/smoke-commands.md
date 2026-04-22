@@ -1,3 +1,9 @@
+---
+name: Smoke Commands
+type: rule
+description: Правила создания смоук-команд для проверки работоспособности
+---
+
 # Смоук-команды (Smoke Commands)
 
 ## Определение

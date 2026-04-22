@@ -1,8 +1,3 @@
-# InMemoryServiceStatusRepository — пример In-memory реализации
-
-> Полный пример in-memory репозитория, иллюстрирующий паттерны, описанные в [repository.md](../repository.md).
-
-```php
 <?php
 
 declare(strict_types=1);
@@ -23,6 +18,8 @@ use Symfony\Component\Uid\Uuid;
 /**
  * In-memory реализация репозитория статусов сервисов.
  * Используется для хранения результатов health checks в памяти.
+ *
+ * @see repository.md — правила создания доменных контрактов репозиториев
  */
 final class InMemoryServiceStatusRepository implements ServiceStatusRepositoryInterface
 {
@@ -145,4 +142,3 @@ final class InMemoryServiceStatusRepository implements ServiceStatusRepositoryIn
         return true;
     }
 }
-```

@@ -1,3 +1,9 @@
+---
+name: Presentation Layer
+type: rule
+description: Слой представления: приём/отдача данных через публичные интерфейсы
+---
+
 # Слой Представления (Presentation)
 
 Слой Presentation отвечает за приём/отдачу данных через публичные интерфейсы (Web, API, Console) и строго взаимодействует только со слоем Application.

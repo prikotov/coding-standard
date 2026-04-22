@@ -1,3 +1,9 @@
+---
+name: Symfony Applications
+type: rule
+description: Правила организации изолированных Symfony-приложений
+---
+
 # Приложения на фреймворке Symfony (Symfony Applications)
 
 **Приложение Symfony (Symfony Application)** — изолированный экземпляр Symfony Kernel с собственным набором модулей, конфигурацией и назначением. Подробности: [Symfony Applications](https://symfony.com/doc/current/configuration/multiple_applications.html).

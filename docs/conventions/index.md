@@ -1,3 +1,9 @@
+---
+name: Table of Contents
+type: index
+description: Индекс всех конвенций проекта
+---
+
 # Содержание
 
 ## Принципы и Стандарты

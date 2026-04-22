@@ -1,3 +1,9 @@
+---
+name: Middleware
+type: rule
+description: Правила создания и использования middleware в pipeline
+---
+
 # Middleware
 
 **Middleware** — элемент слоя интеграций, встраиваемый в pipeline внешнего фреймворка или транспорта
@@ -40,7 +46,7 @@ Middleware нужен, когда проекту требуется перехв
 `Component`. Если класс завязан на конкретный message pipeline и знает о внутренних message/command типах модуля, это
 `Middleware`, а не `Component`.
 
-## Размещение
+## Расположение
 
 - **Module Integration**
 

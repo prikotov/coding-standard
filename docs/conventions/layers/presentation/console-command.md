@@ -1,3 +1,9 @@
+---
+name: Console Command
+type: rule
+description: Правила создания консольных команд презентационного слоя
+---
+
 # Консольная команда презентационного слоя (Presentation Console Command)
 
 ## Определение

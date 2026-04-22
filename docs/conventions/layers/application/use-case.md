@@ -1,3 +1,9 @@
+---
+name: Use Case
+type: rule
+description: Правила реализации сценариев использования
+---
+
 # Сценарий использования (use case)
 
 **Сценарий использования (use case)** — реализуют конкретные действия или сценарии, которые может выполнить
@@ -10,22 +16,26 @@
 
 UseCase-ы являются частью слоя [Application](../application.md) и могут располагаться только там.
 
-# Структура UseCase-ов
+## Общие правила
+
+- UseCase взаимодействует с доменом, не реализуя бизнес-логику самостоятельно.
+- Принимает и возвращает только DTO или скалярные значения.
+- Управляет транзакциями при необходимости.
+- Не зависит от фреймворка.
+- Не вызывает другие UseCase.
+
+## Расположение
 
 ```
-src/Module/{ModuleName}/Application/
-└── UseCase/
-    ├── Command/
-    │   └── {CommandGroup}/
-    │       └── {CommandName}/
-    │           ├── {CommandName}Command.php
-    │           └── {CommandName}CommandHandler.php
-    └── Query/
-        └── {QueryGroup}/
-            └── {QueryName}/
-                ├── {QueryName}Query.php
-                ├── {QueryName}QueryHandler.php
-                └── {QueryName}QueryResultDto.php
+src/Module/{ModuleName}/Application/UseCase/
+├── Command/
+│   └── {CommandGroup}/{CommandName}/
+│       ├── {CommandName}Command.php
+│       └── {CommandName}CommandHandler.php
+└── Query/
+    └── {QueryGroup}/{QueryName}/
+        ├── {QueryName}Query.php
+        └── {QueryName}QueryHandler.php
 ```
 
 ## Содержат
@@ -42,3 +52,13 @@ src/Module/{ModuleName}/Application/
 - Не реализуют бизнес-логику самостоятельно — делегируют её в доменные сущности, сервисы и спецификации.
 - Вызов классов из других модулей.
 - Вызовы других UseCase-ов.
+
+## Чек-лист для проведения ревью кода
+
+- [ ] UseCase расположен в Application-слое.
+- [ ] Бизнес-логика делегирована в Domain.
+- [ ] Нет зависимости от фреймворка.
+- [ ] Нет вызовов других UseCase.
+- [ ] Принимает и возвращает DTO/скаляры.
+- [ ] Транзакции управляются корректно.
+

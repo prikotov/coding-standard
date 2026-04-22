@@ -1,3 +1,9 @@
+---
+name: Query DTO
+type: rule
+description: Правила создания Query DTO презентационного слоя
+---
+
 # Query DTO презентационного слоя (Presentation Query DTO)
 
 ## Определение

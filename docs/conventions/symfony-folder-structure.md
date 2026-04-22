@@ -1,3 +1,9 @@
+---
+name: Symfony Folder Structure
+type: rule
+description: Организация директорий проекта на основе модульной DDD-архитектуры
+---
+
 # Структура папок на Symfony (Symfony Folder Structure)
 
 **Структура папок на Symfony (Symfony Folder Structure)** — организация директорий проекта TasK, основанная на модульной архитектуре DDD и множественных приложениях Symfony.

@@ -1,3 +1,9 @@
+---
+name: PHPMD Suppressions
+type: rule
+description: Правила обоснованного подавления предупреждений PHP Mess Detector
+---
+
 # Обоснованные подавления PHPMD (PHPMD suppression guidelines)
 
 **Обоснованное подавление PHPMD (PHPMD suppression)** — контролируемое и документированное исключение из правила анализатора, которое допускается только после проверки, что рефакторинг сейчас непропорционален риску или стоимости изменений.
@@ -28,7 +34,7 @@
 ## Зависимости
 
 - Конфигурация PHPMD для CI: [`phpmd.xml`](../examples/phpmd.xml)
-- Baseline rollout: [`phpmd.baseline.xml`](../examples/phpmd.baseline.xml)
+- Baseline rollout: `phpmd.baseline.xml` (генерируется через `vendor/bin/phpmd --generate-baseline`)
 - CI/check pipeline: [`Makefile`](../examples/Makefile) (`make check`, `make phpmd-fast`)
 - Рабочий контекст задач: см. `todo/` для актуальных задач по PHPMD
 

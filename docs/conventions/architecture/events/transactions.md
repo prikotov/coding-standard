@@ -1,4 +1,16 @@
+---
+name: Events and DB Transactions
+type: rule
+description: Правила работы с доменными событиями и транзакциями базы данных
+---
+
 # События и транзакции БД
+
+## Общие правила
+
+- События dispatch'ся **после** `flush()`, когда данные уже записаны в БД.
+- Транзакциями управляет код хендлера явно через `flush()`.
+
 
 ## Обзор
 
@@ -145,3 +157,14 @@ framework:
 - [События (Event)](../../layers/application/event.md)
 - [Обработчик Команд (Command Handler)](../../layers/application/command-handler.md)
 - [Внешние сервисы](../../core-patterns/external-service.md)
+
+## Расположение
+
+Транзакции управляются в Application-слое, внутри [Command Handler](../../layers/application/command-handler.md):
+
+
+## Чек-лист для проведения ревью кода
+
+- [ ] События dispatch'ся после `flush()`, а не внутри транзакции.
+- [ ] Транзакции управляются явно, без `doctrine_transaction` middleware.
+- [ ] Retry-strategy настроен для критичных событий.
