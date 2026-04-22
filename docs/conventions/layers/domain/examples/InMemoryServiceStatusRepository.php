@@ -1,24 +1,3 @@
----
-name: InMemoryServiceStatusRepository
-type: rule
-description: Пример in-memory реализации репозитория
----
-
-# InMemoryServiceStatusRepository — пример In-memory реализации
-
-> Полный пример in-memory репозитория, иллюстрирующий паттерны, описанные в [repository.md](../repository.md).
-
-## Общие правила
-
-- In-memory реализация используется для тестирования и прототипирования.
-- Реализует доменный интерфейс (контракт) репозитория.
-- Хранит данные в массиве, без I/O.
-
-## Расположение
-
-- Namespace: `App\Module\{Module}\Infrastructure\Repository\`
-
-```php
 <?php
 
 declare(strict_types=1);
@@ -39,6 +18,8 @@ use Symfony\Component\Uid\Uuid;
 /**
  * In-memory реализация репозитория статусов сервисов.
  * Используется для хранения результатов health checks в памяти.
+ *
+ * @see repository.md — правила создания доменных контрактов репозиториев
  */
 final class InMemoryServiceStatusRepository implements ServiceStatusRepositoryInterface
 {
@@ -161,13 +142,3 @@ final class InMemoryServiceStatusRepository implements ServiceStatusRepositoryIn
         return true;
     }
 }
-```
-
-## Чек-лист для проведения ревью кода
-
-- [ ] In-memory репозиторий реализует доменный интерфейс.
-- [ ] Все методы контракта реализованы.
-- [ ] Нет I/O и внешних зависимостей.
-- [ ] Данные хранятся в массиве.
-- [ ] Исключения соответствуют контракту (NotFoundException и т.д.).
-
