@@ -201,8 +201,13 @@ $iterator = new RecursiveIteratorIterator(
 );
 
 $mdFiles = [];
+$excludeFiles = ['AGENTS.md'];
+
 foreach ($iterator as $item) {
     if (!$item->isFile() || $item->getExtension() !== 'md') {
+        continue;
+    }
+    if (in_array($item->getFilename(), $excludeFiles, true)) {
         continue;
     }
     $mdFiles[] = $item->getPathname();

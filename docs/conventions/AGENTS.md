@@ -1,9 +1,3 @@
----
-name: AI Agent Guidelines
-type: meta
-description: Правила для AI-агентов по работе с конвенциями проекта
----
-
 # Правила для AI-агентов по работе с конвенциями (Conventions Guidelines for AI Agents)
 
 ## Назначение
