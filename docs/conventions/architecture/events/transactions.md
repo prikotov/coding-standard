@@ -160,9 +160,7 @@ framework:
 
 ## Расположение
 
-Транзакции управляются в Application-слое, внутри Command Handler:
-
-- Command Handler: `Common\Module\{Module}\Application\UseCase\Command\{Group}\{Name}\{Name}CommandHandler`
+Транзакции управляются в Application-слое, внутри [Command Handler](../../layers/application/command-handler.md):
 
 
 ## Чек-лист для проведения ревью кода
