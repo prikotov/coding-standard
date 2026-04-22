@@ -24,10 +24,6 @@ src/Module/{ModuleName}/
 ├── Resource/
 │   └── config/
 │       └── services.yaml
-├── Domain/
-├── Application/
-├── Infrastructure/
-└── Integration/
 ```
 
 ## Базовая структура модуля
