@@ -8,7 +8,12 @@
 - Публичные контракты Presentation формируют входные данные в Request DTO/Command/Query и принимают Response DTO.
 - В Presentation запрещено использовать типы из Domain напрямую (Entity, VO, Repository, Specification), а также классы из Infrastructure/Integration.
 - Исключения маппятся в ответы/сообщения через обработчики уровня Presentation (listeners/subscribers/exception mappers).
-- Любая валидация ввода — либо на уровне формы/DTO, либо делегируется в Application.
+- Для transport DTO и custom validators используем профильные правила:
+  [Request DTO](presentation/request-dto.md),
+  [Query DTO](presentation/query-dto.md),
+  [Response DTO](presentation/response-dto.md),
+  [Validator](presentation/validator.md).
+- Любая presentation-level validation остаётся declarative в DTO/FormModel либо выносится во внешний validator pair; императивные `Callback`/`validate*()` в transport model запрещены.
 
 ## Расположение
 
@@ -37,6 +42,8 @@ apps/{web|api|console}/src/...
 - TwigExtension: презентационные функции/фильтры для Twig-шаблонов. [Twig Extension](presentation/twig-extension.md)
 - TwigComponent: переиспользуемые UI-компоненты Symfony UX. [Twig Component](presentation/twig-component.md)
 - Forms: `FormType` и `FormModel` для валидации входа. [Формы](presentation/forms.md)
+- Request DTO / Query DTO / Response DTO: transport-контракты HTTP binding и ответа. [Request DTO](presentation/request-dto.md), [Query DTO](presentation/query-dto.md), [Response DTO](presentation/response-dto.md)
+- Validator: custom `Constraint` / `ConstraintValidator` pair для cross-field и reusable validation. [Validator](presentation/validator.md)
 - Authorization: `PermissionEnum`, `ActionEnum`, `Rule`, `Voter`, `Grant`. [Авторизация](presentation/authorization.md), [Permission Enum](presentation/permission-enum.md), [Правило](presentation/rule.md), [Voter](presentation/voter.md), [Grant](presentation/grant.md)
 
 ## Уведомления (Notification) в Presentation
@@ -60,6 +67,10 @@ apps/{web|api|console}/src/...
 - [Правило доступа](presentation/rule.md)
 - [Голосующий объект](presentation/voter.md)
 - [Формы](presentation/forms.md)
+- [Request DTO](presentation/request-dto.md)
+- [Query DTO](presentation/query-dto.md)
+- [Response DTO](presentation/response-dto.md)
+- [Validator](presentation/validator.md)
 - [Контроллер списка](presentation/list-controller.md)
 - [Маршруты](presentation/route.md)
 - [Twig Component](presentation/twig-component.md)

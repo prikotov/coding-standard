@@ -12,6 +12,8 @@
 - Для фильтров включаем метод `GET` и отключаем CSRF; для действий (`create`, `edit`) используем `POST`.
 - Переводы (`label`, `help`, `placeholder`) задаём через `translation_domain` либо ключи в YAML.
 - В контроллере проверяем `isSubmitted()` до `isValid()`, работаем с типизированной моделью.
+- В `FormModel` допускаем declarative field metadata, но cross-field и reusable validation выносим в custom validator pair; `#[Assert\Callback]` и методы `validate*()` в `FormModel` не используем.
+- Для custom validators форм применяем правила из [Validator](validator.md).
 
 ## Зависимости
 
