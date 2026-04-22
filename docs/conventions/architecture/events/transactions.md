@@ -161,8 +161,10 @@ framework:
 
 ## Расположение
 
-- Обработчики событий: `Common\Module\{Module}\Integration\Listener\`
-- Конфигурация Messenger: `config/packages/messenger.yaml` или `src/Module/{Module}/Resource/config/messenger.yaml`
+Транзакции управляются в Application-слое, внутри Command Handler:
+
+- Command Handler: `Common\Module\{Module}\Application\UseCase\Command\{Group}\{Name}\{Name}CommandHandler`
+- Конфигурация Messenger (routing, middleware): `config/packages/messenger.yaml` или `src/Module/{Module}/Resource/config/messenger.yaml`
 
 ## Чек-лист для проведения ревью кода
 
