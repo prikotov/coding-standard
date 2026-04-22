@@ -16,7 +16,6 @@ description: Пример in-memory реализации репозитория
 
 ## Расположение
 
-- Тестовая реализация: `tests/Stub/` или `tests/Support/`
 - Namespace: `App\Module\{Module}\Infrastructure\Repository\`
 
 ```php
