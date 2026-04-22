@@ -6,10 +6,15 @@
 
 - Контроллеры, консольные команды и HTTP-эндпоинты обращаются **только** к UseCase/Handler из Application слоя.
 - Публичные контракты Presentation формируют входные данные в Request DTO/Command/Query и принимают Response DTO.
+- Для transport DTO и custom validators используем профильные документы:
+  [Request DTO](request-dto.md),
+  [Query DTO](query-dto.md),
+  [Response DTO](response-dto.md),
+  [Validator](validator.md).
 - **Запрещено** использовать типы из Domain напрямую (Entity, VO, Repository, Specification).
 - **Запрещено** обращаться к классам из Infrastructure/Integration слоёв.
 - Исключения маппятся в ответы/сообщения через обработчики уровня Presentation (listeners/subscribers/exception mappers).
-- Валидация ввода — на уровне формы/DTO или делегируется в Application.
+- Валидация ввода остаётся declarative в DTO/FormModel или делегируется во внешний validator pair; `Callback` и `validate*()` внутри transport model не используем.
 - Web-контроллеры возвращают HTML (Twig), API-контроллеры — JSON.
 - Console-команды используют `SymfonyStyle` для вывода и корректные коды завершения.
 
@@ -137,7 +142,11 @@ apps/
 - [Контроллер списка (List Controller)](list-controller.md)
 - [Консольная команда (Console Command)](console-command.md)
 - [Формы (Forms)](forms.md)
+- [Request DTO](request-dto.md)
+- [Query DTO](query-dto.md)
+- [Response DTO](response-dto.md)
 - [Маршруты (Route)](route.md)
+- [Validator](validator.md)
 - [Ограничение частоты запросов (Rate Limiter)](rate-limiter.md)
 - [Twig-компонент (Twig Component)](twig-component.md)
 - [Twig-расширение (Twig Extension)](twig-extension.md)

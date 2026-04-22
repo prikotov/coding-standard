@@ -162,7 +162,14 @@ function resolveLinkTarget(string $sourceDir, string $target): string
         }
     }
 
-    return implode('/', $normalized);
+    $path = implode('/', $normalized);
+
+    // Restore absolute path
+    if (str_starts_with($resolved, '/')) {
+        $path = '/' . $path;
+    }
+
+    return $path;
 }
 
 /**

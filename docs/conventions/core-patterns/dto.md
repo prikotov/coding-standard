@@ -15,7 +15,12 @@
 - Коллекции — только типизированные: описываем через PHPDoc `@var` (например, `@var ProjectDto[]`).
 - Никаких сервисов внутри DTO (ни через DI, ни через фабрики). Никаких дополнительных методов — только конструктор и публичные свойства.
 - Конструктор не содержит логики и преобразований: значения принимаются «как есть».
-- Никаких выбросов исключений, валидации или обращений к окружению. Валидация — во входных точках (формы/Presentation) или на уровне Application.
+- Никаких выбросов исключений, императивной валидации или обращений к окружению.
+- По умолчанию валидация живёт во входных точках (формы/Presentation) или на уровне Application, а DTO остаётся `data-only`.
+- Для transport DTO презентационного слоя используем профильные конвенции:
+  [Request DTO](../layers/presentation/request-dto.md),
+  [Query DTO](../layers/presentation/query-dto.md),
+  [Response DTO](../layers/presentation/response-dto.md).
 - Именование: суффикс `Dto`. Контекст — в имени/namespace (`RequestDto`, `ResponseDto`, `ResultDto`, `...Dto`).
 
 ## Зависимости
@@ -76,7 +81,6 @@ Common\Module\{ModuleName}\Domain\Dto\{Name}Dto
 
 ## Как используем
 
-- В Presentation формируем входные данные в `RequestDto` и получаем `Response/ResultDto`.
 - В Application `Use Case` принимает/возвращает DTO, маппит из/в доменные модели через мапперы.
 - В Integration/Infrastructure компоненты принимают/возвращают DTO. Сетевые ответы маппим в DTO через `Mapper`.
 - DTO не «знают» о слоях и не тянут зависимости — это переносимые структуры данных.
@@ -179,3 +183,4 @@ final readonly class InferenceRequestDto
 - [ ] Название и namespace отражают контекст использования (`Request/Response/Result` при необходимости).
 - [ ] Денежные/точные величины представлены `numeric-string` или VO.
 - [ ] DTO используется на границах слоя, а не подменяет доменные сущности.
+- [ ] Для Presentation transport DTO дополнительно соблюдены профильные presentation-conventions.
