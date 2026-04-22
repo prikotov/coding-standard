@@ -1,3 +1,9 @@
+---
+name: Взаимодействие слоёв
+type: rule
+description: Правила зависимостей между слоями архитектуры на основе Clean Architecture
+---
+
 # Взаимодействие слоёв (Layer Interaction)
 
 **Взаимодействие слоёв** — правила зависимостей между слоями архитектуры, основанные на принципах Clean Architecture (луковичная архитектура).
@@ -97,3 +103,20 @@ Presentation зависит только от Application:
 | **Presentation** | ❌ | ✅ | ❌ | ❌ | — |
 
 \* Только контракты и типы Domain (интерфейсы сервисов, `VO`/`Enum`/доменные `DTO` в сигнатурах), без зависимости на доменные реализации.
+
+## Расположение
+
+- Domain: `Common\Module\{Module}\Domain\`
+- Application: `Common\Module\{Module}\Application\`
+- Infrastructure: `Common\Module\{Module}\Infrastructure\`
+- Integration: `Common\Module\{Module}\Integration\`
+- Presentation: `{App}\Module\{Module}\` (Web, Api, Console и др.)
+
+## Чек-лист для проведения ревью кода
+
+- [ ] Зависимости между слоями соответствуют матрице.
+- [ ] Domain не зависит от других слоёв.
+- [ ] Application зависит только от Domain.
+- [ ] Infrastructure реализует контракты Domain.
+- [ ] Integration обращается к Domain (только контракты) и Application.
+- [ ] Presentation обращается только к Application.

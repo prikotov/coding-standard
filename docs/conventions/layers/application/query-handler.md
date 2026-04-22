@@ -1,9 +1,29 @@
+---
+name: Query Handler
+type: rule
+description: Правила создания и использования обработчиков запросов
+---
+
 # Query и Query Handler
 
 **Запрос (Query)** — разновидность [Use Case](use-case.md), описывающая намерение получить состояние приложения (модуля).
 Представляет собой DTO, передаваемое в Query Handler и описывающее сам запрос.
 
 **Обработчик запроса (Query Handler)** — реализует получение данных, оркестрируя доступ к доменной логике, сервисам и инфраструктуре.
+
+## Общие правила
+
+- Query — DTO, реализующее `QueryInterface<ReturnType>`.
+- Query Handler не должен изменять состояние приложения.
+- Запрещено вызывать другие UseCase внутри QueryHandler.
+- Название запроса начинается с глагола (например: `GetCustomerQuery`).
+- Класс обработчика имеет постфикс `QueryHandler`.
+- Возвращает DTO, Enum или скалярное значение.
+
+## Расположение
+
+- Query: `Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{QueryName}Query`
+- Handler: `Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{QueryName}QueryHandler`
 
 ## Где размещаются
 
@@ -226,3 +246,13 @@ final class ListController extends AbstractController
 ```
 
 > 💡 В продакшн-коде рекомендуется использовать QueryBus для доставки запросов, особенно при использовании Symfony Messenger и очередей. Прямой вызов QueryHandler допустим для unit-тестов или простых MVP-прототипов.
+
+## Чек-лист для проведения ревью кода
+
+- [ ] Query — `final readonly class`, реализующий `QueryInterface`.
+- [ ] Query Handler не изменяет состояние приложения.
+- [ ] Нет вызовов других UseCase/Handler внутри.
+- [ ] Название запроса начинается с глагола.
+- [ ] Возвращается DTO, Enum или скаляр.
+- [ ] Входные и возвращаемые объекты находятся в Application-слое модуля.
+

@@ -1,3 +1,9 @@
+---
+name: View
+type: rule
+description: Правила создания представлений через Twig-шаблоны
+---
+
 # Представление (View)
 
 **Представление (View)** — слой, отвечающий за отображение данных пользователю через HTML-шаблоны, использующие Twig и Bootstrap 5 Phoenix. Подробнее см. руководство [Symfony Twig](https://symfony.com/doc/current/templates.html), [Symfony UX TwigComponent](https://symfony.com/bundles/ux-twig-component/current/index.html) и документацию [Bootstrap 5 Phoenix]().

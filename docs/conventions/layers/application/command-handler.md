@@ -1,3 +1,9 @@
+---
+name: Command Handler
+type: rule
+description: Правила создания и использования обработчиков команд
+---
+
 # Command и CommandHandler
 
 **Команда (Command)** — разновидность [Use Case](use-case.md), описывающая намерение изменить состояние приложения (
@@ -6,6 +12,20 @@
 
 **Обработчик команды (Command Handler)** — реализует изменение состояния модуля, оркестрируя взаимодействие с доменной
 логикой, сервисами и инфраструктурой.
+
+## Общие правила
+
+- Command — DTO, реализующее `CommandInterface<ReturnType>`.
+- Command Handler должен завершиться успешно или выбросить исключение.
+- Выполняет только одну логическую транзакцию.
+- Запрещено вызывать другие UseCase внутри CommandHandler.
+- События dispatch'ся после `flush()`, когда данные уже в БД.
+- Исключения внешних зависимостей оборачиваются в `Common\Exception\{ExceptionName}`.
+
+## Расположение
+
+- Command: `Common\Module\{ModuleName}\Application\UseCase\Command\{CommandGroup}\{CommandName}\{CommandName}Command`
+- Handler: `Common\Module\{ModuleName}\Application\UseCase\Command\{CommandGroup}\{CommandName}\{CommandName}CommandHandler`
 
 ## Где размещаются
 
@@ -217,3 +237,13 @@ final class CreateController extends AbstractController
 
 > 💡 В продакшн-коде рекомендуется использовать CommandBus для доставки команд, особенно при использовании Symfony
 > Messenger и очередей. Прямой вызов CommandHandler допустим для unit-тестов или простых MVP-прототипов.
+
+## Чек-лист для проведения ревью кода
+
+- [ ] Command — `final readonly class`, реализующий `CommandInterface`.
+- [ ] Command Handler выполняет одну логическую транзакцию.
+- [ ] События dispatch'ся после `flush()`.
+- [ ] Исключения внешних зависимостей обёрнуты.
+- [ ] Нет вызовов других UseCase/Handler внутри.
+- [ ] Возвращается `void`, идентификатор или `IdDto`.
+

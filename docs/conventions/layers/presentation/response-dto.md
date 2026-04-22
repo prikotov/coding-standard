@@ -1,3 +1,9 @@
+---
+name: Response DTO
+type: rule
+description: Правила создания Response DTO презентационного слоя
+---
+
 # Response DTO презентационного слоя (Presentation Response DTO)
 
 ## Определение

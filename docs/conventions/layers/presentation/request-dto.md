@@ -1,3 +1,9 @@
+---
+name: Request DTO
+type: rule
+description: Правила создания Request DTO презентационного слоя
+---
+
 # Request DTO презентационного слоя (Presentation Request DTO)
 
 ## Определение

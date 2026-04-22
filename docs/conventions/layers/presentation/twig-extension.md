@@ -1,3 +1,9 @@
+---
+name: Twig Extension
+type: rule
+description: Правила создания Twig-расширений
+---
+
 # Twig-расширение (Twig Extension)
 
 ## Определение

@@ -1,3 +1,9 @@
+---
+name: Twig Component
+type: rule
+description: Правила создания Twig-компонентов
+---
+
 # Twig-компонент (Twig Component)
 
 ## Определение

@@ -1,3 +1,9 @@
+---
+name: Спецификация
+type: rule
+description: Правила использования паттерна Specification для формализации бизнес-правил
+---
+
 # Спецификация (Specification pattern)
 
 **Спецификация ([Specification](https://martinfowler.com/apsupp/spec.pdf))** — артефакт доменного слоя, формализующий
@@ -69,3 +75,11 @@ final readonly class InviteResendAllowedSpecification
     }
 }
 ```
+
+## Чек-лист для проведения ревью кода
+
+- [ ] Specification находится в Domain-слое.
+- [ ] Specification реализует единый метод проверки (`isSatisfiedBy` или аналогичный).
+- [ ] Specification не содержит I/O и зависимостей от инфраструктуры.
+- [ ] Specification легко комбинируется с другими Specification.
+- [ ] Логика Specification покрывается unit-тестами.

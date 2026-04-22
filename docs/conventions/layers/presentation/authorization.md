@@ -1,3 +1,9 @@
+---
+name: Authorization
+type: rule
+description: Правила проверки прав презентационного слоя
+---
+
 # Проверка прав презентационного слоя (Presentation Authorization)
 
 ## Определение

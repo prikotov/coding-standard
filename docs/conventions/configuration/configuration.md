@@ -1,3 +1,9 @@
+---
+name: Конфигурация в Symfony
+type: rule
+description: Принципы конфигурирования в Symfony: пакеты, окружения, переменные окружения и сервисы
+---
+
 # Конфигурация в Symfony
 
 Этот документ описывает общие принципы конфигурирования в Symfony, включая конфигурацию пакетов, окружений, переменных окружения и сервисов.
@@ -254,6 +260,13 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 ```
+
+## Расположение
+
+- Общая конфигурация: `config/packages/`, `config/services.yaml`
+- Конфигурация модулей: `src/Module/{ModuleName}/Resource/config/`
+- Конфигурация приложений: `apps/{AppName}/config/`
+- Переменные окружения: `.env`, `.env.dist`, `.env.local`
 
 ## Лучшие практики
 

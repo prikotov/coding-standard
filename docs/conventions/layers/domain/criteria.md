@@ -1,3 +1,9 @@
+---
+name: Критерий
+type: rule
+description: Правила создания критериев для фильтрации и выборки сущностей
+---
+
 # Критерий (Criteria)
 
 **Критерий (Criteria)** - объект, инкапсулирующий условия выборки сущностей в репозитории. Используются для фильтрации,
@@ -169,7 +175,7 @@ final class PaymentFindCriteria implements PaymentCriteriaInterface, SortableCri
 }
 ```
 
-## Чек лист для проведения ревью кода
+## Чек-лист для проведения ревью кода
 
 - [ ] Интерфейс критерия лежит в `Domain/Repository/{EntityName}`.
 - [ ] Реализация находится в `Domain/Repository/{EntityName}/Criteria`.

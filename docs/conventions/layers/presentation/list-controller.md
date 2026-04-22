@@ -1,3 +1,9 @@
+---
+name: List Controller
+type: rule
+description: Правила создания контроллеров списка
+---
+
 # Контроллер списка (List Controller)
 
 ## Определение

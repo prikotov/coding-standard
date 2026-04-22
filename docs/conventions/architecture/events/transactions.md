@@ -1,4 +1,17 @@
+---
+name: События и транзакции БД
+type: rule
+description: Правила работы с доменными событиями и транзакциями базы данных
+---
+
 # События и транзакции БД
+
+## Общие правила
+
+- События dispatch'ся **после** `flush()`, когда данные уже записаны в БД.
+- Транзакциями управляет код хендлера явно через `flush()`.
+- Outbox pattern используется опционально только для критичных уведомлений.
+- Гарантия доставки — через retry_strategy Messenger.
 
 ## Обзор
 
@@ -145,3 +158,16 @@ framework:
 - [События (Event)](../../layers/application/event.md)
 - [Обработчик Команд (Command Handler)](../../layers/application/command-handler.md)
 - [Внешние сервисы](../../core-patterns/external-service.md)
+
+## Расположение
+
+- Обработчики событий: `Common\Module\{Module}\Integration\Listener\`
+- Конфигурация Messenger: `config/packages/messenger.yaml` или `src/Module/{Module}/Resource/config/messenger.yaml`
+
+## Чек-лист для проведения ревью кода
+
+- [ ] События dispatch'ся после `flush()`, а не внутри транзакции.
+- [ ] Транзакции управляются явно, без `doctrine_transaction` middleware.
+- [ ] Retry-strategy настроен для критичных событий.
+- [ ] Outbox pattern используется только при обоснованной необходимости.
+- [ ] Слушатели не выполняют долгих операций синхронно.

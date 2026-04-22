@@ -1,3 +1,9 @@
+---
+name: Validator
+type: rule
+description: Правила создания валидаторов презентационного слоя
+---
+
 # Validator презентационного слоя (Presentation Validator)
 
 ## Определение

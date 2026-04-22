@@ -1,3 +1,9 @@
+---
+name: Внешний сервис
+type: rule
+description: Правила работы с внешними сервисами, API и SDK
+---
+
 # Правила работы с внешним сервисом (External Service)
 
 **Работа с внешним сервисом** — это взаимодействие с API, SDK, облачным сервисом или другим инфраструктурным ресурсом.
@@ -162,3 +168,20 @@ final readonly class DeepSeekComponent implements DeepSeekComponentInterface
     }
 }
 ```
+
+## Расположение
+
+- Порт (интерфейс): `Common\Module\{Module}\Domain\Service\Integration\{ServiceName}Interface`
+- Компонент (реализация): `Common\Module\{Module}\Infrastructure\Component\{Vendor}\{ServiceName}Component`
+- DTO: `Common\Module\{Module}\Infrastructure\Component\{Vendor}\Dto\`
+- Маппер: `Common\Module\{Module}\Infrastructure\Component\{Vendor}\Mapper\`
+
+## Чек-лист для проведения ревью кода
+
+- [ ] Внешний сервис вызывается через Component, а не напрямую.
+- [ ] Порт (интерфейс) определён в Domain-слое.
+- [ ] Реализация зарегистрирована через Symfony DI с `@http_client`.
+- [ ] Ошибки внешнего сервиса обёрнуты в `InfrastructureException`.
+- [ ] Запросы и ответы логируются.
+- [ ] DTO используются для входных и выходных данных.
+- [ ] Секреты передаются через параметры окружения, не захардкожены.

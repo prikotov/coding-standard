@@ -1,3 +1,9 @@
+---
+name: Access Rule
+type: rule
+description: Правила создания правил доступа
+---
+
 # Правило доступа (Access Rule)
 
 ## Определение
