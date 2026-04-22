@@ -178,7 +178,7 @@ final readonly class DeepSeekComponent implements DeepSeekComponentInterface
 ## Чек-лист для проведения ревью кода
 
 - [ ] Внешний сервис вызывается через Component, а не напрямую.
-- [ ] Порт (интерфейс) определён в Domain-слое.
+- [ ] Интерфейс определён в Domain-слое.
 - [ ] Реализация зарегистрирована через Symfony DI с `@http_client`.
 - [ ] Ошибки внешнего сервиса обёрнуты в `InfrastructureException`.
 - [ ] Запросы и ответы логируются.
