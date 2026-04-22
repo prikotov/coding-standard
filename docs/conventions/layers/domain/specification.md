@@ -79,7 +79,7 @@ final readonly class InviteResendAllowedSpecification
 ## Чек-лист для проведения ревью кода
 
 - [ ] Specification находится в Domain-слое.
-- [ ] Specification реализует единый метод проверки (`isSatisfiedBy` или аналогичный).
+- [ ] Specification реализует единый метод проверки `isSatisfiedBy`.
 - [ ] Specification не содержит I/O и зависимостей от инфраструктуры.
 - [ ] Specification легко комбинируется с другими Specification.
 - [ ] Логика Specification покрывается unit-тестами.
