@@ -38,8 +38,8 @@ declare(strict_types=1);
 
 namespace Common\Module\Billing;
 
-use {AppName}\Common\Component\ModuleSystem\Extension\DoctrineInterface;
-use {AppName}\Common\Component\ModuleSystem\ModuleInterface;
+use AppName\Common\Component\ModuleSystem\Extension\DoctrineInterface;
+use AppName\Common\Component\ModuleSystem\ModuleInterface;
 use Override;
 
 final class BillingModule implements ModuleInterface, DoctrineInterface
@@ -58,7 +58,7 @@ final class BillingModule implements ModuleInterface, DoctrineInterface
 }
 ```
 
-3. Если модуль предоставляет Twig-шаблоны, переводы или дополнительные расширения, реализуйте соответствующие интерфейсы (`TwigInterface`, `TranslationInterface` и т.п.). Пример полного списка интерфейсов есть в `{AppName}\Common\Module\Billing\BillingModule`.
+3. Если модуль предоставляет Twig-шаблоны, переводы или дополнительные расширения, реализуйте соответствующие интерфейсы (`TwigInterface`, `TranslationInterface` и т.п.). Пример полного списка интерфейсов есть в `AppName\Common\Module\Billing\BillingModule`.
 4. Добавьте модуль в `config/modules.php`. Для приложений из каталога `apps/*` используйте их собственные `config/modules.php`.
 
 ## Конфигурация сервисов
@@ -80,7 +80,7 @@ services:
     autowire: true
     autoconfigure: true
 
-  {AppName}\Common\Module\Billing\:
+  AppName\Common\Module\Billing\:
     resource: '%module.billing.module_dir%/'
     exclude:
       - '%module.billing.module_dir%/Domain/Entity/'
@@ -97,7 +97,7 @@ services:
 
 ## Конфигурация работы с Doctrine-сущностями
 
-> Глава основана на `{AppName}\Common\Module\Billing\BillingModule` и `src/Module/Billing/Resource/config/services.yaml`.
+> Глава основана на `AppName\Common\Module\Billing\BillingModule` и `src/Module/Billing/Resource/config/services.yaml`.
 
 Поддержка Doctrine в модуле включает три шага:
 
@@ -119,7 +119,7 @@ services:
     }
     ```
 
-2. **Разместите сущности в `Domain/Entity`.** Сущности оформляются через атрибуты Doctrine, используют постфикс `Model` и технические трейты (`IdTrait`, `UuidTrait`, `InsTsTrait`). Пример можно найти в `{AppName}\Common\Module\Billing\Domain\Entity\PaymentModel`.
+2. **Разместите сущности в `Domain/Entity`.** Сущности оформляются через атрибуты Doctrine, используют постфикс `Model` и технические трейты (`IdTrait`, `UuidTrait`, `InsTsTrait`). Пример можно найти в `AppName\Common\Module\Billing\Domain\Entity\PaymentModel`.
 
 3. **Настройте сервисы Doctrine.**
     - Не регистрируйте сущности как сервисы в `services.yaml`. Исключения в разделе `exclude` защищают от автоконфигурации, чтобы Doctrine создавала сущности сама.
@@ -129,7 +129,7 @@ services:
 
 4. **Проверьте миграции.** Создание таблиц для новых сущностей выполняйте через `bin/console make:migration`. Скрипты миграций лежат в корне проекта внутри `migrations/`.
 
-После этих шагов сущности модуля доступны в общем EntityManager. Для тестов создавайте фикстуры или фабрики внутри модуля, а интеграционные тесты наследуйте от `{AppName}\Common\Component\Test\KernelTestCase`, чтобы контейнер модуля полностью инициализировался.
+После этих шагов сущности модуля доступны в общем EntityManager. Для тестов создавайте фикстуры или фабрики внутри модуля, а интеграционные тесты наследуйте от `AppName\Common\Component\Test\KernelTestCase`, чтобы контейнер модуля полностью инициализировался.
 
 ### Чек-лист
 

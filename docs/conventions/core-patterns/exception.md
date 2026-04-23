@@ -80,12 +80,12 @@ description: Правила проектирования и использова
 * Общие исключения:
 
   ```
-  {AppName}\Common\Exception\{Category}\{ExceptionName}Exception
+  AppName\Common\Exception\{Category}\{ExceptionName}Exception
   ```
 * Частные исключения располагаются в своём модуле, в соответствующем слое:
 
   ```
-  {AppName}\Common\Module\{ModuleName}\Domain\Exception\{ExceptionName}Exception
+  AppName\Common\Module\{ModuleName}\Domain\Exception\{ExceptionName}Exception
   ```
 * Название исключения должно явно отражать причину ошибки.
 
@@ -93,7 +93,7 @@ description: Правила проектирования и использова
 
 * В каждом слое:
     * внешние исключения перехватываются и заменяются на свои;
-    * наружу выбрасываются только исключения слоя или общие (`{AppName}\Common\Exception`).
+    * наружу выбрасываются только исключения слоя или общие (`AppName\Common\Exception`).
 * В `catch` блоках используем интерфейсы.
 * На Presentation-слое исключения маппятся в HTTP-ошибки (4xx/5xx).
 
@@ -106,7 +106,7 @@ declare(strict_types=1);
 
 namespace Common\Module\User\Domain\Exception;
 
-use {AppName}\Common\Exception\ValidationExceptionInterface;
+use AppName\Common\Exception\ValidationExceptionInterface;
 
 final class WrongPhoneFormatException extends \InvalidArgumentException implements ValidationExceptionInterface
 {

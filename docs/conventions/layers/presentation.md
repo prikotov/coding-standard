@@ -56,13 +56,13 @@ apps/{web|api|console}/src/...
 
 Сущности и точки входа, которые используются для Web-уведомлений и live-обновлений:
 
-- Controllers: `{AppName}\Web\Module\Notification\Controller\Notification\ListController`, `{AppName}\Web\Module\Notification\Controller\Notification\AcknowledgeController`
-- Route: `{AppName}\Web\Module\Notification\Route\NotificationRoute`
-- UI glue: `{AppName}\Web\Component\Notification\NotificationStreamConfigProvider`, `{AppName}\Web\Component\Twig\Extension\NotificationExtension`, `{AppName}\Web\Component\Twig\Extension\TurboStreamExtension`
+- Controllers: `AppName\Web\Module\Notification\Controller\Notification\ListController`, `AppName\Web\Module\Notification\Controller\Notification\AcknowledgeController`
+- Route: `AppName\Web\Module\Notification\Route\NotificationRoute`
+- UI glue: `AppName\Web\Component\Notification\NotificationStreamConfigProvider`, `AppName\Web\Component\Twig\Extension\NotificationExtension`, `AppName\Web\Component\Twig\Extension\TurboStreamExtension`
 - Frontend: `apps/web/assets/controllers/notification-toast_controller.js`
 - Turbo Stream template (source status): `apps/web/src/Module/Notification/Resource/templates/source/status_turbo_stream.html.twig`
-- Mercure auth cookie: `{AppName}\Web\EventSubscriber\MercureAuthorizationSubscriber`
-- Turbo Stream topics: `{AppName}\Web\Component\Turbo\TurboStreamTopicRegistry`
+- Mercure auth cookie: `AppName\Web\EventSubscriber\MercureAuthorizationSubscriber`
+- Turbo Stream topics: `AppName\Web\Component\Turbo\TurboStreamTopicRegistry`
 
 ## Дополнительно
 

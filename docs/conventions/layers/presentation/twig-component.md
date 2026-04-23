@@ -67,12 +67,12 @@ apps/web/tests/Unit/Component/Twig/<Namespace>/<Component>Test.php
 
 declare(strict_types=1);
 
-namespace {AppName}\Web\Component\Twig\Project;
+namespace AppName\Web\Component\Twig\Project;
 
 use Common\Module\Project\Application\Enum\ProjectStatusEnum;
 use InvalidArgumentException;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
-use {AppName}\Web\Component\Twig\Phoenix\Badge;
+use AppName\Web\Component\Twig\Phoenix\Badge;
 
 #[AsTwigComponent(template: 'components/Phoenix/Badge.html.twig')]
 final class StatusBadge extends Badge

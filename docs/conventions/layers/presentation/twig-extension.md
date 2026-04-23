@@ -66,7 +66,7 @@ apps/<app>/tests/Unit/Component/Twig/Extension/<Name>ExtensionTest.php
 
 declare(strict_types=1);
 
-namespace {AppName}\Web\Component\Twig\Extension;
+namespace AppName\Web\Component\Twig\Extension;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;

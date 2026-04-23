@@ -68,7 +68,7 @@ doctrine:
                 type: attribute
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Module'
-                prefix: '{AppName}\Common\Module'
+                prefix: 'AppName\Common\Module'
                 alias: App
 
 when@test:
@@ -223,18 +223,18 @@ services:
     autowire: true
     autoconfigure: true
 
-  {AppName}\Common\Module\Billing\:
+  AppName\Common\Module\Billing\:
     resource: '%module.billing.module_dir%/'
     exclude:
       - '%module.billing.module_dir%/Domain/Entity/'
       - '%module.billing.module_dir%/Resource/'
       - '%module.billing.module_dir%/BillingModule.php'
 
-  {AppName}\Common\Module\Billing\Application\Service\PaymentService:
+  AppName\Common\Module\Billing\Application\Service\PaymentService:
     arguments:
       $paymentProvider: '%module.billing.payment_provider%'
 
-  {AppName}\Common\Module\Billing\Domain\Repository\PaymentRepositoryInterface: '@{AppName}\Common\Module\Billing\Infrastructure\Repository\PaymentRepository'
+  AppName\Common\Module\Billing\Domain\Repository\PaymentRepositoryInterface: '@AppName\Common\Module\Billing\Infrastructure\Repository\PaymentRepository'
 ```
 
 Пример конфигурации сервисов приложения (`config/services.yaml`):
@@ -265,7 +265,7 @@ services:
 
 - Общая конфигурация: `config/packages/`, `config/services.yaml`
 - Конфигурация модулей: `src/Module/{ModuleName}/Resource/config/`
-- Конфигурация приложений: `apps/{AppName}/config/`
+- Конфигурация приложений: `apps/AppName/config/`
 - Переменные окружения: `.env`, `.env.dist`, `.env.local`
 
 ## Лучшие практики

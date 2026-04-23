@@ -34,7 +34,7 @@ description: Правила использования паттерна Specific
 - В слое [Domain](../domain.md):
 
 ```php
-{AppName}\Common\Module\{ModuleName}\Domain\Specification\{Context}\{SpecificationName}Specification
+AppName\Common\Module\{ModuleName}\Domain\Specification\{Context}\{SpecificationName}Specification
 ```
 
 `{Context}` используется при необходимости логически сгруппировать спецификации внутри модуля.

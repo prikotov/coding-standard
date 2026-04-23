@@ -39,13 +39,13 @@ description: Правила создания доменных контракто
 - Интерфейс в слое [Domain](../domain.md):
 
 ```php
-namespace {AppName}\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\{EntityName}RepositoryInterface
+namespace AppName\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\{EntityName}RepositoryInterface
 ```
 
 - Реализация в слое [Infrastructure](../infrastructure.md):
 
 ```php
-namespace {AppName}\Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\{EntityName}Repository
+namespace AppName\Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\{EntityName}Repository
 ```
 
 ## Пример
@@ -58,7 +58,7 @@ declare(strict_types=1);
 
 namespace Common\Module\Billing\Domain\Repository\Payment;
 
-use {AppName}\Common\Exception\NotFoundExceptionInterface;
+use AppName\Common\Exception\NotFoundExceptionInterface;
 use Common\Module\Billing\Domain\Entity\PaymentModel;
 use Common\Module\Billing\Domain\Repository\Payment\PaymentCriteriaInterface;
 use Symfony\Component\Uid\Uuid;
@@ -89,7 +89,7 @@ interface PaymentRepositoryInterface
 
 declare(strict_types=1);
 
-use {AppName}\Common\Component\Persistence\PersistenceManagerInterface;
+use AppName\Common\Component\Persistence\PersistenceManagerInterface;
 
 final readonly class InitCommandHandler
 {
@@ -138,7 +138,7 @@ declare(strict_types=1);
 
 namespace Common\Module\Health\Infrastructure\Repository\ServiceStatus;
 
-use {AppName}\Common\Exception\NotFoundException;
+use AppName\Common\Exception\NotFoundException;
 use Common\Module\Health\Domain\Entity\ServiceStatusModel;
 use Common\Module\Health\Domain\Repository\ServiceStatus\Criteria\ServiceStatusFindCriteria;
 use Common\Module\Health\Domain\Repository\ServiceStatus\ServiceStatusCriteriaInterface;

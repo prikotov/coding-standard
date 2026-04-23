@@ -44,7 +44,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/PermissionEnum.php
 
 declare(strict_types=1);
 
-namespace {AppName}\Web\Module\Project\Controller\Project\Security;
+namespace AppName\Web\Module\Project\Controller\Project\Security;
 
 enum ProjectPermissionEnum: string
 {
