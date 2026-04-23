@@ -48,8 +48,8 @@ declare(strict_types=1);
 namespace ProjectName\Web\Module\Project\Controller\Project\Security;
 
 use ProjectName\Common\Application\Component\QueryBus\QueryBusComponentInterface;
-use Common\Module\Project\Application\UseCase\Query\ProjectUser\CheckMember\CheckMemberQuery;
-use Common\Module\Project\Application\UseCase\Query\ProjectUser\CheckOwner\CheckOwnerQuery;
+use ProjectName\Common\Module\Project\Application\UseCase\Query\ProjectUser\CheckMember\CheckMemberQuery;
+use ProjectName\Common\Module\Project\Application\UseCase\Query\ProjectUser\CheckOwner\CheckOwnerQuery;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Uid\Uuid;

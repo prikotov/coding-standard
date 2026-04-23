@@ -154,13 +154,13 @@ when@dev:
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Integration\Component\TBusiness;
+namespace ProjectName\Common\Module\Billing\Integration\Component\TBusiness;
 
 use ProjectName\Common\Exception\InfrastructureException;
-use Common\Module\Billing\Integration\Component\TBusiness\Dto\InitRequestDto;
-use Common\Module\Billing\Integration\Component\TBusiness\Dto\InitResponseDto;
-use Common\Module\Billing\Integration\Component\TBusiness\Mapper\InitRequestMapper;
-use Common\Module\Billing\Integration\Component\TBusiness\Mapper\InitResponseMapper;
+use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Dto\InitRequestDto;
+use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Dto\InitResponseDto;
+use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Mapper\InitRequestMapper;
+use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Mapper\InitResponseMapper;
 use Override;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;

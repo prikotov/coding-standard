@@ -123,9 +123,9 @@ Map-класс для сопоставления enum'ов разных сист
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Domain\Map;
+namespace ProjectName\Common\Module\Billing\Domain\Map;
 
-use Common\Module\Billing\Domain\Enum\PaymentStatusEnum;
+use ProjectName\Common\Module\Billing\Domain\Enum\PaymentStatusEnum;
 use External\Payment\Enum\ExternalPaymentStatusEnum;
 use OutOfBoundsException;
 

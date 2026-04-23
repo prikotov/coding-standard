@@ -102,7 +102,7 @@ trait SortableCriteriaTrait
 
 declare(strict_types=1);
 
-namespace Common\Module\User\Domain\Repository\User\Criteria;
+namespace ProjectName\Common\Module\User\Domain\Repository\User\Criteria;
 
 use ProjectName\Common\Component\Repository\CriteriaWithLimitInterface;
 use ProjectName\Common\Component\Repository\CriteriaWithOffsetInterface;
@@ -110,7 +110,7 @@ use ProjectName\Common\Component\Repository\SortableCriteriaInterface;
 use ProjectName\Common\Component\Repository\Trait\CriteriaWithLimitTrait;
 use ProjectName\Common\Component\Repository\Trait\CriteriaWithOffsetTrait;
 use ProjectName\Common\Component\Repository\Trait\SortableCriteriaTrait;
-use Common\Module\User\Domain\Repository\User\UserCriteriaInterface;
+use ProjectName\Common\Module\User\Domain\Repository\User\UserCriteriaInterface;
 
 final class UserFindCriteria implements
     UserCriteriaInterface,

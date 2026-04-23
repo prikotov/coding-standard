@@ -88,8 +88,8 @@ declare(strict_types=1);
 
 namespace ProjectName\Web\Module\Project\Wrapper;
 
-use Common\Module\Project\Application\Dto\ProjectDto;
-use Common\Module\Project\Application\Enum\ProjectStatusEnum;
+use ProjectName\Common\Module\Project\Application\Dto\ProjectDto;
+use ProjectName\Common\Module\Project\Application\Enum\ProjectStatusEnum;
 
 final readonly class ProjectDisplayWrapper
 {
@@ -151,8 +151,8 @@ declare(strict_types=1);
 namespace ProjectName\Web\Module\Project\Form;
 
 use ProjectName\Common\Application\Component\QueryBus\QueryBusComponentInterface;
-use Common\Module\Project\Application\Dto\ProjectDto;
-use Common\Module\Project\Application\UseCase\Query\Project\Find\FindQuery;
+use ProjectName\Common\Module\Project\Application\Dto\ProjectDto;
+use ProjectName\Common\Module\Project\Application\UseCase\Query\Project\Find\FindQuery;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -202,9 +202,9 @@ final readonly class ProjectSelectFormType extends AbstractType
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Infrastructure\Wrapper;
+namespace ProjectName\Common\Module\Project\Infrastructure\Wrapper;
 
-use Common\Module\Project\Domain\Entity\ProjectModel;
+use ProjectName\Common\Module\Project\Domain\Entity\ProjectModel;
 
 final readonly class ProjectDiskUsageWrapper
 {

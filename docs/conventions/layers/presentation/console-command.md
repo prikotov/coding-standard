@@ -56,8 +56,8 @@ use ProjectName\Common\Application\Component\CommandBus\CommandBusComponentInter
 use ProjectName\Common\Application\Component\QueryBus\QueryBusComponentInterface;
 use ProjectName\Common\Application\Dto\PaginationDto;
 use ProjectName\Common\Exception\NotFoundExceptionInterface;
-use Common\Module\Source\Application\UseCase\Command\Source\Download\DownloadCommand as ApplicationDownloadCommand;
-use Common\Module\Source\Application\UseCase\Query\Source\GetForDownload\GetForDownloadQuery;
+use ProjectName\Common\Module\Source\Application\UseCase\Command\Source\Download\DownloadCommand as ApplicationDownloadCommand;
+use ProjectName\Common\Module\Source\Application\UseCase\Query\Source\GetForDownload\GetForDownloadQuery;
 use Exception;
 use Override;
 use Symfony\Component\Console\Attribute\AsCommand;

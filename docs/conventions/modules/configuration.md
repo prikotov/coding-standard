@@ -36,7 +36,7 @@ src/Module/{ModuleName}/
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing;
+namespace ProjectName\Common\Module\Billing;
 
 use ProjectName\Common\Component\ModuleSystem\Extension\DoctrineInterface;
 use ProjectName\Common\Component\ModuleSystem\ModuleInterface;

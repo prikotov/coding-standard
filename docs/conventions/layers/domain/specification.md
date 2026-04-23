@@ -54,7 +54,7 @@ description: Правила использования паттерна Specific
 
 declare(strict_types=1);
 
-namespace Common\Module\User\Domain\Specification\TeamMembership;
+namespace ProjectName\Common\Module\User\Domain\Specification\TeamMembership;
 
 use DateTimeImmutable;
 

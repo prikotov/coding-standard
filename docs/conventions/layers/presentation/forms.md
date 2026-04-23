@@ -51,7 +51,7 @@ declare(strict_types=1);
 
 namespace ProjectName\Web\Module\Billing\Form\Plan;
 
-use Common\Module\Billing\Application\Enum\PlanStatusEnum;
+use ProjectName\Common\Module\Billing\Application\Enum\PlanStatusEnum;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -195,7 +195,7 @@ declare(strict_types=1);
 namespace ProjectName\Web\Module\Project\Form\Task;
 
 use ProjectName\Common\Application\Component\QueryBus\QueryBusComponentInterface;
-use Common\Module\Project\Application\UseCase\Query\Project\FindForSelect\FindForSelectQuery;
+use ProjectName\Common\Module\Project\Application\UseCase\Query\Project\FindForSelect\FindForSelectQuery;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

@@ -90,9 +90,9 @@ List-класс для ролей пользователей проекта (Dom
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Domain\List;
+namespace ProjectName\Common\Module\Project\Domain\List;
 
-use Common\Module\Project\Domain\Enum\ProjectUserTypeEnum;
+use ProjectName\Common\Module\Project\Domain\Enum\ProjectUserTypeEnum;
 
 final class ProjectUserRolesList
 {

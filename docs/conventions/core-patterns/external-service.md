@@ -99,14 +99,14 @@ services:
 
 declare(strict_types=1);
 
-namespace Common\Module\Llm\Infrastructure\Component\DeepSeek;
+namespace ProjectName\Common\Module\Llm\Infrastructure\Component\DeepSeek;
 
 use ProjectName\Common\Exception\InfrastructureException;
-use Common\Helper\JsonHelper;
-use Common\Module\Llm\Infrastructure\Component\DeepSeek\Dto\CompletionsRequestDto;
-use Common\Module\Llm\Infrastructure\Component\DeepSeek\Dto\CompletionsResponseDto;
-use Common\Module\Llm\Infrastructure\Component\DeepSeek\Mapper\CompletionsRequestMapper;
-use Common\Module\Llm\Infrastructure\Component\DeepSeek\Mapper\CompletionsResponseMapper;
+use ProjectName\Common\Helper\JsonHelper;
+use ProjectName\Common\Module\Llm\Infrastructure\Component\DeepSeek\Dto\CompletionsRequestDto;
+use ProjectName\Common\Module\Llm\Infrastructure\Component\DeepSeek\Dto\CompletionsResponseDto;
+use ProjectName\Common\Module\Llm\Infrastructure\Component\DeepSeek\Mapper\CompletionsRequestMapper;
+use ProjectName\Common\Module\Llm\Infrastructure\Component\DeepSeek\Mapper\CompletionsResponseMapper;
 use Override;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;

@@ -104,7 +104,7 @@ description: Правила проектирования и использова
 
 declare(strict_types=1);
 
-namespace Common\Module\User\Domain\Exception;
+namespace ProjectName\Common\Module\User\Domain\Exception;
 
 use ProjectName\Common\Exception\ValidationExceptionInterface;
 

@@ -126,9 +126,9 @@ DTO результата выборки проекта с вложенным DTO
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\Dto;
+namespace ProjectName\Common\Module\Project\Application\Dto;
 
-use Common\Module\Project\Application\Enum\ProjectStatusEnum;
+use ProjectName\Common\Module\Project\Application\Enum\ProjectStatusEnum;
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 
@@ -166,9 +166,9 @@ DTO запроса к внешнему компоненту (пример для
 
 declare(strict_types=1);
 
-namespace Common\Module\SpeechToText\Infrastructure\Component\WhisperCppServer\Dto;
+namespace ProjectName\Common\Module\SpeechToText\Infrastructure\Component\WhisperCppServer\Dto;
 
-use Common\Module\SpeechToText\Infrastructure\Component\WhisperCppServer\Enum\ResponseFormatEnum;
+use ProjectName\Common\Module\SpeechToText\Infrastructure\Component\WhisperCppServer\Enum\ResponseFormatEnum;
 
 final readonly class InferenceRequestDto
 {

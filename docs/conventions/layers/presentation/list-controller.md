@@ -52,8 +52,8 @@ declare(strict_types=1);
 namespace ProjectName\Web\Module\Billing\Controller\Plan;
 
 use ProjectName\Common\Application\Component\QueryBus\QueryBusComponentInterface;
-use Common\Module\Billing\Application\Enum\PlanStatusEnum;
-use Common\Module\Billing\Application\UseCase\Query\Plan\Find\FindQuery;
+use ProjectName\Common\Module\Billing\Application\Enum\PlanStatusEnum;
+use ProjectName\Common\Module\Billing\Application\UseCase\Query\Plan\Find\FindQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

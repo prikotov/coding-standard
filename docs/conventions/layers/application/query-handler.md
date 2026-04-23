@@ -48,12 +48,12 @@ description: Правила создания и использования об�
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\UseCase\Query\Project\Find;
+namespace ProjectName\Common\Module\Project\Application\UseCase\Query\Project\Find;
 
 use ProjectName\Common\Application\Dto\PaginationDto;
 use ProjectName\Common\Application\Dto\SortDto;
 use ProjectName\Common\Application\Query\QueryInterface;
-use Common\Module\Project\Application\Enum\ProjectStatusEnum;
+use ProjectName\Common\Module\Project\Application\Enum\ProjectStatusEnum;
 use Symfony\Component\Uid\Uuid;
 
 /**
@@ -80,15 +80,15 @@ final readonly class FindQuery implements QueryInterface
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\UseCase\Query\Project\Find;
+namespace ProjectName\Common\Module\Project\Application\UseCase\Query\Project\Find;
 
 use ProjectName\Common\Application\Dto\SortDto;
 use ProjectName\Common\Application\Enum\SortDirectionEnum;
 use ProjectName\Common\Application\Mapper\SortDtoToOrderMapper;
-use Common\Module\Project\Application\Mapper\ApplicationToDomainProjectStatusMapper;
-use Common\Module\Project\Application\Mapper\ProjectDtoMapper;
-use Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
-use Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
+use ProjectName\Common\Module\Project\Application\Mapper\ApplicationToDomainProjectStatusMapper;
+use ProjectName\Common\Module\Project\Application\Mapper\ProjectDtoMapper;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -147,9 +147,9 @@ declare(strict_types=1);
 namespace ProjectName\Web\Module\Project\Controller\Project;
 
 use ProjectName\Common\Application\Component\QueryBus\QueryBusComponentInterface;
-use Common\Module\Project\Application\Enum\ProjectStatusEnum as ApplicationProjectStatusEnum;
-use Common\Module\Project\Application\UseCase\Query\Project\CountByStatus\CountByStatusQuery;
-use Common\Module\Project\Application\UseCase\Query\Project\Find\FindQuery;
+use ProjectName\Common\Module\Project\Application\Enum\ProjectStatusEnum as ApplicationProjectStatusEnum;
+use ProjectName\Common\Module\Project\Application\UseCase\Query\Project\CountByStatus\CountByStatusQuery;
+use ProjectName\Common\Module\Project\Application\UseCase\Query\Project\Find\FindQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

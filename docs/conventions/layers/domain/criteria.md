@@ -62,7 +62,7 @@ namespace {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{En
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Domain\Repository\Payment\Criteria;
+namespace ProjectName\Common\Module\Billing\Domain\Repository\Payment\Criteria;
 
 use ProjectName\Common\Component\Repository\CriteriaWithLimitInterface;
 use ProjectName\Common\Component\Repository\CriteriaWithOffsetInterface;
@@ -70,8 +70,8 @@ use ProjectName\Common\Component\Repository\SortableCriteriaInterface;
 use ProjectName\Common\Component\Repository\Trait\CriteriaWithLimitTrait;
 use ProjectName\Common\Component\Repository\Trait\CriteriaWithOffsetTrait;
 use ProjectName\Common\Component\Repository\Trait\SortableCriteriaTrait;
-use Common\Module\Billing\Domain\Enum\CurrencyEnum;
-use Common\Module\Billing\Domain\Repository\Payment\PaymentCriteriaInterface;
+use ProjectName\Common\Module\Billing\Domain\Enum\CurrencyEnum;
+use ProjectName\Common\Module\Billing\Domain\Repository\Payment\PaymentCriteriaInterface;
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 

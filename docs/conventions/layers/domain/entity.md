@@ -80,14 +80,14 @@ description: Правила проектирования доменных сущ
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Domain\Entity;
+namespace ProjectName\Common\Module\Billing\Domain\Entity;
 
 use ProjectName\Common\Component\Clock\ClockFactory;
 use ProjectName\Common\Component\Doctrine\Model\IdModelInterface;
 use ProjectName\Common\Component\Doctrine\Model\InsTsModelInterface;
 use ProjectName\Common\Component\Doctrine\Model\UuidModelInterface;
 use ProjectName\Common\Exception\DomainException;
-use Common\Module\Billing\Domain\Enum\PaymentStatusEnum;
+use ProjectName\Common\Module\Billing\Domain\Enum\PaymentStatusEnum;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Uid\Uuid;

@@ -57,8 +57,8 @@ declare(strict_types=1);
 namespace ProjectName\Web\Module\Llm\Controller\Provider;
 
 use ProjectName\Common\Application\Component\CommandBus\CommandBusComponentInterface;
-use Common\Module\Llm\Application\Enum\ProviderEnum as ApplicationProviderEnum;
-use Common\Module\Llm\Application\UseCase\Command\Provider\Create\CreateCommand;
+use ProjectName\Common\Module\Llm\Application\Enum\ProviderEnum as ApplicationProviderEnum;
+use ProjectName\Common\Module\Llm\Application\UseCase\Command\Provider\Create\CreateCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -56,11 +56,11 @@ namespace {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{En
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Domain\Repository\Payment;
+namespace ProjectName\Common\Module\Billing\Domain\Repository\Payment;
 
 use ProjectName\Common\Exception\NotFoundExceptionInterface;
-use Common\Module\Billing\Domain\Entity\PaymentModel;
-use Common\Module\Billing\Domain\Repository\Payment\PaymentCriteriaInterface;
+use ProjectName\Common\Module\Billing\Domain\Entity\PaymentModel;
+use ProjectName\Common\Module\Billing\Domain\Repository\Payment\PaymentCriteriaInterface;
 use Symfony\Component\Uid\Uuid;
 
 interface PaymentRepositoryInterface
@@ -136,13 +136,13 @@ final readonly class InitCommandHandler
 
 declare(strict_types=1);
 
-namespace Common\Module\Health\Infrastructure\Repository\ServiceStatus;
+namespace ProjectName\Common\Module\Health\Infrastructure\Repository\ServiceStatus;
 
 use ProjectName\Common\Exception\NotFoundException;
-use Common\Module\Health\Domain\Entity\ServiceStatusModel;
-use Common\Module\Health\Domain\Repository\ServiceStatus\Criteria\ServiceStatusFindCriteria;
-use Common\Module\Health\Domain\Repository\ServiceStatus\ServiceStatusCriteriaInterface;
-use Common\Module\Health\Domain\Repository\ServiceStatus\ServiceStatusRepositoryInterface;
+use ProjectName\Common\Module\Health\Domain\Entity\ServiceStatusModel;
+use ProjectName\Common\Module\Health\Domain\Repository\ServiceStatus\Criteria\ServiceStatusFindCriteria;
+use ProjectName\Common\Module\Health\Domain\Repository\ServiceStatus\ServiceStatusCriteriaInterface;
+use ProjectName\Common\Module\Health\Domain\Repository\ServiceStatus\ServiceStatusRepositoryInterface;
 use Override;
 use Symfony\Component\Uid\Uuid;
 

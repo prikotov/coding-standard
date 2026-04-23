@@ -92,7 +92,7 @@ Common\\Module\\{ModuleName}\\Infrastructure\\...\\ValueObject\\{Name}Vo
 
 declare(strict_types=1);
 
-namespace Common\Module\User\Domain\ValueObject;
+namespace ProjectName\Common\Module\User\Domain\ValueObject;
 
 use InvalidArgumentException;
 

@@ -57,7 +57,7 @@ description: Правила создания и использования об�
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\UseCase\Command\Project\Create;
+namespace ProjectName\Common\Module\Project\Application\UseCase\Command\Project\Create;
 
 use ProjectName\Common\Application\Command\CommandInterface;
 use Symfony\Component\Uid\Uuid;
@@ -84,20 +84,20 @@ final readonly class CreateCommand implements CommandInterface
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\UseCase\Command\Project\Create;
+namespace ProjectName\Common\Module\Project\Application\UseCase\Command\Project\Create;
 
 use ProjectName\Common\Component\Event\EventBusInterface;
 use ProjectName\Common\Component\Persistence\PersistenceManagerInterface;
 use ProjectName\Common\Exception\ConflictException;
 use ProjectName\Common\Exception\NotFoundExceptionInterface;
-use Common\Module\Project\Application\Event\Project\CreatedEvent;
-use Common\Module\Project\Domain\Enum\ProjectStatusEnum;
-use Common\Module\Project\Domain\Enum\ProjectUserTypeEnum;
-use Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
-use Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
-use Common\Module\Project\Domain\Entity\ProjectModel;
-use Common\Module\Project\Domain\Entity\ProjectUserModel;
-use Common\Module\User\Domain\Repository\User\UserRepositoryInterface;
+use ProjectName\Common\Module\Project\Application\Event\Project\CreatedEvent;
+use ProjectName\Common\Module\Project\Domain\Enum\ProjectStatusEnum;
+use ProjectName\Common\Module\Project\Domain\Enum\ProjectUserTypeEnum;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
+use ProjectName\Common\Module\Project\Domain\Entity\ProjectModel;
+use ProjectName\Common\Module\Project\Domain\Entity\ProjectUserModel;
+use ProjectName\Common\Module\User\Domain\Repository\User\UserRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Uid\Uuid;
 
@@ -169,7 +169,7 @@ declare(strict_types=1);
 namespace ProjectName\Web\Module\Project\Controller\Project;
 
 use ProjectName\Common\Application\Component\CommandBus\CommandBusComponentInterface;
-use Common\Module\Project\Application\UseCase\Command\Project\Create\CreateCommand;
+use ProjectName\Common\Module\Project\Application\UseCase\Command\Project\Create\CreateCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

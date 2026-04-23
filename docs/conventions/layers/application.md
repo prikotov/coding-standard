@@ -228,7 +228,7 @@ Presentation → Application → Domain
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\UseCase\Command\Project\Create;
+namespace ProjectName\Common\Module\Project\Application\UseCase\Command\Project\Create;
 
 use ProjectName\Common\Application\Command\CommandInterface;
 use Symfony\Component\Uid\Uuid;
@@ -255,20 +255,20 @@ final readonly class CreateCommand implements CommandInterface
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\UseCase\Command\Project\Create;
+namespace ProjectName\Common\Module\Project\Application\UseCase\Command\Project\Create;
 
 use ProjectName\Common\Component\Event\EventBusInterface;
 use ProjectName\Common\Component\Persistence\PersistenceManagerInterface;
 use ProjectName\Common\Exception\ConflictException;
 use ProjectName\Common\Exception\NotFoundExceptionInterface;
-use Common\Module\Project\Application\Event\Project\CreatedEvent;
-use Common\Module\Project\Domain\Enum\ProjectStatusEnum;
-use Common\Module\Project\Domain\Enum\ProjectUserTypeEnum;
-use Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
-use Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
-use Common\Module\Project\Domain\Entity\ProjectModel;
-use Common\Module\Project\Domain\Entity\ProjectUserModel;
-use Common\Module\User\Domain\Repository\User\UserRepositoryInterface;
+use ProjectName\Common\Module\Project\Application\Event\Project\CreatedEvent;
+use ProjectName\Common\Module\Project\Domain\Enum\ProjectStatusEnum;
+use ProjectName\Common\Module\Project\Domain\Enum\ProjectUserTypeEnum;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
+use ProjectName\Common\Module\Project\Domain\Entity\ProjectModel;
+use ProjectName\Common\Module\Project\Domain\Entity\ProjectUserModel;
+use ProjectName\Common\Module\User\Domain\Repository\User\UserRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Uid\Uuid;
 
@@ -347,12 +347,12 @@ final readonly class CreateCommandHandler
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\UseCase\Query\Project\Find;
+namespace ProjectName\Common\Module\Project\Application\UseCase\Query\Project\Find;
 
 use ProjectName\Common\Application\Dto\PaginationDto;
 use ProjectName\Common\Application\Dto\SortDto;
 use ProjectName\Common\Application\Query\QueryInterface;
-use Common\Module\Project\Application\Enum\ProjectStatusEnum;
+use ProjectName\Common\Module\Project\Application\Enum\ProjectStatusEnum;
 use Symfony\Component\Uid\Uuid;
 
 /**
@@ -379,15 +379,15 @@ final readonly class FindQuery implements QueryInterface
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\UseCase\Query\Project\Find;
+namespace ProjectName\Common\Module\Project\Application\UseCase\Query\Project\Find;
 
 use ProjectName\Common\Application\Dto\SortDto;
 use ProjectName\Common\Application\Enum\SortDirectionEnum;
 use ProjectName\Common\Application\Mapper\SortDtoToOrderMapper;
-use Common\Module\Project\Application\Mapper\ApplicationToDomainProjectStatusMapper;
-use Common\Module\Project\Application\Mapper\ProjectDtoMapper;
-use Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
-use Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
+use ProjectName\Common\Module\Project\Application\Mapper\ApplicationToDomainProjectStatusMapper;
+use ProjectName\Common\Module\Project\Application\Mapper\ProjectDtoMapper;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler] // Подробности: https://symfony.com/doc/current/messenger.html#handling-messages-synchronously-or-asynchronously
@@ -449,9 +449,9 @@ final readonly class FindQueryHandler
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\Dto;
+namespace ProjectName\Common\Module\Project\Application\Dto;
 
-use Common\Module\Project\Application\Enum\ProjectStatusEnum;
+use ProjectName\Common\Module\Project\Application\Enum\ProjectStatusEnum;
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 
@@ -478,13 +478,13 @@ final readonly class ProjectDto
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\Mapper;
+namespace ProjectName\Common\Module\Project\Application\Mapper;
 
-use Common\Module\Project\Application\Dto\CreatorDto;
-use Common\Module\Project\Application\Dto\ProjectDto;
-use Common\Module\Project\Application\Enum\ProjectStatusEnum as ApplicationProjectStatusEnum;
-use Common\Module\Project\Domain\Entity\ProjectModel;
-use Common\Module\Project\Domain\Enum\ProjectStatusEnum as DomainProjectStatusEnum;
+use ProjectName\Common\Module\Project\Application\Dto\CreatorDto;
+use ProjectName\Common\Module\Project\Application\Dto\ProjectDto;
+use ProjectName\Common\Module\Project\Application\Enum\ProjectStatusEnum as ApplicationProjectStatusEnum;
+use ProjectName\Common\Module\Project\Domain\Entity\ProjectModel;
+use ProjectName\Common\Module\Project\Domain\Enum\ProjectStatusEnum as DomainProjectStatusEnum;
 
 final readonly class ProjectDtoMapper
 {

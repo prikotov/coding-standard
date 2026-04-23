@@ -69,7 +69,7 @@ declare(strict_types=1);
 
 namespace ProjectName\Web\Component\Twig\Project;
 
-use Common\Module\Project\Application\Enum\ProjectStatusEnum;
+use ProjectName\Common\Module\Project\Application\Enum\ProjectStatusEnum;
 use InvalidArgumentException;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use ProjectName\Web\Component\Twig\Phoenix\Badge;

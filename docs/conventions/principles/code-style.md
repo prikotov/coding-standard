@@ -368,14 +368,14 @@ public function createPaymentWithConversion(
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Application\Service;
+namespace ProjectName\Common\Module\Billing\Application\Service;
 
 use ProjectName\Common\Exception\DomainException;
-use Common\Module\Billing\Domain\Entity\PaymentModel;
-use Common\Module\Billing\Domain\Enum\PaymentStatusEnum;
-use Common\Module\Billing\Domain\Repository\Payment\PaymentRepositoryInterface;
-use Common\Module\User\Domain\Entity\UserModel;
-use Common\Module\User\Domain\Repository\User\UserRepositoryInterface;
+use ProjectName\Common\Module\Billing\Domain\Entity\PaymentModel;
+use ProjectName\Common\Module\Billing\Domain\Enum\PaymentStatusEnum;
+use ProjectName\Common\Module\Billing\Domain\Repository\Payment\PaymentRepositoryInterface;
+use ProjectName\Common\Module\User\Domain\Entity\UserModel;
+use ProjectName\Common\Module\User\Domain\Repository\User\UserRepositoryInterface;
 use Symfony\Component\Uid\Uuid;
 
 /**
@@ -445,10 +445,10 @@ final readonly class PaymentService
 // 6. Избыточные комментарии
 // 7. Нарушено форматирование (длинные строки)
 
-namespace Common\Module\Billing\Application\Service;
+namespace ProjectName\Common\Module\Billing\Application\Service;
 
-use Common\Module\Billing\Domain\Entity\PaymentModel;
-use Common\Module\Billing\Domain\Repository\Payment\PaymentRepositoryInterface;
+use ProjectName\Common\Module\Billing\Domain\Entity\PaymentModel;
+use ProjectName\Common\Module\Billing\Domain\Repository\Payment\PaymentRepositoryInterface;
 
 class paymentService // ❌ Имя класса не в PascalCase
 {
@@ -483,7 +483,7 @@ class paymentService // ❌ Имя класса не в PascalCase
 
 ```php
 // ❌ Плохо
-namespace Common\Module\Billing\Application\Service;
+namespace ProjectName\Common\Module\Billing\Application\Service;
 
 class PaymentService
 {
@@ -493,7 +493,7 @@ class PaymentService
 // ✅ Хорошо
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Application\Service;
+namespace ProjectName\Common\Module\Billing\Application\Service;
 
 class PaymentService
 {

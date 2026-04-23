@@ -57,7 +57,7 @@ description: Правила использования нативных PHP-пе
 
 declare(strict_types=1);
 
-namespace Common\Module\Chat\Domain\Enum;
+namespace ProjectName\Common\Module\Chat\Domain\Enum;
 
 enum ChatMessageRoleEnum: int
 {
@@ -77,7 +77,7 @@ declare(strict_types=1);
 
 namespace ProjectName\Web\Component\Twig\Project;
 
-use Common\Module\Project\Application\Enum\ProjectStatusEnum;
+use ProjectName\Common\Module\Project\Application\Enum\ProjectStatusEnum;
 use InvalidArgumentException;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use ProjectName\Web\Component\Twig\Phoenix\Badge;

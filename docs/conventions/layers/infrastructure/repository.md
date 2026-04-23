@@ -39,14 +39,14 @@ description: Правила реализации репозиториев
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Infrastructure\Repository\Project;
+namespace ProjectName\Common\Module\Project\Infrastructure\Repository\Project;
 
 use ProjectName\Common\Exception\InfrastructureException;
 use ProjectName\Common\Exception\NotFoundException;
-use Common\Module\Project\Domain\Entity\ProjectModel;
-use Common\Module\Project\Domain\Repository\Project\ProjectCriteriaInterface;
-use Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
-use Common\Module\Project\Infrastructure\Repository\Project\Criteria\CriteriaMapper;
+use ProjectName\Common\Module\Project\Domain\Entity\ProjectModel;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\ProjectCriteriaInterface;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
+use ProjectName\Common\Module\Project\Infrastructure\Repository\Project\Criteria\CriteriaMapper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
