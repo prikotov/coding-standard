@@ -265,7 +265,7 @@ services:
 
 - Общая конфигурация: `config/packages/`, `config/services.yaml`
 - Конфигурация модулей: `src/Module/{ModuleName}/Resource/config/`
-- Конфигурация приложений: `apps/AppName/config/`
+- Конфигурация приложений: `apps/<app_name>/config/`
 - Переменные окружения: `.env`, `.env.dist`, `.env.local`
 
 ## Лучшие практики
