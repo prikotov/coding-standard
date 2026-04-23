@@ -79,13 +79,13 @@ services:
                 }
             }
 
-    Common\Module\Llm\Infrastructure\Component\DeepSeek\DeepSeekComponent:
+    {AppName}\Common\Module\Llm\Infrastructure\Component\DeepSeek\DeepSeekComponent:
         arguments:
             $httpClient: '@http_client.deepseek'
             $baseUrl: '%module.llm.deepseek.base_url%'
             $logger: '@monolog.logger.deepseek'
 
-    Common\Module\Llm\Infrastructure\Component\Fireworks\FireworksComponent:
+    {AppName}\Common\Module\Llm\Infrastructure\Component\Fireworks\FireworksComponent:
         arguments:
             $httpClient: '@http_client.fireworks'
             $baseUrl: '%module.llm.fireworks.base_url%'
@@ -101,7 +101,7 @@ declare(strict_types=1);
 
 namespace Common\Module\Llm\Infrastructure\Component\DeepSeek;
 
-use Common\Exception\InfrastructureException;
+use {AppName}\Common\Exception\InfrastructureException;
 use Common\Helper\JsonHelper;
 use Common\Module\Llm\Infrastructure\Component\DeepSeek\Dto\CompletionsRequestDto;
 use Common\Module\Llm\Infrastructure\Component\DeepSeek\Dto\CompletionsResponseDto;

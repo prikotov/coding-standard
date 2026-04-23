@@ -2,6 +2,11 @@
 #
 # Implements deterministic verification of architectural rules from docs/conventions/.
 #
+# Namespace pattern: {AppName}\{AppGroup}\Module\{ModuleName}\{Layer}\...
+# Where:
+#   {AppName}  — корневой namespace проекта (опционально, зависит от PSR-4 маппинга)
+#   {AppGroup} — Common (разделяемый код) или имя приложения (Web, Api, Console, Blog)
+#
 # See README.md for layer descriptions and dependency rules.
 
 deptrac:

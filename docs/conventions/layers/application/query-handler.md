@@ -25,8 +25,8 @@ description: Правила создания и использования об�
 - [Application](../application.md)
 
 ```php
-Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{QueryName}Query
-Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{QueryName}QueryHandler
+{AppName}\Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{QueryName}Query
+{AppName}\Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{QueryName}QueryHandler
 ```
 
 ## Как создаем
@@ -50,9 +50,9 @@ declare(strict_types=1);
 
 namespace Common\Module\Project\Application\UseCase\Query\Project\Find;
 
-use Common\Application\Dto\PaginationDto;
-use Common\Application\Dto\SortDto;
-use Common\Application\Query\QueryInterface;
+use {AppName}\Common\Application\Dto\PaginationDto;
+use {AppName}\Common\Application\Dto\SortDto;
+use {AppName}\Common\Application\Query\QueryInterface;
 use Common\Module\Project\Application\Enum\ProjectStatusEnum;
 use Symfony\Component\Uid\Uuid;
 
@@ -82,9 +82,9 @@ declare(strict_types=1);
 
 namespace Common\Module\Project\Application\UseCase\Query\Project\Find;
 
-use Common\Application\Dto\SortDto;
-use Common\Application\Enum\SortDirectionEnum;
-use Common\Application\Mapper\SortDtoToOrderMapper;
+use {AppName}\Common\Application\Dto\SortDto;
+use {AppName}\Common\Application\Enum\SortDirectionEnum;
+use {AppName}\Common\Application\Mapper\SortDtoToOrderMapper;
 use Common\Module\Project\Application\Mapper\ApplicationToDomainProjectStatusMapper;
 use Common\Module\Project\Application\Mapper\ProjectDtoMapper;
 use Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
@@ -144,9 +144,9 @@ final readonly class FindQueryHandler
 
 declare(strict_types=1);
 
-namespace Web\Module\Project\Controller\Project;
+namespace {AppName}\Web\Module\Project\Controller\Project;
 
-use Common\Application\Component\QueryBus\QueryBusComponentInterface;
+use {AppName}\Common\Application\Component\QueryBus\QueryBusComponentInterface;
 use Common\Module\Project\Application\Enum\ProjectStatusEnum as ApplicationProjectStatusEnum;
 use Common\Module\Project\Application\UseCase\Query\Project\CountByStatus\CountByStatusQuery;
 use Common\Module\Project\Application\UseCase\Query\Project\Find\FindQuery;
@@ -158,16 +158,16 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Web\Component\Pagination\PaginationRequestDto as ComponentPaginationRequestDto;
-use Web\Component\Pagination\PaginationRequestToApplicationDtoMapper;
-use Web\Module\Project\Security\Project\ActionEnum as ProjectActionEnum;
-use Web\Module\Project\Controller\Project\Request\PaginationRequestDto;
-use Web\Module\Project\Form\Project\FilterFormModel;
-use Web\Module\Project\Form\Project\FilterFormType;
-use Web\Module\Project\List\FastFilterProjectStatusList;
-use Web\Module\Project\Mapper\ProjectStatusToTextMapper;
-use Web\Module\Project\Route\ProjectRoute;
-use Web\Security\UserInterface;
+use {AppName}\Web\Component\Pagination\PaginationRequestDto as ComponentPaginationRequestDto;
+use {AppName}\Web\Component\Pagination\PaginationRequestToApplicationDtoMapper;
+use {AppName}\Web\Module\Project\Security\Project\ActionEnum as ProjectActionEnum;
+use {AppName}\Web\Module\Project\Controller\Project\Request\PaginationRequestDto;
+use {AppName}\Web\Module\Project\Form\Project\FilterFormModel;
+use {AppName}\Web\Module\Project\Form\Project\FilterFormType;
+use {AppName}\Web\Module\Project\List\FastFilterProjectStatusList;
+use {AppName}\Web\Module\Project\Mapper\ProjectStatusToTextMapper;
+use {AppName}\Web\Module\Project\Route\ProjectRoute;
+use {AppName}\Web\Security\UserInterface;
 
 #[Route(
     path: ProjectRoute::LIST_PATH,

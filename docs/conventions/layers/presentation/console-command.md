@@ -50,12 +50,12 @@ apps/<app>/src/Module/<ModuleName>/Command/<SubjectName>/<ActionName>Command.php
 
 declare(strict_types=1);
 
-namespace Console\Module\Source\Command;
+namespace {AppName}\Console\Module\Source\Command;
 
-use Common\Application\Component\CommandBus\CommandBusComponentInterface;
-use Common\Application\Component\QueryBus\QueryBusComponentInterface;
-use Common\Application\Dto\PaginationDto;
-use Common\Exception\NotFoundExceptionInterface;
+use {AppName}\Common\Application\Component\CommandBus\CommandBusComponentInterface;
+use {AppName}\Common\Application\Component\QueryBus\QueryBusComponentInterface;
+use {AppName}\Common\Application\Dto\PaginationDto;
+use {AppName}\Common\Exception\NotFoundExceptionInterface;
 use Common\Module\Source\Application\UseCase\Command\Source\Download\DownloadCommand as ApplicationDownloadCommand;
 use Common\Module\Source\Application\UseCase\Query\Source\GetForDownload\GetForDownloadQuery;
 use Exception;

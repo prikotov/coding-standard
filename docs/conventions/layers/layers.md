@@ -106,11 +106,19 @@ Presentation зависит только от Application:
 
 ## Расположение
 
-- Domain: `Common\Module\{Module}\Domain\`
-- Application: `Common\Module\{Module}\Application\`
-- Infrastructure: `Common\Module\{Module}\Infrastructure\`
-- Integration: `Common\Module\{Module}\Integration\`
-- Presentation: `{App}\Module\{Module}\` (Web, Api, Console и др.)
+Полный namespace включает префикс `{AppName}\` — корневой namespace проекта (например, `TaskOrchestrator\`).
+
+- Domain: `{AppName}\Common\Module\{Module}\Domain\`
+- Application: `{AppName}\Common\Module\{Module}\Application\`
+- Infrastructure: `{AppName}\Common\Module\{Module}\Infrastructure\`
+- Integration: `{AppName}\Common\Module\{Module}\Integration\`
+- Presentation: `{AppName}\{App}\Module\{Module}\` (Web, Api, Console и др.)
+
+Где:
+- `{AppName}` — корневой namespace проекта. Может быть пустым, если PSR-4 маппит `Common\` напрямую в `src/`.
+- `{AppGroup}` (`Common`, `Web`, `Api`, `Console`, `Blog`) — группа: `Common` для разделяемого кода (`src/`), имя приложения — для кода конкретного приложения (`apps/<app>/`).
+
+В примерах кода в документации префикс `{AppName}\` может быть опущен для краткости.
 
 ## Чек-лист для проведения ревью кода
 
@@ -120,3 +128,4 @@ Presentation зависит только от Application:
 - [ ] Infrastructure реализует контракты Domain.
 - [ ] Integration обращается к Domain (только контракты) и Application.
 - [ ] Presentation обращается только к Application.
+- [ ] Namespace следует паттерну `{AppName}\{AppGroup}\Module\...`.

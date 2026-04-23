@@ -68,7 +68,7 @@ doctrine:
                 type: attribute
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Module'
-                prefix: 'Common\Module'
+                prefix: '{AppName}\Common\Module'
                 alias: App
 
 when@test:
@@ -223,18 +223,18 @@ services:
     autowire: true
     autoconfigure: true
 
-  Common\Module\Billing\:
+  {AppName}\Common\Module\Billing\:
     resource: '%module.billing.module_dir%/'
     exclude:
       - '%module.billing.module_dir%/Domain/Entity/'
       - '%module.billing.module_dir%/Resource/'
       - '%module.billing.module_dir%/BillingModule.php'
 
-  Common\Module\Billing\Application\Service\PaymentService:
+  {AppName}\Common\Module\Billing\Application\Service\PaymentService:
     arguments:
       $paymentProvider: '%module.billing.payment_provider%'
 
-  Common\Module\Billing\Domain\Repository\PaymentRepositoryInterface: '@Common\Module\Billing\Infrastructure\Repository\PaymentRepository'
+  {AppName}\Common\Module\Billing\Domain\Repository\PaymentRepositoryInterface: '@{AppName}\Common\Module\Billing\Infrastructure\Repository\PaymentRepository'
 ```
 
 Пример конфигурации сервисов приложения (`config/services.yaml`):

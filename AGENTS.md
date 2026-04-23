@@ -107,7 +107,7 @@ description: {Описание}
 ## Расположение *(если применимо)*
 
 - Слой (Domain, Application, Infrastructure, Presentation).
-- Путь: `Common\Module\{ModuleName}\{Layer}\{Context}\{Name}`
+- Путь: `{AppName}\Common\Module\{ModuleName}\{Layer}\{Context}\{Name}`
 
 ## Как используем
 

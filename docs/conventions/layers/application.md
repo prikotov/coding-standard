@@ -72,7 +72,7 @@ Use Case (сценарий использования) — реализует к
 **Правила реализации:**
 
 - Хендлер должен завершиться успешно или выбросить исключение
-- Не может прокидывать исключения внешних зависимостей напрямую — оборачивать их в `Common\Exception\{ExceptionName}`
+- Не может прокидывать исключения внешних зависимостей напрямую — оборачивать их в `{AppName}\Common\Exception\{ExceptionName}`
 - Выполняет только одну логическую транзакцию
 - Запрещено вызывать другие Use Case внутри CommandHandler
 
@@ -125,7 +125,7 @@ Use Case (сценарий использования) — реализует к
 **Правила именования:**
 
 - `{Source}To{Target}Mapper` — например: `ProjectDtoMapper`, `ApplicationToDomainProjectStatusMapper`
-- Расположение: `Common\Module\{ModuleName}\Application\Mapper\`
+- Расположение: `{AppName}\Common\Module\{ModuleName}\Application\Mapper\`
 
 ## Правила взаимодействия
 
@@ -230,7 +230,7 @@ declare(strict_types=1);
 
 namespace Common\Module\Project\Application\UseCase\Command\Project\Create;
 
-use Common\Application\Command\CommandInterface;
+use {AppName}\Common\Application\Command\CommandInterface;
 use Symfony\Component\Uid\Uuid;
 
 /**
@@ -257,10 +257,10 @@ declare(strict_types=1);
 
 namespace Common\Module\Project\Application\UseCase\Command\Project\Create;
 
-use Common\Component\Event\EventBusInterface;
-use Common\Component\Persistence\PersistenceManagerInterface;
-use Common\Exception\ConflictException;
-use Common\Exception\NotFoundExceptionInterface;
+use {AppName}\Common\Component\Event\EventBusInterface;
+use {AppName}\Common\Component\Persistence\PersistenceManagerInterface;
+use {AppName}\Common\Exception\ConflictException;
+use {AppName}\Common\Exception\NotFoundExceptionInterface;
 use Common\Module\Project\Application\Event\Project\CreatedEvent;
 use Common\Module\Project\Domain\Enum\ProjectStatusEnum;
 use Common\Module\Project\Domain\Enum\ProjectUserTypeEnum;
@@ -349,9 +349,9 @@ declare(strict_types=1);
 
 namespace Common\Module\Project\Application\UseCase\Query\Project\Find;
 
-use Common\Application\Dto\PaginationDto;
-use Common\Application\Dto\SortDto;
-use Common\Application\Query\QueryInterface;
+use {AppName}\Common\Application\Dto\PaginationDto;
+use {AppName}\Common\Application\Dto\SortDto;
+use {AppName}\Common\Application\Query\QueryInterface;
 use Common\Module\Project\Application\Enum\ProjectStatusEnum;
 use Symfony\Component\Uid\Uuid;
 
@@ -381,9 +381,9 @@ declare(strict_types=1);
 
 namespace Common\Module\Project\Application\UseCase\Query\Project\Find;
 
-use Common\Application\Dto\SortDto;
-use Common\Application\Enum\SortDirectionEnum;
-use Common\Application\Mapper\SortDtoToOrderMapper;
+use {AppName}\Common\Application\Dto\SortDto;
+use {AppName}\Common\Application\Enum\SortDirectionEnum;
+use {AppName}\Common\Application\Mapper\SortDtoToOrderMapper;
 use Common\Module\Project\Application\Mapper\ApplicationToDomainProjectStatusMapper;
 use Common\Module\Project\Application\Mapper\ProjectDtoMapper;
 use Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
@@ -550,7 +550,7 @@ src/Module/{ModuleName}/Application/
 - [ ] Query Handler не изменяет состояние приложения
 - [ ] Взаимодействие с Domain слоем только через публичные интерфейсы
 - [ ] Взаимодействие с Infrastructure слоем через абстракции
-- [ ] Исключения внешних зависимостей оборачиваются в `Common\Exception\{ExceptionName}`
+- [ ] Исключения внешних зависимостей оборачиваются в `{AppName}\Common\Exception\{ExceptionName}`
 - [ ] Мапперы расположены в `Application\Mapper\*`
 - [ ] Enum-ы Application слоя не смешиваются с Domain Enum-ами (есть мапперы)
 - [ ] Транзакция управляется в Command Handler через `persist/flush`

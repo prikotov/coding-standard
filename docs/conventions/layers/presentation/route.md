@@ -39,7 +39,7 @@ apps/<app>/src/Module/<ModuleName>/Route/<Entity>Route.php
 
 ```twig
 {# допустимый вызов через path() с константой #}
-<a href="{{ path(constant('Web\\Module\\User\\Route\\InvitationRoute::LIST')) }}">...</a>
+<a href="{{ path(constant('{AppName}\\Web\\Module\\User\\Route\\InvitationRoute::LIST')) }}">...</a>
 
 {# предпочтительно — через Route-класс #}
 <a href="{{ invitationRoute.list() }}">...</a>
@@ -52,7 +52,7 @@ apps/<app>/src/Module/<ModuleName>/Route/<Entity>Route.php
 
 declare(strict_types=1);
 
-namespace Web\Module\User\Route;
+namespace {AppName}\Web\Module\User\Route;
 
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Uid\Uuid;
