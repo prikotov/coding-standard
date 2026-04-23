@@ -90,16 +90,16 @@ when@dev:
 ## Расположение
 
 - **Integration**  
-  `ProjectName\Common\Module\{ModuleName}\Integration\Component\{ComponentName}` - Компоненты интеграций с внешними сервисами
+  `{ProjectName}\Common\Module\{ModuleName}\Integration\Component\{ComponentName}` - Компоненты интеграций с внешними сервисами
 
 - **Infrastructure**  
-  `ProjectName\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}` - Компоненты, работающие с локальными ресурсами (ФС, кэш, процесс)
+  `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}` - Компоненты, работающие с локальными ресурсами (ФС, кэш, процесс)
 
 - **Presentation**  
-  `ProjectName\{Web|Api|Console}\Component\{ComponentName}`
+  `{ProjectName}\{Web|Api|Console}\Component\{ComponentName}`
 
 - **Common**  
-  `ProjectName\Common\Component\{ComponentName}`
+  `{ProjectName}\Common\Component\{ComponentName}`
 
 
 ## Правила применения Postfix для именования реализации интерфейса

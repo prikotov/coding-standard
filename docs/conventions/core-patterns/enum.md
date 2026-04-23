@@ -26,20 +26,20 @@ description: Правила использования нативных PHP-пе
 ## Расположение
 
 * Domain
-  - `ProjectName\Common\Module\{ModuleName}\Domain\Enum\{Name}Enum`
+  - `{ProjectName}\Common\Module\{ModuleName}\Domain\Enum\{Name}Enum`
 * Application
-  - `ProjectName\Common\Module\{ModuleName}\Application\Enum\{Name}Enum` — для общих enum'ов уровня Application
-  - `ProjectName\Common\Module\{ModuleName}\Application\UseCase\{Name}\{Name}Enum` — для enum'ов, связанных строго с одним UseCase.
+  - `{ProjectName}\Common\Module\{ModuleName}\Application\Enum\{Name}Enum` — для общих enum'ов уровня Application
+  - `{ProjectName}\Common\Module\{ModuleName}\Application\UseCase\{Name}\{Name}Enum` — для enum'ов, связанных строго с одним UseCase.
 * Infrastructure
-  - `ProjectName\Common\Module\{ModuleName}\Infrastructure\Enum\{Name}Enum`
-  - `ProjectName\Common\Module\{ModuleName}\Infrastructure\Component\{SomeComponent}\Enum\{Name}Enum`
+  - `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Enum\{Name}Enum`
+  - `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{SomeComponent}\Enum\{Name}Enum`
 * Integration
-  - `ProjectName\Common\Module\{ModuleName}\Integration\Enum\{Name}Enum`
-  - `ProjectName\Common\Module\{ModuleName}\Integration\Component\{SomeComponent}\Enum\{Name}Enum`
+  - `{ProjectName}\Common\Module\{ModuleName}\Integration\Enum\{Name}Enum`
+  - `{ProjectName}\Common\Module\{ModuleName}\Integration\Component\{SomeComponent}\Enum\{Name}Enum`
 * Presentation
-  - `ProjectName\Web\Module\{ModuleName}\Enum\{Name}Enum`
+  - `{ProjectName}\Web\Module\{ModuleName}\Enum\{Name}Enum`
 * Common
-  - `ProjectName\Common\Enum\{Name}Enum`
+  - `{ProjectName}\Common\Enum\{Name}Enum`
 
 ## Как используем
 

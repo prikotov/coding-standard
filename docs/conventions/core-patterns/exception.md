@@ -80,12 +80,12 @@ description: Правила проектирования и использова
 * Общие исключения:
 
   ```
-  ProjectName\Common\Exception\{Category}\{ExceptionName}Exception
+  {ProjectName}\Common\Exception\{Category}\{ExceptionName}Exception
   ```
 * Частные исключения располагаются в своём модуле, в соответствующем слое:
 
   ```
-  ProjectName\Common\Module\{ModuleName}\Domain\Exception\{ExceptionName}Exception
+  {ProjectName}\Common\Module\{ModuleName}\Domain\Exception\{ExceptionName}Exception
   ```
 * Название исключения должно явно отражать причину ошибки.
 

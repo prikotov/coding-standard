@@ -72,7 +72,7 @@ Use Case (сценарий использования) — реализует к
 **Правила реализации:**
 
 - Хендлер должен завершиться успешно или выбросить исключение
-- Не может прокидывать исключения внешних зависимостей напрямую — оборачивать их в `ProjectName\Common\Exception\{ExceptionName}`
+- Не может прокидывать исключения внешних зависимостей напрямую — оборачивать их в `{ProjectName}\Common\Exception\{ExceptionName}`
 - Выполняет только одну логическую транзакцию
 - Запрещено вызывать другие Use Case внутри CommandHandler
 
@@ -125,7 +125,7 @@ Use Case (сценарий использования) — реализует к
 **Правила именования:**
 
 - `{Source}To{Target}Mapper` — например: `ProjectDtoMapper`, `ApplicationToDomainProjectStatusMapper`
-- Расположение: `ProjectName\Common\Module\{ModuleName}\Application\Mapper\`
+- Расположение: `{ProjectName}\Common\Module\{ModuleName}\Application\Mapper\`
 
 ## Правила взаимодействия
 
@@ -550,7 +550,7 @@ src/Module/{ModuleName}/Application/
 - [ ] Query Handler не изменяет состояние приложения
 - [ ] Взаимодействие с Domain слоем только через публичные интерфейсы
 - [ ] Взаимодействие с Infrastructure слоем через абстракции
-- [ ] Исключения внешних зависимостей оборачиваются в `ProjectName\Common\Exception\{ExceptionName}`
+- [ ] Исключения внешних зависимостей оборачиваются в `{ProjectName}\Common\Exception\{ExceptionName}`
 - [ ] Мапперы расположены в `Application\Mapper\*`
 - [ ] Enum-ы Application слоя не смешиваются с Domain Enum-ами (есть мапперы)
 - [ ] Транзакция управляется в Command Handler через `persist/flush`

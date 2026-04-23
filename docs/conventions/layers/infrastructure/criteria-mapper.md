@@ -59,8 +59,8 @@ CriteriaMapper состоит из двух уровней:
 ## Расположение
 
 ```
-ProjectName\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\CriteriaMapper.php
-ProjectName\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{CriteriaName}CriteriaMapper.php
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\CriteriaMapper.php
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{CriteriaName}CriteriaMapper.php
 ```
 
 > Диспетчер лежит в `Criteria/`, конкретные мапперы — в `Criteria/Mapper/`.

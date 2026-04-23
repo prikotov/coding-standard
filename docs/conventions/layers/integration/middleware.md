@@ -51,7 +51,7 @@ Middleware нужен, когда проекту требуется перехв
 - **Module Integration**
 
 ```php
-ProjectName\Common\Module\{ModuleName}\Integration\Middleware\{Technology}\{Name}Middleware
+{ProjectName}\Common\Module\{ModuleName}\Integration\Middleware\{Technology}\{Name}Middleware
 ```
 
 - **Shared Infrastructure**

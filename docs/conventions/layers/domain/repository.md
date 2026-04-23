@@ -39,13 +39,13 @@ description: Правила создания доменных контракто
 - Интерфейс в слое [Domain](../domain.md):
 
 ```php
-namespace ProjectName\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\{EntityName}RepositoryInterface
+namespace {ProjectName}\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\{EntityName}RepositoryInterface
 ```
 
 - Реализация в слое [Infrastructure](../infrastructure.md):
 
 ```php
-namespace ProjectName\Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\{EntityName}Repository
+namespace {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\{EntityName}Repository
 ```
 
 ## Пример

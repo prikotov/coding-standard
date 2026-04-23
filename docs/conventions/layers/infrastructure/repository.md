@@ -25,7 +25,7 @@ description: Правила реализации репозиториев
 ## Расположение
 
 ```
-ProjectName\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\{Entity}Repository.php
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\{Entity}Repository.php
 ```
 
 ## Как используем
