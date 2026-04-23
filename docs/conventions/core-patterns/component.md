@@ -61,7 +61,7 @@ parameters:
 # ...
 services:
 # ...
-  AppName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponent:
+  ProjectName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponent:
     arguments:
       $baseUrl: '%module.billing.t_business.base_url%'
       $terminalKey: '%module.billing.t_business.terminal_key%'
@@ -71,13 +71,13 @@ services:
 # ...
 when@prod:
     services:
-        AppName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponentInterface:
-            alias: AppName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponent
+        ProjectName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponentInterface:
+            alias: ProjectName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponent
 
 when@dev:
     services:
-        AppName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponentInterface:
-            alias: AppName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsSandboxComponent
+        ProjectName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponentInterface:
+            alias: ProjectName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsSandboxComponent
 
 ```
 
@@ -90,16 +90,16 @@ when@dev:
 ## Расположение
 
 - **Integration**  
-  `AppName\Common\Module\{ModuleName}\Integration\Component\{ComponentName}` - Компоненты интеграций с внешними сервисами
+  `ProjectName\Common\Module\{ModuleName}\Integration\Component\{ComponentName}` - Компоненты интеграций с внешними сервисами
 
 - **Infrastructure**  
-  `AppName\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}` - Компоненты, работающие с локальными ресурсами (ФС, кэш, процесс)
+  `ProjectName\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}` - Компоненты, работающие с локальными ресурсами (ФС, кэш, процесс)
 
 - **Presentation**  
-  `AppName\{Web|Api|Console}\Component\{ComponentName}`
+  `ProjectName\{Web|Api|Console}\Component\{ComponentName}`
 
 - **Common**  
-  `AppName\Common\Component\{ComponentName}`
+  `ProjectName\Common\Component\{ComponentName}`
 
 
 ## Правила применения Postfix для именования реализации интерфейса
@@ -156,7 +156,7 @@ declare(strict_types=1);
 
 namespace Common\Module\Billing\Integration\Component\TBusiness;
 
-use AppName\Common\Exception\InfrastructureException;
+use ProjectName\Common\Exception\InfrastructureException;
 use Common\Module\Billing\Integration\Component\TBusiness\Dto\InitRequestDto;
 use Common\Module\Billing\Integration\Component\TBusiness\Dto\InitResponseDto;
 use Common\Module\Billing\Integration\Component\TBusiness\Mapper\InitRequestMapper;

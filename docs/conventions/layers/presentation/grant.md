@@ -46,7 +46,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Grant.php
 
 declare(strict_types=1);
 
-namespace AppName\Web\Module\User\Security\User;
+namespace ProjectName\Web\Module\User\Security\User;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Uid\Uuid;

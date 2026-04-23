@@ -25,7 +25,7 @@ description: Правила реализации репозиториев
 ## Расположение
 
 ```
-AppName\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\{Entity}Repository.php
+ProjectName\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\{Entity}Repository.php
 ```
 
 ## Как используем
@@ -41,8 +41,8 @@ declare(strict_types=1);
 
 namespace Common\Module\Project\Infrastructure\Repository\Project;
 
-use AppName\Common\Exception\InfrastructureException;
-use AppName\Common\Exception\NotFoundException;
+use ProjectName\Common\Exception\InfrastructureException;
+use ProjectName\Common\Exception\NotFoundException;
 use Common\Module\Project\Domain\Entity\ProjectModel;
 use Common\Module\Project\Domain\Repository\Project\ProjectCriteriaInterface;
 use Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;

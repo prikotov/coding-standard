@@ -45,14 +45,14 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Voter.php
 
 declare(strict_types=1);
 
-namespace AppName\Web\Module\Project\Security\Project;
+namespace ProjectName\Web\Module\Project\Security\Project;
 
 use Override;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
-use AppName\Web\Module\Project\Security\Project\ActionEnum as ProjectActionEnum;
+use ProjectName\Web\Module\Project\Security\Project\ActionEnum as ProjectActionEnum;
 
 /**
  * @template TAttribute of string

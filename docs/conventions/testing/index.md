@@ -59,7 +59,7 @@ final class SourceModelTest extends TestCase
 Проверка взаимодействия слоёв и инфраструктуры с использованием тестовой БД и моков для внешних API.
 
 - **Расположение:** `tests/Integration/` (повторяет структуру `src/`)
-- **Обязательное наследование** от `AppName\Common\Component\Test\KernelTestCase`
+- **Обязательное наследование** от `ProjectName\Common\Component\Test\KernelTestCase`
 - Используют реальную тестовую БД (PostgreSQL)
 - Инициализируют ядро Symfony через `self::bootKernel()`
 - Ядро перезапускается перед каждым тестом для изоляции
@@ -73,7 +73,7 @@ declare(strict_types=1);
 
 namespace Common\Test\Integration\Module\User\Application\UseCase\Command\User\Register;
 
-use AppName\Common\Component\Test\KernelTestCase;
+use ProjectName\Common\Component\Test\KernelTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 
@@ -234,7 +234,7 @@ make audit
 
 - Любое изменение кода сопровождается тестами соответствующего уровня
 - Новый код в Domain/Application — покрытие минимум 80%
-- Integration/функциональные тесты наследуются от `AppName\Common\Component\Test\KernelTestCase`
+- Integration/функциональные тесты наследуются от `ProjectName\Common\Component\Test\KernelTestCase`
 - Ядро в integration-тестах через `self::bootKernel()`
 - Без реальных внешних сервисов и секретных данных в тестах
 

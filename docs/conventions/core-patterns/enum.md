@@ -21,25 +21,25 @@ description: Правила использования нативных PHP-пе
 * Названия самих `enum` - в PascalCase с постфиксом `Enum`.
 * Названия `case` - в `camelCase`.
 * Если enum универсален и не связан с конкретным модулем (например: `LanguageEnum`, `GenderEnum`), его размещают в
-  `AppName\Common\Enum`.
+  `ProjectName\Common\Enum`.
 
 ## Расположение
 
 * Domain
-  - `AppName\Common\Module\{ModuleName}\Domain\Enum\{Name}Enum`
+  - `ProjectName\Common\Module\{ModuleName}\Domain\Enum\{Name}Enum`
 * Application
-  - `AppName\Common\Module\{ModuleName}\Application\Enum\{Name}Enum` — для общих enum'ов уровня Application
-  - `AppName\Common\Module\{ModuleName}\Application\UseCase\{Name}\{Name}Enum` — для enum'ов, связанных строго с одним UseCase.
+  - `ProjectName\Common\Module\{ModuleName}\Application\Enum\{Name}Enum` — для общих enum'ов уровня Application
+  - `ProjectName\Common\Module\{ModuleName}\Application\UseCase\{Name}\{Name}Enum` — для enum'ов, связанных строго с одним UseCase.
 * Infrastructure
-  - `AppName\Common\Module\{ModuleName}\Infrastructure\Enum\{Name}Enum`
-  - `AppName\Common\Module\{ModuleName}\Infrastructure\Component\{SomeComponent}\Enum\{Name}Enum`
+  - `ProjectName\Common\Module\{ModuleName}\Infrastructure\Enum\{Name}Enum`
+  - `ProjectName\Common\Module\{ModuleName}\Infrastructure\Component\{SomeComponent}\Enum\{Name}Enum`
 * Integration
-  - `AppName\Common\Module\{ModuleName}\Integration\Enum\{Name}Enum`
-  - `AppName\Common\Module\{ModuleName}\Integration\Component\{SomeComponent}\Enum\{Name}Enum`
+  - `ProjectName\Common\Module\{ModuleName}\Integration\Enum\{Name}Enum`
+  - `ProjectName\Common\Module\{ModuleName}\Integration\Component\{SomeComponent}\Enum\{Name}Enum`
 * Presentation
-  - `AppName\Web\Module\{ModuleName}\Enum\{Name}Enum`
+  - `ProjectName\Web\Module\{ModuleName}\Enum\{Name}Enum`
 * Common
-  - `AppName\Common\Enum\{Name}Enum`
+  - `ProjectName\Common\Enum\{Name}Enum`
 
 ## Как используем
 
@@ -75,12 +75,12 @@ enum ChatMessageRoleEnum: int
 
 declare(strict_types=1);
 
-namespace AppName\Web\Component\Twig\Project;
+namespace ProjectName\Web\Component\Twig\Project;
 
 use Common\Module\Project\Application\Enum\ProjectStatusEnum;
 use InvalidArgumentException;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
-use AppName\Web\Component\Twig\Phoenix\Badge;
+use ProjectName\Web\Component\Twig\Phoenix\Badge;
 
 #[AsTwigComponent(template: 'components/Phoenix/Badge.html.twig')]
 final class StatusBadge extends Badge
@@ -107,7 +107,7 @@ final class StatusBadge extends Badge
 Пример обработки исключения \ValueError:
 
 ```php
-use AppName\Common\Exception\ValidationException;
+use ProjectName\Common\Exception\ValidationException;
 
 try {
     $enum = ProjectStatusEnum::from($input);

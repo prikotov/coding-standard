@@ -57,7 +57,7 @@ description: Правила проектирования доменных сущ
 - В слое [Domain](../domain.md):
 
 ```php
-AppName\Common\Module\{ModuleName}\Domain\Entity\{Context}\{EntityName}Model
+ProjectName\Common\Module\{ModuleName}\Domain\Entity\{Context}\{EntityName}Model
 ```
 
 ## Как используем
@@ -82,11 +82,11 @@ declare(strict_types=1);
 
 namespace Common\Module\Billing\Domain\Entity;
 
-use AppName\Common\Component\Clock\ClockFactory;
-use AppName\Common\Component\Doctrine\Model\IdModelInterface;
-use AppName\Common\Component\Doctrine\Model\InsTsModelInterface;
-use AppName\Common\Component\Doctrine\Model\UuidModelInterface;
-use AppName\Common\Exception\DomainException;
+use ProjectName\Common\Component\Clock\ClockFactory;
+use ProjectName\Common\Component\Doctrine\Model\IdModelInterface;
+use ProjectName\Common\Component\Doctrine\Model\InsTsModelInterface;
+use ProjectName\Common\Component\Doctrine\Model\UuidModelInterface;
+use ProjectName\Common\Exception\DomainException;
 use Common\Module\Billing\Domain\Enum\PaymentStatusEnum;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;

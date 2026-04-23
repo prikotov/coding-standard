@@ -59,8 +59,8 @@ CriteriaMapper состоит из двух уровней:
 ## Расположение
 
 ```
-AppName\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\CriteriaMapper.php
-AppName\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{CriteriaName}CriteriaMapper.php
+ProjectName\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\CriteriaMapper.php
+ProjectName\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{CriteriaName}CriteriaMapper.php
 ```
 
 > Диспетчер лежит в `Criteria/`, конкретные мапперы — в `Criteria/Mapper/`.
@@ -99,7 +99,7 @@ declare(strict_types=1);
 
 namespace Common\Module\Project\Infrastructure\Repository\Project\Criteria;
 
-use AppName\Common\Exception\ConfigurationException;
+use ProjectName\Common\Exception\ConfigurationException;
 use Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
 use Common\Module\Project\Domain\Repository\Project\ProjectCriteriaInterface;
 use Common\Module\Project\Infrastructure\Repository\Project\Criteria\Mapper\ProjectFindCriteriaMapper;
@@ -136,7 +136,7 @@ declare(strict_types=1);
 
 namespace Common\Module\Llm\Infrastructure\Repository\Model\Criteria\Mapper;
 
-use AppName\Common\Component\Repository\Criteria\Mapper\LimitOffsetSortCriteriaMapper;
+use ProjectName\Common\Component\Repository\Criteria\Mapper\LimitOffsetSortCriteriaMapper;
 use Common\Module\Llm\Domain\Repository\Model\Criteria\ModelFindCriteria;
 use Common\Module\Llm\Infrastructure\Repository\Model\ModelRepository;
 use Doctrine\DBAL\ParameterType;
@@ -231,7 +231,7 @@ declare(strict_types=1);
 
 namespace Common\Module\Billing\Infrastructure\Repository\Payment\Criteria\Mapper;
 
-use AppName\Common\Component\Repository\Criteria\Mapper\LimitOffsetSortCriteriaMapper;
+use ProjectName\Common\Component\Repository\Criteria\Mapper\LimitOffsetSortCriteriaMapper;
 use Common\Module\Billing\Domain\Repository\Payment\Criteria\PaymentFindCriteria;
 use Common\Module\Billing\Infrastructure\Repository\Payment\PaymentReadRepository;
 use Doctrine\DBAL\ParameterType;

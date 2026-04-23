@@ -370,7 +370,7 @@ declare(strict_types=1);
 
 namespace Common\Module\Billing\Application\Service;
 
-use AppName\Common\Exception\DomainException;
+use ProjectName\Common\Exception\DomainException;
 use Common\Module\Billing\Domain\Entity\PaymentModel;
 use Common\Module\Billing\Domain\Enum\PaymentStatusEnum;
 use Common\Module\Billing\Domain\Repository\Payment\PaymentRepositoryInterface;

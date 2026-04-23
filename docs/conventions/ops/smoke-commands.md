@@ -85,7 +85,7 @@ check. Это даёт читателю явный сигнал: команда 
 
 declare(strict_types=1);
 
-namespace AppName\Console\Module\Notification\Command\Smoke;
+namespace ProjectName\Console\Module\Notification\Command\Smoke;
 
 use Common\Module\User\Application\Service\Email\WelcomeEmailServiceInterface;
 use Override;
