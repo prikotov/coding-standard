@@ -49,11 +49,11 @@ apps/<app>/src/Module/<ModuleName>/Resource/templates/<context>/
 
 declare(strict_types=1);
 
-namespace Web\Module\Billing\Controller\Plan;
+namespace ProjectName\Web\Module\Billing\Controller\Plan;
 
-use Common\Application\Component\QueryBus\QueryBusComponentInterface;
-use Common\Module\Billing\Application\Enum\PlanStatusEnum;
-use Common\Module\Billing\Application\UseCase\Query\Plan\Find\FindQuery;
+use ProjectName\Common\Application\Component\QueryBus\QueryBusComponentInterface;
+use ProjectName\Common\Module\Billing\Application\Enum\PlanStatusEnum;
+use ProjectName\Common\Module\Billing\Application\UseCase\Query\Plan\Find\FindQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,14 +61,14 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Web\Component\Pagination\PaginationRequestDto;
-use Web\Component\Pagination\PaginationRequestToApplicationDtoMapper;
-use Web\Component\Sort\SortRequestDto;
-use Web\Component\Sort\SortRequestToApplicationDtoMapper;
-use Web\Module\Billing\Form\Plan\FilterFormModel;
-use Web\Module\Billing\Form\Plan\FilterFormType;
-use Web\Module\Billing\Route\PlanRoute;
-use Web\Security\UserInterface;
+use ProjectName\Web\Component\Pagination\PaginationRequestDto;
+use ProjectName\Web\Component\Pagination\PaginationRequestToApplicationDtoMapper;
+use ProjectName\Web\Component\Sort\SortRequestDto;
+use ProjectName\Web\Component\Sort\SortRequestToApplicationDtoMapper;
+use ProjectName\Web\Module\Billing\Form\Plan\FilterFormModel;
+use ProjectName\Web\Module\Billing\Form\Plan\FilterFormType;
+use ProjectName\Web\Module\Billing\Route\PlanRoute;
+use ProjectName\Web\Security\UserInterface;
 
 #[Route(path: PlanRoute::LIST_PATH, name: PlanRoute::LIST, methods: [Request::METHOD_GET])]
 #[AsController]
@@ -146,9 +146,9 @@ apps/<app>/src/Module/<ModuleName>/Mapper/FastFilter<Subject>StatusMapper.php
 
 declare(strict_types=1);
 
-namespace Web\Module\Source\List;
+namespace ProjectName\Web\Module\Source\List;
 
-use Web\Module\Source\Form\Source\SourceStatusEnum;
+use ProjectName\Web\Module\Source\Form\Source\SourceStatusEnum;
 
 final readonly class FastFilterSourceStatusList
 {
@@ -175,9 +175,9 @@ Mapper преобразует статусы для интеграции с фо
 
 declare(strict_types=1);
 
-namespace Web\Module\Source\Mapper;
+namespace ProjectName\Web\Module\Source\Mapper;
 
-use Web\Module\Source\Form\Source\SourceStatusEnum;
+use ProjectName\Web\Module\Source\Form\Source\SourceStatusEnum;
 
 final readonly class FastFilterSourceStatusMapper
 {

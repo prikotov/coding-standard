@@ -69,7 +69,7 @@ PermissionEnum добавляется в `security.yaml` и назначаетс
 
 ## Зависимости
 
-- **Разрешено:** `TokenInterface`, `AuthorizationCheckerInterface`, `Web\Security\UserInterface`, `Uuid`, DTO Presentation.
+- **Разрешено:** `TokenInterface`, `AuthorizationCheckerInterface`, `ProjectName\Web\Security\UserInterface`, `Uuid`, DTO Presentation.
 - **Запрещено:** сервисы Domain, Application, ORM-репозитории, глобальные синглтоны.
 
 ## Расположение

@@ -51,7 +51,7 @@ Middleware нужен, когда проекту требуется перехв
 - **Module Integration**
 
 ```php
-Common\Module\{ModuleName}\Integration\Middleware\{Technology}\{Name}Middleware
+{ProjectName}\Common\Module\{ModuleName}\Integration\Middleware\{Technology}\{Name}Middleware
 ```
 
 - **Shared Infrastructure**
@@ -76,9 +76,9 @@ Common\Infrastructure\Component\{Technology}\Middleware\{Name}Middleware
 
 declare(strict_types=1);
 
-namespace Common\Module\Webhook\Integration\Middleware\Messenger;
+namespace ProjectName\Common\Module\Webhook\Integration\Middleware\Messenger;
 
-use Common\Module\Webhook\Application\UseCase\Command\WebhookDelivery\Deliver\DeliverCommand;
+use ProjectName\Common\Module\Webhook\Application\UseCase\Command\WebhookDelivery\Deliver\DeliverCommand;
 use Override;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;

@@ -59,8 +59,8 @@ CriteriaMapper состоит из двух уровней:
 ## Расположение
 
 ```
-Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\CriteriaMapper.php
-Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{CriteriaName}CriteriaMapper.php
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\CriteriaMapper.php
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{CriteriaName}CriteriaMapper.php
 ```
 
 > Диспетчер лежит в `Criteria/`, конкретные мапперы — в `Criteria/Mapper/`.
@@ -97,13 +97,13 @@ Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{C
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Infrastructure\Repository\Project\Criteria;
+namespace ProjectName\Common\Module\Project\Infrastructure\Repository\Project\Criteria;
 
-use Common\Exception\ConfigurationException;
-use Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
-use Common\Module\Project\Domain\Repository\Project\ProjectCriteriaInterface;
-use Common\Module\Project\Infrastructure\Repository\Project\Criteria\Mapper\ProjectFindCriteriaMapper;
-use Common\Module\Project\Infrastructure\Repository\Project\ProjectRepository;
+use ProjectName\Common\Exception\ConfigurationException;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\ProjectCriteriaInterface;
+use ProjectName\Common\Module\Project\Infrastructure\Repository\Project\Criteria\Mapper\ProjectFindCriteriaMapper;
+use ProjectName\Common\Module\Project\Infrastructure\Repository\Project\ProjectRepository;
 use Doctrine\ORM\QueryBuilder;
 
 final readonly class CriteriaMapper
@@ -134,11 +134,11 @@ final readonly class CriteriaMapper
 
 declare(strict_types=1);
 
-namespace Common\Module\Llm\Infrastructure\Repository\Model\Criteria\Mapper;
+namespace ProjectName\Common\Module\Llm\Infrastructure\Repository\Model\Criteria\Mapper;
 
-use Common\Component\Repository\Criteria\Mapper\LimitOffsetSortCriteriaMapper;
-use Common\Module\Llm\Domain\Repository\Model\Criteria\ModelFindCriteria;
-use Common\Module\Llm\Infrastructure\Repository\Model\ModelRepository;
+use ProjectName\Common\Component\Repository\Criteria\Mapper\LimitOffsetSortCriteriaMapper;
+use ProjectName\Common\Module\Llm\Domain\Repository\Model\Criteria\ModelFindCriteria;
+use ProjectName\Common\Module\Llm\Infrastructure\Repository\Model\ModelRepository;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\QueryBuilder;
 
@@ -229,11 +229,11 @@ public function map(Repository $repository, Criteria $criteria): QueryBuilder
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Infrastructure\Repository\Payment\Criteria\Mapper;
+namespace ProjectName\Common\Module\Billing\Infrastructure\Repository\Payment\Criteria\Mapper;
 
-use Common\Component\Repository\Criteria\Mapper\LimitOffsetSortCriteriaMapper;
-use Common\Module\Billing\Domain\Repository\Payment\Criteria\PaymentFindCriteria;
-use Common\Module\Billing\Infrastructure\Repository\Payment\PaymentReadRepository;
+use ProjectName\Common\Component\Repository\Criteria\Mapper\LimitOffsetSortCriteriaMapper;
+use ProjectName\Common\Module\Billing\Domain\Repository\Payment\Criteria\PaymentFindCriteria;
+use ProjectName\Common\Module\Billing\Infrastructure\Repository\Payment\PaymentReadRepository;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Types\UuidType;

@@ -25,8 +25,8 @@ description: Правила создания и использования об�
 - [Application](../application.md)
 
 ```php
-Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{QueryName}Query
-Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{QueryName}QueryHandler
+{ProjectName}\Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{QueryName}Query
+{ProjectName}\Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{QueryName}QueryHandler
 ```
 
 ## Как создаем
@@ -48,12 +48,12 @@ Common\Module\{ModuleName}\Application\UseCase\Query\{QueryGroup}\{QueryName}\{Q
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\UseCase\Query\Project\Find;
+namespace ProjectName\Common\Module\Project\Application\UseCase\Query\Project\Find;
 
-use Common\Application\Dto\PaginationDto;
-use Common\Application\Dto\SortDto;
-use Common\Application\Query\QueryInterface;
-use Common\Module\Project\Application\Enum\ProjectStatusEnum;
+use ProjectName\Common\Application\Dto\PaginationDto;
+use ProjectName\Common\Application\Dto\SortDto;
+use ProjectName\Common\Application\Query\QueryInterface;
+use ProjectName\Common\Module\Project\Application\Enum\ProjectStatusEnum;
 use Symfony\Component\Uid\Uuid;
 
 /**
@@ -80,15 +80,15 @@ final readonly class FindQuery implements QueryInterface
 
 declare(strict_types=1);
 
-namespace Common\Module\Project\Application\UseCase\Query\Project\Find;
+namespace ProjectName\Common\Module\Project\Application\UseCase\Query\Project\Find;
 
-use Common\Application\Dto\SortDto;
-use Common\Application\Enum\SortDirectionEnum;
-use Common\Application\Mapper\SortDtoToOrderMapper;
-use Common\Module\Project\Application\Mapper\ApplicationToDomainProjectStatusMapper;
-use Common\Module\Project\Application\Mapper\ProjectDtoMapper;
-use Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
-use Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
+use ProjectName\Common\Application\Dto\SortDto;
+use ProjectName\Common\Application\Enum\SortDirectionEnum;
+use ProjectName\Common\Application\Mapper\SortDtoToOrderMapper;
+use ProjectName\Common\Module\Project\Application\Mapper\ApplicationToDomainProjectStatusMapper;
+use ProjectName\Common\Module\Project\Application\Mapper\ProjectDtoMapper;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\Criteria\ProjectFindCriteria;
+use ProjectName\Common\Module\Project\Domain\Repository\Project\ProjectRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -144,12 +144,12 @@ final readonly class FindQueryHandler
 
 declare(strict_types=1);
 
-namespace Web\Module\Project\Controller\Project;
+namespace ProjectName\Web\Module\Project\Controller\Project;
 
-use Common\Application\Component\QueryBus\QueryBusComponentInterface;
-use Common\Module\Project\Application\Enum\ProjectStatusEnum as ApplicationProjectStatusEnum;
-use Common\Module\Project\Application\UseCase\Query\Project\CountByStatus\CountByStatusQuery;
-use Common\Module\Project\Application\UseCase\Query\Project\Find\FindQuery;
+use ProjectName\Common\Application\Component\QueryBus\QueryBusComponentInterface;
+use ProjectName\Common\Module\Project\Application\Enum\ProjectStatusEnum as ApplicationProjectStatusEnum;
+use ProjectName\Common\Module\Project\Application\UseCase\Query\Project\CountByStatus\CountByStatusQuery;
+use ProjectName\Common\Module\Project\Application\UseCase\Query\Project\Find\FindQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -158,16 +158,16 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Web\Component\Pagination\PaginationRequestDto as ComponentPaginationRequestDto;
-use Web\Component\Pagination\PaginationRequestToApplicationDtoMapper;
-use Web\Module\Project\Security\Project\ActionEnum as ProjectActionEnum;
-use Web\Module\Project\Controller\Project\Request\PaginationRequestDto;
-use Web\Module\Project\Form\Project\FilterFormModel;
-use Web\Module\Project\Form\Project\FilterFormType;
-use Web\Module\Project\List\FastFilterProjectStatusList;
-use Web\Module\Project\Mapper\ProjectStatusToTextMapper;
-use Web\Module\Project\Route\ProjectRoute;
-use Web\Security\UserInterface;
+use ProjectName\Web\Component\Pagination\PaginationRequestDto as ComponentPaginationRequestDto;
+use ProjectName\Web\Component\Pagination\PaginationRequestToApplicationDtoMapper;
+use ProjectName\Web\Module\Project\Security\Project\ActionEnum as ProjectActionEnum;
+use ProjectName\Web\Module\Project\Controller\Project\Request\PaginationRequestDto;
+use ProjectName\Web\Module\Project\Form\Project\FilterFormModel;
+use ProjectName\Web\Module\Project\Form\Project\FilterFormType;
+use ProjectName\Web\Module\Project\List\FastFilterProjectStatusList;
+use ProjectName\Web\Module\Project\Mapper\ProjectStatusToTextMapper;
+use ProjectName\Web\Module\Project\Route\ProjectRoute;
+use ProjectName\Web\Security\UserInterface;
 
 #[Route(
     path: ProjectRoute::LIST_PATH,

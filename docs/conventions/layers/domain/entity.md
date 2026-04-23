@@ -57,7 +57,7 @@ description: Правила проектирования доменных сущ
 - В слое [Domain](../domain.md):
 
 ```php
-Common\Module\{ModuleName}\Domain\Entity\{Context}\{EntityName}Model
+{ProjectName}\Common\Module\{ModuleName}\Domain\Entity\{Context}\{EntityName}Model
 ```
 
 ## Как используем
@@ -80,14 +80,14 @@ Common\Module\{ModuleName}\Domain\Entity\{Context}\{EntityName}Model
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Domain\Entity;
+namespace ProjectName\Common\Module\Billing\Domain\Entity;
 
-use Common\Component\Clock\ClockFactory;
-use Common\Component\Doctrine\Model\IdModelInterface;
-use Common\Component\Doctrine\Model\InsTsModelInterface;
-use Common\Component\Doctrine\Model\UuidModelInterface;
-use Common\Exception\DomainException;
-use Common\Module\Billing\Domain\Enum\PaymentStatusEnum;
+use ProjectName\Common\Component\Clock\ClockFactory;
+use ProjectName\Common\Component\Doctrine\Model\IdModelInterface;
+use ProjectName\Common\Component\Doctrine\Model\InsTsModelInterface;
+use ProjectName\Common\Component\Doctrine\Model\UuidModelInterface;
+use ProjectName\Common\Exception\DomainException;
+use ProjectName\Common\Module\Billing\Domain\Enum\PaymentStatusEnum;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Uid\Uuid;

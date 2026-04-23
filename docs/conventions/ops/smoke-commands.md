@@ -85,9 +85,9 @@ check. Это даёт читателю явный сигнал: команда 
 
 declare(strict_types=1);
 
-namespace Console\Module\Notification\Command\Smoke;
+namespace ProjectName\Console\Module\Notification\Command\Smoke;
 
-use Common\Module\User\Application\Service\Email\WelcomeEmailServiceInterface;
+use ProjectName\Common\Module\User\Application\Service\Email\WelcomeEmailServiceInterface;
 use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

@@ -49,17 +49,17 @@ apps/<app>/src/Module/<ModuleName>/Resource/templates/<context>/_*.html.twig
 
 declare(strict_types=1);
 
-namespace Web\Module\Billing\Form\Plan;
+namespace ProjectName\Web\Module\Billing\Form\Plan;
 
-use Common\Module\Billing\Application\Enum\PlanStatusEnum;
+use ProjectName\Common\Module\Billing\Application\Enum\PlanStatusEnum;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Web\Module\Billing\Enum\CurrencyEnum;
-use Web\Module\Billing\List\CurrencyList;
+use ProjectName\Web\Module\Billing\Enum\CurrencyEnum;
+use ProjectName\Web\Module\Billing\List\CurrencyList;
 
 final class FilterFormModel
 {
@@ -192,10 +192,10 @@ final class FilterFormType extends AbstractType
 
 declare(strict_types=1);
 
-namespace Web\Module\Project\Form\Task;
+namespace ProjectName\Web\Module\Project\Form\Task;
 
-use Common\Application\Component\QueryBus\QueryBusComponentInterface;
-use Common\Module\Project\Application\UseCase\Query\Project\FindForSelect\FindForSelectQuery;
+use ProjectName\Common\Application\Component\QueryBus\QueryBusComponentInterface;
+use ProjectName\Common\Module\Project\Application\UseCase\Query\Project\FindForSelect\FindForSelectQuery;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

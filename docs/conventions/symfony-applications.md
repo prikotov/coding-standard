@@ -11,7 +11,7 @@ description: Правила организации изолированных Sy
 ## Общие правила
 
 - Каждое приложение находится в директории `apps/<app_name>/`.
-- Все приложения наследуются от общего [`Common\Kernel`](examples/Kernel.php).
+- Все приложения наследуются от общего [`ProjectName\Common\Kernel`](examples/Kernel.php). В namespace: `ProjectName\Common\Kernel`.
 - Каждое приложение имеет собственный идентификатор (`id`), который используется для разделения кэша и логов.
 - Конфигурация приложения находится в `apps/<app_name>/config/`.
 - Модули приложения регистрируются в `apps/<app_name>/config/modules.php`.
@@ -103,7 +103,7 @@ apps/<app_name>/
 
 ## Общий Kernel
 
-Все приложения наследуются от [`Common\Kernel`](examples/Kernel.php), который реализует:
+Все приложения наследуются от [`ProjectName\Common\Kernel`](examples/Kernel.php), который реализует:
 
 - **ModuleKernelTrait** — поддержка модульной системы.
 - **MicroKernelTrait** — гибкая конфигурация через PHP.
@@ -118,9 +118,9 @@ apps/<app_name>/
 
 declare(strict_types=1);
 
-namespace Blog;
+namespace ProjectName\Blog;
 
-use Common\Kernel as CommonKernel;
+use ProjectName\Common\Kernel as CommonKernel;
 
 final class Kernel extends CommonKernel
 {
@@ -139,8 +139,8 @@ final class Kernel extends CommonKernel
 declare(strict_types=1);
 
 return [
-    Web\Module\Chat\ChatModule::class => ['all' => true],
-    Web\Module\Project\ProjectModule::class => ['all' => true],
+    ProjectName\Web\Module\Chat\ChatModule::class => ['all' => true],
+    ProjectName\Web\Module\Project\ProjectModule::class => ['all' => true],
 ];
 ```
 
@@ -183,12 +183,12 @@ services:
 # apps/web/config/routes/dashboard.yaml
 dashboard:
     path: /dashboard
-    controller: Web\Module\Dashboard\Controller\DashboardController::index
+    controller: ProjectName\Web\Module\Dashboard\Controller\DashboardController::index
 ```
 
 ## Как используем
 
-- **Создание нового приложения**: создайте директорию `apps/<app_name>/` с необходимой структурой и Kernel, наследуемым от `Common\Kernel`.
+- **Создание нового приложения**: создайте директорию `apps/<app_name>/` с необходимой структурой и Kernel, наследуемым от `ProjectName\Common\Kernel`.
 - **Добавление модуля в приложение**: зарегистрируйте модуль в `apps/<app_name>/config/modules.php`.
 - **Переопределение конфигурации**: создайте файл конфигурации в `apps/<app_name>/config/` для переопределения общих настроек.
 - **Разделение тестов**: размещайте тесты в `apps/<app_name>/tests/` для изоляции тестов разных приложений.
@@ -204,21 +204,21 @@ dashboard:
 declare(strict_types=1);
 
 return [
-    Web\Module\AppOption\AppOptionModule::class => ['all' => true],
-    Web\Module\Attribution\AttributionModule::class => ['all' => true],
-    Web\Module\Billing\BillingModule::class => ['all' => true],
-    Web\Module\Chat\ChatModule::class => ['all' => true],
-    Web\Module\Dashboard\DashboardModule::class => ['all' => true],
-    Web\Module\Landing\LandingModule::class => ['all' => true],
-    Web\Module\Llm\LlmModule::class => ['all' => true],
-    Web\Module\Project\ProjectModule::class => ['all' => true],
-    Web\Module\Rag\RagModule::class => ['all' => true],
-    Web\Module\Search\SearchModule::class => ['all' => true],
-    Web\Module\Source\SourceModule::class => ['all' => true],
-    Web\Module\Secret\SecretModule::class => ['all' => true],
-    Web\Module\User\UserModule::class => ['all' => true],
-    Web\Module\Tag\TagModule::class => ['all' => true],
-    Web\Module\Notification\NotificationModule::class => ['all' => true],
+    ProjectName\Web\Module\AppOption\AppOptionModule::class => ['all' => true],
+    ProjectName\Web\Module\Attribution\AttributionModule::class => ['all' => true],
+    ProjectName\Web\Module\Billing\BillingModule::class => ['all' => true],
+    ProjectName\Web\Module\Chat\ChatModule::class => ['all' => true],
+    ProjectName\Web\Module\Dashboard\DashboardModule::class => ['all' => true],
+    ProjectName\Web\Module\Landing\LandingModule::class => ['all' => true],
+    ProjectName\Web\Module\Llm\LlmModule::class => ['all' => true],
+    ProjectName\Web\Module\Project\ProjectModule::class => ['all' => true],
+    ProjectName\Web\Module\Rag\RagModule::class => ['all' => true],
+    ProjectName\Web\Module\Search\SearchModule::class => ['all' => true],
+    ProjectName\Web\Module\Source\SourceModule::class => ['all' => true],
+    ProjectName\Web\Module\Secret\SecretModule::class => ['all' => true],
+    ProjectName\Web\Module\User\UserModule::class => ['all' => true],
+    ProjectName\Web\Module\Tag\TagModule::class => ['all' => true],
+    ProjectName\Web\Module\Notification\NotificationModule::class => ['all' => true],
 ];
 ```
 
@@ -230,23 +230,23 @@ return [
 declare(strict_types=1);
 
 return [
-    Console\Module\Chat\ChatModule::class => ['all' => true],
-    Console\Module\Llm\LlmModule::class => ['all' => true],
-    Console\Module\Project\ProjectModule::class => ['all' => true],
-    Console\Module\Rag\RagModule::class => ['all' => true],
-    Console\Module\Source\SourceModule::class => ['all' => true],
-    Console\Module\SpeechToText\SpeechToTextModule::class => ['all' => true],
-    Console\Module\User\UserModule::class => ['all' => true],
-    Console\Module\Billing\BillingModule::class => ['all' => true],
-    Console\Module\Notification\NotificationModule::class => ['all' => true],
-    Console\Module\Fix\FixModule::class => ['all' => true],
+    ProjectName\Console\Module\Chat\ChatModule::class => ['all' => true],
+    ProjectName\Console\Module\Llm\LlmModule::class => ['all' => true],
+    ProjectName\Console\Module\Project\ProjectModule::class => ['all' => true],
+    ProjectName\Console\Module\Rag\RagModule::class => ['all' => true],
+    ProjectName\Console\Module\Source\SourceModule::class => ['all' => true],
+    ProjectName\Console\Module\SpeechToText\SpeechToTextModule::class => ['all' => true],
+    ProjectName\Console\Module\User\UserModule::class => ['all' => true],
+    ProjectName\Console\Module\Billing\BillingModule::class => ['all' => true],
+    ProjectName\Console\Module\Notification\NotificationModule::class => ['all' => true],
+    ProjectName\Console\Module\Fix\FixModule::class => ['all' => true],
 ];
 ```
 
 ## Чек-лист для проведения ревью кода
 
 - [ ] Приложение имеет правильную структуру директорий.
-- [ ] Kernel приложения наследуется от `Common\Kernel`.
+- [ ] Kernel приложения наследуется от `ProjectName\Common\Kernel`.
 - [ ] Модули зарегистрированы в `apps/<app_name>/config/modules.php`.
 - [ ] Bundles зарегистрированы в `apps/<app_name>/config/bundles.php`.
 - [ ] Конфигурация сервисов находится в `apps/<app_name>/config/services.yaml`.

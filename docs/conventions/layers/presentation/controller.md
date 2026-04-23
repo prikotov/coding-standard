@@ -45,7 +45,7 @@ apps/<app>/src/Module/<ModuleName>/Controller/<Context>/{Request|Response}/{Name
 3. Создаём и обрабатываем форму/DTO для входных данных.
 4. Вызываем Application-UseCase через CommandBus/QueryBus.
 5. Формируем ответ: рендер шаблона, JSON или редирект с flash-сообщениями.
-6. Исключения отдаем на обработку `Web\EventSubscriber\ExceptionSubscriber`.
+6. Исключения отдаем на обработку `ProjectName\Web\EventSubscriber\ExceptionSubscriber`.
 
 ## Пример
 
@@ -54,11 +54,11 @@ apps/<app>/src/Module/<ModuleName>/Controller/<Context>/{Request|Response}/{Name
 
 declare(strict_types=1);
 
-namespace Web\Module\Llm\Controller\Provider;
+namespace ProjectName\Web\Module\Llm\Controller\Provider;
 
-use Common\Application\Component\CommandBus\CommandBusComponentInterface;
-use Common\Module\Llm\Application\Enum\ProviderEnum as ApplicationProviderEnum;
-use Common\Module\Llm\Application\UseCase\Command\Provider\Create\CreateCommand;
+use ProjectName\Common\Application\Component\CommandBus\CommandBusComponentInterface;
+use ProjectName\Common\Module\Llm\Application\Enum\ProviderEnum as ApplicationProviderEnum;
+use ProjectName\Common\Module\Llm\Application\UseCase\Command\Provider\Create\CreateCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,11 +66,11 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Web\Module\Llm\Security\Provider\ActionEnum as ProviderActionEnum;
-use Web\Module\Llm\Form\Provider\CreateFormModel;
-use Web\Module\Llm\Form\Provider\CreateFormType;
-use Web\Module\Llm\Route\ProviderRoute;
-use Web\Security\UserInterface;
+use ProjectName\Web\Module\Llm\Security\Provider\ActionEnum as ProviderActionEnum;
+use ProjectName\Web\Module\Llm\Form\Provider\CreateFormModel;
+use ProjectName\Web\Module\Llm\Form\Provider\CreateFormType;
+use ProjectName\Web\Module\Llm\Route\ProviderRoute;
+use ProjectName\Web\Security\UserInterface;
 
 #[Route(path: ProviderRoute::CREATE_PATH, name: ProviderRoute::CREATE, methods: [Request::METHOD_GET, Request::METHOD_POST])]
 #[AsController]

@@ -219,10 +219,10 @@ apps/
 Все E2E тесты наследуются от базового класса `PantherWebTestCase`:
 
 ```php
-namespace Web\Test\E2E\JavaScript;
+namespace ProjectName\Web\Test\E2E\JavaScript;
 
-use Web\Test\Base\PantherWebTestCase;
-use Web\Test\Support\Trait\UserLoginTrait;
+use ProjectName\Web\Test\Base\PantherWebTestCase;
+use ProjectName\Web\Test\Support\Trait\UserLoginTrait;
 
 final class TurboNavigationTest extends PantherWebTestCase
 {
@@ -244,7 +244,7 @@ final class TurboNavigationTest extends PantherWebTestCase
 Трейт `UserLoginTrait` упрощает авторизацию пользователя в E2E тестах:
 
 ```php
-use Web\Test\Support\Trait\UserLoginTrait;
+use ProjectName\Web\Test\Support\Trait\UserLoginTrait;
 
 final class MyE2ETest extends PantherWebTestCase
 {

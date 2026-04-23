@@ -43,33 +43,33 @@ description: Правила создания мапперов для преоб�
 **Application слой** — маппинг Domain ↔ DTO:
 
 ```
-Common\Module\{ModuleName}\Application\Mapper\{Name}Mapper
+{ProjectName}\Common\Module\{ModuleName}\Application\Mapper\{Name}Mapper
 ```
 
 **Infrastructure слой** — маппинг Criteria → QueryBuilder, DTO → массив:
 
 ```
-Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{Name}Mapper
-Common\Module\{ModuleName}\Infrastructure\Component\{Component}\Mapper\{Name}Mapper
-Common\Module\{ModuleName}\Infrastructure\Mapper\{Name}Mapper
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{Name}Mapper
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{Component}\Mapper\{Name}Mapper
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Mapper\{Name}Mapper
 ```
 
 **Domain слой** — маппинг внутри домена:
 
 ```
-Common\Module\{ModuleName}\Domain\Mapper\{Name}Mapper
+{ProjectName}\Common\Module\{ModuleName}\Domain\Mapper\{Name}Mapper
 ```
 
 **Integration слой** — маппинг для внешних API:
 
 ```
-Common\Module\{ModuleName}\Integration\Component\{Component}\Mapper\{Name}Mapper
+{ProjectName}\Common\Module\{ModuleName}\Integration\Component\{Component}\Mapper\{Name}Mapper
 ```
 
 **Presentation слой** — маппинг для контроллеров:
 
 ```
-Common\Module\{ModuleName}\Presentation\Mapper\{Name}Mapper
+{ProjectName}\Common\Module\{ModuleName}\Presentation\Mapper\{Name}Mapper
 ```
 
 ## Как используем
@@ -89,13 +89,13 @@ Common\Module\{ModuleName}\Presentation\Mapper\{Name}Mapper
 
 declare(strict_types=1);
 
-namespace Common\Module\Source\Application\Mapper;
+namespace ProjectName\Common\Module\Source\Application\Mapper;
 
-use Common\Module\Source\Application\Dto\CreatorDto;
-use Common\Module\Source\Application\Dto\SourceDto;
-use Common\Module\Source\Application\Enum\SourceDiarizationModeEnum;
-use Common\Module\Source\Application\Enum\SourceLanguageEnum;
-use Common\Module\Source\Domain\Entity\SourceModel;
+use ProjectName\Common\Module\Source\Application\Dto\CreatorDto;
+use ProjectName\Common\Module\Source\Application\Dto\SourceDto;
+use ProjectName\Common\Module\Source\Application\Enum\SourceDiarizationModeEnum;
+use ProjectName\Common\Module\Source\Application\Enum\SourceLanguageEnum;
+use ProjectName\Common\Module\Source\Domain\Entity\SourceModel;
 
 final readonly class SourceDtoMapper
 {
@@ -141,10 +141,10 @@ final readonly class SourceDtoMapper
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Integration\Component\TBusiness\Mapper;
+namespace ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Mapper;
 
-use Common\Module\Billing\Integration\Component\TBusiness\Dto\InitRequestDto;
-use Common\Module\Billing\Integration\Component\TBusiness\Helper\TokenHelper;
+use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Dto\InitRequestDto;
+use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Helper\TokenHelper;
 
 final readonly class InitRequestMapper
 {

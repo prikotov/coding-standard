@@ -48,7 +48,7 @@ apps/<app>/src/Module/<Module>/Controller/<Context>/<Action>Controller.php
 
 declare(strict_types=1);
 
-namespace Web\Module\Chat\Controller\PublicChat;
+namespace ProjectName\Web\Module\Chat\Controller\PublicChat;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

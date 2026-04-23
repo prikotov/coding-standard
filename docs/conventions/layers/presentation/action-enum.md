@@ -40,7 +40,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/ActionEnum.php
 
 declare(strict_types=1);
 
-namespace Web\Module\Project\Security\Project;
+namespace ProjectName\Web\Module\Project\Security\Project;
 
 enum ActionEnum: string
 {

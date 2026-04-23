@@ -36,15 +36,15 @@ description: Правила создания критериев для филь�
 - Интерфейс и реализации в слое [Domain](../domain.md):
 
 ```php
-namespace Common\Module\{ModuleName}\Domain\Repository\{EntityName}\{EntityName}CriteriaInterface
-namespace Common\Module\{ModuleName}\Domain\Repository\{EntityName}\Criteria\{CriteriaName}Criteria
-namespace Common\Module\{ModuleName}\Domain\Repository\{EntityName}\Enum\{EntityName}SortFieldEnum; // при использовании enum
+namespace {ProjectName}\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\{EntityName}CriteriaInterface
+namespace {ProjectName}\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\Criteria\{CriteriaName}Criteria
+namespace {ProjectName}\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\Enum\{EntityName}SortFieldEnum; // при использовании enum
 ```
 
 - Mapper в слое [Infrastructure](../infrastructure.md):
 
 ```php
-namespace Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\Criteria\Mapper\{CriteriaName}CriteriaMapper
+namespace {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\Criteria\Mapper\{CriteriaName}CriteriaMapper
 ```
 
 ## Как используем
@@ -62,16 +62,16 @@ namespace Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\Crit
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Domain\Repository\Payment\Criteria;
+namespace ProjectName\Common\Module\Billing\Domain\Repository\Payment\Criteria;
 
-use Common\Component\Repository\CriteriaWithLimitInterface;
-use Common\Component\Repository\CriteriaWithOffsetInterface;
-use Common\Component\Repository\SortableCriteriaInterface;
-use Common\Component\Repository\Trait\CriteriaWithLimitTrait;
-use Common\Component\Repository\Trait\CriteriaWithOffsetTrait;
-use Common\Component\Repository\Trait\SortableCriteriaTrait;
-use Common\Module\Billing\Domain\Enum\CurrencyEnum;
-use Common\Module\Billing\Domain\Repository\Payment\PaymentCriteriaInterface;
+use ProjectName\Common\Component\Repository\CriteriaWithLimitInterface;
+use ProjectName\Common\Component\Repository\CriteriaWithOffsetInterface;
+use ProjectName\Common\Component\Repository\SortableCriteriaInterface;
+use ProjectName\Common\Component\Repository\Trait\CriteriaWithLimitTrait;
+use ProjectName\Common\Component\Repository\Trait\CriteriaWithOffsetTrait;
+use ProjectName\Common\Component\Repository\Trait\SortableCriteriaTrait;
+use ProjectName\Common\Module\Billing\Domain\Enum\CurrencyEnum;
+use ProjectName\Common\Module\Billing\Domain\Repository\Payment\PaymentCriteriaInterface;
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 

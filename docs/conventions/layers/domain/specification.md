@@ -34,7 +34,7 @@ description: Правила использования паттерна Specific
 - В слое [Domain](../domain.md):
 
 ```php
-Common\Module\{ModuleName}\Domain\Specification\{Context}\{SpecificationName}Specification
+{ProjectName}\Common\Module\{ModuleName}\Domain\Specification\{Context}\{SpecificationName}Specification
 ```
 
 `{Context}` используется при необходимости логически сгруппировать спецификации внутри модуля.
@@ -54,7 +54,7 @@ Common\Module\{ModuleName}\Domain\Specification\{Context}\{SpecificationName}Spe
 
 declare(strict_types=1);
 
-namespace Common\Module\User\Domain\Specification\TeamMembership;
+namespace ProjectName\Common\Module\User\Domain\Specification\TeamMembership;
 
 use DateTimeImmutable;
 

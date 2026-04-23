@@ -39,13 +39,13 @@ description: Правила создания доменных контракто
 - Интерфейс в слое [Domain](../domain.md):
 
 ```php
-namespace Common\Module\{ModuleName}\Domain\Repository\{EntityName}\{EntityName}RepositoryInterface
+namespace {ProjectName}\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\{EntityName}RepositoryInterface
 ```
 
 - Реализация в слое [Infrastructure](../infrastructure.md):
 
 ```php
-namespace Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\{EntityName}Repository
+namespace {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\{EntityName}Repository
 ```
 
 ## Пример
@@ -56,11 +56,11 @@ namespace Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\{Ent
 
 declare(strict_types=1);
 
-namespace Common\Module\Billing\Domain\Repository\Payment;
+namespace ProjectName\Common\Module\Billing\Domain\Repository\Payment;
 
-use Common\Exception\NotFoundExceptionInterface;
-use Common\Module\Billing\Domain\Entity\PaymentModel;
-use Common\Module\Billing\Domain\Repository\Payment\PaymentCriteriaInterface;
+use ProjectName\Common\Exception\NotFoundExceptionInterface;
+use ProjectName\Common\Module\Billing\Domain\Entity\PaymentModel;
+use ProjectName\Common\Module\Billing\Domain\Repository\Payment\PaymentCriteriaInterface;
 use Symfony\Component\Uid\Uuid;
 
 interface PaymentRepositoryInterface
@@ -89,7 +89,7 @@ interface PaymentRepositoryInterface
 
 declare(strict_types=1);
 
-use Common\Component\Persistence\PersistenceManagerInterface;
+use ProjectName\Common\Component\Persistence\PersistenceManagerInterface;
 
 final readonly class InitCommandHandler
 {
@@ -136,13 +136,13 @@ final readonly class InitCommandHandler
 
 declare(strict_types=1);
 
-namespace Common\Module\Health\Infrastructure\Repository\ServiceStatus;
+namespace ProjectName\Common\Module\Health\Infrastructure\Repository\ServiceStatus;
 
-use Common\Exception\NotFoundException;
-use Common\Module\Health\Domain\Entity\ServiceStatusModel;
-use Common\Module\Health\Domain\Repository\ServiceStatus\Criteria\ServiceStatusFindCriteria;
-use Common\Module\Health\Domain\Repository\ServiceStatus\ServiceStatusCriteriaInterface;
-use Common\Module\Health\Domain\Repository\ServiceStatus\ServiceStatusRepositoryInterface;
+use ProjectName\Common\Exception\NotFoundException;
+use ProjectName\Common\Module\Health\Domain\Entity\ServiceStatusModel;
+use ProjectName\Common\Module\Health\Domain\Repository\ServiceStatus\Criteria\ServiceStatusFindCriteria;
+use ProjectName\Common\Module\Health\Domain\Repository\ServiceStatus\ServiceStatusCriteriaInterface;
+use ProjectName\Common\Module\Health\Domain\Repository\ServiceStatus\ServiceStatusRepositoryInterface;
 use Override;
 use Symfony\Component\Uid\Uuid;
 
