@@ -4,7 +4,7 @@
 
 ## 这是什么
 
-`depfile.yaml.example` — 一个 [Deptrac](https://github.com/qossmic/deptrac) 配置示例，它对约定（`docs/conventions/`）中描述的架构规则实施**确定性验证**：
+`depfile.yaml` — 一个 [Deptrac](https://github.com/qossmic/deptrac) 配置，它对约定（`docs/conventions/`）中描述的架构规则实施**确定性验证**：
 
 ```
 Presentation → Application → Domain

@@ -4,7 +4,7 @@
 
 ## Что здесь
 
-`depfile.yaml.example` — пример конфига [Deptrac](https://github.com/qossmic/deptrac), который реализует **детерминированную верификацию** архитектурных правил, описанных в конвенциях (`docs/conventions/`):
+`depfile.yaml` — конфиг [Deptrac](https://github.com/qossmic/deptrac), который реализует **детерминированную верификацию** архитектурных правил, описанных в конвенциях (`docs/conventions/`):
 
 ```
 Presentation → Application → Domain

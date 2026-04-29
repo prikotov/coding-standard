@@ -4,7 +4,7 @@
 
 ## What's here
 
-`depfile.yaml.example` — an example [Deptrac](https://github.com/qossmic/deptrac) config that implements **deterministic verification** of architectural rules described in the conventions (`docs/conventions/`):
+`depfile.yaml` — a [Deptrac](https://github.com/qossmic/deptrac) config that implements **deterministic verification** of architectural rules described in the conventions (`docs/conventions/`):
 
 ```
 Presentation → Application → Domain

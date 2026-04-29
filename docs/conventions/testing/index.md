@@ -208,7 +208,7 @@ make psalm
 
 ### Deptrac
 
-Анализ архитектуры (слои, модули). Конфигурация: [`depfile.yaml`](../../../examples/deptrac/depfile.yaml.example)
+Анализ архитектуры (слои, модули). Конфигурация: [`depfile.yaml`](../../../config/deptrac/depfile.yaml)
 
 ```bash
 make deptrac
@@ -322,7 +322,7 @@ tests/
 | [`phpcs.xml.dist`](../examples/phpcs.xml.dist) | Конфигурация PHP_CodeSniffer |
 | [`phpmd.xml`](../examples/phpmd.xml) | Конфигурация PHP Mess Detector |
 | [`Makefile`](../examples/Makefile) | Команды для проверок |
-| [`depfile.yaml`](../../../examples/deptrac/depfile.yaml.example) | Конфигурация Deptrac |
+| [`depfile.yaml`](../../../config/deptrac/depfile.yaml) | Конфигурация Deptrac |
 
 ## Дополнительные ресурсы
 

@@ -39,8 +39,8 @@ bin/
   run-sniff-tests.php         # Запуск тестов сниффов
 docs/
   conventions/                # DDD-конвенции (копируются в проект-потребитель)
-  depfile.yaml.example        # Пример конфигурации Deptrac
-examples/                     # Примеры конфигураций
+  config/deptrac/              # Конфигурация Deptrac
+config/                       # Конфигурации (Deptrac)
 ruleset.xml                   # PHPCS ruleset
 ```
 
