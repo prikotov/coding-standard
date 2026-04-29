@@ -160,8 +160,22 @@ declare(strict_types=1);
 
 ---
 
+## Git workflow
+
+Правила работы с git — ветки, коммиты, PR, релизы, SemVer:
+
+- [Ветки](vendor/prikotov/git-workflow/docs/git-workflow/branches.md)
+- [Коммиты (Conventional Commits)](vendor/prikotov/git-workflow/docs/git-workflow/commits.md)
+- [Pull Request](vendor/prikotov/git-workflow/docs/git-workflow/pull-request.md)
+- [Code Review](vendor/prikotov/git-workflow/docs/git-workflow/code-review.md)
+- [Релизы и CHANGELOG](vendor/prikotov/git-workflow/docs/git-workflow/release.md)
+
+---
+
 ## Ссылки
 
 - **Конвенции**: [docs/conventions/index.md](docs/conventions/index.md)
+- **Deptrac**: [config/deptrac/depfile.yaml](config/deptrac/depfile.yaml)
+- **Git workflow**: [vendor/prikotov/git-workflow/docs/git-workflow/index.md](vendor/prikotov/git-workflow/docs/git-workflow/index.md)
 - **README**: [README.md](README.md)
 - **PHPCS Ruleset**: [ruleset.xml](ruleset.xml)
