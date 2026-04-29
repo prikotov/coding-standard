@@ -122,4 +122,10 @@ return [
         ],
         'warnings' => [],
     ],
+    // Root namespace prefix (Task\) — no NamespaceMismatch error
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Application/UseCase/Command/Foo/BazTask/BazTaskCommand.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
 ];
