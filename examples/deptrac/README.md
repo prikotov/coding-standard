@@ -95,6 +95,37 @@ The Presentation layer uses a single regex that matches any application-level na
 
 The optional prefix `(?:[A-Za-z_]+\\)?` handles both `Console\Module\...` and `TaskOrchestrator\Console\Module\...`. Add your app namespaces to the alternation if needed.
 
+## Custom rules
+
+### ServiceContractDependencyRule
+
+A custom Deptrac event subscriber that enforces **service contract boundaries** — goes beyond what static layer rules can express:
+
+1. **Cross-module service calls are forbidden** — a service in `Module\Billing` must not depend on a service in `Module\User`. Use Integration layer for cross-module communication.
+2. **Service interfaces must be referenced/implemented only by allowed layers** — for example, Domain may only reference its own Domain service interfaces, while Integration may reference Domain + Application + Integration interfaces.
+3. **`use` imports are ignored** — only actual dependencies (parameter types, return types, method calls, inheritance) are checked, so IDE-importing a class from another module doesn't trigger a false positive.
+
+Allowed service interface references per layer:
+
+| Layer         | Can reference (use)          | Can implement (inherit)       |
+|---------------|------------------------------|-------------------------------|
+| Domain        | Domain                       | Domain                        |
+| Application   | Domain, Application          | Domain, Application           |
+| Infrastructure| Domain, Infrastructure       | Domain, Infrastructure        |
+| Integration   | Domain, Application,         | Domain, Integration           |
+|               |   Integration                |                               |
+
+**Installation**: the rule is provided by `prikotov/coding-standard` as an autoloaded class — no need to copy files. Just register it in your `depfile.yaml`:
+
+```yaml
+services:
+  - class: PrikotovCodingStandard\Deptrac\ServiceContractDependencyRule
+    tags:
+      - { name: kernel.event_subscriber }
+```
+
+Full test suite (28 cases) is included in the package (`tests/Deptrac/ServiceContractDependencyRuleTest.php`).
+
 ## Running
 
 Directly:

@@ -281,3 +281,10 @@ deptrac:
       - +ApplicationQuery
       - ApplicationCommandHandler
       - ApplicationQueryHandler
+
+# Custom Deptrac event subscriber for service contract rules.
+# Provided by prikotov/coding-standard — no need to copy, works out of the box.
+services:
+  - class: PrikotovCodingStandard\Deptrac\ServiceContractDependencyRule
+    tags:
+      - { name: kernel.event_subscriber }

@@ -20,12 +20,21 @@
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
+        "deptrac/deptrac": "^2.0",
         "phpunit/phpunit": "^10.5"
     },
     "autoload": {
         "psr-4": {
             "PrikotovCodingStandard\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PrikotovCodingStandard\\Tests\\": "tests/"
+        }
+    },
+    "suggest": {
+        "deptrac/deptrac": "For using ServiceContractDependencyRule — custom Deptrac rule that enforces service contract boundaries"
     },
     "config": {
         "sort-packages": true,
@@ -34,9 +43,11 @@
         }
     },
     "scripts": {
+        "test": "phpunit",
         "sniff-test": "php bin/run-sniff-tests.php",
         "validate-docs": "php bin/validate-docs.php",
         "check": [
+            "@test",
             "@sniff-test",
             "@validate-docs",
             "phpcs src/"
