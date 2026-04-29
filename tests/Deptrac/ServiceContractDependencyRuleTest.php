@@ -455,6 +455,50 @@ final class ServiceContractDependencyRuleTest extends TestCase
         self::assertCount(1, $this->violations($event));
     }
 
+    // --- Non-standard interface naming (no ServiceInterface suffix) ---
+
+    public function testIntegrationImplementsApplicationInterfaceWithoutServiceSuffixWithViolation(): void
+    {
+        $event = $this->createProcessEvent(
+            'App\Common\Module\Billing\Integration\Service\Payment\RouterPaymentNotificationUrlGenerator',
+            'App\Common\Module\Billing\Application\Service\Payment\PaymentNotificationUrlGeneratorInterface',
+            DependencyType::INHERIT,
+        );
+        $rule = new ServiceContractDependencyRule();
+
+        $rule->onProcessEvent($event);
+
+        self::assertCount(1, $this->violations($event));
+    }
+
+    public function testInfrastructureImplementsDomainInterfaceWithoutServiceSuffixWithoutViolation(): void
+    {
+        $event = $this->createProcessEvent(
+            'App\Common\Module\Billing\Infrastructure\Service\Payment\SomePaymentUrlGenerator',
+            'App\Common\Module\Billing\Domain\Service\Payment\PaymentUrlGeneratorInterface',
+            DependencyType::INHERIT,
+        );
+        $rule = new ServiceContractDependencyRule();
+
+        $rule->onProcessEvent($event);
+
+        self::assertSame([], $this->violations($event));
+    }
+
+    public function testIntegrationUsesDomainInterfaceWithoutServiceSuffixWithoutViolation(): void
+    {
+        $event = $this->createProcessEvent(
+            'App\Common\Module\Billing\Integration\Service\Payment\SomePaymentUrlGenerator',
+            'App\Common\Module\Billing\Domain\Service\Payment\PaymentUrlGeneratorInterface',
+            DependencyType::PARAMETER,
+        );
+        $rule = new ServiceContractDependencyRule();
+
+        $rule->onProcessEvent($event);
+
+        self::assertSame([], $this->violations($event));
+    }
+
     // --- ruleName / ruleDescription ---
 
     public function testRuleName(): void

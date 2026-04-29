@@ -40,8 +40,7 @@ final class ServiceContractDependencyRule implements ViolationCreatingInterface
     private const string LAYER_INFRASTRUCTURE = 'Infrastructure';
     private const string LAYER_INTEGRATION = 'Integration';
     private const string SERVICE_DIRECTORY_PREFIX = 'Service\\';
-    private const string SERVICE_CLASS_SUFFIX = 'Service';
-    private const string SERVICE_INTERFACE_SUFFIX = 'ServiceInterface';
+    private const string INTERFACE_SUFFIX = 'Interface';
 
     public static function getSubscribedEvents(): array
     {
@@ -106,7 +105,7 @@ final class ServiceContractDependencyRule implements ViolationCreatingInterface
     private function isServiceInterface(array $class): bool
     {
         return str_starts_with($class['path'], self::SERVICE_DIRECTORY_PREFIX)
-            && str_ends_with($class['path'], self::SERVICE_INTERFACE_SUFFIX);
+            && str_ends_with($class['path'], self::INTERFACE_SUFFIX);
     }
 
     /**
@@ -114,11 +113,7 @@ final class ServiceContractDependencyRule implements ViolationCreatingInterface
      */
     private function isService(array $class): bool
     {
-        return str_starts_with($class['path'], self::SERVICE_DIRECTORY_PREFIX)
-            && (
-                str_ends_with($class['path'], self::SERVICE_CLASS_SUFFIX)
-                || str_ends_with($class['path'], self::SERVICE_INTERFACE_SUFFIX)
-            );
+        return str_starts_with($class['path'], self::SERVICE_DIRECTORY_PREFIX);
     }
 
     /**
