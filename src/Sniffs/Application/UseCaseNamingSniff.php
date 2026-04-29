@@ -97,12 +97,12 @@ final class UseCaseNamingSniff implements Sniff
             $namespaceInfo   = $this->resolveNamespace($phpcsFile);
             $actualNamespace = $namespaceInfo['name'];
 
-            if ($actualNamespace !== $expectedNamespace) {
+            if ($actualNamespace !== null && !str_ends_with($actualNamespace, $expectedNamespace)) {
                 $phpcsFile->addError(
                     sprintf(
-                        'Namespace must match path; expected %s, found %s.',
+                        'Namespace must match path; expected namespace ending with %s, found %s.',
                         $expectedNamespace,
-                        $actualNamespace ?? '(none)',
+                        $actualNamespace,
                     ),
                     $namespaceInfo['ptr'] ?? $stackPtr,
                     self::ERROR_NAMESPACE_MISMATCH,
@@ -168,7 +168,8 @@ final class UseCaseNamingSniff implements Sniff
         $relativeWithoutSrc = substr($relativePath, strlen('src/'));
         $namespacePath      = str_replace('/', '\\', dirname($relativeWithoutSrc));
 
-        return 'Common\\' . $namespacePath;
+        // Match any root namespace prefix: Task\Common\..., App\Common\..., Common\...
+        return $namespacePath;
     }
 
     private function isLegacyAllowlisted(string $relativePath): bool
