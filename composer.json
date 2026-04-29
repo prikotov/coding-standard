@@ -21,7 +21,8 @@
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
         "deptrac/deptrac": "^2.0",
-        "phpunit/phpunit": "^10.5"
+        "phpunit/phpunit": "^10.5",
+        "prikotov/git-workflow": "@dev"
     },
     "autoload": {
         "psr-4": {
