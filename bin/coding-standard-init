@@ -12,13 +12,14 @@ declare(strict_types=1);
  *   target-dir    — project root (default: current working directory).
  *   --docs-path   — relative path where docs will be copied (default: docs/conventions).
  *   --deptrac-path — relative path where depfile.yaml will be copied (default: depfile.yaml).
- *                    Set to empty string (--deptrac-path=) to skip deptrac config.
+ *   --no-deptrac  — skip depfile.yaml copying entirely.
  *   --force       — overwrite existing files with fresh copies from the package.
  */
 
 // ── Parse arguments ────────────────────────────────────────────────────────
 
 $force       = false;
+$noDeptrac   = false;
 $targetArg   = null;
 $docsPath    = null;
 $deptracPath = null;
@@ -29,6 +30,8 @@ foreach ($argv as $i => $arg) {
     }
     if ($arg === '--force') {
         $force = true;
+    } elseif ($arg === '--no-deptrac') {
+        $noDeptrac = true;
     } elseif (str_starts_with($arg, '--docs-path=')) {
         $docsPath = substr($arg, strlen('--docs-path='));
     } elseif (str_starts_with($arg, '--deptrac-path=')) {
@@ -36,6 +39,12 @@ foreach ($argv as $i => $arg) {
     } else {
         $targetArg = $arg;
     }
+}
+
+if ($noDeptrac) {
+    $deptracPath = '';
+} elseif ($deptracPath === null) {
+    $deptracPath = 'depfile.yaml';
 }
 
 // ── Resolve paths ──────────────────────────────────────────────────────────
@@ -50,9 +59,8 @@ if ($targetDir === false || !is_dir($targetDir)) {
 
 $sourceDocs     = $packageRoot . '/docs/conventions';
 $sourceConfig = $packageRoot . '/config';
-$docsPath     = $docsPath ?? 'docs/conventions';
-$deptracPath  = $deptracPath ?? 'depfile.yaml';
-$targetDocs   = $targetDir . '/' . $docsPath;
+$docsPath   = $docsPath ?? 'docs/conventions';
+$targetDocs = $targetDir . '/' . $docsPath;
 
 if (!is_dir($sourceDocs)) {
     fwrite(STDERR, "Error: package docs/ not found at $sourceDocs" . PHP_EOL);
