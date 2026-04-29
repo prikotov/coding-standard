@@ -122,14 +122,8 @@ if ($deptracPath !== '') {
 
     if (file_exists($deptracSource)) {
         if (file_exists($deptracTarget)) {
-            if ($force) {
-                copy($deptracSource, $deptracTarget);
-                echo "  Updated  $deptracPath" . PHP_EOL;
-                $updated++;
-            } else {
-                echo "  Skip     $deptracPath (already exists)" . PHP_EOL;
-                $skipped++;
-            }
+            echo "  Skip     $deptracPath (project file, not overwritten)" . PHP_EOL;
+            $skipped++;
         } else {
             $deptracDir = dirname($deptracTarget);
             if (!is_dir($deptracDir)) {
@@ -150,14 +144,8 @@ if (!$noPhpcs) {
 
     if (file_exists($phpcsSource)) {
         if (file_exists($phpcsTarget)) {
-            if ($force) {
-                copy($phpcsSource, $phpcsTarget);
-                echo "  Updated  phpcs.xml.dist" . PHP_EOL;
-                $updated++;
-            } else {
-                echo "  Skip     phpcs.xml.dist (already exists)" . PHP_EOL;
-                $skipped++;
-            }
+            echo "  Skip     phpcs.xml.dist (project file, not overwritten)" . PHP_EOL;
+            $skipped++;
         } else {
             copy($phpcsSource, $phpcsTarget);
             echo "  Copied   phpcs.xml.dist" . PHP_EOL;
