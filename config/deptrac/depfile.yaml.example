@@ -1,0 +1,12 @@
+# Deptrac — project configuration
+#
+# Imports shared layers and rules from prikotov/coding-standard.
+# Add project-specific overrides below (skip_violations, extra layers, etc).
+
+imports:
+  - vendor/prikotov/coding-standard/config/deptrac/depfile.yaml
+
+deptrac:
+  # Project-specific violations to skip.
+  # Remove entries as you fix them.
+  skip_violations: {}
