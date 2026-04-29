@@ -142,9 +142,33 @@ if ($deptracPath !== '') {
     }
 }
 
-// ── 3. Update .gitignore ──────────────────────────────────────────────────
+// ── 3. Copy phpcs.xml.dist ─────────────────────────────────────────────────
 
-// 3a. docs/.gitignore — exclude copied conventions documentation
+if (!$noPhpcs) {
+    $phpcsSource = $sourceConfig . '/phpcs/phpcs.xml.dist.example';
+    $phpcsTarget = $targetDir . '/phpcs.xml.dist';
+
+    if (file_exists($phpcsSource)) {
+        if (file_exists($phpcsTarget)) {
+            if ($force) {
+                copy($phpcsSource, $phpcsTarget);
+                echo "  Updated  phpcs.xml.dist" . PHP_EOL;
+                $updated++;
+            } else {
+                echo "  Skip     phpcs.xml.dist (already exists)" . PHP_EOL;
+                $skipped++;
+            }
+        } else {
+            copy($phpcsSource, $phpcsTarget);
+            echo "  Copied   phpcs.xml.dist" . PHP_EOL;
+            $copied++;
+        }
+    }
+}
+
+// ── 4. Update .gitignore ──────────────────────────────────────────────────
+
+// 4a. docs/.gitignore — exclude copied conventions documentation
 
 $gitignore    = $targetDir . '/docs/.gitignore';
 $gitignoreDir = dirname($docsPath) === 'docs' ? basename($docsPath) . '/' : $docsPath;
@@ -173,7 +197,7 @@ echo PHP_EOL;
 echo "Next steps:" . PHP_EOL;
 echo "  1. Add this line to your project's AGENTS.md:" . PHP_EOL;
 echo "     * \`Конвенции\` — [$docsPath/index.md]($docsPath/index.md)." . PHP_EOL;
-echo "  2. Add PHPCS config to your project (phpcs.xml.dist) with installed_paths pointing to this package." . PHP_EOL;
+echo "  2. Run \`vendor/bin/phpcs\` to check coding style." . PHP_EOL;
 if ($deptracPath !== '') {
     echo "  3. Run \`vendor/bin/deptrac analyse\` to verify architectural rules." . PHP_EOL;
 }

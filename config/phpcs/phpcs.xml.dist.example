@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<ruleset
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    name="PHP_CodeSniffer"
+    xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd"
+>
+    <description>Coding standard.</description>
+
+    <arg name="basepath" value="."/>
+    <arg name="extensions" value="php"/>
+    <arg name="bootstrap" value="vendor/autoload.php"/>
+
+    <!-- installed_paths managed by dealerdirect/phpcodesniffer-composer-installer -->
+
+    <rule ref="PSR12">
+        <exclude name="PSR2.Files.EndFileNewline.NoneFound"/>
+    </rule>
+
+    <rule ref="Generic.Files.LineLength">
+        <exclude name="Generic.Files.LineLength.TooLong"/>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
+    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
+        <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes.IncorrectStrictTypesFormat"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes.IncorrectWhitespaceBeforeDeclare"/>
+        <properties>
+            <property name="declareOnFirstLine" value="true"/>
+            <property name="linesCountBeforeDeclare" value="1"/>
+            <property name="linesCountAfterDeclare" value="1"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue"/>
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" value="true"/>
+        </properties>
+    </rule>
+
+    <!-- Custom sniffs from prikotov/coding-standard -->
+    <rule ref="coding-standard">
+        <exclude name="PSR12"/>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Classes.MethodSpacing">
+        <properties>
+            <property name="maxLinesCount" value="1"/>
+            <property name="minLinesCount" value="1"/>
+        </properties>
+    </rule>
+
+    <exclude-pattern>/vendor</exclude-pattern>
+    <exclude-pattern>/var</exclude-pattern>
+    <exclude-pattern>/bin</exclude-pattern>
+</ruleset>
