@@ -99,7 +99,7 @@ deptrac:
       collectors:
         # Matches app-level namespaces (Console, Api, Web, etc.)
         - type: classLike
-          value: ^(?:[A-Za-z_]+\\)?(?:Api|Console|Web|Blog|Docs)\\Module\\.*
+          value: ^(?:[A-Za-z_]+\\)?(?:Api|Console|Web|Blog|Docs)\\(Module|Component)\\.*
 
     # --- Fine-grained: DTO, VO, Enum ---
 
