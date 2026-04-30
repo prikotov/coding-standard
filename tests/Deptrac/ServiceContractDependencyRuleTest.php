@@ -149,7 +149,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
         self::assertSame([], $this->violations($event));
     }
 
-    public function testIntegrationUsesOwnApplicationServiceInterfaceWithoutViolation(): void
+    public function testIntegrationUsesOwnApplicationServiceInterfaceWithViolation(): void
     {
         $event = $this->createProcessEvent(
             'App\Common\Module\Billing\Integration\Service\Invoice\PublishInvoiceService',
@@ -160,7 +160,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
 
         $rule->onProcessEvent($event);
 
-        self::assertSame([], $this->violations($event));
+        self::assertCount(1, $this->violations($event));
     }
 
     public function testIntegrationUsesOwnApplicationServiceClassWithoutViolation(): void

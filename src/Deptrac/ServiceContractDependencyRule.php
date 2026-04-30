@@ -160,7 +160,7 @@ final class ServiceContractDependencyRule implements ViolationCreatingInterface
             self::LAYER_DOMAIN => [self::LAYER_DOMAIN],
             self::LAYER_APPLICATION => [self::LAYER_DOMAIN, self::LAYER_APPLICATION],
             self::LAYER_INFRASTRUCTURE => [self::LAYER_DOMAIN, self::LAYER_INFRASTRUCTURE],
-            self::LAYER_INTEGRATION => [self::LAYER_DOMAIN, self::LAYER_APPLICATION, self::LAYER_INTEGRATION],
+            self::LAYER_INTEGRATION => [self::LAYER_DOMAIN, self::LAYER_INTEGRATION],
             default => [],
         };
     }
