@@ -51,14 +51,24 @@ final class ServiceContractDependencyRule implements ViolationCreatingInterface
 
     public function onProcessEvent(ProcessEvent $event): void
     {
-        $depender = $this->parseModuleClass($event->dependerReference->getToken()->toString());
-        $dependent = $this->parseModuleClass($event->dependentReference->getToken()->toString());
+        $dependerClassName = $event->dependerReference->getToken()->toString();
+        $dependentClassName = $event->dependentReference->getToken()->toString();
 
-        if ($depender === null || $dependent === null || !$this->isService($dependent)) {
+        $depender = $this->parseModuleClass($dependerClassName);
+        $dependent = $this->parseModuleClass($dependentClassName);
+
+        if ($dependent === null || !$this->isService($dependent)) {
             return;
         }
 
         if ($event->dependency->getContext()->dependencyType === DependencyType::USE) {
+            return;
+        }
+
+        // Depender is outside module structure — implementing/using a module service is forbidden
+        if ($depender === null) {
+            $this->addViolation($event, $dependent);
+
             return;
         }
 
@@ -75,7 +85,8 @@ final class ServiceContractDependencyRule implements ViolationCreatingInterface
     public function ruleDescription(): string
     {
         return 'Service dependencies must stay inside the module; '
-            . 'service interfaces must also be referenced or implemented only by allowed layers.';
+            . 'service interfaces must only be referenced or implemented by allowed layers; '
+            . 'classes outside the module must not depend on module services.';
     }
 
     /**

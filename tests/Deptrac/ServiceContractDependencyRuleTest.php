@@ -499,6 +499,50 @@ final class ServiceContractDependencyRuleTest extends TestCase
         self::assertSame([], $this->violations($event));
     }
 
+    // --- Depender outside module structure ---
+
+    public function testOutsideModuleImplementsModuleServiceInterfaceWithViolation(): void
+    {
+        $event = $this->createProcessEvent(
+            'App\\Web\\Component\\UserEmail\\WebUserEmailUrlGenerator',
+            'App\\Common\\Module\\User\\Domain\\Service\\Email\\UserEmailUrlGeneratorInterface',
+            DependencyType::INHERIT,
+        );
+        $rule = new ServiceContractDependencyRule();
+
+        $rule->onProcessEvent($event);
+
+        self::assertCount(1, $this->violations($event));
+    }
+
+    public function testOutsideModuleUsesModuleServiceInterfaceWithViolation(): void
+    {
+        $event = $this->createProcessEvent(
+            'App\\Web\\Component\\UserEmail\\WebUserEmailUrlGenerator',
+            'App\\Common\\Module\\User\\Domain\\Service\\Email\\UserEmailUrlGeneratorInterface',
+            DependencyType::PARAMETER,
+        );
+        $rule = new ServiceContractDependencyRule();
+
+        $rule->onProcessEvent($event);
+
+        self::assertCount(1, $this->violations($event));
+    }
+
+    public function testOutsideModuleUsesNonServiceClassWithoutViolation(): void
+    {
+        $event = $this->createProcessEvent(
+            'App\\Web\\Component\\UserEmail\\WebUserEmailUrlGenerator',
+            'App\\Common\\Module\\User\\Domain\\Entity\\User',
+            DependencyType::PARAMETER,
+        );
+        $rule = new ServiceContractDependencyRule();
+
+        $rule->onProcessEvent($event);
+
+        self::assertSame([], $this->violations($event));
+    }
+
     // --- ruleName / ruleDescription ---
 
     public function testRuleName(): void
@@ -513,7 +557,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
         $rule = new ServiceContractDependencyRule();
 
         self::assertSame(
-            'Service dependencies must stay inside the module; service interfaces must also be referenced or implemented only by allowed layers.',
+            'Service dependencies must stay inside the module; service interfaces must only be referenced or implemented by allowed layers; classes outside the module must not depend on module services.',
             $rule->ruleDescription(),
         );
     }
