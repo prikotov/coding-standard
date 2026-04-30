@@ -36,7 +36,7 @@ Integration слой отвечает за межмодульное взаимо
 
 - [Listener](integration/listener.md) — обработчики событий
 - [Middleware](integration/middleware.md) — framework-specific адаптеры pipeline/transport lifecycle
-- **Service** — реализация Domain Service-интерфейсов, требующая внешних зависимостей
+- **Service** — реализация Domain Service-интерфейсов для межмодульного взаимодействия
 - Команды межмодульного взаимодействия
 - Внешние API интеграции
 
@@ -50,7 +50,7 @@ Integration слой отвечает за межмодульное взаимо
 
 ### Service
 
-- Реализует Domain Service-интерфейсы, когда реализация требует внешних зависимостей (HTTP-клиент, роутер, мессенджер и т.д.).
+- Реализует Domain Service-интерфейсы, когда реализация связывает модули или адаптирует внешний transport.
 - Application оркестрирует Domain через интерфейсы, не зная, где находится реализация — в Domain, Infrastructure или Integration.
 - Может использовать Application Service-интерфейсы.
 
