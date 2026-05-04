@@ -288,3 +288,6 @@ services:
   - class: PrikotovCodingStandard\Deptrac\ServiceContractDependencyRule
     tags:
       - { name: kernel.event_subscriber }
+  - class: PrikotovCodingStandard\Deptrac\CrossModuleDomainRule
+    tags:
+      - { name: kernel.event_subscriber }
