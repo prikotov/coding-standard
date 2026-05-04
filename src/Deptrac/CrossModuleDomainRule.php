@@ -61,14 +61,17 @@ final class CrossModuleDomainRule implements ViolationCreatingInterface
         }
 
         // Doctrine ORM ManyToOne/OneToMany require entity class references
-        if ($depender['layer'] === 'Domain' && $dependent['layer'] === 'Domain'
-            && str_starts_with($depender['path'], 'Entity\\') && str_starts_with($dependent['path'], 'Entity\\')) {
+        if (
+            $depender['layer'] === 'Domain' && $dependent['layer'] === 'Domain'
+            && str_starts_with($depender['path'], 'Entity\\') && str_starts_with($dependent['path'], 'Entity\\')
+        ) {
             return;
         }
 
         // TODO: temporary — Command handlers may use foreign Domain\Repository and Domain\Entity
         // This legacy debt must be eliminated by routing through Integration → foreign Application
-        if ($depender['layer'] === 'Application' && $dependent['layer'] === 'Domain'
+        if (
+            $depender['layer'] === 'Application' && $dependent['layer'] === 'Domain'
             && str_starts_with($depender['path'], 'UseCase\\Command\\')
             && (str_starts_with($dependent['path'], 'Repository\\') || str_starts_with($dependent['path'], 'Entity\\'))
         ) {
@@ -104,14 +107,16 @@ final class CrossModuleDomainRule implements ViolationCreatingInterface
      */
     private function parseModuleClass(string $className): ?array
     {
-        if (1 !== preg_match(
-            '/^(?:[A-Za-z_]+\\\\)?Common\\\\Module\\\\'
-            . '(?P<module>[A-Za-z][A-Za-z0-9]*)\\\\'
-            . '(?P<layer>Domain|Application|Infrastructure|Integration)\\\\'
-            . '(?P<path>.+)$/',
-            $className,
-            $matches,
-        )) {
+        if (
+            1 !== preg_match(
+                '/^(?:[A-Za-z_]+\\\\)?Common\\\\Module\\\\'
+                . '(?P<module>[A-Za-z][A-Za-z0-9]*)\\\\'
+                . '(?P<layer>Domain|Application|Infrastructure|Integration)\\\\'
+                . '(?P<path>.+)$/',
+                $className,
+                $matches,
+            )
+        ) {
             return null;
         }
 
