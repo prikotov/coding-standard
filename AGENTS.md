@@ -13,6 +13,13 @@
 
 ---
 
+## Перед каждым пушем / PR
+
+- **Запускать `composer check`**, а не только `composer test`.
+  `composer check` = PHPUnit + sniff-test + validate-docs + phpcs.
+  `composer test` покрывает только PHPUnit — этого недостаточно.
+- **Проверять `composer.json`** на приватные зависимости — в CI нет доступа к VCS-репозиториям.
+
 ## Принципы работы с кодом
 
 - **PHP 8.4**, Symfony 8.0, строгая типизация (`declare(strict_types=1)`).
