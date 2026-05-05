@@ -252,6 +252,44 @@ final class CrossModuleDomainRuleTest extends TestCase
         );
     }
 
+    // ─── Infrastructure\Repository\*\Criteria\Mapper → foreign Entity: allowed ──
+
+    public function testCriteriaMapperDependsOnForeignDomainEntity(): void
+    {
+        $this->assertNoViolation(
+            'App\Common\Module\Billing\Infrastructure\Repository\Usage\Criteria\Mapper\UsageFindCriteriaMapper',
+            'App\Common\Module\User\Domain\Entity\TeamMembershipModel',
+        );
+    }
+
+    public function testCriteriaMapperDependsOnForeignDomainEntityNested(): void
+    {
+        $this->assertNoViolation(
+            'App\Common\Module\Project\Infrastructure\Repository\ProjectUser\Criteria\Mapper\ProjectUserFindCriteriaMapper',
+            'App\Common\Module\User\Domain\Entity\UserModel',
+        );
+    }
+
+    // ─── Infrastructure\Repository\*\Mapper → foreign non-Entity: still violation ──
+
+    public function testCriteriaMapperDependsOnForeignDomainRepository(): void
+    {
+        $this->assertViolation(
+            'App\Common\Module\Billing\Infrastructure\Repository\Usage\Criteria\Mapper\UsageFindCriteriaMapper',
+            'App\Common\Module\User\Domain\Repository\User\UserRepositoryInterface',
+        );
+    }
+
+    // ─── Infrastructure non-Mapper → foreign Domain\Entity: still violation ──
+
+    public function testInfrastructureRepositoryDependsOnForeignDomainEntity(): void
+    {
+        $this->assertViolation(
+            'App\Common\Module\Billing\Infrastructure\Repository\UserPlanHistory\UserPlanHistoryRepository',
+            'App\Common\Module\User\Domain\Entity\TeamMembershipModel',
+        );
+    }
+
     // ─── Command Handler → foreign Domain\Repository: temporary allowed ──
 
     public function testCommandHandlerDependsOnForeignDomainRepository(): void

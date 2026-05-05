@@ -18,6 +18,7 @@ use Qossmic\Deptrac\Contract\Result\Violation;
  * All other cross-module dependencies are violations, regardless of layer.
  * Shared data types (ValueObject, Enum, Dto) are excluded — safe to use across modules.
  * Domain\Entity → foreign Domain\Entity is excluded — Doctrine ORM relations require class references.
+ * Infrastructure\*Criteria\Mapper → foreign Domain\Entity is excluded — query building requires entity references.
  *
  * This rule cannot be bypassed by renaming directories (Contract, Port, Gateway, etc.)
  * because it checks the entire module namespace regardless of subdirectory naming.
@@ -64,6 +65,16 @@ final class CrossModuleDomainRule implements ViolationCreatingInterface
         if (
             $depender['layer'] === 'Domain' && $dependent['layer'] === 'Domain'
             && str_starts_with($depender['path'], 'Entity\\') && str_starts_with($dependent['path'], 'Entity\\')
+        ) {
+            return;
+        }
+
+        // Criteria mappers build SQL queries using entity class references
+        if (
+            $depender['layer'] === 'Infrastructure' && $dependent['layer'] === 'Domain'
+            && str_ends_with($depender['path'], 'Mapper')
+            && str_starts_with($depender['path'], 'Repository\\')
+            && str_starts_with($dependent['path'], 'Entity\\')
         ) {
             return;
         }
