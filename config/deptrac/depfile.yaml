@@ -103,6 +103,11 @@ deptrac:
 
     # --- Fine-grained: DTO, VO, Enum ---
 
+    - name: DomainSpecification
+      collectors:
+        - type: classLike
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Specification\\.*
+
     - name: DomainVo
       collectors:
         - type: classLike
@@ -176,6 +181,7 @@ deptrac:
       - Domain
       - DomainDto
       - DomainEnum
+      - DomainSpecification
       - DomainVo
     DomainVo:
       - Domain
