@@ -15,11 +15,15 @@ final class ValueObjectStructureSniff implements Sniff
     private const ERROR_FORBIDDEN_MAGIC_METHOD = 'ForbiddenMagicMethod';
     private const ERROR_FORBIDDEN_METHOD = 'ForbiddenMethod';
     private const ERROR_FORBIDDEN_STATIC_METHOD = 'ForbiddenStaticMethod';
+    private const ERROR_TO_RETURN_SELF = 'ToReturnSelfForbidden';
+    private const ERROR_WITH_METHOD = 'WithMethodForbidden';
     private const ERROR_VOID_RETURN = 'VoidReturnForbidden';
     private const ERROR_STATIC_WITHOUT_PRIVATE_CONSTRUCTOR = 'StaticWithoutPrivateConstructor';
     private const ERROR_NON_READONLY_PROPERTY = 'NonReadonlyProperty';
     private const ERROR_FORBIDDEN_PROPERTY_TYPE = 'ForbiddenPropertyType';
     private const WARNING_NAMESPACE_MISMATCH = 'NamespaceMismatch';
+
+    private const DOC_REF = ' See: docs/conventions/core-patterns/value-object.md';
 
     private const FORBIDDEN_MAGIC_METHODS = [
         '__set',
@@ -69,7 +73,7 @@ final class ValueObjectStructureSniff implements Sniff
         $properties = $phpcsFile->getClassProperties($classPtr);
         if (($properties['is_final'] ?? false) === false || ($properties['is_readonly'] ?? false) === false) {
             $phpcsFile->addError(
-                'ValueObject classes must be declared as final readonly.',
+                'ValueObject classes must be declared as final readonly.' . self::DOC_REF,
                 $classPtr,
                 self::ERROR_FINAL_READONLY_REQUIRED,
             );
@@ -84,7 +88,7 @@ final class ValueObjectStructureSniff implements Sniff
             $scopeStart,
             $scopeEnd,
             [T_CONST],
-            'ValueObject classes must not declare constants.',
+            'ValueObject classes must not declare constants.' . self::DOC_REF,
         );
         $this->assertNoTokens(
             $phpcsFile,
@@ -92,7 +96,7 @@ final class ValueObjectStructureSniff implements Sniff
             $scopeStart,
             $scopeEnd,
             [T_USE],
-            'ValueObject classes must not use traits.',
+            'ValueObject classes must not use traits.' . self::DOC_REF,
         );
     }
 
@@ -118,7 +122,7 @@ final class ValueObjectStructureSniff implements Sniff
 
             if (($member['is_readonly'] ?? false) === false) {
                 $phpcsFile->addError(
-                    'ValueObject properties must be readonly.',
+                    'ValueObject properties must be readonly.' . self::DOC_REF,
                     $pointer,
                     self::ERROR_NON_READONLY_PROPERTY,
                 );
@@ -139,7 +143,7 @@ final class ValueObjectStructureSniff implements Sniff
                 $phpcsFile->addError(
                     sprintf(
                         'ValueObject properties must not depend on %s.'
-                        . ' Only primitives, DateTimeImmutable, Enum, and other VO are allowed.',
+                        . ' Only primitives, DateTimeImmutable, Enum, and other VO are allowed.' . self::DOC_REF,
                         $type,
                     ),
                     $propertyPtr,
@@ -190,7 +194,7 @@ final class ValueObjectStructureSniff implements Sniff
 
             if (in_array($methodName, self::FORBIDDEN_MAGIC_METHODS, true)) {
                 $phpcsFile->addError(
-                    sprintf('ValueObject classes must not declare %s().', $methodName),
+                    sprintf('ValueObject classes must not declare %s().' . self::DOC_REF, $methodName),
                     $methodPointer,
                     self::ERROR_FORBIDDEN_MAGIC_METHOD,
                 );
@@ -212,7 +216,8 @@ final class ValueObjectStructureSniff implements Sniff
                 if ($this->isStaticFactory($methodName) === false) {
                     $phpcsFile->addError(
                         sprintf(
-                            'ValueObject static methods must be named createFrom*(). Found static %s().',
+                            'ValueObject static methods must be named createFrom*()'
+                            . '. Found static %s().' . self::DOC_REF,
                             $methodName,
                         ),
                         $methodPointer,
@@ -226,12 +231,44 @@ final class ValueObjectStructureSniff implements Sniff
             // Non-static methods
             if ($this->methodReturnsType($phpcsFile, $methodPointer, 'void')) {
                 $phpcsFile->addError(
-                    'ValueObject methods must not have void return type.',
+                    'ValueObject methods must not have void return type.' . self::DOC_REF,
                     $methodPointer,
                     self::ERROR_VOID_RETURN,
                 );
 
                 continue;
+            }
+
+            // with*() is forbidden — use explicit new SomeVo(...) instead
+            if (str_starts_with($methodName, 'with') && strlen($methodName) > strlen('with')) {
+                $phpcsFile->addError(
+                    sprintf(
+                        'ValueObject must not declare with*() methods.'
+                        . ' Create a new instance explicitly instead. Found %s().' . self::DOC_REF,
+                        $methodName,
+                    ),
+                    $methodPointer,
+                    self::ERROR_WITH_METHOD,
+                );
+
+                continue;
+            }
+
+            // to*() returning self/static is forbidden — to* is a converter to another type
+            if (str_starts_with($methodName, 'to') && strlen($methodName) > strlen('to')) {
+                if ($this->methodReturnsSelf($phpcsFile, $methodPointer)) {
+                    $phpcsFile->addError(
+                        sprintf(
+                            'ValueObject to*() must return a different type, not self/static.'
+                            . ' Found %s(): self.' . self::DOC_REF,
+                            $methodName,
+                        ),
+                        $methodPointer,
+                        self::ERROR_TO_RETURN_SELF,
+                    );
+
+                    continue;
+                }
             }
 
             if ($this->isAllowedInstanceMethod($phpcsFile, $methodPointer, $methodName)) {
@@ -242,7 +279,7 @@ final class ValueObjectStructureSniff implements Sniff
                 sprintf(
                     'ValueObject method "%s()" is not allowed.'
                     . ' Allowed: getters (get*, is*, has*, to*), predicates returning bool,'
-                    . ' static factories (createFrom*), __toString.',
+                    . ' static factories (createFrom*), __toString.' . self::DOC_REF,
                     $methodName,
                 ),
                 $methodPointer,
@@ -283,7 +320,7 @@ final class ValueObjectStructureSniff implements Sniff
 
         if (($props['scope'] ?? '') !== 'private') {
             $phpcsFile->addError(
-                'ValueObject with static factory (createFrom*) must have a private constructor.',
+                'ValueObject with static factory (createFrom*) must have a private constructor.' . self::DOC_REF,
                 $constructorPtr,
                 self::ERROR_STATIC_WITHOUT_PRIVATE_CONSTRUCTOR,
             );
@@ -318,7 +355,7 @@ final class ValueObjectStructureSniff implements Sniff
         }
 
         $phpcsFile->addWarning(
-            'ValueObject class with "Vo" suffix should be in a ValueObject or Vo namespace.',
+            'ValueObject class with "Vo" suffix should be in a ValueObject or Vo namespace.' . self::DOC_REF,
             $namespace['ptr'] ?? $classPtr,
             self::WARNING_NAMESPACE_MISMATCH,
         );
@@ -326,13 +363,28 @@ final class ValueObjectStructureSniff implements Sniff
 
     private function methodReturnsType(File $phpcsFile, int $methodPtr, string $type): bool
     {
+        $content = $this->getReturnTypeContent($phpcsFile, $methodPtr);
+
+        return $content !== null && str_contains($content, $type);
+    }
+
+    private function methodReturnsSelf(File $phpcsFile, int $methodPtr): bool
+    {
+        $content = $this->getReturnTypeContent($phpcsFile, $methodPtr);
+
+        return $content !== null
+            && (str_contains($content, 'self') || str_contains($content, 'static'));
+    }
+
+    private function getReturnTypeContent(File $phpcsFile, int $methodPtr): ?string
+    {
         $tokens = $phpcsFile->getTokens();
 
         $closeParen  = $tokens[$methodPtr]['parenthesis_closer'] ?? null;
         $scopeOpener = $tokens[$methodPtr]['scope_opener'] ?? null;
 
         if ($closeParen === null || $scopeOpener === null) {
-            return false;
+            return null;
         }
 
         $content = '';
@@ -340,7 +392,7 @@ final class ValueObjectStructureSniff implements Sniff
             $content .= $tokens[$i]['content'];
         }
 
-        return str_contains($content, $type);
+        return $content;
     }
 
     /**

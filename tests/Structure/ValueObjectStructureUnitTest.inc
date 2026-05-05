@@ -25,6 +25,16 @@ class BadVo
     {
     }
 
+    public function withName(string $name): self
+    {
+        return new self(value: $this->value, name: $name);
+    }
+
+    public function toModifiedValue(): self
+    {
+        return new self(value: $this->value . '_modified');
+    }
+
     public static function fromString(string $value): self
     {
         return new self($value);

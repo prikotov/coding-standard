@@ -16,6 +16,8 @@ final class CommandQueryStructureSniff implements Sniff
     private const ERROR_CONSTRUCTOR_NOT_EMPTY = 'ConstructorMustBeEmpty';
     private const ERROR_FORBIDDEN_MEMBERS = 'ForbiddenMembers';
 
+    private const DOC_REF = ' See: docs/conventions/layers/application/use-case.md';
+
     public function register(): array
     {
         return [T_CLASS];
@@ -87,7 +89,7 @@ final class CommandQueryStructureSniff implements Sniff
             $methodName = strtolower($phpcsFile->getDeclarationName($pointer));
             if ($methodName !== '__construct') {
                 $phpcsFile->addError(
-                    'Command/Query classes must not declare methods other than the constructor.',
+                    'Command/Query classes must not declare methods other than the constructor.' . self::DOC_REF,
                     $pointer,
                     self::ERROR_ONLY_CONSTRUCTOR,
                 );
@@ -99,7 +101,7 @@ final class CommandQueryStructureSniff implements Sniff
 
         if ($constructorPtr === null) {
             $phpcsFile->addError(
-                'Command/Query classes must declare a constructor with promoted properties.',
+                'Command/Query classes must declare a constructor with promoted properties.' . self::DOC_REF,
                 $classPtr,
                 self::ERROR_CONSTRUCTOR_REQUIRED,
             );
@@ -127,7 +129,7 @@ final class CommandQueryStructureSniff implements Sniff
 
         if ($nextToken !== false) {
             $phpcsFile->addError(
-                'Constructor of Command/Query classes must not contain executable code.',
+                'Constructor of Command/Query classes must not contain executable code.' . self::DOC_REF,
                 $nextToken,
                 self::ERROR_CONSTRUCTOR_NOT_EMPTY,
             );
@@ -151,7 +153,8 @@ final class CommandQueryStructureSniff implements Sniff
             }
 
             $phpcsFile->addError(
-                'Command/Query classes must not declare properties; use promoted constructor parameters instead.',
+                'Command/Query classes must not declare properties;'
+                . ' use promoted constructor parameters instead.' . self::DOC_REF,
                 $pointer,
                 self::ERROR_FORBIDDEN_MEMBERS,
             );
@@ -163,7 +166,7 @@ final class CommandQueryStructureSniff implements Sniff
             $scopeStart,
             $scopeEnd,
             [T_CONST],
-            'Command/Query classes must not declare constants.',
+            'Command/Query classes must not declare constants.' . self::DOC_REF,
         );
         $this->assertNoTokens(
             $phpcsFile,
@@ -171,7 +174,7 @@ final class CommandQueryStructureSniff implements Sniff
             $scopeStart,
             $scopeEnd,
             [T_USE],
-            'Command/Query classes must not use traits.',
+            'Command/Query classes must not use traits.' . self::DOC_REF,
         );
     }
 
