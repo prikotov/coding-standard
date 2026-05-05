@@ -14,6 +14,8 @@ final class UseCaseNamingSniff implements Sniff
     private const ERROR_FILENAME_MISMATCH = 'FilenameMismatch';
     private const ERROR_NAMESPACE_MISMATCH = 'NamespaceMismatch';
 
+    private const DOC_REF = ' See: docs/conventions/layers/application/use-case.md';
+
     private const LEGACY_NAME_MISMATCH_ALLOWLIST = [];
 
     public function register(): array
@@ -51,7 +53,7 @@ final class UseCaseNamingSniff implements Sniff
         if ($this->isTypeAllowed($useCaseType, $classType) === false) {
             $phpcsFile->addError(
                 sprintf(
-                    'UseCase class in %s path must use %s suffix, got %s.',
+                    'UseCase class in %s path must use %s suffix, got %s.' . self::DOC_REF,
                     $useCaseType,
                     $useCaseType === 'Command' ? 'Command/CommandHandler' : 'Query/QueryHandler',
                     $classType,
@@ -68,7 +70,7 @@ final class UseCaseNamingSniff implements Sniff
         if ($this->isLegacyAllowlisted($relativePath) === false && $baseName !== $useCaseName) {
             $phpcsFile->addError(
                 sprintf(
-                    'UseCase class name must match directory "%s"; expected %s%s, found %s.',
+                    'UseCase class name must match directory "%s"; expected %s%s, found %s.' . self::DOC_REF,
                     $useCaseName,
                     $useCaseName,
                     $classType,
@@ -83,7 +85,7 @@ final class UseCaseNamingSniff implements Sniff
         if ($fileBase !== $className) {
             $phpcsFile->addError(
                 sprintf(
-                    'UseCase filename must match class name; expected %s.php, found %s.php.',
+                    'UseCase filename must match class name; expected %s.php, found %s.php.' . self::DOC_REF,
                     $className,
                     $fileBase,
                 ),
@@ -100,7 +102,7 @@ final class UseCaseNamingSniff implements Sniff
             if ($actualNamespace !== null && !str_ends_with($actualNamespace, $expectedNamespace)) {
                 $phpcsFile->addError(
                     sprintf(
-                        'Namespace must match path; expected namespace ending with %s, found %s.',
+                        'Namespace must match path; expected namespace ending with %s, found %s.' . self::DOC_REF,
                         $expectedNamespace,
                         $actualNamespace,
                     ),

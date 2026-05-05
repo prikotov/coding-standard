@@ -14,6 +14,8 @@ final class CommandHandlerStructureSniff implements Sniff
     private const ERROR_PUBLIC_METHODS = 'ForbiddenPublicMethods';
     private const ERROR_PUBLIC_PROPERTIES = 'ForbiddenPublicProperties';
 
+    private const DOC_REF = ' See: docs/conventions/layers/application/command-handler.md';
+
     public function register(): array
     {
         return [T_CLASS];
@@ -82,7 +84,7 @@ final class CommandHandlerStructureSniff implements Sniff
 
         if ($invoke === null) {
             $phpcsFile->addError(
-                'CommandHandler classes must declare public __invoke method.',
+                'CommandHandler classes must declare public __invoke method.' . self::DOC_REF,
                 $classPtr,
                 self::ERROR_INVOKE_REQUIRED,
             );
@@ -96,7 +98,7 @@ final class CommandHandlerStructureSniff implements Sniff
         $properties = $phpcsFile->getMethodProperties($invokePtr);
         if (($properties['scope'] ?? null) !== 'public') {
             $phpcsFile->addError(
-                '__invoke method in CommandHandler must be public.',
+                '__invoke method in CommandHandler must be public.' . self::DOC_REF,
                 $invokePtr,
                 self::ERROR_PUBLIC_METHODS,
             );
@@ -121,7 +123,7 @@ final class CommandHandlerStructureSniff implements Sniff
             $properties = $phpcsFile->getMethodProperties($pointer);
             if (($properties['scope'] ?? null) === 'public') {
                 $phpcsFile->addError(
-                    'CommandHandler classes must not declare public methods other than __invoke.',
+                    'CommandHandler classes must not declare public methods other than __invoke.' . self::DOC_REF,
                     $pointer,
                     self::ERROR_PUBLIC_METHODS,
                 );
@@ -150,7 +152,7 @@ final class CommandHandlerStructureSniff implements Sniff
             }
 
             $phpcsFile->addError(
-                'CommandHandler classes must not declare public properties.',
+                'CommandHandler classes must not declare public properties.' . self::DOC_REF,
                 $pointer,
                 self::ERROR_PUBLIC_PROPERTIES,
             );
@@ -176,7 +178,7 @@ final class CommandHandlerStructureSniff implements Sniff
             $visibility = $parameter['property_visibility'] ?? null;
             if ($visibility === 'public') {
                 $phpcsFile->addError(
-                    'CommandHandler constructor dependencies must not be public promoted properties.',
+                    'CommandHandler constructor dependencies must not be public promoted properties.' . self::DOC_REF,
                     $constructorPtr,
                     self::ERROR_PUBLIC_PROPERTIES,
                 );

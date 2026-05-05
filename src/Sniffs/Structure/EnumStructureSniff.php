@@ -12,6 +12,8 @@ final class EnumStructureSniff implements Sniff
     private const ERROR_FORBIDDEN_MEMBERS = 'ForbiddenMembers';
     private const ERROR_CAMEL_CASE = 'CaseNameMustBeCamelCase';
 
+    private const DOC_REF = ' See: docs/conventions/core-patterns/enum.md';
+
     public function register(): array
     {
         return [T_ENUM];
@@ -36,7 +38,7 @@ final class EnumStructureSniff implements Sniff
             $scopeStart,
             $scopeEnd,
             [T_FUNCTION],
-            'Enums must not declare methods.',
+            'Enums must not declare methods.' . self::DOC_REF,
         );
         $this->assertNoTokens(
             $phpcsFile,
@@ -44,7 +46,7 @@ final class EnumStructureSniff implements Sniff
             $scopeStart,
             $scopeEnd,
             [T_CONST],
-            'Enums must not declare constants.',
+            'Enums must not declare constants.' . self::DOC_REF,
         );
         $this->assertNoTokens(
             $phpcsFile,
@@ -52,7 +54,7 @@ final class EnumStructureSniff implements Sniff
             $scopeStart,
             $scopeEnd,
             [T_USE],
-            'Enums must not use traits.',
+            'Enums must not use traits.' . self::DOC_REF,
         );
 
         $this->assertCasesCamelCase($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
@@ -76,7 +78,7 @@ final class EnumStructureSniff implements Sniff
             $caseName = $tokens[$caseNamePtr]['content'];
             if ($this->isCamelCase($caseName) === false) {
                 $phpcsFile->addError(
-                    'Enum case names must follow camelCase.',
+                    'Enum case names must follow camelCase.' . self::DOC_REF,
                     $caseNamePtr,
                     self::ERROR_CAMEL_CASE,
                 );

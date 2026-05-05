@@ -16,6 +16,8 @@ final class DtoStructureSniff implements Sniff
     private const ERROR_CONSTRUCTOR_NOT_EMPTY = 'ConstructorMustBeEmpty';
     private const ERROR_FORBIDDEN_MEMBERS = 'ForbiddenMembers';
 
+    private const DOC_REF = ' See: docs/conventions/core-patterns/dto.md';
+
     public function register(): array
     {
         return [T_CLASS];
@@ -52,7 +54,7 @@ final class DtoStructureSniff implements Sniff
         $properties = $phpcsFile->getClassProperties($classPtr);
         if (($properties['is_final'] ?? false) === false || ($properties['is_readonly'] ?? false) === false) {
             $phpcsFile->addError(
-                'DTO classes must be declared as final readonly.',
+                'DTO classes must be declared as final readonly.' . self::DOC_REF,
                 $classPtr,
                 self::ERROR_FINAL_READONLY_REQUIRED,
             );
@@ -73,7 +75,7 @@ final class DtoStructureSniff implements Sniff
             $methodName = strtolower($phpcsFile->getDeclarationName($pointer));
             if ($methodName !== '__construct') {
                 $phpcsFile->addError(
-                    'DTO classes must not declare methods other than the constructor.',
+                    'DTO classes must not declare methods other than the constructor.' . self::DOC_REF,
                     $pointer,
                     self::ERROR_FORBIDDEN_MEMBERS,
                 );
@@ -85,7 +87,7 @@ final class DtoStructureSniff implements Sniff
 
         if ($constructorPtr === null) {
             $phpcsFile->addError(
-                'DTO classes must declare a constructor with promoted readonly properties.',
+                'DTO classes must declare a constructor with promoted readonly properties.' . self::DOC_REF,
                 $classPtr,
                 self::ERROR_CONSTRUCTOR_REQUIRED,
             );
@@ -113,7 +115,7 @@ final class DtoStructureSniff implements Sniff
 
         if ($nextToken !== false) {
             $phpcsFile->addError(
-                'Constructor of DTO classes must not contain executable code.',
+                'Constructor of DTO classes must not contain executable code.' . self::DOC_REF,
                 $nextToken,
                 self::ERROR_CONSTRUCTOR_NOT_EMPTY,
             );
@@ -141,7 +143,8 @@ final class DtoStructureSniff implements Sniff
             }
 
             $phpcsFile->addError(
-                'DTO classes must not declare properties; use promoted readonly constructor parameters instead.',
+                'DTO classes must not declare properties;'
+                . ' use promoted readonly constructor parameters instead.' . self::DOC_REF,
                 $pointer,
                 self::ERROR_FORBIDDEN_MEMBERS,
             );
@@ -153,7 +156,7 @@ final class DtoStructureSniff implements Sniff
             $scopeStart,
             $scopeEnd,
             [T_CONST],
-            'DTO classes must not declare constants.',
+            'DTO classes must not declare constants.' . self::DOC_REF,
         );
         $this->assertNoTokens(
             $phpcsFile,
@@ -161,7 +164,7 @@ final class DtoStructureSniff implements Sniff
             $scopeStart,
             $scopeEnd,
             [T_USE],
-            'DTO classes must not use traits.',
+            'DTO classes must not use traits.' . self::DOC_REF,
         );
     }
 
