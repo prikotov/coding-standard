@@ -30,6 +30,8 @@ deptrac:
             - type: classLike
               value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\(Entity\\)?ValueObject\\.*Vo$
             - type: classLike
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Specification\\.*
+            - type: classLike
               value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Enum\\.*
             - type: classLike
               value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\.*Dto$
