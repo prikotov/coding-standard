@@ -30,6 +30,8 @@ deptrac:
             - type: classLike
               value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\(Entity\\)?ValueObject\\.*Vo$
             - type: classLike
+              value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Specification\\.*
+            - type: classLike
               value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Enum\\.*
             - type: classLike
               value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\.*Dto$
@@ -102,6 +104,11 @@ deptrac:
           value: ^(?:[A-Za-z_]+\\)?(?:Api|Console|Web|Blog|Docs)\\Module\\.*
 
     # --- Fine-grained: DTO, VO, Enum ---
+
+    - name: DomainSpecification
+      collectors:
+        - type: classLike
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Specification\\.*
 
     - name: DomainVo
       collectors:
@@ -176,6 +183,7 @@ deptrac:
       - Domain
       - DomainDto
       - DomainEnum
+      - DomainSpecification
       - DomainVo
     DomainVo:
       - Domain

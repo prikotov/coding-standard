@@ -2,7 +2,7 @@
 type: feat
 created: 2026-05-04
 priority: P2
-status: todo
+status: done
 ---
 
 # Specification: устранить противоречие в конвенциях + накрыть Deptrac
