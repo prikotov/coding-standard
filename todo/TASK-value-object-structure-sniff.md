@@ -2,7 +2,7 @@
 type: feat
 created: 2026-05-04
 priority: P2
-status: todo
+status: done
 ---
 
 # ValueObject Structure Sniff — PHPCS-проверки структуры VO

@@ -26,6 +26,7 @@ $config->sniffs   = [
     'PrikotovCodingStandard.Namespaces.GlobalFunctionCallStyle',
     'PrikotovCodingStandard.Structure.DtoStructure',
     'PrikotovCodingStandard.Structure.EnumStructure',
+    'PrikotovCodingStandard.Structure.ValueObjectStructure',
 ];
 $config->tabWidth = 4;
 

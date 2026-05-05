@@ -123,6 +123,21 @@ final readonly class EmailVo
 }
 ```
 
+## Автоматические проверки (PHPCS)
+
+Структура ValueObject автоматически проверяется сниффом `ValueObjectStructureSniff` (пакет `prikotov/coding-standard`).
+
+Снифф проверяет:
+
+- Класс объявлен как `final readonly`.
+- Нет `const` и `use` (traits).
+- Статические методы разрешены только `createFrom*()`. При наличии static-фабрики конструктор должен быть `private`.
+- Нестатические методы: геттеры (`get*`, `is*`, `has*`, `to*`), предикаты с возвратом `bool`, `__toString`.
+- Запрещены магические методы `__set`, `__unset`, `__clone`, `__sleep`, `__wakeup`.
+- Запрещён тип возврата `void`.
+- Свойства — только `readonly`; запрещены типы, оканчивающиеся на `Entity`, `Repository`, `Service`.
+- Предупреждение, если класс `*Vo` не находится в namespace, содержащем `ValueObject` или `Vo`.
+
 ## Чек-лист для проведения ревью кода
 
 - [ ] Класс `final readonly`, без сеттеров и побочных эффектов.

@@ -128,4 +128,27 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // ValueObjectStructureSniff — bad cases
+    [
+        'file' => __DIR__ . '/Structure/ValueObjectStructureUnitTest.inc',
+        'errors' => [
+            5  => 1, // FinalReadonlyRequired
+            7  => 1, // ForbiddenMembers — trait
+            9  => 1, // ForbiddenMembers — const
+            11 => 1, // NonReadonlyProperty
+            13 => 2, // NonReadonlyProperty + ForbiddenPropertyType
+            20 => 1, // ForbiddenMagicMethod
+            24 => 1, // VoidReturnForbidden
+            28 => 1, // ForbiddenStaticMethod
+        ],
+        'warnings' => [
+            3 => 1, // NamespaceMismatch
+        ],
+    ],
+    // ValueObjectStructureSniff — valid cases
+    [
+        'file' => __DIR__ . '/Structure/ValueObjectStructureUnitTestValid.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
 ];
