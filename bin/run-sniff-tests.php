@@ -22,6 +22,7 @@ $config->cache    = false;
 $config->sniffs   = [
     'PrikotovCodingStandard.Application.CommandQueryStructure',
     'PrikotovCodingStandard.Application.CommandHandlerStructure',
+    'PrikotovCodingStandard.Application.HandlerReturnType',
     'PrikotovCodingStandard.Application.UseCaseNaming',
     'PrikotovCodingStandard.Namespaces.GlobalFunctionCallStyle',
     'PrikotovCodingStandard.Structure.DtoStructure',

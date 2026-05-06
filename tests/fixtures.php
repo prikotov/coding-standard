@@ -128,6 +128,20 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // HandlerReturnTypeSniff — returns forbidden type (Model)
+    [
+        'file' => __DIR__ . '/Application/HandlerReturnTypeUnitTest.inc',
+        'errors' => [
+            9 => 1, // ForbiddenReturnType — UserModel
+        ],
+        'warnings' => [],
+    ],
+    // HandlerReturnTypeSniff — returns valid DTO
+    [
+        'file' => __DIR__ . '/Application/HandlerReturnTypeUnitTestValid.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
     // ValueObjectStructureSniff — bad cases
     [
         'file' => __DIR__ . '/Structure/ValueObjectStructureUnitTest.inc',
