@@ -1,11 +1,17 @@
 ---
-type: feat
+type: task
 created: 2026-05-06
 priority: P2
-status: todo
+status: rejected
 ---
 
-# Deptrac: поддержать PHPDoc-скипы нарушений
+# ~~Deptrac: поддержать PHPDoc-скипы нарушений~~
+
+**Решение:** Не реализуем. Используем нативный `skip_violations` в `depfile.yaml` — он работает для всех правил, включая кастомные (`ServiceContractDependencyRule`, `CrossModuleDomainRule`).
+
+`@deptrac-skip` в PHPDoc добавляет сложность (кастомный subscriber, привязка к API Deptrac) ради marginal benefit — скип рядом с кодом. YAML-конфиг проще и работает.
+
+Если скипов станет много (>10) и будет неудобно — пересмотрим.
 
 ## Проблема
 
