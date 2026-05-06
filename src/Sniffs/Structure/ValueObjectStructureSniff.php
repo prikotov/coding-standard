@@ -216,8 +216,8 @@ final class ValueObjectStructureSniff implements Sniff
                 if ($this->isStaticFactory($methodName) === false) {
                     $phpcsFile->addError(
                         sprintf(
-                            'ValueObject static methods must be named createFrom*()'
-                            . '. Found static %s().' . self::DOC_REF,
+                            'ValueObject static methods must be named create*().'
+                            . ' Found static %s().' . self::DOC_REF,
                             $methodName,
                         ),
                         $methodPointer,
@@ -279,7 +279,7 @@ final class ValueObjectStructureSniff implements Sniff
                 sprintf(
                     'ValueObject method "%s()" is not allowed.'
                     . ' Allowed: getters (get*, is*, has*, to*), predicates returning bool,'
-                    . ' static factories (createFrom*), __toString.' . self::DOC_REF,
+                    . ' static factories (create*), __toString.' . self::DOC_REF,
                     $methodName,
                 ),
                 $methodPointer,
@@ -295,8 +295,8 @@ final class ValueObjectStructureSniff implements Sniff
 
     private function isStaticFactory(string $methodName): bool
     {
-        return str_starts_with($methodName, 'createFrom')
-            && strlen($methodName) > strlen('createFrom');
+        return str_starts_with($methodName, 'create')
+            && strlen($methodName) > strlen('create');
     }
 
     private function isMethodStatic(File $phpcsFile, int $methodPtr): bool
@@ -320,7 +320,7 @@ final class ValueObjectStructureSniff implements Sniff
 
         if (($props['scope'] ?? '') !== 'private') {
             $phpcsFile->addError(
-                'ValueObject with static factory (createFrom*) must have a private constructor.' . self::DOC_REF,
+                'ValueObject with static factory (create*) must have a private constructor.' . self::DOC_REF,
                 $constructorPtr,
                 self::ERROR_STATIC_WITHOUT_PRIVATE_CONSTRUCTOR,
             );
