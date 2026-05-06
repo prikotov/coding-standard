@@ -7,11 +7,11 @@ namespace PrikotovCodingStandard\Sniffs\Application;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
-final class HandlerReturnTypeSniff implements Sniff
+final class CommandHandlerReturnTypeSniff implements Sniff
 {
     private const ERROR_FORBIDDEN_RETURN_TYPE = 'ForbiddenReturnType';
 
-    private const DOC_REF = ' See: docs/conventions/layers/application/use-case.md';
+    private const DOC_REF = ' See: docs/conventions/layers/application/command-handler.md';
 
     private const FORBIDDEN_RETURN_TYPE_SUFFIXES = [
         'Entity',
@@ -28,14 +28,7 @@ final class HandlerReturnTypeSniff implements Sniff
     public function process(File $phpcsFile, $stackPtr): void
     {
         $className = $phpcsFile->getDeclarationName($stackPtr);
-        if ($className === '') {
-            return;
-        }
-
-        $isHandler = str_ends_with($className, 'CommandHandler')
-            || str_ends_with($className, 'QueryHandler');
-
-        if ($isHandler === false) {
+        if ($className === '' || str_ends_with($className, 'CommandHandler') === false) {
             return;
         }
 
@@ -62,8 +55,7 @@ final class HandlerReturnTypeSniff implements Sniff
             return true;
         }
 
-        return str_contains($normalizedPath, '/Application/UseCase/Command/')
-            || str_contains($normalizedPath, '/Application/UseCase/Query/');
+        return str_contains($normalizedPath, '/Application/UseCase/Command/');
     }
 
     private function assertInvokeReturnType(
@@ -90,33 +82,37 @@ final class HandlerReturnTypeSniff implements Sniff
                 return;
             }
 
-            // Extract individual type names from return type (strip ?|\)
-            preg_match_all('/[A-Z][a-zA-Z0-9]*/', $returnType, $matches);
-            $typeNames = $matches[0] ?? [];
-
-            foreach ($typeNames as $typeName) {
-                foreach (self::FORBIDDEN_RETURN_TYPE_SUFFIXES as $suffix) {
-                    if (
-                        str_ends_with($typeName, $suffix)
-                        && !str_ends_with($typeName, 'Dto')
-                        && !str_ends_with($typeName, 'Vo')
-                    ) {
-                        $phpcsFile->addError(
-                            sprintf(
-                                'Handler __invoke must not return %s.'
-                                . ' UseCase accepts and returns only DTO or scalar values.' . self::DOC_REF,
-                                $typeName,
-                            ),
-                            $pointer,
-                            self::ERROR_FORBIDDEN_RETURN_TYPE,
-                        );
-
-                        return;
-                    }
-                }
-            }
+            $this->assertReturnTypeAllowed($phpcsFile, $pointer, $returnType);
 
             return;
+        }
+    }
+
+    private function assertReturnTypeAllowed(File $phpcsFile, int $pointer, string $returnType): void
+    {
+        preg_match_all('/[A-Z][a-zA-Z0-9]*/', $returnType, $matches);
+        $typeNames = $matches[0] ?? [];
+
+        foreach ($typeNames as $typeName) {
+            foreach (self::FORBIDDEN_RETURN_TYPE_SUFFIXES as $suffix) {
+                if (
+                    str_ends_with($typeName, $suffix)
+                    && !str_ends_with($typeName, 'Dto')
+                    && !str_ends_with($typeName, 'Vo')
+                ) {
+                    $phpcsFile->addError(
+                        sprintf(
+                            'CommandHandler __invoke must not return %s.'
+                            . ' Allowed: void, identifier (int/Uuid), or IdDto.' . self::DOC_REF,
+                            $typeName,
+                        ),
+                        $pointer,
+                        self::ERROR_FORBIDDEN_RETURN_TYPE,
+                    );
+
+                    return;
+                }
+            }
         }
     }
 
