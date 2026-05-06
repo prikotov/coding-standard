@@ -20,8 +20,10 @@ use PHP_CodeSniffer\Ruleset;
 $config = new Config(['--standard=' . $packageRoot . '/ruleset.xml']);
 $config->cache    = false;
 $config->sniffs   = [
-    'PrikotovCodingStandard.Application.CommandQueryStructure',
+    'PrikotovCodingStandard.Application.CommandHandlerReturnType',
     'PrikotovCodingStandard.Application.CommandHandlerStructure',
+    'PrikotovCodingStandard.Application.CommandQueryStructure',
+    'PrikotovCodingStandard.Application.QueryHandlerReturnType',
     'PrikotovCodingStandard.Application.UseCaseNaming',
     'PrikotovCodingStandard.Namespaces.GlobalFunctionCallStyle',
     'PrikotovCodingStandard.Structure.DtoStructure',

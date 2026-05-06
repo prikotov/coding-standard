@@ -128,6 +128,34 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // CommandHandlerReturnTypeSniff — returns forbidden type (Model)
+    [
+        'file' => __DIR__ . '/Application/CommandHandlerReturnTypeUnitTest.inc',
+        'errors' => [
+            9 => 1, // ForbiddenReturnType — UserModel
+        ],
+        'warnings' => [],
+    ],
+    // CommandHandlerReturnTypeSniff — returns void (valid)
+    [
+        'file' => __DIR__ . '/Application/CommandHandlerReturnTypeUnitTestValid.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // QueryHandlerReturnTypeSniff — returns forbidden type (Model)
+    [
+        'file' => __DIR__ . '/Application/QueryHandlerReturnTypeUnitTest.inc',
+        'errors' => [
+            9 => 1, // ForbiddenReturnType — UserModel
+        ],
+        'warnings' => [],
+    ],
+    // QueryHandlerReturnTypeSniff — returns valid DTO
+    [
+        'file' => __DIR__ . '/Application/QueryHandlerReturnTypeUnitTestValid.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
     // ValueObjectStructureSniff — bad cases
     [
         'file' => __DIR__ . '/Structure/ValueObjectStructureUnitTest.inc',
