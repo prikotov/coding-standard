@@ -13,6 +13,11 @@ final readonly class EmailVo
         return new self($email);
     }
 
+    public static function createDefault(): self
+    {
+        return new self('default@example.com');
+    }
+
     public function getValue(): string
     {
         return $this->value;
