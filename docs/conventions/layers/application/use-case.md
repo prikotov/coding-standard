@@ -70,8 +70,6 @@ src/Module/{ModuleName}/Application/UseCase/
 public function __invoke(OrchestrateChainCommand $command): OrchestrateChainResultDto
 ```
 
-При появлении асинхронного сценария (web API, очереди) — перейти на Store + Command/Query.
-
 ## Чек-лист для проведения ревью кода
 
 - [ ] UseCase расположен в Application-слое.
