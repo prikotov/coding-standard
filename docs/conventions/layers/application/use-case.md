@@ -53,6 +53,23 @@ src/Module/{ModuleName}/Application/UseCase/
 - Вызов классов из других модулей.
 - Вызовы других UseCase-ов.
 
+## Исключение: compute-операции без БД
+
+В проектах без БД (compute, CLI-инструменты) CommandHandler может возвращать DTO с результатом вычислений.
+Это не соответствует строгому CQRS (Command не возвращает данные), но оправдано когда:
+
+- Результат нужен синхронно, в той же команде.
+- Нет хранилища для паттерна Command → token → Query.
+- Store был бы overengineering.
+
+**Оформление в коде:** suppress сниффа с комментарием-причиной.
+
+```php
+// phpcs:ignore PrikotovCodingStandard.Application.CommandHandlerReturnType.ForbiddenReturnType
+//   compute: синхронный запуск цепочки без БД, результат нужен сразу
+public function __invoke(OrchestrateChainCommand $command): OrchestrateChainResultDto
+```
+
 ## Чек-лист для проведения ревью кода
 
 - [ ] UseCase расположен в Application-слое.

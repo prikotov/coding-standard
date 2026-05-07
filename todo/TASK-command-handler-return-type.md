@@ -1,37 +1,45 @@
 ---
-name: CommandHandler return type — расширить для no-DB контекста
+name: CommandHandler return type — compute-проекты без БД
 type: task
-description: Конвенция CommandHandler return type описывает только CRUD+БД сценарий. Нужно учесть no-DB (compute) сценарии.
+description: Все CommandHandler в task-orchestrator возвращают DTO — системная особенность compute-проектов без БД
+created: 2026-05-06
+priority: P3
+status: closed
 ---
 
-# Задача: CommandHandler return type — no-DB контекст
+# CommandHandler return type — compute-проекты без БД
 
-## Проблема
+## Итог
 
-Конвенция `command-handler.md` разрешает CommandHandler возвращать:
-- `void`
-- Идентификатор (int, Uuid)
-- `IdDto` (если нужно вернуть несколько ID)
+Конвенция `command-handler.md` **остаётся без изменений**. Возврат `void`, ID или `IdDto` — правильное правило для CRUD+БД проектов.
 
-Это описывает CRUD+БД паттерн. Но существуют сценарии без БД:
+В task-orchestrator все 3 CommandHandler возвращают DTO — это не исключение, а системная особенность compute-проекта без БД.
 
-**Пример:** `OrchestrateChainCommandHandler` запускает цепочку AI-агентов, собирает результаты в памяти и возвращает `OrchestrateChainResultDto` с метриками и exit code. Нет БД, нет сущности, ID не применим.
+Решение: `phpcs:ignore` в коде с комментарием.
 
-## Что нужно проработать
+## Анализ
 
-1. Расширить конвенцию `command-handler.md` — описать допустимые типы возврата для no-DB сценария.
-2. Обновить `CommandHandlerReturnTypeSniff` — разрешить DTO в определённых случаях (или по suppress).
-3. Определить критерий: как отличить «compute» UseCase от «CRUD» UseCase? Возможные варианты:
-   - По suppress-комментарию (current approach).
-   - По отсутствию `PersistenceManagerInterface` в зависимостях.
-   - По отдельному интерфейсу/атрибуту.
+### Строгий CQRS
 
-## Текущий workaround
+CQRS допускает только Command и Query. Третьего нет:
+- Command — side effects, без возврата данных
+- Query — данные, без side effects
 
-`OrchestrateChainCommandHandler` использует `phpcs:ignore` с ссылкой на эту задачу.
+`OrchestrateChain` делает и то, и другое — не вписывается в CQRS.
 
-## Связанные файлы
+### Вариант: Store + Command/Query
 
-- `docs/conventions/layers/application/command-handler.md`
-- `src/Sniffs/Application/CommandHandlerReturnTypeSniff.php`
-- Проект task-orchestrator: `OrchestrateChainCommandHandler.php`
+Распилить на Command (запуск → token) + Query (чтение по token → DTO):
+- Плюсы: replay/resume, history, monitoring, cancellation
+- Минусы: overengineering для синхронного CLI-инструмента
+- Имеет смысл при переходе к асинхронной модели (web API, очереди)
+
+### Почему не меняем конвенцию
+
+- Конвенция описывает CRUD+БД паттерн — она правильная
+- 3 нарушения в одном проекте = особенность проекта, не дыра в конвенции
+- Если добавим «разрешить DTO всегда» — потеряем чёткость CQRS для основных проектов (TasK)
+
+### Когда пересмотреть
+
+Если в task-orchestrаторе появится web API с асинхронным запуском цепочек — перейти на Store + Command/Query.
