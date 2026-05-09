@@ -62,7 +62,7 @@ final class ValueObjectStructureSniff implements Sniff
         $scopeEnd   = $tokens[$stackPtr]['scope_closer'];
 
         $this->assertFinalReadonly($phpcsFile, $stackPtr);
-        $this->assertNoConstOrTraits($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
+        $this->assertNoTraits($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
         $this->assertProperties($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
         $this->assertMethods($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
         $this->assertNamespace($phpcsFile, $stackPtr);
@@ -80,9 +80,8 @@ final class ValueObjectStructureSniff implements Sniff
         }
     }
 
-    private function assertNoConstOrTraits(File $phpcsFile, int $classPtr, int $scopeStart, int $scopeEnd): void
+    private function assertNoTraits(File $phpcsFile, int $classPtr, int $scopeStart, int $scopeEnd): void
     {
-        $this->assertNoPublicOrProtectedConstants($phpcsFile, $classPtr, $scopeStart, $scopeEnd);
         $this->assertNoTokens(
             $phpcsFile,
             $classPtr,
@@ -91,61 +90,6 @@ final class ValueObjectStructureSniff implements Sniff
             [T_USE],
             'ValueObject classes must not use traits.' . self::DOC_REF,
         );
-    }
-
-    private function assertNoPublicOrProtectedConstants(
-        File $phpcsFile,
-        int $classPtr,
-        int $scopeStart,
-        int $scopeEnd,
-    ): void {
-        $tokens  = $phpcsFile->getTokens();
-        $pointer = $scopeStart;
-
-        while (($pointer = $phpcsFile->findNext(T_CONST, $pointer + 1, $scopeEnd)) !== false) {
-            if ($this->belongsToClass($tokens, $pointer, $classPtr) === false) {
-                continue;
-            }
-
-            $visibility = $this->getConstantVisibility($tokens, $pointer);
-            if ($visibility === 'private') {
-                continue;
-            }
-
-            $phpcsFile->addError(
-                'ValueObject classes must not declare public or protected constants. Use private const instead.'
-                . self::DOC_REF,
-                $pointer,
-                self::ERROR_FORBIDDEN_MEMBERS,
-            );
-        }
-    }
-
-    private function getConstantVisibility(array $tokens, int $constPtr): string
-    {
-        // Walk backwards from const, skipping whitespace and comments,
-        // to find visibility modifier
-        for ($i = $constPtr - 1; $i >= 0; $i--) {
-            $code = $tokens[$i]['code'];
-            if ($code === T_WHITESPACE || $code === T_COMMENT || $code === T_DOC_COMMENT) {
-                continue;
-            }
-            if ($code === T_PUBLIC) {
-                return 'public';
-            }
-            if ($code === T_PROTECTED) {
-                return 'protected';
-            }
-            if ($code === T_PRIVATE) {
-                return 'private';
-            }
-
-            // Any other token means no explicit visibility
-            break;
-        }
-
-        // No explicit visibility = implicitly public in PHP
-        return 'public';
     }
 
     private function assertProperties(File $phpcsFile, int $classPtr, int $scopeStart, int $scopeEnd): void
