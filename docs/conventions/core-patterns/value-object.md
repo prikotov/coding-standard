@@ -135,7 +135,7 @@ final readonly class EmailVo
 - Класс объявлен как `final readonly`.
 - Нет `public const`, `protected const` и `use` (traits). `private const` допускается.
 - Статические методы разрешены только `create*()`. При наличии static-фабрики конструктор должен быть `private`.
-- Нестатические методы: геттеры (`get*`, `is*`, `has*`, `to*`), предикаты с возвратом `bool`, `__toString`.
+- Нестатические методы: геттеры (`get*`, `is*`, `has*`, `to*`), предикаты с возвратом `bool`, операции над значениями (возвращают `self`/`static` и принимают `self`-параметр, например `add(Money $other): self`), `__toString`.
 - `with*()` запрещены — используйте явное создание `new SomeVo(...)`.
 - `to*()` — конвертер в другой тип. Возврат `self`/`static` из `to*()` запрещён.
 - Запрещены магические методы `__set`, `__unset`, `__clone`, `__sleep`, `__wakeup`.

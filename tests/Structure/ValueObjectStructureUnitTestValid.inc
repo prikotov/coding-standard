@@ -34,4 +34,9 @@ final readonly class EmailVo
     {
         return $this->value;
     }
+
+    public function merge(self $other): self
+    {
+        return new self($this->value . $other->value);
+    }
 }
