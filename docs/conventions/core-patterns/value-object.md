@@ -133,7 +133,7 @@ final readonly class EmailVo
 Снифф проверяет:
 
 - Класс объявлен как `final readonly`.
-- Нет `const` и `use` (traits).
+- Нет `public const`, `protected const` и `use` (traits). `private const` допускается.
 - Статические методы разрешены только `create*()`. При наличии static-фабрики конструктор должен быть `private`.
 - Нестатические методы: геттеры (`get*`, `is*`, `has*`, `to*`), предикаты с возвратом `bool`, `__toString`.
 - `with*()` запрещены — используйте явное создание `new SomeVo(...)`.

@@ -4,6 +4,8 @@ namespace Project\Common\Module\User\Domain\ValueObject;
 
 final readonly class EmailVo
 {
+    private const int MAX_LENGTH = 255;
+
     private function __construct(
         private string $value,
     ) {}
