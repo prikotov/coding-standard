@@ -234,8 +234,7 @@ final class ValueObjectStructureSniff implements Sniff
 
     private function isStaticFactory(string $methodName): bool
     {
-        return str_starts_with($methodName, 'create')
-            && strlen($methodName) > strlen('create');
+        return str_starts_with($methodName, 'create');
     }
 
     private function isMethodStatic(File $phpcsFile, int $methodPtr): bool
