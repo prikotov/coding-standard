@@ -327,6 +327,7 @@ final class ValueObjectStructureSniff implements Sniff
                 sprintf(
                     'ValueObject method "%s()" is not allowed.'
                     . ' Allowed: getters (get*, is*, has*, to*), predicates returning bool,'
+                    . ' value operations returning self with self-typed parameter,'
                     . ' static factories (create*), __toString.' . self::DOC_REF,
                     $methodName,
                 ),
@@ -385,6 +386,36 @@ final class ValueObjectStructureSniff implements Sniff
 
         if ($this->methodReturnsType($phpcsFile, $methodPtr, 'bool')) {
             return true;
+        }
+
+        // Value operations: methods returning self/static with a self-typed parameter
+        // e.g. add(Money $other): self, merge(self $other): self
+        if (
+            $this->methodReturnsSelf($phpcsFile, $methodPtr)
+            && $this->methodHasSelfParameter($phpcsFile, $methodPtr)
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function methodHasSelfParameter(File $phpcsFile, int $methodPtr): bool
+    {
+        $tokens = $phpcsFile->getTokens();
+
+        $openParen  = $tokens[$methodPtr]['parenthesis_opener'] ?? null;
+        $closeParen = $tokens[$methodPtr]['parenthesis_closer'] ?? null;
+
+        if ($openParen === null || $closeParen === null) {
+            return false;
+        }
+
+        for ($i = $openParen + 1; $i < $closeParen; $i++) {
+            $code = $tokens[$i]['code'];
+            if ($code === T_SELF || $code === T_STATIC) {
+                return true;
+            }
         }
 
         return false;
