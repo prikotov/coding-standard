@@ -13,10 +13,8 @@ final class ValueObjectStructureSniff implements Sniff
     private const ERROR_FINAL_READONLY_REQUIRED = 'FinalReadonlyRequired';
     private const ERROR_FORBIDDEN_MEMBERS = 'ForbiddenMembers';
     private const ERROR_FORBIDDEN_MAGIC_METHOD = 'ForbiddenMagicMethod';
-    private const ERROR_FORBIDDEN_METHOD = 'ForbiddenMethod';
     private const ERROR_FORBIDDEN_STATIC_METHOD = 'ForbiddenStaticMethod';
     private const ERROR_TO_RETURN_SELF = 'ToReturnSelfForbidden';
-    private const ERROR_WITH_METHOD = 'WithMethodForbidden';
     private const ERROR_VOID_RETURN = 'VoidReturnForbidden';
     private const ERROR_STATIC_WITHOUT_PRIVATE_CONSTRUCTOR = 'StaticWithoutPrivateConstructor';
     private const ERROR_NON_READONLY_PROPERTY = 'NonReadonlyProperty';
@@ -32,8 +30,6 @@ final class ValueObjectStructureSniff implements Sniff
         '__sleep',
         '__wakeup',
     ];
-
-    private const ALLOWED_GETTER_PREFIXES = ['get', 'is', 'has', 'to'];
 
     private const FORBIDDEN_PROPERTY_TYPE_SUFFIXES = [
         'Entity',
@@ -62,7 +58,7 @@ final class ValueObjectStructureSniff implements Sniff
         $scopeEnd   = $tokens[$stackPtr]['scope_closer'];
 
         $this->assertFinalReadonly($phpcsFile, $stackPtr);
-        $this->assertNoConstOrTraits($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
+        $this->assertNoTraits($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
         $this->assertProperties($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
         $this->assertMethods($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
         $this->assertNamespace($phpcsFile, $stackPtr);
@@ -80,9 +76,8 @@ final class ValueObjectStructureSniff implements Sniff
         }
     }
 
-    private function assertNoConstOrTraits(File $phpcsFile, int $classPtr, int $scopeStart, int $scopeEnd): void
+    private function assertNoTraits(File $phpcsFile, int $classPtr, int $scopeStart, int $scopeEnd): void
     {
-        $this->assertNoPublicOrProtectedConstants($phpcsFile, $classPtr, $scopeStart, $scopeEnd);
         $this->assertNoTokens(
             $phpcsFile,
             $classPtr,
@@ -91,61 +86,6 @@ final class ValueObjectStructureSniff implements Sniff
             [T_USE],
             'ValueObject classes must not use traits.' . self::DOC_REF,
         );
-    }
-
-    private function assertNoPublicOrProtectedConstants(
-        File $phpcsFile,
-        int $classPtr,
-        int $scopeStart,
-        int $scopeEnd,
-    ): void {
-        $tokens  = $phpcsFile->getTokens();
-        $pointer = $scopeStart;
-
-        while (($pointer = $phpcsFile->findNext(T_CONST, $pointer + 1, $scopeEnd)) !== false) {
-            if ($this->belongsToClass($tokens, $pointer, $classPtr) === false) {
-                continue;
-            }
-
-            $visibility = $this->getConstantVisibility($tokens, $pointer);
-            if ($visibility === 'private') {
-                continue;
-            }
-
-            $phpcsFile->addError(
-                'ValueObject classes must not declare public or protected constants. Use private const instead.'
-                . self::DOC_REF,
-                $pointer,
-                self::ERROR_FORBIDDEN_MEMBERS,
-            );
-        }
-    }
-
-    private function getConstantVisibility(array $tokens, int $constPtr): string
-    {
-        // Walk backwards from const, skipping whitespace and comments,
-        // to find visibility modifier
-        for ($i = $constPtr - 1; $i >= 0; $i--) {
-            $code = $tokens[$i]['code'];
-            if ($code === T_WHITESPACE || $code === T_COMMENT || $code === T_DOC_COMMENT) {
-                continue;
-            }
-            if ($code === T_PUBLIC) {
-                return 'public';
-            }
-            if ($code === T_PROTECTED) {
-                return 'protected';
-            }
-            if ($code === T_PRIVATE) {
-                return 'private';
-            }
-
-            // Any other token means no explicit visibility
-            break;
-        }
-
-        // No explicit visibility = implicitly public in PHP
-        return 'public';
     }
 
     private function assertProperties(File $phpcsFile, int $classPtr, int $scopeStart, int $scopeEnd): void
@@ -287,21 +227,6 @@ final class ValueObjectStructureSniff implements Sniff
                 continue;
             }
 
-            // with*() is forbidden — use explicit new SomeVo(...) instead
-            if (str_starts_with($methodName, 'with') && strlen($methodName) > strlen('with')) {
-                $phpcsFile->addError(
-                    sprintf(
-                        'ValueObject must not declare with*() methods.'
-                        . ' Create a new instance explicitly instead. Found %s().' . self::DOC_REF,
-                        $methodName,
-                    ),
-                    $methodPointer,
-                    self::ERROR_WITH_METHOD,
-                );
-
-                continue;
-            }
-
             // to*() returning self/static is forbidden — to* is a converter to another type
             if (str_starts_with($methodName, 'to') && strlen($methodName) > strlen('to')) {
                 if ($this->methodReturnsSelf($phpcsFile, $methodPointer)) {
@@ -314,26 +239,8 @@ final class ValueObjectStructureSniff implements Sniff
                         $methodPointer,
                         self::ERROR_TO_RETURN_SELF,
                     );
-
-                    continue;
                 }
             }
-
-            if ($this->isAllowedInstanceMethod($phpcsFile, $methodPointer, $methodName)) {
-                continue;
-            }
-
-            $phpcsFile->addError(
-                sprintf(
-                    'ValueObject method "%s()" is not allowed.'
-                    . ' Allowed: getters (get*, is*, has*, to*), predicates returning bool,'
-                    . ' value operations returning self with self-typed parameter,'
-                    . ' static factories (create*), __toString.' . self::DOC_REF,
-                    $methodName,
-                ),
-                $methodPointer,
-                self::ERROR_FORBIDDEN_METHOD,
-            );
         }
 
         // Static factory requires private constructor
@@ -374,51 +281,6 @@ final class ValueObjectStructureSniff implements Sniff
                 self::ERROR_STATIC_WITHOUT_PRIVATE_CONSTRUCTOR,
             );
         }
-    }
-
-    private function isAllowedInstanceMethod(File $phpcsFile, int $methodPtr, string $methodName): bool
-    {
-        foreach (self::ALLOWED_GETTER_PREFIXES as $prefix) {
-            if (str_starts_with($methodName, $prefix) && strlen($methodName) > strlen($prefix)) {
-                return true;
-            }
-        }
-
-        if ($this->methodReturnsType($phpcsFile, $methodPtr, 'bool')) {
-            return true;
-        }
-
-        // Value operations: methods returning self/static with a self-typed parameter
-        // e.g. add(Money $other): self, merge(self $other): self
-        if (
-            $this->methodReturnsSelf($phpcsFile, $methodPtr)
-            && $this->methodHasSelfParameter($phpcsFile, $methodPtr)
-        ) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private function methodHasSelfParameter(File $phpcsFile, int $methodPtr): bool
-    {
-        $tokens = $phpcsFile->getTokens();
-
-        $openParen  = $tokens[$methodPtr]['parenthesis_opener'] ?? null;
-        $closeParen = $tokens[$methodPtr]['parenthesis_closer'] ?? null;
-
-        if ($openParen === null || $closeParen === null) {
-            return false;
-        }
-
-        for ($i = $openParen + 1; $i < $closeParen; $i++) {
-            $code = $tokens[$i]['code'];
-            if ($code === T_SELF || $code === T_STATIC) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private function assertNamespace(File $phpcsFile, int $classPtr): void

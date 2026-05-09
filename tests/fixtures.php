@@ -162,12 +162,10 @@ return [
         'errors' => [
             5  => 1, // FinalReadonlyRequired
             7  => 1, // ForbiddenMembers — trait
-            9  => 1, // ForbiddenMembers — const
             11 => 1, // NonReadonlyProperty
             13 => 2, // NonReadonlyProperty + ForbiddenPropertyType
             20 => 1, // ForbiddenMagicMethod
             24 => 1, // VoidReturnForbidden
-            28 => 1, // WithMethodForbidden
             33 => 1, // ToReturnSelfForbidden
             38 => 1, // ForbiddenStaticMethod
         ],
