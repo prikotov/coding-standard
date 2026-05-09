@@ -166,7 +166,6 @@ return [
             13 => 2, // NonReadonlyProperty + ForbiddenPropertyType
             20 => 1, // ForbiddenMagicMethod
             24 => 1, // VoidReturnForbidden
-            28 => 1, // WithMethodForbidden
             33 => 1, // ToReturnSelfForbidden
             38 => 1, // ForbiddenStaticMethod
         ],
