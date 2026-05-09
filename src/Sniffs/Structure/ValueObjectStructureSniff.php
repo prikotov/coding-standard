@@ -186,13 +186,13 @@ final class ValueObjectStructureSniff implements Sniff
                 continue;
             }
 
-            $methodProps = $this->getMethodProps($phpcsFile, $methodPointer);
+            $isStatic = $this->isMethodStatic($phpcsFile, $methodPointer);
 
-            if ($methodProps['isStatic'] && $methodProps['scope'] !== 'private') {
+            if ($isStatic) {
                 if ($this->isStaticFactory($methodName) === false) {
                     $phpcsFile->addError(
                         sprintf(
-                            'ValueObject public/protected static methods must be named create*().'
+                            'ValueObject static methods must be named create*().'
                             . ' Found static %s().' . self::DOC_REF,
                             $methodName,
                         ),
@@ -201,10 +201,6 @@ final class ValueObjectStructureSniff implements Sniff
                     );
                 }
 
-                continue;
-            }
-
-            if ($methodProps['isStatic']) {
                 continue;
             }
 
@@ -241,18 +237,15 @@ final class ValueObjectStructureSniff implements Sniff
         return str_starts_with($methodName, 'create');
     }
 
-    private function getMethodProps(File $phpcsFile, int $methodPtr): array
+    private function isMethodStatic(File $phpcsFile, int $methodPtr): bool
     {
         try {
             $props = $phpcsFile->getMethodProperties($methodPtr);
         } catch (RuntimeException) {
-            return ['isStatic' => false, 'scope' => 'public'];
+            return false;
         }
 
-        return [
-            'isStatic' => ($props['is_static'] ?? false) === true,
-            'scope'    => $props['scope'] ?? 'public',
-        ];
+        return ($props['is_static'] ?? false) === true;
     }
 
     private function assertNamespace(File $phpcsFile, int $classPtr): void

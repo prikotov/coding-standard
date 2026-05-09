@@ -62,11 +62,6 @@ final readonly class TokenCostVo
 
     public static function create(float $cost): self
     {
-        return new self(self::normalizeScale($cost));
-    }
-
-    private static function normalizeScale(float $value): float
-    {
-        return round($value, 6);
+        return new self($cost);
     }
 }
