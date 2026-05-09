@@ -40,3 +40,16 @@ final readonly class EmailVo
         return new self($this->value . $other->value);
     }
 }
+
+final readonly class MoneyVo
+{
+    public function __construct(
+        private int $amount,
+        private string $currency,
+    ) {}
+
+    public static function createEmpty(): self
+    {
+        return new self(0, 'USD');
+    }
+}

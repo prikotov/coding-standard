@@ -16,7 +16,6 @@ final class ValueObjectStructureSniff implements Sniff
     private const ERROR_FORBIDDEN_STATIC_METHOD = 'ForbiddenStaticMethod';
     private const ERROR_TO_RETURN_SELF = 'ToReturnSelfForbidden';
     private const ERROR_VOID_RETURN = 'VoidReturnForbidden';
-    private const ERROR_STATIC_WITHOUT_PRIVATE_CONSTRUCTOR = 'StaticWithoutPrivateConstructor';
     private const ERROR_NON_READONLY_PROPERTY = 'NonReadonlyProperty';
     private const ERROR_FORBIDDEN_PROPERTY_TYPE = 'ForbiddenPropertyType';
     private const WARNING_NAMESPACE_MISMATCH = 'NamespaceMismatch';
@@ -148,10 +147,7 @@ final class ValueObjectStructureSniff implements Sniff
         $tokens  = $phpcsFile->getTokens();
         $pointer = $scopeStart;
 
-        $hasStaticFactory = false;
-        $constructorPtr   = null;
-
-        // First pass: collect constructor and static factory info
+        // First pass: collect methods
         $methodPtrs = [];
         $scanPtr    = $scopeStart;
 
@@ -163,14 +159,6 @@ final class ValueObjectStructureSniff implements Sniff
             $methodName = $phpcsFile->getDeclarationName($scanPtr);
             if ($methodName === '') {
                 continue;
-            }
-
-            if ($methodName === '__construct') {
-                $constructorPtr = $scanPtr;
-            }
-
-            if ($this->isStaticFactory($methodName)) {
-                $hasStaticFactory = true;
             }
 
             $methodPtrs[] = $scanPtr;
@@ -242,11 +230,6 @@ final class ValueObjectStructureSniff implements Sniff
                 }
             }
         }
-
-        // Static factory requires private constructor
-        if ($hasStaticFactory && $constructorPtr !== null) {
-            $this->assertConstructorIsPrivate($phpcsFile, $constructorPtr);
-        }
     }
 
     private function isStaticFactory(string $methodName): bool
@@ -264,23 +247,6 @@ final class ValueObjectStructureSniff implements Sniff
         }
 
         return ($props['is_static'] ?? false) === true;
-    }
-
-    private function assertConstructorIsPrivate(File $phpcsFile, int $constructorPtr): void
-    {
-        try {
-            $props = $phpcsFile->getMethodProperties($constructorPtr);
-        } catch (RuntimeException) {
-            return;
-        }
-
-        if (($props['scope'] ?? '') !== 'private') {
-            $phpcsFile->addError(
-                'ValueObject with static factory (create*) must have a private constructor.' . self::DOC_REF,
-                $constructorPtr,
-                self::ERROR_STATIC_WITHOUT_PRIVATE_CONSTRUCTOR,
-            );
-        }
     }
 
     private function assertNamespace(File $phpcsFile, int $classPtr): void
