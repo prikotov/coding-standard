@@ -53,15 +53,3 @@ final readonly class MoneyVo
         return new self(0, 'USD');
     }
 }
-
-final readonly class TokenCostVo
-{
-    private function __construct(
-        private float $cost,
-    ) {}
-
-    public static function create(float $cost): self
-    {
-        return new self($cost);
-    }
-}
