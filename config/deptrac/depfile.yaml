@@ -213,6 +213,12 @@ deptrac:
       - DomainDto
       - DomainEnum
       - DomainVo
+    DomainSpecification:
+      - Domain
+      - DomainDto
+      - DomainEnum
+      - DomainSpecification
+      - DomainVo
 
     # CQRS
     ApplicationCommand:
