@@ -231,6 +231,7 @@ deptrac:
       - Domain
       - DomainDto
       - DomainEnum
+      - DomainSpecification
       - DomainVo
     ApplicationQueryHandler:
       - Application
@@ -238,6 +239,7 @@ deptrac:
       - Domain
       - DomainDto
       - DomainEnum
+      - DomainSpecification
       - DomainVo
 
     # Layer dependencies
