@@ -89,4 +89,4 @@ php vendor/bin/coding-standard-init /path/to/project --docs-path=docs/ddd --dept
 
 ## License
 
-[MIT](LICENSE) · Copyright © 2025–2026 prikotov
+[MIT](LICENSE)
