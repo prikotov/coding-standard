@@ -498,17 +498,6 @@ function validateLink(
         }
     }
 
-    // If target is a directory, that's an error (no index.md resolution in MVP)
-    if (is_dir($resolvedPath)) {
-        return [[
-            'file' => $relativePath,
-            'line' => $humanLine,
-            'type' => 'broken-link',
-            'message' => "target is a directory, not a file: {$target}",
-            'target' => $target,
-        ]];
-    }
-
     return [];
 }
 
