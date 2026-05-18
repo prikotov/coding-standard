@@ -23,7 +23,7 @@ AI-агенты склонны отклоняться от конвенций. �
 | Команда | Что проверяет |
 |---|---|
 | `composer validate-docs` | Front matter, kebab-case, внутренние ссылки, обязательные секции в `docs/conventions/` |
-| `composer validate-md-links` | Внутренние ссылки в `docs/`, `todo/`, `README.md`, `AGENTS.md`: битые пути, несуществующие якоря |
+| `composer validate-md-links` | Внутренние ссылки в Markdown-файлах (пути и якоря). Область проверки настраивается через `.md-links.php` |
 
 Настройка и интеграция: [Валидация внутренних ссылок](docs/conventions/ops/validate-md-links.md).
 
