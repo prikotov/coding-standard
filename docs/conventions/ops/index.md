@@ -13,10 +13,11 @@ description: Правила и гайды по операционным прак
 - [Fixes](fixes.md) — типичные проблемы и их решения
 - [Smoke Commands](smoke-commands.md) — команды для проверки работоспособности
 - [Обоснованные подавления PHPMD](phpmd-suppressions-guidelines.md) — когда и как подавлять предупреждения PHPMD
+- [Валидация внутренних ссылок](validate-md-links.md) — настройка и использование `validate-md-links`
 
 ## Примеры
 
-Примеры конфигураций инструментов доступны в [examples/](../examples/):
+Примеры конфигураций инструментов доступны в [examples/](../examples/Makefile):
 - [phpmd.xml](../examples/phpmd.xml) — конфигурация PHPMD
 - [phpunit.xml.dist](../examples/phpunit.xml.dist) — конфигурация PHPUnit
 - [psalm.xml](../examples/psalm.xml) — конфигурация Psalm

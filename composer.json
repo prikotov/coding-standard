@@ -47,10 +47,12 @@
         "test": "phpunit",
         "sniff-test": "php bin/run-sniff-tests.php",
         "validate-docs": "php bin/validate-docs.php",
+        "validate-md-links": "php bin/validate-md-links.php",
         "check": [
             "@test",
             "@sniff-test",
             "@validate-docs",
+            "@validate-md-links",
             "phpcs src/"
         ]
     },
