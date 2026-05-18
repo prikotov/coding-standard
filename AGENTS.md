@@ -167,6 +167,13 @@ declare(strict_types=1);
 
 ---
 
+## Задачи
+
+- **Регламент работы с задачениями**: [`todo/AGENTS.md`](todo/AGENTS.md).
+- **Справочники и шаблоны**: [`docs/todo-md/`](docs/todo-md/).
+
+---
+
 ## Git workflow
 
 Правила работы с git — ветки, коммиты, PR, релизы, SemVer:
@@ -186,3 +193,4 @@ declare(strict_types=1);
 - **Git workflow**: [vendor/prikotov/git-workflow/docs/git-workflow/index.md](vendor/prikotov/git-workflow/docs/git-workflow/index.md)
 - **README**: [README.md](README.md)
 - **PHPCS Ruleset**: [ruleset.xml](ruleset.xml)
+- **Задачи (todo-md)**: [todo/AGENTS.md](todo/AGENTS.md)
