@@ -9,7 +9,7 @@ epic:
 author: pi
 assignee:
 branch:
-pr:
+pr: https://github.com/prikotov/coding-standard/pull/43
 status: todo
 ---
 
