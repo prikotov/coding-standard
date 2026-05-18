@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 return [
     // Files and directories to scan.
-    'paths' => ['docs/', 'README.md', 'AGENTS.md'],
+    'paths' => ['docs/', 'todo/', 'README.md', 'AGENTS.md'],
 
     // Path fragments to exclude from scanning (substring match).
     'exclude' => [

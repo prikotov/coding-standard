@@ -32,7 +32,7 @@ declare(strict_types=1);
 
 // ── Defaults ───────────────────────────────────────────────────────────────
 
-$DEFAULT_PATHS = ['docs/', 'README.md', 'AGENTS.md'];
+$DEFAULT_PATHS = ['docs/', 'todo/', 'README.md', 'AGENTS.md'];
 $DEFAULT_SKIP_DIRS = ['vendor/', '.git/', 'var/', 'tmp/', 'cache/', 'node_modules/'];
 $DEFAULT_EXCLUDE = [];
 

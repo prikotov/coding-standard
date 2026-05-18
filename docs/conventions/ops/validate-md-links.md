@@ -70,7 +70,7 @@ declare(strict_types=1);
 
 return [
     // Файлы и директории для сканирования.
-    'paths' => ['docs/', 'README.md', 'AGENTS.md'],
+    'paths' => ['docs/', 'todo/', 'README.md', 'AGENTS.md'],
 
     // Фрагменты путей для исключения (substring match).
     'exclude' => [

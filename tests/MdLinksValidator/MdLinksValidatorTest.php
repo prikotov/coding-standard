@@ -149,7 +149,7 @@ final class MdLinksValidatorTest extends TestCase
 
         $this->assertSame(0, $result['exitCode'],
             "validate-md-links should load .md-links.php from project root:\n" . $result['output']);
-        $this->assertStringContainsString('81 markdown files', $result['output']);
+        $this->assertStringContainsString('88 markdown files', $result['output']);
     }
 
     public function testConfigOptionOverridesDefaultConfigFile(): void
