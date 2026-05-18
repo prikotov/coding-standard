@@ -16,7 +16,7 @@ description: Правила и гайды по операционным прак
 
 ## Примеры
 
-Примеры конфигураций инструментов доступны в [examples/](../examples/):
+Примеры конфигураций инструментов доступны в [examples/](../examples/Makefile):
 - [phpmd.xml](../examples/phpmd.xml) — конфигурация PHPMD
 - [phpunit.xml.dist](../examples/phpunit.xml.dist) — конфигурация PHPUnit
 - [psalm.xml](../examples/psalm.xml) — конфигурация Psalm

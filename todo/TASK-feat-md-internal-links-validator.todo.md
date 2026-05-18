@@ -7,10 +7,10 @@ priority: P1
 depends_on:
 epic:
 author: pi
-assignee:
-branch:
-pr: https://github.com/prikotov/coding-standard/pull/43
-status: todo
+assignee: pi
+branch: task/feat-md-internal-links-validator
+pr:
+status: in_progress
 ---
 
 # TASK-feat-md-internal-links-validator: Markdown Internal Links Validator
@@ -79,39 +79,32 @@ status: todo
 - Поддержать русские заголовки.
 - Front matter не должен ломать парсинг заголовков.
 
-## План
+## План реализации
 
-1. Исследовать существующий `bin/validate-docs.php` и решить:
-   - расширять его;
-   - или добавить отдельный скрипт `bin/validate-md-links.php`.
-2. Реализовать парсер Markdown-ссылок без тяжёлых зависимостей.
-3. Исключать fenced code blocks перед поиском ссылок.
-4. Реализовать резолв относительных путей.
-5. Реализовать построение anchor index по заголовкам Markdown-файла.
-6. Добавить понятный вывод ошибок:
-   ```text
-   docs/conventions/index.md:42 broken-link target not found: ./missing.md
-   docs/conventions/foo.md:17 broken-anchor target exists but anchor not found: bar.md#section
-   ```
-7. Добавить composer script:
-   ```json
-   "validate-md-links": "php bin/validate-md-links.php"
-   ```
-8. Включить проверку в `composer check`.
-9. Добавить PHPUnit-тесты или fixture-based тесты для валидатора.
-10. Обновить документацию/README с командой запуска.
+Решение: **отдельный скрипт** `bin/validate-md-links.php`. `validate-docs.php` уже несёт 4 проверки для `docs/conventions/`, а валидатор ссылок — более通用 инструмент для любых `.md` файлов проекта.
+
+1. [x] Создать `bin/validate-md-links.php` — standalone скрипт без зависимостей
+2. [x] Реализовать парсер: inline-ссылки + reference-style links
+3. [x] Исключать fenced code blocks (``` и ~~~) перед парсингом
+4. [x] Резолв относительных путей от файла-источника
+5. [x] Anchor index: GitHub-совместимый slug, русские заголовки, дубликаты с суффиксами
+6. [x] Вывод ошибок: `file:line error-type: target`
+7. [x] Composer script `validate-md-links`
+8. [x] Включить в `composer check`
+9. [x] Fixture-тесты: happy path + broken links
+10. [x] Обновить README
 
 ## Definition of Done
 
-- [ ] `composer validate-md-links` падает на битой внутренней ссылке.
-- [ ] `composer validate-md-links` падает на несуществующем anchor.
-- [ ] Валидатор не проверяет внешние URL в MVP.
-- [ ] Валидатор игнорирует ссылки внутри fenced code blocks.
-- [ ] Валидатор корректно работает с русскими заголовками.
-- [ ] Валидатор поддерживает reference-style links.
-- [ ] Валидатор выдаёт файл, строку, тип ошибки и target.
-- [ ] `composer check` включает проверку ссылок.
-- [ ] Есть тесты/fixtures на happy path и broken links.
+- [x] `composer validate-md-links` падает на битой внутренней ссылке.
+- [x] `composer validate-md-links` падает на несуществующем anchor.
+- [x] Валидатор не проверяет внешние URL в MVP.
+- [x] Валидатор игнорирует ссылки внутри fenced code blocks.
+- [x] Валидатор корректно работает с русскими заголовками.
+- [x] Валидатор поддерживает reference-style links.
+- [x] Валидатор выдаёт файл, строку, тип ошибки и target.
+- [x] `composer check` включает проверку ссылок.
+- [x] Есть тесты/fixtures на happy path и broken links (17 тестов).
 
 ## Verification
 
