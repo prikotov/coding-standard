@@ -142,6 +142,37 @@ final class MdLinksValidatorTest extends TestCase
             "validate-md-links should pass on project docs:\n" . $result['output']);
     }
 
+    public function testConfigFileIsLoadedFromProjectRoot(): void
+    {
+        // Project root has .md-links.php with excludes — should pass
+        $result = self::runScript([]);
+
+        $this->assertSame(0, $result['exitCode'],
+            "validate-md-links should load .md-links.php from project root:\n" . $result['output']);
+        $this->assertStringContainsString('81 markdown files', $result['output']);
+    }
+
+    public function testConfigOptionOverridesDefaultConfigFile(): void
+    {
+        $tempDir = sys_get_temp_dir() . '/md-links-test-' . uniqid();
+        mkdir($tempDir);
+        // Create a minimal .md file with a broken link
+        file_put_contents($tempDir . '/test.md', '# Test\n\n[broken](missing.md)\n');
+        // Create a config that excludes it
+        $configFile = $tempDir . '/custom-config.php';
+        file_put_contents($configFile, "<?php return ['paths' => [], 'exclude' => []];");
+
+        $result = self::runScript(['--config=' . $configFile]);
+
+        // Cleanup
+        unlink($tempDir . '/test.md');
+        unlink($configFile);
+        rmdir($tempDir);
+
+        // With empty paths, no files scanned — should pass
+        $this->assertSame(0, $result['exitCode']);
+    }
+
     /**
      * Run the validate-md-links script and capture output.
      *

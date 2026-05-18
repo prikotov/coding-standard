@@ -23,7 +23,9 @@ AI-агенты склонны отклоняться от конвенций. �
 | Команда | Что проверяет |
 |---|---|
 | `composer validate-docs` | Front matter, kebab-case, внутренние ссылки, обязательные секции в `docs/conventions/` |
-| `composer validate-md-links` | Внутренние ссылки во всём проекте: битые пути, несуществующие якоря, fenced code blocks игнорируются |
+| `composer validate-md-links` | Внутренние ссылки во всём проекте: битые пути, несуществующие якоря |
+
+Настройка и интеграция: [Валидация внутренних ссылок](docs/conventions/ops/validate-md-links.md).
 
 ### PHP CodeSniffer-сниффы
 

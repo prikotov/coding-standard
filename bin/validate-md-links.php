@@ -11,37 +11,67 @@ declare(strict_types=1);
  * images are skipped. Links inside fenced code blocks are ignored.
  *
  * Usage:
- *   php bin/validate-md-links.php [path...] [--no-fail]
+ *   php bin/validate-md-links.php [options]
  *
- *   paths    — files or directories to scan (default: docs/ README.md AGENTS.md).
- *   --no-fail — exit 0 even if errors found (useful for gradual adoption).
+ * Options:
+ *   --config=<file>   Path to config file (PHP). Default: .md-links.php in project root.
+ *   --exclude=<pat>   Exclude paths matching pattern (repeatable).
+ *   --no-fail         Exit 0 even if errors found (gradual adoption).
+ *   <path>            Files or directories to scan (overrides config paths).
+ *
+ * Config file (.md-links.php):
+ *   Returns an array with optional keys:
+ *     paths    => string[]  — files/directories to scan.
+ *     exclude  => string[]  — path fragments to exclude.
+ *     skip_dirs => string[] — directory names to always skip.
  *
  * Exit codes:
  *   0 — no errors (or --no-fail)
  *   1 — broken links found
  */
 
-// ── Config ─────────────────────────────────────────────────────────────────
+// ── Defaults ───────────────────────────────────────────────────────────────
 
 $DEFAULT_PATHS = ['docs/', 'README.md', 'AGENTS.md'];
-$SKIP_DIRS = ['vendor/', '.git/', 'var/', 'tmp/', 'cache/', 'node_modules/'];
-$NO_FAIL = false;
-$EXCLUDE_PATTERNS = [];
+$DEFAULT_SKIP_DIRS = ['vendor/', '.git/', 'var/', 'tmp/', 'cache/', 'node_modules/'];
+$DEFAULT_EXCLUDE = [];
 
-// Parse arguments
-$paths = [];
+$NO_FAIL = false;
+$CONFIG_FILE = null;
+
+// ── Parse arguments ────────────────────────────────────────────────────────
+
+$argPaths = [];
+$argExcludes = [];
 foreach (array_slice($argv, 1) as $arg) {
     if ($arg === '--no-fail') {
         $NO_FAIL = true;
+    } elseif (str_starts_with($arg, '--config=')) {
+        $CONFIG_FILE = substr($arg, strlen('--config='));
     } elseif (str_starts_with($arg, '--exclude=')) {
-        $EXCLUDE_PATTERNS[] = substr($arg, strlen('--exclude='));
+        $argExcludes[] = substr($arg, strlen('--exclude='));
     } else {
-        $paths[] = $arg;
+        $argPaths[] = $arg;
     }
 }
-if ($paths === []) {
-    $paths = $DEFAULT_PATHS;
+
+// ── Load config ────────────────────────────────────────────────────────────
+
+$projectRoot = getcwd() ?: '.';
+$configFilePath = $CONFIG_FILE ?? "{$projectRoot}/.md-links.php";
+
+if (is_file($configFilePath)) {
+    $config = (array) require $configFilePath;
+} else {
+    $config = [];
 }
+
+$paths = $argPaths !== [] ? $argPaths : ($config['paths'] ?? $DEFAULT_PATHS);
+$EXCLUDE_PATTERNS = array_values(array_unique(array_merge(
+    $config['exclude'] ?? $DEFAULT_EXCLUDE,
+    $argExcludes,
+)));
+$SKIP_DIRS = $config['skip_dirs'] ?? $DEFAULT_SKIP_DIRS;
 
 $errors = [];
 
@@ -145,6 +175,9 @@ function extractInlineLinksFromLine(string $line): array
  */
 function extractRefLinksFromLine(string $line): array
 {
+    // Skip inline code: `...`
+    $line = preg_replace('/`[^`]*`/', '', $line);
+
     $links = [];
     // Match [text][id] but not [text][] (implicit) and not [text] (no ref)
     if (!preg_match_all('/\[([^\]]+)\]\[([^\]]+)\]/', $line, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
@@ -348,9 +381,11 @@ function validateFile(string $filePath, string $projectRoot): array
     $stripped = stripFencedCodeBlocks($content);
     // Strip front matter, preserving line numbers
     $stripped = stripFrontMatter($stripped);
+    // Strip inline code for reference definitions (preserve for line-by-line parsing)
+    $strippedForRefs = preg_replace('/`[^`]*`/', '', $stripped);
 
     // Build reference definitions from the full (stripped) content
-    $refDefs = extractReferenceDefinitions($stripped);
+    $refDefs = extractReferenceDefinitions($strippedForRefs);
 
     // Process line by line
     $lines = explode("\n", $stripped);
@@ -479,7 +514,6 @@ function validateLink(
 
 // ── Run ────────────────────────────────────────────────────────────────────
 
-$projectRoot = getcwd() ?: '.';
 $mdFiles = collectMdFiles($paths);
 
 echo "Validating internal links in " . count($mdFiles) . " markdown files\n\n";
