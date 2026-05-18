@@ -176,6 +176,9 @@ declare(strict_types=1);
 
 ## Git workflow
 
+- **Все изменения — через ветку + PR.** Прямой пуш в `master` запрещён.
+- Создать ветку `task/<short-description>`, сделать коммиты, открыть PR, дождаться CI, смержить, удалить ветку.
+
 Правила работы с git — ветки, коммиты, PR, релизы, SemVer:
 
 - [Ветки](vendor/prikotov/git-workflow/docs/git-workflow/branches.md)
