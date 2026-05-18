@@ -9,8 +9,8 @@ epic:
 author: pi
 assignee: pi
 branch: task/feat-md-internal-links-validator
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/44
+status: review
 ---
 
 # TASK-feat-md-internal-links-validator: Markdown Internal Links Validator
