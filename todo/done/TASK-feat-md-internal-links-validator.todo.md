@@ -10,7 +10,7 @@ author: pi
 assignee: pi
 branch: task/feat-md-internal-links-validator
 pr: https://github.com/prikotov/coding-standard/pull/44
-status: review
+status: done
 ---
 
 # TASK-feat-md-internal-links-validator: Markdown Internal Links Validator
