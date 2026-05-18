@@ -20,12 +20,12 @@ AI-агенты склонны отклоняться от конвенций. �
 
 ### Markdown-валидация
 
-| Команда | Что проверяет |
-|---|---|
-| `composer validate-docs` | Конвенции документации в `docs/conventions/` — front matter, kebab-case, обязательные секции, ссылки внутри каталога |
-| `composer validate-md-links` | Ссылки между Markdown-файлами всего проекта (пути и якоря). Область проверки настраивается через `.md-links.php` |
+Проверка документации ведётся двумя инструментами:
 
-Настройка и интеграция: [Валидация внутренних ссылок](docs/conventions/ops/validate-md-links.md).
+- **`composer validate-docs`** — проверяет конвенции внутри каталога `docs/conventions/`: структуру front matter, именование файлов (kebab-case), обязательные секции и ссылки между документами каталога.
+- **`composer validate-md-links`** — проверяет ссылки между Markdown-файлами всего проекта (пути и якоря). Область проверки настраивается через `.md-links.php`.
+
+Подробнее: [Валидация внутренних ссылок](docs/conventions/ops/validate-md-links.md).
 
 ### PHP CodeSniffer-сниффы
 
