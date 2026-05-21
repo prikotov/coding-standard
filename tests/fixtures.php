@@ -179,4 +179,38 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // ServiceStructureSniff — no companion Service class in directory
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Service/NoCompanion/SomeCatalog.inc',
+        'errors' => [
+            6 => 1, // NoServiceSuffix
+        ],
+        'warnings' => [],
+    ],
+    // ServiceStructureSniff — Service class without interface
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Service/WithServiceNoInterface/SomeService.inc',
+        'errors' => [
+            6 => 1, // NoInterface
+        ],
+        'warnings' => [],
+    ],
+    // ServiceStructureSniff — companion class with Service nearby (no error on companion)
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Service/WithServiceNoInterface/SomeHelper.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // ServiceStructureSniff — valid Service with implements
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Service/WithValidService/SomeService.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // ServiceStructureSniff — companion class with valid Service nearby
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Service/WithValidService/SomeHelper.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
 ];
