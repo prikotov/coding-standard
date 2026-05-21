@@ -10,7 +10,7 @@
             "email": "prikotov@gmail.com"
         }
     ],
-    "bin": ["bin/coding-standard-init"],
+    "bin": ["bin/coding-standard-init", "bin/validate-md-links.php"],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {

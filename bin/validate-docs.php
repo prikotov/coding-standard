@@ -8,9 +8,10 @@ declare(strict_types=1);
  *
  * Checks:
  *   1. YAML front matter present with required fields (name, description, type).
- *   2. Internal markdown links point to existing files.
- *   3. Naming: files and directories use kebab-case (no underscores).
- *   4. Required sections present in rule documents.
+ *   2. Naming: files and directories use kebab-case (no underscores).
+ *   3. Required sections present in rule documents.
+ *
+ * For link validation use bin/validate-md-links.php.
  *
  * Document types (set in front matter):
  *   - rule  — must have required sections.
@@ -90,40 +91,6 @@ function parseFrontMatter(string $content): ?array
 }
 
 /**
- * Extract all internal markdown links from content.
- *
- * @return array<int, array{text: string, target: string, line: int}>
- */
-function extractInternalLinks(string $content): array
-{
-    $links = [];
-    $lines = explode("\n", $content);
-
-    foreach ($lines as $lineNum => $line) {
-        if (!preg_match_all('/\[([^\]]+)\]\(([^)]+)\)/', $line, $matches, PREG_SET_ORDER)) {
-            continue;
-        }
-
-        foreach ($matches as $match) {
-            $target = $match[2];
-            if (preg_match('/^(https?:|mailto:|#|tel:)/', $target)) {
-                continue;
-            }
-            if (str_contains($target, '{')) {
-                continue;
-            }
-            $links[] = [
-                'text' => $match[1],
-                'target' => $target,
-                'line' => $lineNum + 1,
-            ];
-        }
-    }
-
-    return $links;
-}
-
-/**
  * Extract ## headings from content.
  *
  * @return string[]
@@ -138,38 +105,6 @@ function extractHeadings(string $content): array
     }
 
     return $headings;
-}
-
-/**
- * Resolve a link target relative to the source file's directory.
- */
-function resolveLinkTarget(string $sourceDir, string $target): string
-{
-    $path = preg_replace('/#.*/', '', $target);
-    if ($path === '') {
-        return '';
-    }
-
-    $resolved = rtrim($sourceDir, '/') . '/' . $path;
-
-    $parts = explode('/', $resolved);
-    $normalized = [];
-    foreach ($parts as $part) {
-        if ($part === '..') {
-            array_pop($normalized);
-        } elseif ($part !== '' && $part !== '.') {
-            $normalized[] = $part;
-        }
-    }
-
-    $path = implode('/', $normalized);
-
-    // Restore absolute path
-    if (str_starts_with($resolved, '/')) {
-        $path = '/' . $path;
-    }
-
-    return $path;
 }
 
 /**
@@ -288,45 +223,7 @@ if ($namingErrors === 0) {
 }
 echo "\n";
 
-// ── Check 3: Internal links ───────────────────────────────────────────────
-
-echo "## Internal links\n";
-$linkErrors = 0;
-
-foreach ($mdFiles as $filePath) {
-    $content = file_get_contents($filePath);
-    if ($content === false) {
-        continue;
-    }
-
-    // Get body without front matter
-    $parsed = parseFrontMatter($content);
-    $body = $parsed['body'] ?? $content;
-
-    $sourceDir = dirname($filePath);
-    $relativePath = substr($filePath, strlen($docsDir) + 1);
-    $links = extractInternalLinks($body);
-
-    foreach ($links as $link) {
-        $resolved = resolveLinkTarget($sourceDir, $link['target']);
-        if ($resolved === '') {
-            continue;
-        }
-
-        if (!file_exists($resolved)) {
-            echo "  ✗ {$relativePath}:{$link['line']} → {$link['target']} (not found)\n";
-            $errors[] = "link: {$relativePath}:{$link['line']} → {$link['target']}";
-            $linkErrors++;
-        }
-    }
-}
-
-if ($linkErrors === 0) {
-    echo "  ✓ All internal links resolve\n";
-}
-echo "\n";
-
-// ── Check 4: Required sections (rule documents only) ──────────────────────
+// ── Check 3: Required sections (rule documents only) ──────────────────────
 
 echo "## Required sections\n";
 $sectionErrors = 0;
@@ -380,7 +277,6 @@ if ($totalErrors > 0) {
     echo "✗ Found {$totalErrors} error(s)\n";
     echo "  Front matter: {$fmErrors}\n";
     echo "  Naming:       {$namingErrors}\n";
-    echo "  Links:        {$linkErrors}\n";
     echo "  Sections:     {$sectionErrors}\n";
     exit(1);
 }
