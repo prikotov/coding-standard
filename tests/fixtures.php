@@ -249,4 +249,12 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // ServiceStructureSniff — Service class outside Service/ directory
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/ServiceOutsideDir/SomeService.inc',
+        'errors' => [
+            6 => 1, // ServiceOutsideServiceDirectory
+        ],
+        'warnings' => [],
+    ],
 ];

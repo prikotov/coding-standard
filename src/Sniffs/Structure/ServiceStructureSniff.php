@@ -11,6 +11,7 @@ final class ServiceStructureSniff implements Sniff
 {
     private const ERROR_NO_SUFFIX = 'NoServiceSuffix';
     private const ERROR_NO_INTERFACE = 'NoInterface';
+    private const ERROR_SERVICE_OUTSIDE_SERVICE_DIR = 'ServiceOutsideServiceDirectory';
 
     private const DOC_REF = ' See: docs/conventions/core-patterns/service.md';
 
@@ -28,19 +29,28 @@ final class ServiceStructureSniff implements Sniff
             return;
         }
 
-        if ($this->isInServiceDirectory($relativePath) === false) {
-            return;
-        }
-
         $className = $phpcsFile->getDeclarationName($stackPtr);
         if ($className === '') {
             return;
         }
 
-        if (str_ends_with($className, 'Service') === true) {
+        $inServiceDir = $this->isInServiceDirectory($relativePath);
+        $hasSuffix    = str_ends_with($className, 'Service');
+
+        if ($inServiceDir && $hasSuffix) {
             $this->assertImplementsInterface($phpcsFile, $stackPtr, $className);
-        } else {
+
+            return;
+        }
+
+        if ($inServiceDir) {
             $this->assertCompanionClassAllowed($phpcsFile, $stackPtr, $className, $normalizedPath);
+
+            return;
+        }
+
+        if ($hasSuffix) {
+            $this->assertServiceInCorrectDirectory($phpcsFile, $stackPtr, $className);
         }
     }
 
@@ -72,8 +82,7 @@ final class ServiceStructureSniff implements Sniff
                 sprintf(
                     'Class "%s" is in a Service directory but is not a Service'
                     . ' and has no companion Service class in the same directory.'
-                    . ' Either rename to "%sService" with an interface,'
-                    . ' or move it out of the Service namespace.' . self::DOC_REF,
+                    . ' Rename to "%sService" with an interface.' . self::DOC_REF,
                     $className,
                     $className,
                 ),
@@ -81,6 +90,23 @@ final class ServiceStructureSniff implements Sniff
                 self::ERROR_NO_SUFFIX,
             );
         }
+    }
+
+    private function assertServiceInCorrectDirectory(
+        File $phpcsFile,
+        int $classPtr,
+        string $className,
+    ): void {
+        $phpcsFile->addError(
+            sprintf(
+                'Service class "%s" must be placed in a Service/ directory.'
+                . ' Move it to .../Service/{Context?}/%s.' . self::DOC_REF,
+                $className,
+                $className,
+            ),
+            $classPtr,
+            self::ERROR_SERVICE_OUTSIDE_SERVICE_DIR,
+        );
     }
 
     private function isInServiceDirectory(string $relativePath): bool
