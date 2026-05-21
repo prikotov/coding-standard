@@ -30,6 +30,7 @@ $config->sniffs   = [
     'PrikotovCodingStandard.Structure.EnumStructure',
     'PrikotovCodingStandard.Structure.ServiceStructure',
     'PrikotovCodingStandard.Structure.ValueObjectStructure',
+    'PrikotovCodingStandard.Namespaces.PresentationLayerNamespace',
 ];
 $config->tabWidth = 4;
 

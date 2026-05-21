@@ -3,6 +3,42 @@
 declare(strict_types=1);
 
 return [
+    // PresentationLayerNamespaceSniff — Application inside Web (forbidden)
+    [
+        'file' => __DIR__ . '/Namespaces/PresentationLayerNamespaceUnitTest.inc',
+        'errors' => [
+            3 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // PresentationLayerNamespaceSniff — Application inside Api (forbidden)
+    [
+        'file' => __DIR__ . '/Namespaces/PresentationLayerNamespaceUnitTestApp.inc',
+        'errors' => [
+            3 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // PresentationLayerNamespaceSniff — Domain inside Api (forbidden)
+    [
+        'file' => __DIR__ . '/Namespaces/PresentationLayerNamespaceUnitTestDomain.inc',
+        'errors' => [
+            3 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // PresentationLayerNamespaceSniff — Application in Common (valid)
+    [
+        'file' => __DIR__ . '/Namespaces/PresentationLayerNamespaceUnitTestValidCommon.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // PresentationLayerNamespaceSniff — Controller in Web (valid, no inner layer)
+    [
+        'file' => __DIR__ . '/Namespaces/PresentationLayerNamespaceUnitTestValidWeb.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
     [
         'file' => __DIR__ . '/Application/CommandQueryStructureUnitTest.inc',
         'errors' => [
