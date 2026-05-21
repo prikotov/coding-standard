@@ -11,7 +11,7 @@ declare(strict_types=1);
  *   2. Naming: files and directories use kebab-case (no underscores).
  *   3. Required sections present in rule documents.
  *
- * For link validation use bin/validate-md-links.php.
+ * For link validation use bin/validate-md-links.
  *
  * Document types (set in front matter):
  *   - rule  — must have required sections.

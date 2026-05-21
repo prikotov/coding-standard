@@ -48,7 +48,7 @@ composer require --dev prikotov/coding-standard
 Запуск:
 
 ```bash
-php vendor/bin/validate-md-links.php
+php vendor/bin/validate-md-links
 ```
 
 Или через composer-скрипт (если добавлен в `composer.json`):
@@ -93,7 +93,7 @@ return [
 Аргументы **переопределяют** значения из конфиг-файла.
 
 ```
-php vendor/bin/validate-md-links.php [options] [path...]
+php vendor/bin/validate-md-links [options] [path...]
 
 Options:
   --config=<file>     Путь к конфиг-файлу (по умолчанию: .md-links.php)
@@ -105,16 +105,16 @@ Options:
 
 ```bash
 # Проверить конкретную директорию
-php vendor/bin/validate-md-links.php docs/conventions/
+php vendor/bin/validate-md-links docs/conventions/
 
 # Исключить шаблоны
-php vendor/bin/validate-md-links.php --exclude=docs/api/ --exclude=docs/drafts/
+php vendor/bin/validate-md-links --exclude=docs/api/ --exclude=docs/drafts/
 
 # Использовать кастомный конфиг
-php vendor/bin/validate-md-links.php --config=build/md-links-config.php
+php vendor/bin/validate-md-links --config=build/md-links-config.php
 
 # Проверить один файл
-php vendor/bin/validate-md-links.php README.md
+php vendor/bin/validate-md-links README.md
 ```
 
 ## Встраивание в проверки проекта
@@ -126,7 +126,7 @@ php vendor/bin/validate-md-links.php README.md
 ```json
 {
     "scripts": {
-        "validate-md-links": "php vendor/bin/validate-md-links.php",
+        "validate-md-links": "php vendor/bin/validate-md-links",
         "check": [
             "@test",
             "@validate-md-links",
@@ -146,7 +146,7 @@ check: validate-md-links phpcs test
 
 .PHONY: validate-md-links
 validate-md-links:
-	php vendor/bin/validate-md-links.php
+	php vendor/bin/validate-md-links
 ```
 
 Запуск: `make check`.
@@ -155,7 +155,7 @@ validate-md-links:
 
 ```yaml
 - name: Validate markdown links
-  run: php vendor/bin/validate-md-links.php
+  run: php vendor/bin/validate-md-links
 ```
 
 ### Постепенное внедрение
@@ -165,7 +165,7 @@ validate-md-links:
 ```json
 {
     "scripts": {
-        "validate-md-links": "php vendor/bin/validate-md-links.php --no-fail"
+        "validate-md-links": "php vendor/bin/validate-md-links --no-fail"
     }
 }
 ```
@@ -174,7 +174,7 @@ validate-md-links:
 
 ## Расположение
 
-- Скрипт: `vendor/prikotov/coding-standard/bin/validate-md-links.php`
+- Скрипт: `vendor/prikotov/coding-standard/bin/validate-md-links`
 - Конфиг: `.md-links.php` в корне проекта
 
 ## Чек-лист для проведения ревью кода
