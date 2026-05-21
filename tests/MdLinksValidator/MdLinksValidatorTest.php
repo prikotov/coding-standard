@@ -7,14 +7,14 @@ namespace PrikotovCodingStandard\Tests\MdLinksValidator;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for bin/validate-md-links.php.
+ * Tests for bin/validate-md-links.
  *
  * Runs the script against fixture files and checks exit code and output.
  */
 final class MdLinksValidatorTest extends TestCase
 {
     private const FIXTURE_DIR = __DIR__ . '/../fixtures/md-links';
-    private const SCRIPT = __DIR__ . '/../../bin/validate-md-links.php';
+    private const SCRIPT = __DIR__ . '/../../bin/validate-md-links';
 
     private static string $fixtureOutput;
     private static int $fixtureExitCode;
