@@ -1,0 +1,547 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Binary operation "\.\=" between string and mixed results in an error\.$#'
+			identifier: assignOp.invalid
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Cannot access offset ''content'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Cannot access offset ''parenthesis_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Application/CommandHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Offset 0 on array\{list\<string\>\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_last expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerReturnTypeSniff\:\:belongsToClass\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerReturnTypeSniff\:\:assertInvokeReturnType\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerReturnTypeSniff\:\:assertInvokeReturnType\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Cannot access offset ''property_visibility'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_last expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerStructureSniff\:\:belongsToClass\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Sniffs/Application/CommandHandlerStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerStructureSniff\:\:assertInvokeExists\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerStructureSniff\:\:assertNoOtherPublicMethods\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerStructureSniff\:\:assertNoPublicProperties\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerStructureSniff\:\:assertInvokeExists\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerStructureSniff\:\:assertNoOtherPublicMethods\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerStructureSniff\:\:assertNoPublicProperties\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerStructureSniff.php
+
+		-
+			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Sniffs/Application/CommandQueryStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Application/CommandQueryStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Application/CommandQueryStructureSniff.php
+
+		-
+			message: '#^Method PrikotovCodingStandard\\Sniffs\\Application\\CommandQueryStructureSniff\:\:assertNoTokens\(\) has parameter \$tokenTypes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Sniffs/Application/CommandQueryStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_last expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandQueryStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Application\\CommandQueryStructureSniff\:\:belongsToClass\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Sniffs/Application/CommandQueryStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$end of method PHP_CodeSniffer\\Files\\File\:\:findNext\(\) expects int\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandQueryStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Application\\CommandQueryStructureSniff\:\:assertNoMembers\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandQueryStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Application\\CommandQueryStructureSniff\:\:assertOnlyConstructor\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandQueryStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Application\\CommandQueryStructureSniff\:\:assertNoMembers\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandQueryStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Application\\CommandQueryStructureSniff\:\:assertOnlyConstructor\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandQueryStructureSniff.php
+
+		-
+			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Sniffs/Application/QueryHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Binary operation "\.\=" between string and mixed results in an error\.$#'
+			identifier: assignOp.invalid
+			count: 1
+			path: src/Sniffs/Application/QueryHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Cannot access offset ''content'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Application/QueryHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Cannot access offset ''parenthesis_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Application/QueryHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Application/QueryHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Application/QueryHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Offset 0 on array\{list\<string\>\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Sniffs/Application/QueryHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_last expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/QueryHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Application\\QueryHandlerReturnTypeSniff\:\:belongsToClass\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/QueryHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Application\\QueryHandlerReturnTypeSniff\:\:assertInvokeReturnType\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/QueryHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Application\\QueryHandlerReturnTypeSniff\:\:assertInvokeReturnType\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/QueryHandlerReturnTypeSniff.php
+
+		-
+			message: '#^Call to function in_array\(\) with arguments string, array\{\} and true will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/Sniffs/Application/UseCaseNamingSniff.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: src/Sniffs/Namespaces/GlobalFunctionCallStyleSniff.php
+
+		-
+			message: '#^Cannot access offset ''content'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Namespaces/GlobalFunctionCallStyleSniff.php
+
+		-
+			message: '#^Parameter \#1 \$string of function ltrim expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Namespaces/GlobalFunctionCallStyleSniff.php
+
+		-
+			message: '#^Parameter \#1 \$string of function strtolower expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Namespaces/GlobalFunctionCallStyleSniff.php
+
+		-
+			message: '#^Parameter \#2 \$subject of function preg_match expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Namespaces/GlobalFunctionCallStyleSniff.php
+
+		-
+			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''conditions'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Method PrikotovCodingStandard\\Sniffs\\Structure\\DtoStructureSniff\:\:assertNoTokens\(\) has parameter \$tokenTypes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Method PrikotovCodingStandard\\Sniffs\\Structure\\DtoStructureSniff\:\:belongsToClass\(\) has parameter \$tokens with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_last expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$end of method PHP_CodeSniffer\\Files\\File\:\:findNext\(\) expects int\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Structure\\DtoStructureSniff\:\:assertNoMembers\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Structure\\DtoStructureSniff\:\:assertOnlyConstructor\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Structure\\DtoStructureSniff\:\:assertNoMembers\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Structure\\DtoStructureSniff\:\:assertOnlyConstructor\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/DtoStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''content'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Structure/EnumStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Structure/EnumStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Structure/EnumStructureSniff.php
+
+		-
+			message: '#^Method PrikotovCodingStandard\\Sniffs\\Structure\\EnumStructureSniff\:\:assertNoTokens\(\) has parameter \$tokenTypes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Sniffs/Structure/EnumStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_last expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/EnumStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Structure\\EnumStructureSniff\:\:belongsToEnum\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/EnumStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$value of method PrikotovCodingStandard\\Sniffs\\Structure\\EnumStructureSniff\:\:isCamelCase\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/EnumStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Structure\\EnumStructureSniff\:\:assertCasesCamelCase\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/EnumStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Structure\\EnumStructureSniff\:\:assertNoTokens\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Sniffs/Structure/EnumStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Structure\\EnumStructureSniff\:\:assertCasesCamelCase\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/EnumStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Structure\\EnumStructureSniff\:\:assertNoTokens\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Sniffs/Structure/EnumStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Structure/ServiceStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$end of method PHP_CodeSniffer\\Files\\File\:\:findNext\(\) expects int\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ServiceStructureSniff.php
+
+		-
+			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Binary operation "\.\=" between string and mixed results in an error\.$#'
+			identifier: assignOp.invalid
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''content'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''parenthesis_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:assertNoTokens\(\) has parameter \$tokenTypes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_last expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:belongsToClass\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:assertMethods\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:assertNoTraits\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:assertProperties\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$type of method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:assertPropertyTypeAllowed\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:assertMethods\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:assertNoTraits\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:assertProperties\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
