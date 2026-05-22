@@ -439,14 +439,50 @@ parameters:
 			path: src/Sniffs/Structure/EnumStructureSniff.php
 
 		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/ServiceStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''content'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/ServiceStructureSniff.php
+
+		-
 			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/ServiceStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$string of function ltrim expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ServiceStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Structure\\ServiceStructureSniff\:\:extractFqcnFromUse\(\) expects array\<int, array\{code\: int\|string, content\: string\}\>, array given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Sniffs/Structure/ServiceStructureSniff.php
 
 		-
 			message: '#^Parameter \#3 \$end of method PHP_CodeSniffer\\Files\\File\:\:findNext\(\) expects int\|null, mixed given\.$#'
 			identifier: argument.type
+			count: 2
+			path: src/Sniffs/Structure/ServiceStructureSniff.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: src/Sniffs/Structure/ServiceStructureSniff.php
+
+		-
+			message: '#^Method PrikotovCodingStandard\\Sniffs\\Structure\\ServiceStructureSniff\:\:getImplementedInterfaceFqcns\(\) should return list\<string\> but returns list\.$#'
+			identifier: return.type
 			count: 1
 			path: src/Sniffs/Structure/ServiceStructureSniff.php
 
