@@ -8,21 +8,28 @@ declare(strict_types=1);
  *
  * Usage:
  *   php vendor/bin/coding-standard-init [target-dir] [--docs-path=<path>] [--deptrac-path=<path>] [--force]
+ *                                            [--project-name=<Name>] [--exceptions-path=<path>] [--no-exceptions]
  *
- *   target-dir    — project root (default: current working directory).
- *   --docs-path   — relative path where docs will be copied (default: docs/conventions).
- *   --deptrac-path — relative path where depfile.yaml will be copied (default: depfile.yaml).
- *   --no-deptrac  — skip depfile.yaml copying entirely.
- *   --force       — overwrite existing files with fresh copies from the package.
+ *   target-dir        — project root (default: current working directory).
+ *   --docs-path       — relative path where docs will be copied (default: docs/conventions).
+ *   --deptrac-path    — relative path where depfile.yaml will be copied (default: depfile.yaml).
+ *   --no-deptrac      — skip depfile.yaml copying entirely.
+ *   --project-name    — project name used as namespace prefix for exceptions (e.g. Task).
+ *   --exceptions-path — relative path where exceptions will be copied (default: src/Common/Exception).
+ *   --no-exceptions   — skip exceptions copying entirely.
+ *   --force           — overwrite existing files with fresh copies from the package.
  */
 
 // ── Parse arguments ────────────────────────────────────────────────────────
 
-$force       = false;
-$noDeptrac   = false;
-$targetArg   = null;
-$docsPath    = null;
-$deptracPath = null;
+$force          = false;
+$noDeptrac      = false;
+$noExceptions   = false;
+$targetArg      = null;
+$docsPath       = null;
+$deptracPath    = null;
+$projectName    = null;
+$exceptionsPath = null;
 
 foreach ($argv as $i => $arg) {
     if ($i === 0) {
@@ -32,10 +39,16 @@ foreach ($argv as $i => $arg) {
         $force = true;
     } elseif ($arg === '--no-deptrac') {
         $noDeptrac = true;
+    } elseif ($arg === '--no-exceptions') {
+        $noExceptions = true;
     } elseif (str_starts_with($arg, '--docs-path=')) {
         $docsPath = substr($arg, strlen('--docs-path='));
     } elseif (str_starts_with($arg, '--deptrac-path=')) {
         $deptracPath = substr($arg, strlen('--deptrac-path='));
+    } elseif (str_starts_with($arg, '--project-name=')) {
+        $projectName = substr($arg, strlen('--project-name='));
+    } elseif (str_starts_with($arg, '--exceptions-path=')) {
+        $exceptionsPath = substr($arg, strlen('--exceptions-path='));
     } else {
         $targetArg = $arg;
     }
@@ -59,7 +72,8 @@ if ($targetDir === false || !is_dir($targetDir)) {
 
 $sourceDocs     = $packageRoot . '/docs/conventions';
 $sourceConfig = $packageRoot . '/config';
-$docsPath   = $docsPath ?? 'docs/conventions';
+$docsPath       = $docsPath ?? 'docs/conventions';
+$exceptionsPath = $exceptionsPath ?? 'src/Common/Exception';
 $targetDocs = $targetDir . '/' . $docsPath;
 
 if (!is_dir($sourceDocs)) {
@@ -168,7 +182,60 @@ if (file_exists($phpstanSource)) {
     }
 }
 
-// ── 5. Update .gitignore ──────────────────────────────────────────────────
+// ── 5. Copy exceptions ────────────────────────────────────────────────────
+
+if (!$noExceptions && $projectName !== null) {
+    $exceptionsSource = $sourceConfig . '/exceptions';
+
+    if (is_dir($exceptionsSource)) {
+        $targetExceptions = $targetDir . '/' . $exceptionsPath;
+        echo "  Using project name: $projectName" . PHP_EOL;
+
+        $exIterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($exceptionsSource, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST,
+        );
+
+        foreach ($exIterator as $item) {
+            $relativePath = substr($item->getPathname(), strlen($exceptionsSource) + 1);
+            $destPath     = $targetExceptions . '/' . $relativePath;
+
+            if ($item->isDir()) {
+                if (!is_dir($destPath)) {
+                    mkdir($destPath, 0755, true);
+                }
+                continue;
+            }
+
+            $content = file_get_contents($item->getPathname());
+            $content = str_replace('{{ProjectName}}', $projectName, $content);
+
+            $destDirForFile = dirname($destPath);
+            if (!is_dir($destDirForFile)) {
+                mkdir($destDirForFile, 0755, true);
+            }
+
+            if (file_exists($destPath)) {
+                if ($force) {
+                    file_put_contents($destPath, $content);
+                    echo "  Updated  $exceptionsPath/$relativePath" . PHP_EOL;
+                    $updated++;
+                } else {
+                    echo "  Skip     $exceptionsPath/$relativePath (already exists)" . PHP_EOL;
+                    $skipped++;
+                }
+            } else {
+                file_put_contents($destPath, $content);
+                echo "  Copied   $exceptionsPath/$relativePath" . PHP_EOL;
+                $copied++;
+            }
+        }
+    }
+} elseif (!$noExceptions && $projectName === null) {
+    echo "  Skip     exceptions (--project-name not specified)" . PHP_EOL;
+}
+
+// ── 6. Update .gitignore ──────────────────────────────────────────────────
 
 // 4a. docs/.gitignore — exclude copied conventions documentation
 
@@ -204,3 +271,6 @@ if ($deptracPath !== '') {
     echo "  3. Run \`vendor/bin/deptrac analyse\` to verify architectural rules." . PHP_EOL;
 }
 echo "  4. Run \`vendor/bin/phpstan analyse\` to run static analysis." . PHP_EOL;
+if (!$noExceptions && $projectName !== null) {
+    echo "  5. Review copied exceptions in $exceptionsPath/ and adjust if needed." . PHP_EOL;
+}
