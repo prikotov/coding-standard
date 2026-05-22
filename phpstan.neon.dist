@@ -1,0 +1,12 @@
+includes:
+    - phpstan-baseline.neon
+parameters:
+    level: max
+    paths:
+        - src/
+        - tests/
+    excludePaths:
+        - tests/fixtures/*
+    scanDirectories:
+        - vendor/squizlabs/php_codesniffer/src
+    reportUnmatchedIgnoredErrors: false

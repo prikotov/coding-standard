@@ -138,23 +138,37 @@ if ($deptracPath !== '') {
 
 // ── 3. Copy phpcs.xml.dist ─────────────────────────────────────────────────
 
-if (!$noPhpcs) {
-    $phpcsSource = $sourceConfig . '/phpcs/phpcs.xml.dist.example';
-    $phpcsTarget = $targetDir . '/phpcs.xml.dist';
+$phpcsSource = $sourceConfig . '/phpcs/phpcs.xml.dist.example';
+$phpcsTarget = $targetDir . '/phpcs.xml.dist';
 
-    if (file_exists($phpcsSource)) {
-        if (file_exists($phpcsTarget)) {
-            echo "  Skip     phpcs.xml.dist (project file, not overwritten)" . PHP_EOL;
-            $skipped++;
-        } else {
-            copy($phpcsSource, $phpcsTarget);
-            echo "  Copied   phpcs.xml.dist" . PHP_EOL;
-            $copied++;
-        }
+if (file_exists($phpcsSource)) {
+    if (file_exists($phpcsTarget)) {
+        echo "  Skip     phpcs.xml.dist (project file, not overwritten)" . PHP_EOL;
+        $skipped++;
+    } else {
+        copy($phpcsSource, $phpcsTarget);
+        echo "  Copied   phpcs.xml.dist" . PHP_EOL;
+        $copied++;
     }
 }
 
-// ── 4. Update .gitignore ──────────────────────────────────────────────────
+// ── 4. Copy phpstan.neon.dist ────────────────────────────────────────────
+
+$phpstanSource = $sourceConfig . '/phpstan/phpstan.neon.dist.example';
+$phpstanTarget = $targetDir . '/phpstan.neon.dist';
+
+if (file_exists($phpstanSource)) {
+    if (file_exists($phpstanTarget)) {
+        echo "  Skip     phpstan.neon.dist (project file, not overwritten)" . PHP_EOL;
+        $skipped++;
+    } else {
+        copy($phpstanSource, $phpstanTarget);
+        echo "  Copied   phpstan.neon.dist" . PHP_EOL;
+        $copied++;
+    }
+}
+
+// ── 5. Update .gitignore ──────────────────────────────────────────────────
 
 // 4a. docs/.gitignore — exclude copied conventions documentation
 
@@ -189,3 +203,4 @@ echo "  2. Run \`vendor/bin/phpcs\` to check coding style." . PHP_EOL;
 if ($deptracPath !== '') {
     echo "  3. Run \`vendor/bin/deptrac analyse\` to verify architectural rules." . PHP_EOL;
 }
+echo "  4. Run \`vendor/bin/phpstan analyse\` to run static analysis." . PHP_EOL;

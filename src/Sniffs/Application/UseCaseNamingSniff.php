@@ -16,6 +16,7 @@ final class UseCaseNamingSniff implements Sniff
 
     private const DOC_REF = ' See: docs/conventions/layers/application/use-case.md';
 
+    /** @var list<string> */
     private const LEGACY_NAME_MISMATCH_ALLOWLIST = [];
 
     public function register(): array
