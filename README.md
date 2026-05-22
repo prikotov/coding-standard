@@ -72,6 +72,7 @@ composer require --dev prikotov/coding-standard
 
 - **Сниффы** — PHP CodeSniffer-правила, работают сразу из `vendor/`
 - **Deptrac-правила** — пользовательские правила для deptrac
+- **PHPStan-правила** — пользовательские правила для phpstan
 - **Конфигурации** — `depfile.yaml` для Deptrac, `phpcs.xml.dist` для PHPCS, `phpstan.neon.dist` для PHPStan
 - **Шаблоны исключений** — типовые классы и интерфейсы, копируются с подстановкой namespace проекта
 - **Конвенции** — документация, копируется командой `coding-standard-init`
