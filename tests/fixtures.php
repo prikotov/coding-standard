@@ -293,4 +293,16 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // ServiceStructureSniff — Helper class in Service/ directory — valid per convention
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Service/Source/ParamsGetter/Helper/RutubeHelper.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // ServiceStructureSniff — Factory class in Service/ directory — valid per convention
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Application/Service/SomeService/PaymentDtoFactory.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
 ];
