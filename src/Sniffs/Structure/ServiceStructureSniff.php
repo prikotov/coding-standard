@@ -12,6 +12,7 @@ final class ServiceStructureSniff implements Sniff
     private const ERROR_NO_SUFFIX = 'NoServiceSuffix';
     private const ERROR_NO_INTERFACE = 'NoInterface';
     private const ERROR_SERVICE_OUTSIDE_SERVICE_DIR = 'ServiceOutsideServiceDirectory';
+    private const ERROR_DOMAIN_SERVICE_IMPL_OUTSIDE_SERVICE_DIR = 'DomainServiceImplOutsideServiceDirectory';
 
     private const DOC_REF = ' See: docs/conventions/core-patterns/service.md';
 
@@ -51,7 +52,11 @@ final class ServiceStructureSniff implements Sniff
 
         if ($hasSuffix) {
             $this->assertServiceInCorrectDirectory($phpcsFile, $stackPtr, $className);
+
+            return;
         }
+
+        $this->assertDomainServiceImplInServiceDirectory($phpcsFile, $stackPtr, $className);
     }
 
     private function assertImplementsInterface(File $phpcsFile, int $classPtr, string $className): void
@@ -109,6 +114,38 @@ final class ServiceStructureSniff implements Sniff
         );
     }
 
+    /**
+     * Checks that a class implementing a Domain Service interface is placed in a Service/ directory.
+     * This prevents bypassing the sniff by moving the implementation out of Service/.
+     */
+    private function assertDomainServiceImplInServiceDirectory(
+        File $phpcsFile,
+        int $classPtr,
+        string $className,
+    ): void {
+        $implementedInterfaces = $this->getImplementedInterfaceFqcns($phpcsFile, $classPtr);
+
+        foreach ($implementedInterfaces as $fqcn) {
+            $normalizedFqcn = str_replace('\\', '/', $fqcn);
+            if (str_contains($normalizedFqcn, '/Domain/Service/') === true) {
+                $phpcsFile->addError(
+                    sprintf(
+                        'Class "%s" implements Domain Service interface "%s"'
+                        . ' but is not in a Service/ directory.'
+                        . ' Move it to .../Service/{Context?}/%s.' . self::DOC_REF,
+                        $className,
+                        $fqcn,
+                        $className,
+                    ),
+                    $classPtr,
+                    self::ERROR_DOMAIN_SERVICE_IMPL_OUTSIDE_SERVICE_DIR,
+                );
+
+                return;
+            }
+        }
+    }
+
     private function isInServiceDirectory(string $relativePath): bool
     {
         $withoutSrc = substr($relativePath, strlen('src/'));
@@ -138,6 +175,126 @@ final class ServiceStructureSniff implements Sniff
         }
 
         return true;
+    }
+
+    /**
+     * Resolves FQCNs of all interfaces listed in the `implements` clause.
+     *
+     * @return list<string>
+     */
+    private function getImplementedInterfaceFqcns(File $phpcsFile, int $classPtr): array
+    {
+        $tokens = $phpcsFile->getTokens();
+
+        $scopeOpener = $tokens[$classPtr]['scope_opener'] ?? null;
+        if ($scopeOpener === null) {
+            return [];
+        }
+
+        $implementsPtr = $phpcsFile->findNext(T_IMPLEMENTS, $classPtr + 1, $scopeOpener);
+        if ($implementsPtr === false) {
+            return [];
+        }
+
+        $useMap      = $this->buildUseMap($phpcsFile, $classPtr);
+        $interfaces  = [];
+
+        $ptr = $implementsPtr + 1;
+        while ($ptr < $scopeOpener) {
+            $token = $tokens[$ptr];
+
+            if ($token['code'] === T_NAME_FULLY_QUALIFIED) {
+                $interfaces[] = ltrim($token['content'], '\\');
+                $ptr++;
+                continue;
+            }
+
+            if ($token['code'] === T_STRING) {
+                $name         = $token['content'];
+                $interfaces[] = $useMap[$name] ?? $name;
+                $ptr++;
+                continue;
+            }
+
+            $ptr++;
+        }
+
+        return $interfaces;
+    }
+
+    /**
+     * Builds a map of short class names to FQCNs from use-statements.
+     *
+     * @return array<string, string>
+     */
+    private function buildUseMap(File $phpcsFile, int $classPtr): array
+    {
+        $tokens  = $phpcsFile->getTokens();
+        $useMap  = [];
+
+        for ($i = 0; $i < $classPtr; $i++) {
+            if ($tokens[$i]['code'] !== T_USE) {
+                continue;
+            }
+
+            $useEnd = $phpcsFile->findNext(T_SEMICOLON, $i + 1);
+            if ($useEnd === false) {
+                continue;
+            }
+
+            $fqcn = $this->extractFqcnFromUse($tokens, $i + 1, $useEnd);
+            if ($fqcn === null) {
+                continue;
+            }
+
+            $shortName          = $this->extractShortName($fqcn);
+            $useMap[$shortName] = $fqcn;
+        }
+
+        return $useMap;
+    }
+
+    /**
+     * Extracts the FQCN from tokens between `use` and `;`.
+     *
+     * @param array<int, array{code: int|string, content: string}> $tokens
+     */
+    private function extractFqcnFromUse(array $tokens, int $start, int $end): ?string
+    {
+        $parts = [];
+
+        for ($i = $start; $i < $end; $i++) {
+            $code = $tokens[$i]['code'];
+
+            if ($code === T_NAME_QUALIFIED || $code === T_NAME_FULLY_QUALIFIED) {
+                return ltrim($tokens[$i]['content'], '\\');
+            }
+
+            if ($code === T_STRING || $code === T_NS_SEPARATOR) {
+                $parts[] = $tokens[$i]['content'];
+            }
+        }
+
+        if ($parts === []) {
+            return null;
+        }
+
+        $fqcn = implode('', $parts);
+        if (str_starts_with($fqcn, '\\')) {
+            $fqcn = substr($fqcn, 1);
+        }
+
+        return $fqcn;
+    }
+
+    private function extractShortName(string $fqcn): string
+    {
+        $pos = strrpos($fqcn, '\\');
+        if ($pos === false) {
+            return $fqcn;
+        }
+
+        return substr($fqcn, $pos + 1);
     }
 
     /**

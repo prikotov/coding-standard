@@ -257,4 +257,40 @@ return [
         ],
         'warnings' => [],
     ],
+    // ServiceStructureSniff — class implements Domain\Service\ interface but outside Service/ directory
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Integration/Broadcaster/NullNotificationBroadcaster.inc',
+        'errors' => [
+            8 => 1, // DomainServiceImplOutsideServiceDirectory
+        ],
+        'warnings' => [],
+    ],
+    // ServiceStructureSniff — class implements Domain\Service\ interface via FQCN but outside Service/ directory
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Integration/Broadcaster/FqcnBroadcaster.inc',
+        'errors' => [
+            6 => 1, // DomainServiceImplOutsideServiceDirectory
+        ],
+        'warnings' => [],
+    ],
+    // ServiceStructureSniff — class implements non-Service interface outside Service/ — valid
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Integration/Listener/LogOnSomethingListener.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // ValueObjectStructureSniff — class in ValueObject namespace without Vo suffix
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/ValueObject/RuntimeContext.inc',
+        'errors' => [
+            6 => 1, // MissingVoSuffix
+        ],
+        'warnings' => [],
+    ],
+    // ValueObjectStructureSniff — class in ValueObject namespace with Vo suffix — valid
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/ValueObject/EmailVo.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
 ];

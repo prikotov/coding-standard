@@ -19,6 +19,7 @@ final class ValueObjectStructureSniff implements Sniff
     private const ERROR_NON_READONLY_PROPERTY = 'NonReadonlyProperty';
     private const ERROR_FORBIDDEN_PROPERTY_TYPE = 'ForbiddenPropertyType';
     private const WARNING_NAMESPACE_MISMATCH = 'NamespaceMismatch';
+    private const ERROR_MISSING_VO_SUFFIX = 'MissingVoSuffix';
 
     private const DOC_REF = ' See: docs/conventions/core-patterns/value-object.md';
 
@@ -44,7 +45,28 @@ final class ValueObjectStructureSniff implements Sniff
     public function process(File $phpcsFile, $stackPtr): void
     {
         $className = $phpcsFile->getDeclarationName($stackPtr);
-        if ($className === '' || str_ends_with($className, 'Vo') === false) {
+        if ($className === '') {
+            return;
+        }
+
+        $hasSuffix = str_ends_with($className, 'Vo');
+
+        if ($hasSuffix === false && $this->isInValueObjectNamespace($phpcsFile)) {
+            $phpcsFile->addError(
+                sprintf(
+                    'Class "%s" is in a ValueObject/Vo namespace but does not have a "Vo" suffix.'
+                    . ' Rename to "%sVo".' . self::DOC_REF,
+                    $className,
+                    $className,
+                ),
+                $stackPtr,
+                self::ERROR_MISSING_VO_SUFFIX,
+            );
+
+            return;
+        }
+
+        if ($hasSuffix === false) {
             return;
         }
 
@@ -257,7 +279,7 @@ final class ValueObjectStructureSniff implements Sniff
             return;
         }
 
-        if (str_contains($namespace['name'], 'ValueObject') || preg_match('/\\\\Vo\\\\/', $namespace['name']) === 1) {
+        if ($this->isInValueObjectNamespace($phpcsFile)) {
             return;
         }
 
@@ -266,6 +288,18 @@ final class ValueObjectStructureSniff implements Sniff
             $namespace['ptr'] ?? $classPtr,
             self::WARNING_NAMESPACE_MISMATCH,
         );
+    }
+
+    private function isInValueObjectNamespace(File $phpcsFile): bool
+    {
+        $namespace = $this->resolveNamespace($phpcsFile);
+
+        if ($namespace['name'] === null) {
+            return false;
+        }
+
+        return str_contains($namespace['name'], '\ValueObject')
+            || preg_match('/\\\Vo\\\/', $namespace['name']) === 1;
     }
 
     private function methodReturnsType(File $phpcsFile, int $methodPtr, string $type): bool
