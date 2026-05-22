@@ -29,6 +29,10 @@ phpmd: ## Запустить PHP Mess Detector
 deptrac: ## Запустить анализ зависимостей
 	vendor/bin/deptrac analyse --config-file=depfile.yaml --no-progress
 
+.PHONY: phpstan
+phpstan: ## Запустить PHPStan
+	vendor/bin/phpstan analyse --no-progress
+
 .PHONY: psalm
 psalm: ## Запустить Psalm
 	vendor/bin/psalm --no-cache --no-progress
@@ -55,7 +59,7 @@ tests-e2e: ## Запустить E2E-тесты
 
 .PHONY: check
 check: ## Запустить все проверки
-	@${MAKE} --no-print-directory phpcs phpmd deptrac psalm tests-unit tests-integration && \
+	@${MAKE} --no-print-directory phpcs phpstan phpmd deptrac psalm tests-unit tests-integration && \
 		{ echo; echo "✅ Все проверки завершены успешно."; } || \
 		{ echo; echo "❌ Проверки завершены с ошибками."; exit 1; }
 
