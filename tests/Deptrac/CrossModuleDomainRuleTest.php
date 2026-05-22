@@ -11,6 +11,7 @@ use Qossmic\Deptrac\Contract\Analyser\ProcessEvent;
 use Qossmic\Deptrac\Contract\Ast\DependencyContext;
 use Qossmic\Deptrac\Contract\Ast\DependencyType;
 use Qossmic\Deptrac\Contract\Ast\FileOccurrence;
+use Qossmic\Deptrac\Contract\Result\RuleInterface;
 use Qossmic\Deptrac\Contract\Result\Violation;
 use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeReference;
 use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeToken;
@@ -545,6 +546,11 @@ final class CrossModuleDomainRuleTest extends TestCase
      */
     private function violations(ProcessEvent $event): array
     {
-        return array_values($event->getResult()->rules()[Violation::class] ?? []);
+        return array_values(
+            array_filter(
+                $event->getResult()->rules()[Violation::class] ?? [],
+                static fn (RuleInterface $rule): bool => $rule instanceof Violation,
+            ),
+        );
     }
 }

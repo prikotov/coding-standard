@@ -11,6 +11,7 @@ use Qossmic\Deptrac\Contract\Analyser\ProcessEvent;
 use Qossmic\Deptrac\Contract\Ast\DependencyContext;
 use Qossmic\Deptrac\Contract\Ast\DependencyType;
 use Qossmic\Deptrac\Contract\Ast\FileOccurrence;
+use Qossmic\Deptrac\Contract\Result\RuleInterface;
 use Qossmic\Deptrac\Contract\Result\Violation;
 use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeReference;
 use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeToken;
@@ -562,9 +563,6 @@ final class ServiceContractDependencyRuleTest extends TestCase
         );
     }
 
-    /**
-     * @return array{module: string, layer: string, path: string}|null
-     */
     private function extractModuleLayer(string $className): ?string
     {
         if (
@@ -606,19 +604,16 @@ final class ServiceContractDependencyRuleTest extends TestCase
         );
     }
 
-    private function layerName(string $className): string
-    {
-        $layer = $this->extractModuleLayer($className);
-        self::assertNotNull($layer, sprintf('Failed to extract layer from class "%s".', $className));
-
-        return $layer;
-    }
-
     /**
      * @return list<Violation>
      */
     private function violations(ProcessEvent $event): array
     {
-        return array_values($event->getResult()->rules()[Violation::class] ?? []);
+        return array_values(
+            array_filter(
+                $event->getResult()->rules()[Violation::class] ?? [],
+                static fn (RuleInterface $rule): bool => $rule instanceof Violation,
+            ),
+        );
     }
 }
