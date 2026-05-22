@@ -8,14 +8,14 @@ declare(strict_types=1);
  *
  * Usage:
  *   php vendor/bin/coding-standard-init [target-dir] [--docs-path=<path>] [--deptrac-path=<path>] [--force]
- *                                            [--exceptions-path=<path>] [--no-exceptions]
+ *                                            [--project-name=<Name>] [--exceptions-path=<path>] [--no-exceptions]
  *
  *   target-dir        — project root (default: current working directory).
  *   --docs-path       — relative path where docs will be copied (default: docs/conventions).
  *   --deptrac-path    — relative path where depfile.yaml will be copied (default: depfile.yaml).
  *   --no-deptrac      — skip depfile.yaml copying entirely.
+ *   --project-name    — project name used as namespace prefix for exceptions (e.g. Task).
  *   --exceptions-path — relative path where exceptions will be copied (default: src/Common/Exception).
- *                      Project name is auto-detected from composer.json autoload.psr-4.
  *   --no-exceptions   — skip exceptions copying entirely.
  *   --force           — overwrite existing files with fresh copies from the package.
  */
@@ -28,6 +28,7 @@ $noExceptions   = false;
 $targetArg      = null;
 $docsPath       = null;
 $deptracPath    = null;
+$projectName    = null;
 $exceptionsPath = null;
 
 foreach ($argv as $i => $arg) {
@@ -44,6 +45,8 @@ foreach ($argv as $i => $arg) {
         $docsPath = substr($arg, strlen('--docs-path='));
     } elseif (str_starts_with($arg, '--deptrac-path=')) {
         $deptracPath = substr($arg, strlen('--deptrac-path='));
+    } elseif (str_starts_with($arg, '--project-name=')) {
+        $projectName = substr($arg, strlen('--project-name='));
     } elseif (str_starts_with($arg, '--exceptions-path=')) {
         $exceptionsPath = substr($arg, strlen('--exceptions-path='));
     } else {
@@ -76,33 +79,6 @@ $targetDocs = $targetDir . '/' . $docsPath;
 if (!is_dir($sourceDocs)) {
     fwrite(STDERR, "Error: package docs/ not found at $sourceDocs" . PHP_EOL);
     exit(1);
-}
-
-// ── Detect project name from composer.json ─────────────────────────────────
-
-$projectName = null;
-$composerJsonPath = $targetDir . '/composer.json';
-
-if (!$noExceptions && file_exists($composerJsonPath)) {
-    $composerData = json_decode(file_get_contents($composerJsonPath), true);
-    $psr4 = $composerData['autoload']['psr-4'] ?? [];
-
-    $names = [];
-    foreach ($psr4 as $namespace => $path) {
-        $parts = explode('\\', trim($namespace, '\\'));
-        if ($parts[0] !== '') {
-            $names[$parts[0]] = true;
-        }
-    }
-
-    $uniqueNames = array_keys($names);
-    if (count($uniqueNames) === 1) {
-        $projectName = $uniqueNames[0];
-    } elseif (count($uniqueNames) > 1) {
-        fwrite(STDERR, "Error: ambiguous namespace roots in composer.json: " . implode(', ', $uniqueNames) . PHP_EOL);
-        fwrite(STDERR, "Use --no-exceptions to skip, or specify namespace via composer.json." . PHP_EOL);
-        $noExceptions = true;
-    }
 }
 
 if ($force) {
@@ -213,7 +189,7 @@ if (!$noExceptions && $projectName !== null) {
 
     if (is_dir($exceptionsSource)) {
         $targetExceptions = $targetDir . '/' . $exceptionsPath;
-        echo "  Using project name: $projectName (detected from composer.json)" . PHP_EOL;
+        echo "  Using project name: $projectName" . PHP_EOL;
 
         $exIterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($exceptionsSource, RecursiveDirectoryIterator::SKIP_DOTS),
@@ -256,7 +232,7 @@ if (!$noExceptions && $projectName !== null) {
         }
     }
 } elseif (!$noExceptions && $projectName === null) {
-    echo "  Skip     exceptions (could not detect project name from composer.json)" . PHP_EOL;
+    echo "  Skip     exceptions (--project-name not specified)" . PHP_EOL;
 }
 
 // ── 6. Update .gitignore ──────────────────────────────────────────────────
@@ -297,6 +273,4 @@ if ($deptracPath !== '') {
 echo "  4. Run \`vendor/bin/phpstan analyse\` to run static analysis." . PHP_EOL;
 if (!$noExceptions && $projectName !== null) {
     echo "  5. Review copied exceptions in $exceptionsPath/ and adjust if needed." . PHP_EOL;
-} elseif (!$noExceptions) {
-    echo "  5. Add --no-exceptions or ensure composer.json has a single namespace root." . PHP_EOL;
 }
