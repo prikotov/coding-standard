@@ -56,6 +56,7 @@ AI-агенты склонны отклоняться от конвенций. �
 | `phpcs.xml.dist` | PHP CodeSniffer |
 | `phpunit.xml.dist` | PHPUnit |
 | `phpmd.xml` | PHPMD |
+| `phpstan.neon.dist` | PHPStan |
 | `psalm.xml` | Psalm |
 | `Makefile` | Команды проверки (`make check`) |
 
@@ -71,7 +72,8 @@ composer require --dev prikotov/coding-standard
 
 - **Сниффы** — PHP CodeSniffer-правила, работают сразу из `vendor/`
 - **Deptrac-правила** — пользовательские правила для deptrac
-- **Конфигурации** — `depfile.yaml` для Deptrac, `phpcs.xml.dist` для PHPCS
+- **Конфигурации** — `depfile.yaml` для Deptrac, `phpcs.xml.dist` для PHPCS, `phpstan.neon.dist` для PHPStan
+- **Шаблоны исключений** — типовые классы и интерфейсы, копируются с подстановкой namespace проекта
 - **Конвенции** — документация, копируется командой `coding-standard-init`
 
 ### Подключение PHPCS
@@ -92,6 +94,36 @@ php vendor/bin/coding-standard-init
 ```bash
 php vendor/bin/coding-standard-init /path/to/project --docs-path=docs/ddd --deptrac-path=config/depfile.yaml --force
 ```
+
+### Копирование типовых исключений
+
+Шаблоны исключений хранятся в `config/exceptions/` и копируются в проект с подстановкой имени namespace.
+
+```bash
+php vendor/bin/coding-standard-init --project-name=Task
+```
+
+Это создаст файлы в `src/Common/Exception/` с namespace `Task\Common\Exception`.
+
+| Опция | Описание |
+|---|---|
+| `--project-name=Task` | Имя проекта для namespace (обязательно для исключений) |
+| `--exceptions-path=src/Common/Exception` | Путь копирования (по умолчанию) |
+| `--no-exceptions` | Пропустить копирование исключений |
+
+**Иерархия исключений:**
+
+```
+ClientErrorExceptionInterface          ServerErrorExceptionInterface
+├── ValidationExceptionInterface       ├── InfrastructureExceptionInterface
+├── NotFoundExceptionInterface        └── ConfigurationExceptionInterface
+├── ConflictExceptionInterface
+└── AccessDeniedExceptionInterface
+
+DomainExceptionInterface (独立的)
+```
+
+Без `--project-name` исключения пропускаются, остальные файлы копируются как обычно.
 
 ---
 
