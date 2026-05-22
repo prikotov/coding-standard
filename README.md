@@ -112,18 +112,6 @@ php vendor/bin/coding-standard-init --project-name=Task
 | `--exceptions-path=src/Common/Exception` | Путь копирования (по умолчанию) |
 | `--no-exceptions` | Пропустить копирование исключений |
 
-**Иерархия исключений:**
-
-```
-ClientErrorExceptionInterface          ServerErrorExceptionInterface
-├── ValidationExceptionInterface       ├── InfrastructureExceptionInterface
-├── NotFoundExceptionInterface        └── ConfigurationExceptionInterface
-├── ConflictExceptionInterface
-└── AccessDeniedExceptionInterface
-
-DomainExceptionInterface (独立的)
-```
-
 Без `--project-name` исключения пропускаются, остальные файлы копируются как обычно.
 
 ---
