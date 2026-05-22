@@ -1,0 +1,8 @@
+parameters:
+    level: 8
+    paths:
+        - src/
+        - apps/*/src/
+    excludePaths:
+        - */migrations/*
+    reportUnmatchedIgnoredErrors: false
