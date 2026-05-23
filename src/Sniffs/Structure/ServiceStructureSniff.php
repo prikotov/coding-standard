@@ -79,6 +79,10 @@ final class ServiceStructureSniff implements Sniff
         string $className,
         string $normalizedPath,
     ): void {
+        if (str_ends_with($className, 'Helper') || str_ends_with($className, 'Factory')) {
+            return;
+        }
+
         $directory     = dirname($normalizedPath);
         $serviceFiles  = $this->findServiceClassesInDirectory($directory);
 
