@@ -51,6 +51,10 @@ final class ValueObjectStructureSniff implements Sniff
 
         $hasSuffix = str_ends_with($className, 'Vo');
 
+        if ($hasSuffix === false && str_ends_with($className, 'Test')) {
+            return;
+        }
+
         if ($hasSuffix === false && $this->isInValueObjectNamespace($phpcsFile)) {
             $phpcsFile->addError(
                 sprintf(
