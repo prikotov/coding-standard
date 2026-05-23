@@ -293,6 +293,12 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // ValueObjectStructureSniff — test class in ValueObject namespace — valid (not a VO)
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/ValueObject/RuntimeContextVoTest.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
     // ServiceStructureSniff — Helper class in Service/ directory — valid per convention
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Service/Source/ParamsGetter/Helper/RutubeHelper.inc',
