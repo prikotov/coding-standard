@@ -325,4 +325,10 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // ServiceStructureSniff — Mapper class in Service/ directory — valid per convention
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Service/PublicAgentSession/SessionPayloadMapper.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
 ];
