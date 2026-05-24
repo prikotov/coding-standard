@@ -16,6 +16,8 @@ final class DtoStructureSniff implements Sniff
     private const ERROR_CONSTRUCTOR_NOT_EMPTY = 'ConstructorMustBeEmpty';
     private const ERROR_FORBIDDEN_MEMBERS = 'ForbiddenMembers';
 
+    private const ERROR_DOMAIN_DTO_PATH = 'DomainDtoPath';
+
     private const DOC_REF = ' See: docs/conventions/core-patterns/dto.md';
 
     public function register(): array
@@ -35,6 +37,8 @@ final class DtoStructureSniff implements Sniff
             return;
         }
 
+        $this->assertDomainDtoPath($phpcsFile, $stackPtr);
+
         $this->assertFinalReadonly($phpcsFile, $stackPtr);
 
         $scopeStart = $tokens[$stackPtr]['scope_opener'];
@@ -47,6 +51,22 @@ final class DtoStructureSniff implements Sniff
         }
 
         $this->assertNoMembers($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
+    }
+
+    private function assertDomainDtoPath(File $phpcsFile, int $classPtr): void
+    {
+        $normalizedPath = str_replace('\\', '/', $phpcsFile->getFilename());
+
+        if (str_contains($normalizedPath, '/Domain/Dto/') === false) {
+            return;
+        }
+
+        $phpcsFile->addError(
+            'Domain DTOs must be placed inside a Service context:'
+            . ' Domain/Service/{ServiceName}/{Name}Dto, not Domain/Dto/{Name}Dto.' . self::DOC_REF,
+            $classPtr,
+            self::ERROR_DOMAIN_DTO_PATH,
+        );
     }
 
     private function assertFinalReadonly(File $phpcsFile, int $classPtr): void

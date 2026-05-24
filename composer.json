@@ -18,11 +18,15 @@
         "squizlabs/php_codesniffer": "^4.0",
         "slevomat/coding-standard": "^8.0"
     },
+    "repositories": [
+        {"type": "vcs", "url": "https://github.com/prikotov/todo-md"}
+    ],
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
         "deptrac/deptrac": "^2.0",
         "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^10.5"
+        "phpunit/phpunit": "^10.5",
+        "prikotov/todo-md": "^0.0"
     },
     "autoload": {
         "psr-4": {
@@ -50,11 +54,16 @@
         "sniff-test": "php bin/run-sniff-tests.php",
         "validate-docs": "php bin/validate-docs.php",
         "validate-md-links": "php bin/validate-md-links",
+        "validate-todo": [
+            "php vendor/bin/todo-md-validate todo/*.todo.md",
+            "php vendor/bin/todo-md-validate todo/backlog/"
+        ],
         "check": [
             "@test",
             "@sniff-test",
             "@validate-docs",
             "@validate-md-links",
+            "@validate-todo",
             "@phpstan",
             "phpcs src/"
         ]
