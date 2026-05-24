@@ -79,10 +79,10 @@ description: Правила создания и использования об�
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{Component}\Dto\{Name}Dto
 ```
 
-- DTO доменного уровня (когда доменная операция возвращает структурированные данные):
+- DTO доменного уровня (вход/выход конкретного Domain Service):
 
 ```
-{ProjectName}\Common\Module\{ModuleName}\Domain\Dto\{Name}Dto
+{ProjectName}\Common\Module\{ModuleName}\Domain\Service\{ServiceName}\{Name}Dto
 ```
 
 ## Как используем

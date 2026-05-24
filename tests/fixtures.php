@@ -311,4 +311,18 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // DtoStructureSniff — Domain DTO in Domain/Dto/ — wrong path
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Dto/WrongPathDto.inc',
+        'errors' => [
+            6 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // DtoStructureSniff — Domain DTO in Domain/Service/{Context}/ — correct path
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Service/Payment/InitPaymentResultDto.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
 ];

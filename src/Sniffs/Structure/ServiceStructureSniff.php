@@ -79,8 +79,11 @@ final class ServiceStructureSniff implements Sniff
         string $className,
         string $normalizedPath,
     ): void {
-        if (str_ends_with($className, 'Helper') || str_ends_with($className, 'Factory')) {
-            return;
+        $allowedSuffixes = ['Helper', 'Factory', 'Dto'];
+        foreach ($allowedSuffixes as $suffix) {
+            if (str_ends_with($className, $suffix)) {
+                return;
+            }
         }
 
         $directory     = dirname($normalizedPath);
