@@ -51,6 +51,7 @@ description: Правила создания мапперов для преоб�
 ```
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{Name}Mapper
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{Component}\Mapper\{Name}Mapper
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Service\{ServiceName}\{Name}Mapper
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Mapper\{Name}Mapper
 ```
 
@@ -58,6 +59,7 @@ description: Правила создания мапперов для преоб�
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Domain\Mapper\{Name}Mapper
+{ProjectName}\Common\Module\{ModuleName}\Domain\Service\{ServiceName}\{Name}Mapper
 ```
 
 **Integration слой** — маппинг для внешних API:
