@@ -8,22 +8,23 @@ description: Правила создания правил доступа
 
 ## Определение
 
-**Правило доступа (Access Rule)** — сервис слоя Presentation, инкапсулирующий бизнес-логику проверки прав.
-Rule опирается на Permission Enum и инфраструктуру Symfony Security, но не зависит от Domain-слоя. См.
+**Правило доступа (Access Rule)** — сервис слоя Presentation, который содержит итоговую логику проверки доступа.
+Rule связывает Action, Permission и проверки владения/участия. См.
 [Symfony Security Authorization](https://symfony.com/doc/current/security.html#authorization).
 
 ## Общие правила
 
 - Класс объявляем `final readonly`.
-- Внедряем только сервисы Presentation/Application, необходимые для проверки (RoleHierarchy, QueryBus и т.п.).
+- Внедряем только сервисы, необходимые для проверки доступа.
 - Методы именуем `can<Action>` (`canCreate`, `canViewOwn`) и принимают `TokenInterface` + предмет проверки.
-- Внутри Rule используем Permission Enum и дополнительные проверки (например, принадлежность к проекту).
-- Rule не обращается напрямую к контроллерам или представлениям.
+- Внутри Rule используем Permission Enum и проверки владения/участия.
+- Rule вызывается из Voter, не из контроллеров, шаблонов или Grant.
+- Rule возвращает `bool` и не бросает исключения при отказе.
 
 ## Зависимости
 
-- Разрешено: `TokenInterface`, `RoleHierarchyInterface`, публичные Application-компоненты (QueryBus/CommandBus), DTO Presentation.
-- Запрещено: репозитории Domain, Entity Manager, внешние сервисы без адаптеров Presentation.
+- Разрешено: `TokenInterface`, `RoleHierarchyInterface`, публичные Application-компоненты (`QueryBus`), DTO Presentation.
+- Запрещено: контроллеры, Twig, Grant, репозитории Domain, Entity Manager, внешние сервисы без адаптеров.
 
 ## Расположение
 
@@ -33,10 +34,11 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Rule.php
 
 ## Как используем
 
-1. Внедряем Rule в Voter и/или контроллер.
-2. Методы Rule вызываем из Voter или специфических сервисов Presentation.
-3. Rule может обращаться к Application через QueryBus для проверки дополнительных условий (например, членство).
-4. Возвращаем `bool`, не бросаем исключений — Voter решает итоговый вердикт.
+1. Внедряем Rule в [Voter](voter.md).
+2. Voter передаёт в Rule `TokenInterface`, `ActionEnum` и subject.
+3. Rule проверяет Permission Enum и дополнительные условия доступа.
+4. Rule может обращаться к Application через QueryBus для фактов доступа.
+5. Grant и шаблоны обращаются к `AuthorizationCheckerInterface`, а не к Rule.
 
 ## Пример
 
@@ -45,7 +47,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Rule.php
 
 declare(strict_types=1);
 
-namespace ProjectName\Web\Module\Project\Controller\Project\Security;
+namespace ProjectName\Web\Module\Project\Security\Project;
 
 use ProjectName\Common\Application\Component\QueryBus\QueryBusComponentInterface;
 use ProjectName\Common\Module\Project\Application\UseCase\Query\ProjectUser\CheckMember\CheckMemberQuery;
@@ -218,4 +220,5 @@ final readonly class ProjectRule
 - [ ] Все публичные методы начинаются с `can*` и возвращают `bool`.
 - [ ] Используется Permission Enum, а не строки.
 - [ ] Дополнительные проверки выполняются через Application (QueryBus) или Presentation сервисы.
+- [ ] Rule вызывается из Voter, не из контроллеров, шаблонов или Grant.
 - [ ] Rule не использует классы Domain/Infrastructure и не бросает исключения при отказе.

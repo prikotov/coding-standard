@@ -8,19 +8,23 @@ description: Правила создания грант-сервисов для 
 
 ## Определение
 
-**Грант-сервис (Grant Service)** — вспомогательный сервис презентационного слоя, который агрегирует проверки прав для конкретной сущности, повторно используя [Symfony AuthorizationChecker](https://symfony.com/doc/current/security.html#checking-user-roles). Он обеспечивает единообразный доступ к разрешениям на уровне шаблонов и контроллеров.
+**Грант-сервис (Grant Service)** — фасад презентационного слоя для удобного вызова
+[Symfony AuthorizationChecker](https://symfony.com/doc/current/security.html#checking-user-roles) из контроллеров,
+шаблонов и компонентов пользовательского интерфейса (UI).
 
 ## Общие правила
 
 - Класс объявляется `final readonly` и хранит только зависимости через конструктор.
 - Методы именуются с префиксом `can*` и возвращают `bool` без побочных эффектов.
-- Каждый метод инкапсулирует вызов `AuthorizationCheckerInterface::isGranted()` и дополнительные флаги (например, soft/hard delete).
-- Внутри не используем `TokenInterface` напрямую — только необходимые идентификаторы (`Uuid`) или DTO презентационного слоя.
+- Каждый метод вызывает `AuthorizationCheckerInterface::isGranted()` с `ActionEnum` и subject.
+- Grant не решает доступ сам: итоговое решение остаётся в [Voter](voter.md) и [Rule](rule.md).
+- UI-флаги допустимы только для отображения кнопок и ссылок, не для защиты точки входа (endpoint).
+- Внутри не используем `TokenInterface` напрямую.
 - Не выполняем запросы к базе, не обращаемся к Domain/Application, не модифицируем состояние.
 
 ## Зависимости
 
-- Разрешено: `AuthorizationCheckerInterface`, enum-значения действий (`*ActionEnum`), простые типы (`Uuid`, DTO, флаги состояния).
+- Разрешено: `AuthorizationCheckerInterface`, `*ActionEnum`, простые типы (`Uuid`), DTO Presentation, UI-флаги.
 - Запрещено: репозитории, QueryBus/CommandBus, сервисы Domain/Application/Infrastructure, обращения к глобальному состоянию.
 
 ## Расположение
@@ -37,7 +41,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Grant.php
 1. Создаём Grant для сущности и регистрируем его как сервис в модуле.
 2. Внедряем Grant в контроллеры, Twig-шаблоны и компоненты UI через DI.
 3. Вызываем методы `can*`, чтобы скрыть/показать действия (кнопки, ссылки, формы).
-4. Для сложных сценариев (soft/hard delete) комбинируем проверки внутри Grant, не вынося условие в шаблоны.
+4. Endpoint защищаем через `isGranted()`/Voter, а не через Grant.
 
 ## Пример
 
@@ -87,5 +91,7 @@ final readonly class Grant
 - [ ] Grant лежит в каталоге `Security` соответствующего модуля и объявлен `final readonly`.
 - [ ] Все публичные методы начинаются с `can*` и возвращают `bool`.
 - [ ] Внутри используются значения `*ActionEnum`, а не строки.
+- [ ] Grant только готовит subject и вызывает `AuthorizationCheckerInterface::isGranted()`.
 - [ ] Нет зависимостей на Domain/Application/Infrastructure-сервисы.
+- [ ] Нет логики доступа, дублирующей Rule.
 - [ ] Шаблоны и контроллеры обращаются к Grant вместо прямых вызовов `is_granted()`.

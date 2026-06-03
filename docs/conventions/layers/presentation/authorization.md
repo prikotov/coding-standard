@@ -8,40 +8,44 @@ description: Правила проверки прав презентационн
 
 ## Определение
 
-**Проверка прав презентационного слоя (Presentation Authorization)** — способ ограничить доступ к публичным интерфейсам приложения с помощью Permission Enum, Rule, Voter и Grant. Используем встроенную модель Symfony Security, см. [Security & Authorization](https://symfony.com/doc/current/security.html).
+**Проверка прав презентационного слоя (Presentation Authorization)** — способ ограничить доступ к публичным
+интерфейсам приложения через Permission Enum, Action Enum, Rule, Voter и Grant. Используем встроенную модель
+Symfony Security, см. [Security & Authorization](https://symfony.com/doc/current/security.html).
 
 ## Архитектура авторизации
 
 ```
-Controller / Template
+Controller / Template / UI
        │
        ▼
-    Grant ─────► AuthorizationChecker ◄──── Voter ◄──── Rule ◄──── PermissionEnum
-       │                                            │
-       └────────────────────────────────────────────┘
+      Grant ───► AuthorizationChecker ───► Voter ───► Rule ───► PermissionEnum
+         ▲                                     │          │
+         └──────────── ActionEnum + subject ───┴──────────┘
 ```
 
 **Компоненты:**
 
 | Компонент | Назначение | Документация |
 |-----------|------------|--------------|
-| **PermissionEnum** | Определяет роли `ROLE_*` для модуля | [permission-enum.md](permission-enum.md) |
-| **ActionEnum** | Определяет атрибуты для `isGranted()` | [action-enum.md](action-enum.md) |
-| **Rule** | Инкапсулирует логику проверки прав | [rule.md](rule.md) |
-| **Voter** | Принимает решение о доступе, делегирует в Rule | [voter.md](voter.md) |
-| **Grant** | Удобная обёртка для частых проверок в контроллерах/шаблонах | [grant.md](grant.md) |
+| **PermissionEnum** | Роли `ROLE_*` для модуля | [permission-enum.md](permission-enum.md) |
+| **ActionEnum** | Атрибуты действий для `isGranted()` | [action-enum.md](action-enum.md) |
+| **Rule** | Итоговая логика доступа | [rule.md](rule.md) |
+| **Voter** | Symfony-адаптер, делегирующий в Rule | [voter.md](voter.md) |
+| **Grant** | Фасад пользовательского интерфейса (UI) над AuthorizationChecker | [grant.md](grant.md) |
 
 ## Общие правила
 
 - Каждый модуль определяет собственный `PermissionEnum` с именами ролей `ROLE_*`.
-- Логику проверки инкапсулируем в `Rule`, работающем только с `TokenInterface` и объектами Presentation.
-- Решение об access принимает `Voter`, делегирующий проверку в Rule.
-- Для удобства используется `Grant` — сервис-обёртка над Voter.
-- Никаких прямых обращений к Domain/Infrastructure внутри Rule/Voter/Grant.
+- `ActionEnum` описывает действия: `view`, `edit`, `delete`.
+- `Rule` содержит итоговую логику доступа.
+- `Voter` принимает решение Symfony Security и делегирует в Rule.
+- `Grant` только вызывает `AuthorizationCheckerInterface::isGranted()` для UI.
+- Контроллеры и шаблоны не вызывают Rule напрямую.
+- Domain/Infrastructure не используем внутри Rule/Voter/Grant.
 
 ## Матрица Action-Permission
 
-ActionEnum и PermissionEnum — независимые enum'ы. Связь между ними реализуется в [Rule](rule.md):
+ActionEnum и PermissionEnum — независимые enum'ы. Связь между ними реализует [Rule](rule.md):
 
 ```
 ActionEnum          Rule                 PermissionEnum
@@ -51,26 +55,14 @@ edit         ───►  canEdit()    ───►    editOwn / editAll
 delete       ───►  canDelete()  ───►    deleteOwn / deleteAll
 ```
 
-**Пример в Rule:**
-
-```php
-public function canView(TokenInterface $token, Uuid $projectUuid): bool
-{
-    if ($this->hasPermission(PermissionEnum::viewAll, $token)) {
-        return true;
-    }
-    
-    return $this->hasPermission(PermissionEnum::viewOwn, $token) 
-        && $this->isOwner($token, $projectUuid);
-}
-```
-
 PermissionEnum добавляется в `security.yaml` и назначается ролям пользователей.
 
 ## Зависимости
 
-- **Разрешено:** `TokenInterface`, `AuthorizationCheckerInterface`, `ProjectName\Web\Security\UserInterface`, `Uuid`, DTO Presentation.
-- **Запрещено:** сервисы Domain, Application, ORM-репозитории, глобальные синглтоны.
+- **Rule:** `TokenInterface`, `RoleHierarchyInterface`, DTO Presentation, публичный `QueryBus` для фактов доступа.
+- **Voter:** Rule, `TokenInterface`, `ActionEnum`, subject Presentation.
+- **Grant:** `AuthorizationCheckerInterface`, `ActionEnum`, subject Presentation.
+- **Запрещено:** сервисы Domain, ORM-репозитории, Entity Manager, глобальные синглтоны.
 
 ## Расположение
 
@@ -89,14 +81,14 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/
 2. Определяем [Action Enum](action-enum.md) с атрибутами действий (view, edit, delete...).
 3. Реализуем [Rule](rule.md) для проверки прав.
 4. Создаём [Voter](voter.md), который делегирует проверку в Rule.
-5. При необходимости создаём [Grant](grant.md) для удобных проверок.
-6. В контроллерах вызываем `$this->isGranted(ActionEnum::view->value)` или методы Grant.
+5. При необходимости создаём [Grant](grant.md) для UI-проверок.
+6. Точку входа (endpoint) защищаем через `$this->isGranted(ActionEnum::view->value, $subject)`.
 
 ## Чек-лист для проведения ревью кода
 
 - [ ] Permission Enum лежит в каталоге Security и содержит только значения `ROLE_*`.
 - [ ] Action Enum содержит атрибуты действий (view, edit, delete...).
-- [ ] Rule использует только `TokenInterface` и Presentation-типы.
+- [ ] Rule содержит итоговую логику доступа.
 - [ ] Voter делегирует проверку в Rule и зарегистрирован как сервис.
 - [ ] Значения Permission Enum добавлены в `security.yaml`.
-- [ ] Grant объявлен `final readonly` и не содержит бизнес-логики.
+- [ ] Grant объявлен `final readonly` и не дублирует Rule.
