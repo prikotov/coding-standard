@@ -91,4 +91,4 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/
 - [ ] Rule содержит итоговую логику доступа.
 - [ ] Voter делегирует проверку в Rule и зарегистрирован как сервис.
 - [ ] Значения Permission Enum добавлены в `security.yaml`.
-- [ ] Grant объявлен `final readonly` и не дублирует Rule.
+- [ ] Grant объявлен `final readonly`, не дублирует Rule и не содержит бизнес-логики.
