@@ -27,17 +27,11 @@ src/Module/{ModuleName}/Domain/
 │       ├── {EntityName}RepositoryInterface.php
 │       └── Criteria/
 ├── Service/
-│   └── {GroupName?}/
-│       └── {ServiceName}ServiceInterface.php
 ├── Specification/
 │   └── {SpecificationName}.php
 └── Calculator/
     └── {CalculatorName}.php
 ```
-
-- `{GroupName?}` — опциональная группировка по предметной области или бизнес-возможности.
-- Не называем эту группу «контекстом» (Context): в DDD контекст обычно означает ограниченный контекст (Bounded Context), а не папку внутри сервиса.
-- Не используем в `Domain\Service\...` сегменты `Domain`, `Application`, `Infrastructure`, `Integration`, `Presentation`.
 
 ## Чек-лист для проведения ревью кода
 
