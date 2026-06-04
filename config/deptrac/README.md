@@ -30,7 +30,7 @@ Deptrac catches such violations **deterministically** — in CI, on every commit
 | `Domain` | Entities, VOs, repository interfaces |
 | `DomainVo` | Value Objects (→ Domain, Enum) |
 | `DomainEnum` | Domain enum (closed) |
-| `DomainDto` | Domain DTOs; `Domain\Dto\*` is forbidden (→ Domain, VO, Enum) |
+| `DomainDto` | Domain DTOs (→ Domain, VO, Enum) |
 | `Application` | Use cases, services |
 | `ApplicationDto` | Application DTOs (→ DTO, Enum) |
 | `ApplicationCommand` | Command (CQRS) |

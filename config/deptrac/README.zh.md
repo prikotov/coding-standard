@@ -30,7 +30,7 @@ Deptrac **确定性地**捕获此类违规——在 CI 中，每次提交时都�
 | `Domain` | 实体、值对象、仓库接口 |
 | `DomainVo` | 值对象（→ Domain, Enum） |
 | `DomainEnum` | 领域枚举（封闭） |
-| `DomainDto` | 领域 DTO；禁止 `Domain\Dto\*`（→ Domain, VO, Enum） |
+| `DomainDto` | 领域 DTO（→ Domain, VO, Enum） |
 | `Application` | 用例、服务 |
 | `ApplicationDto` | 应用 DTO（→ DTO, Enum） |
 | `ApplicationCommand` | 命令（CQRS） |
