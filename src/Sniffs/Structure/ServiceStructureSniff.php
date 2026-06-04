@@ -163,7 +163,7 @@ final class ServiceStructureSniff implements Sniff
         $phpcsFile->addError(
             sprintf(
                 'Service class "%s" must be placed in a Service/ directory.'
-                . ' Move it to .../Service/{Context?}/%s.' . self::DOC_REF,
+                . ' Move it to .../Service/{GroupName?}/%s.' . self::DOC_REF,
                 $className,
                 $className,
             ),
@@ -190,7 +190,7 @@ final class ServiceStructureSniff implements Sniff
                     sprintf(
                         'Class "%s" implements Domain Service interface "%s"'
                         . ' but is not in a Service/ directory.'
-                        . ' Move it to .../Service/{Context?}/%s.' . self::DOC_REF,
+                        . ' Move it to .../Service/{GroupName?}/%s.' . self::DOC_REF,
                         $className,
                         $fqcn,
                         $className,

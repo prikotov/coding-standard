@@ -1,6 +1,6 @@
 <?php
 
-// Domain DTO in Domain/Dto/ — wrong path, should be Domain/Service/{Context}/
+// Domain DTO in Domain/Dto/ — wrong path, should be Domain/Service/{GroupName}/
 namespace App\Module\Example\Domain\Dto;
 
 final readonly class WrongPathDto

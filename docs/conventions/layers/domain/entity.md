@@ -57,7 +57,7 @@ description: Правила проектирования доменных сущ
 - В слое [Domain](../domain.md):
 
 ```php
-{ProjectName}\Common\Module\{ModuleName}\Domain\Entity\{Context}\{EntityName}Model
+{ProjectName}\Common\Module\{ModuleName}\Domain\Entity\{GroupName?}\{EntityName}Model
 ```
 
 ## Как используем

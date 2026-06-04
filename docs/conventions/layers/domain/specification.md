@@ -33,10 +33,10 @@ description: Правила использования паттерна Specific
 - В слое [Domain](../domain.md):
 
 ```php
-{ProjectName}\Common\Module\{ModuleName}\Domain\Specification\{Context}\{SpecificationName}Specification
+{ProjectName}\Common\Module\{ModuleName}\Domain\Specification\{GroupName?}\{SpecificationName}Specification
 ```
 
-`{Context}` используется при необходимости логически сгруппировать спецификации внутри модуля.
+`{GroupName?}` используется при необходимости логически сгруппировать спецификации внутри модуля.
 
 ## Как используем
 

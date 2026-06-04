@@ -28,10 +28,10 @@ description: Правила создания и использования до�
 - В слое [Application](../application.md):
 
 ```php
-{ProjectName}\Common\Module\{ModuleName}\Application\Event\{Context?}\{EventName}Event
+{ProjectName}\Common\Module\{ModuleName}\Application\Event\{GroupName?}\{EventName}Event
 ```
 
-* `{Context?}` — опционально, используется для группировки по смыслу.
+* `{GroupName?}` — опциональная группа событий по смыслу.
 * `{EventName}` — имя события без суффикса `Event`.
 
 ## Когда использовать

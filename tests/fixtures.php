@@ -327,7 +327,7 @@ return [
         ],
         'warnings' => [],
     ],
-    // DtoStructureSniff — Domain DTO in Domain/Service/{Context}/ — correct path
+    // DtoStructureSniff — Domain DTO in Domain/Service/{GroupName}/ — correct path
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Service/Payment/InitPaymentResultDto.inc',
         'errors' => [],
