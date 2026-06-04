@@ -60,9 +60,6 @@ description: Правила создания и использования се�
 {ProjectName}\Common\Module\{ModuleName}\Domain\Service\{Context?}\{ServiceName}Service
 ```
 
-- `{Context}` — бизнес-контекст сервиса, не название слоя.
-- Запрещены контексты `Domain`, `Application`, `Infrastructure`, `Integration`, `Presentation` внутри `Domain\Service`.
-
 ## Как используем
 
 - Вызывается внутри Use Case или другого доменного сервиса.
@@ -98,8 +95,6 @@ description: Правила создания и использования се�
 ```php
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Service\{Context?}\{ServiceName}Service
 ```
-
-- `{Context}` у интерфейса в `Domain\Service` — бизнес-контекст, не `Infrastructure`.
 
 ## Как используем
 
@@ -167,8 +162,6 @@ description: Правила создания и использования се�
 ```php
 {ProjectName}\Common\Module\{ModuleName}\Integration\Service\{Context?}\{ServiceName}Service
 ```
-
-- `{Context}` у интерфейса в `Domain\Service` — бизнес-контекст, не `Integration`.
 
 ## Как используем
 

@@ -13,10 +13,10 @@ final class ServiceStructureSniff implements Sniff
     private const ERROR_NO_INTERFACE = 'NoInterface';
     private const ERROR_SERVICE_OUTSIDE_SERVICE_DIR = 'ServiceOutsideServiceDirectory';
     private const ERROR_DOMAIN_SERVICE_IMPL_OUTSIDE_SERVICE_DIR = 'DomainServiceImplOutsideServiceDirectory';
-    private const ERROR_DOMAIN_SERVICE_LAYER_CONTEXT = 'DomainServiceLayerContext';
+    private const ERROR_DOMAIN_SERVICE_LAYER_SEGMENT = 'DomainServiceLayerSegment';
 
     private const DOC_REF = ' See: docs/conventions/core-patterns/service.md';
-    private const LAYER_CONTEXT_NAMES = [
+    private const LAYER_NAMES = [
         'Domain',
         'Application',
         'Infrastructure',
@@ -43,7 +43,7 @@ final class ServiceStructureSniff implements Sniff
             return;
         }
 
-        $this->assertDomainServiceContextIsNotLayerName($phpcsFile, $stackPtr, $relativePath);
+        $this->assertDomainServicePathSegmentIsNotLayerName($phpcsFile, $stackPtr, $relativePath);
 
         if ($this->isInterfaceDeclaration($phpcsFile, $stackPtr)) {
             return;
@@ -87,14 +87,14 @@ final class ServiceStructureSniff implements Sniff
         }
     }
 
-    private function assertDomainServiceContextIsNotLayerName(
+    private function assertDomainServicePathSegmentIsNotLayerName(
         File $phpcsFile,
         int $classPtr,
         string $relativePath,
     ): void {
         if (
             preg_match(
-                '~^src/Module/[^/]+/Domain/Service/(?P<context>[^/]+)/~',
+                '~^src/Module/[^/]+/Domain/Service/(?P<segment>[^/]+)/~',
                 $relativePath,
                 $matches,
             ) !== 1
@@ -102,20 +102,20 @@ final class ServiceStructureSniff implements Sniff
             return;
         }
 
-        $context = $matches['context'];
-        if (in_array($context, self::LAYER_CONTEXT_NAMES, true) === false) {
+        $segment = $matches['segment'];
+        if (in_array($segment, self::LAYER_NAMES, true) === false) {
             return;
         }
 
         $phpcsFile->addError(
             sprintf(
-                'Domain Service context "%s" must describe business context, not a layer name.'
-                . ' Use Domain/Service/{BusinessContext}/..., not Domain/Service/%s/....' . self::DOC_REF,
-                $context,
-                $context,
+                'Domain Service path segment "%s" must describe domain area, not a layer name.'
+                . ' Use Domain/Service/{DomainArea?}/..., not Domain/Service/%s/....' . self::DOC_REF,
+                $segment,
+                $segment,
             ),
             $classPtr,
-            self::ERROR_DOMAIN_SERVICE_LAYER_CONTEXT,
+            self::ERROR_DOMAIN_SERVICE_LAYER_SEGMENT,
         );
     }
 

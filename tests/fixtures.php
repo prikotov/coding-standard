@@ -243,11 +243,11 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
-    // ServiceStructureSniff — Domain Service context must not be a layer name
+    // ServiceStructureSniff — Domain Service path segment must not be a layer name
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Service/Integration/ConnectivityRoleTargetProviderInterface.inc',
         'errors' => [
-            6 => 1, // DomainServiceLayerContext
+            6 => 1, // DomainServiceLayerSegment
         ],
         'warnings' => [],
     ],
