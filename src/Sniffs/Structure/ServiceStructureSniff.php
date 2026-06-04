@@ -13,20 +13,12 @@ final class ServiceStructureSniff implements Sniff
     private const ERROR_NO_INTERFACE = 'NoInterface';
     private const ERROR_SERVICE_OUTSIDE_SERVICE_DIR = 'ServiceOutsideServiceDirectory';
     private const ERROR_DOMAIN_SERVICE_IMPL_OUTSIDE_SERVICE_DIR = 'DomainServiceImplOutsideServiceDirectory';
-    private const ERROR_DOMAIN_SERVICE_LAYER_SEGMENT = 'DomainServiceLayerSegment';
 
     private const DOC_REF = ' See: docs/conventions/core-patterns/service.md';
-    private const LAYER_NAMES = [
-        'Domain',
-        'Application',
-        'Infrastructure',
-        'Integration',
-        'Presentation',
-    ];
 
     public function register(): array
     {
-        return [T_CLASS, T_INTERFACE];
+        return [T_CLASS];
     }
 
     public function process(File $phpcsFile, $stackPtr): void
@@ -40,12 +32,6 @@ final class ServiceStructureSniff implements Sniff
 
         $className = $phpcsFile->getDeclarationName($stackPtr);
         if ($className === '') {
-            return;
-        }
-
-        $this->assertDomainServicePathSegmentIsNotLayerName($phpcsFile, $stackPtr, $relativePath);
-
-        if ($this->isInterfaceDeclaration($phpcsFile, $stackPtr)) {
             return;
         }
 
@@ -85,43 +71,6 @@ final class ServiceStructureSniff implements Sniff
                 self::ERROR_NO_INTERFACE,
             );
         }
-    }
-
-    private function assertDomainServicePathSegmentIsNotLayerName(
-        File $phpcsFile,
-        int $classPtr,
-        string $relativePath,
-    ): void {
-        if (
-            preg_match(
-                '~^src/Module/[^/]+/Domain/Service/(?P<segment>[^/]+)/~',
-                $relativePath,
-                $matches,
-            ) !== 1
-        ) {
-            return;
-        }
-
-        $segment = $matches['segment'];
-        if (in_array($segment, self::LAYER_NAMES, true) === false) {
-            return;
-        }
-
-        $phpcsFile->addError(
-            sprintf(
-                'Domain Service path segment "%s" must describe a group, not a layer name.'
-                . ' Use Domain/Service/{GroupName?}/..., not Domain/Service/%s/....' . self::DOC_REF,
-                $segment,
-                $segment,
-            ),
-            $classPtr,
-            self::ERROR_DOMAIN_SERVICE_LAYER_SEGMENT,
-        );
-    }
-
-    private function isInterfaceDeclaration(File $phpcsFile, int $stackPtr): bool
-    {
-        return $phpcsFile->getTokensAsString($stackPtr, 1) === 'interface';
     }
 
     private function assertCompanionClassAllowed(

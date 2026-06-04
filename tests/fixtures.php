@@ -243,14 +243,6 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
-    // ServiceStructureSniff — Domain Service path segment must not be a layer name
-    [
-        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Service/Integration/ConnectivityRoleTargetProviderInterface.inc',
-        'errors' => [
-            6 => 1, // DomainServiceLayerSegment
-        ],
-        'warnings' => [],
-    ],
     // ServiceStructureSniff — companion class with valid Service nearby
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Service/WithValidService/SomeHelper.inc',
