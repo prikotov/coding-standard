@@ -30,7 +30,7 @@ Deptrac ловит такие нарушения **детерминирован�
 | `Domain` | Сущности, VO, интерфейсы репозиториев |
 | `DomainVo` | Value Objects (→ Domain, Enum) |
 | `DomainEnum` | Enum домена (замкнут) |
-| `DomainDto` | DTO домена; валидный путь: `Domain\Service\...` (→ Domain, VO, Enum) |
+| `DomainDto` | DTO домена; `Domain\Dto\*` запрещён (→ Domain, VO, Enum) |
 | `Application` | Use cases, сервисы |
 | `ApplicationDto` | DTO приложения (→ DTO, Enum) |
 | `ApplicationCommand` | Command (CQRS) |

@@ -63,8 +63,7 @@ final class DtoStructureSniff implements Sniff
 
         $phpcsFile->addError(
             'Classes must not be placed inside Domain/Dto.'
-            . ' Domain DTOs must be placed inside a Service context:'
-            . ' Domain/Service/{ServiceName}/{Name}Dto.' . self::DOC_REF,
+            . ' Domain DTOs must be placed next to their owning Domain context.' . self::DOC_REF,
             $classPtr,
             self::ERROR_DOMAIN_DTO_PATH,
         );

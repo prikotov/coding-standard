@@ -28,7 +28,7 @@ description: Правила создания и использования об�
   [Query DTO](../layers/presentation/query-dto.md),
   [Response DTO](../layers/presentation/response-dto.md).
 - Именование: суффикс `Dto`. Контекст — в имени/namespace (`RequestDto`, `ResponseDto`, `ResultDto`, `...Dto`).
-- DTO в `Domain` — исключение для входа/выхода конкретного `Domain Service`; любые классы в `Domain\Dto\*` запрещены.
+- DTO в `Domain` — исключение для входа/выхода конкретного доменного контекста; любые классы в `Domain\Dto\*` запрещены.
 
 ## Зависимости
 
@@ -80,14 +80,20 @@ description: Правила создания и использования об�
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{Component}\Dto\{Name}Dto
 ```
 
-- DTO доменного уровня (вход/выход конкретного Domain Service):
+- DTO доменного уровня размещаем рядом с владельцем контекста:
+
+```
+{ProjectName}\Common\Module\{ModuleName}\Domain\{Context}\{GroupName?}\{Name}Dto
+```
+
+Например, для результата доменного сервиса:
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Domain\Service\{ServiceName}\{Name}Dto
 ```
 
-`Domain\Dto\*` не используем: у доменного DTO всегда есть локальный контекст сервиса. Если DTO начинает
-переиспользоваться за пределами одного сервиса, заменяем его на `VO` или выносим контракт на уровень `Application`.
+`Domain\Dto\*` не используем: у доменного DTO всегда есть локальный владелец (`Service`, `Calculator`, `Specification` и т.п.). Если DTO начинает
+переиспользоваться за пределами одного контекста, заменяем его на `VO` или выносим контракт на уровень `Application`.
 
 ## Как используем
 
@@ -100,7 +106,7 @@ description: Правила создания и использования об�
 
 - Для передачи данных между слоями и границами подсистем.
 - В Application разрешено общее DTO, если один и тот же набор данных переиспользуется в нескольких Use Case.
-- В Domain используем DTO только когда нужно принять/вернуть данные конкретного сервиса. Если DTO начинает «гулять» по коду,
+- В Domain используем DTO только когда нужно принять/вернуть данные конкретного доменного контекста. Если DTO начинает «гулять» по коду,
   рассмотрите перенос в Value Object (VO).
 
 ## Пример
@@ -192,7 +198,7 @@ final readonly class InferenceRequestDto
 - [ ] Нет зависимостей на сервисы/репозитории/компоненты и внешнее окружение.
 - [ ] Коллекции типизированы через PHPDoc (`@var FooDto[]`).
 - [ ] Название и namespace отражают контекст использования (`Request/Response/Result` при необходимости).
-- [ ] Domain DTO лежит рядом с конкретным сервисом (`Domain\Service\...`); классов в `Domain\Dto\*` нет.
+- [ ] Domain DTO лежит рядом с владельцем контекста (`Domain\{Context}\...`); классов в `Domain\Dto\*` нет.
 - [ ] Денежные/точные величины представлены `numeric-string` или VO.
 - [ ] DTO используется на границах слоя, а не подменяет доменные сущности.
 - [ ] Для Presentation transport DTO дополнительно соблюдены профильные presentation-conventions.

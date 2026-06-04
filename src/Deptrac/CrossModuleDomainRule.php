@@ -17,7 +17,8 @@ use Qossmic\Deptrac\Contract\Result\Violation;
  *
  * All other cross-module dependencies are violations, regardless of layer.
  * Shared data types (ValueObject, Enum, Dto) are excluded — safe to use across modules.
- * Domain DTOs are shared only when scoped to a concrete Domain Service.
+ * Domain DTOs are shared only when they are scoped to an owning Domain context,
+ * not placed in a common Domain\Dto directory.
  * Domain\Entity → foreign Domain\Entity is excluded — Doctrine ORM relations require class references.
  * Infrastructure\*Criteria\Mapper → foreign Domain\Entity is excluded — query building requires entity references.
  *
@@ -141,7 +142,7 @@ final class CrossModuleDomainRule implements ViolationCreatingInterface
 
     /**
      * ValueObject, Enum and Dto are shared data types — safe for cross-module usage.
-     * Domain DTOs must be service-local: Domain\Service\...Dto.
+     * Domain DTOs must not be placed in a common Domain\Dto directory.
      */
     private function isSharedDataType(string $layer, string $path): bool
     {
@@ -157,7 +158,7 @@ final class CrossModuleDomainRule implements ViolationCreatingInterface
             return true;
         }
 
-        return str_starts_with($path, 'Service\\');
+        return str_starts_with($path, 'Dto\\') === false;
     }
 
     private function dependentLayerName(ProcessEvent $event): string
