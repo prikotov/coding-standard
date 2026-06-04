@@ -40,14 +40,14 @@ description: Правила создания и использования се�
 ## Общие правила
 
 - Используется только внутри слоя **Domain**.
-- Работает только с объектами домена: `Entity`, `VO`, `Enum`, `UuidInterface`, примитивы.
-- Для входа/выхода предпочтительны доменные `VO` (включая именованные result/input объекты), если есть инварианты и доменный смысл.
+- Работает только с объектами домена: [Entity](../layers/domain/entity.md), [VO](value-object.md), [Enum](enum.md), `UuidInterface`, примитивы.
+- Для входа/выхода предпочтительны доменные [VO](value-object.md) (включая именованные result/input объекты), если есть инварианты и доменный смысл.
 - [DTO](dto.md) допустим только как простая структура входа/выхода.
 - Может зависеть от:
     - других сервисов своего модуля;
-    - `Specification`;
-    - `Calculator`;
-    - репозиториев;
+    - [Specification](../layers/domain/specification.md);
+    - [Calculator](../layers/domain/calculator.md);
+    - [Repository](../layers/domain/repository.md);
     - общих компонентов.
 - ❗ **Запрещено** зависеть от внешней инфраструктуры.
 
