@@ -92,7 +92,7 @@ description: Правила создания и использования об�
 {ProjectName}\Common\Module\{ModuleName}\Domain\Service\{ServiceName}\{Name}Dto
 ```
 
-`Domain\Dto\*` не используем. `{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает
+Общие `Domain\Dto\*` не используем. `{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает
 переиспользоваться за пределами одной группы, заменяем его на `VO` или выносим контракт на уровень `Application`.
 
 ## Как используем
