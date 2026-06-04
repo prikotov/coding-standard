@@ -121,9 +121,11 @@ deptrac:
           value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Enum\\.*
 
     - name: DomainDto
+      # Keep this collector broad to classify all Domain DTO-like classes.
+      # Valid path is enforced by DtoStructureSniff: Domain\Service\...Dto.
       collectors:
         - type: classLike
-          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Service\\.*Dto$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\.*Dto$
 
     - name: ApplicationDto
       collectors:
