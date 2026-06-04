@@ -27,7 +27,7 @@ src/Module/{ModuleName}/Domain/
 │       ├── {EntityName}RepositoryInterface.php
 │       └── Criteria/
 ├── Service/
-│   └── {DomainArea?}/
+│   └── {GroupName?}/
 │       └── {ServiceName}ServiceInterface.php
 ├── Specification/
 │   └── {SpecificationName}.php
@@ -35,7 +35,7 @@ src/Module/{ModuleName}/Domain/
     └── {CalculatorName}.php
 ```
 
-- `{DomainArea?}` — опциональная группировка по предметной области или бизнес-возможности.
+- `{GroupName?}` — опциональная группировка по предметной области или бизнес-возможности.
 - Не называем эту группу «контекстом» (Context): в DDD контекст обычно означает ограниченный контекст (Bounded Context), а не папку внутри сервиса.
 - Не используем в `Domain\Service\...` сегменты `Domain`, `Application`, `Infrastructure`, `Integration`, `Presentation`.
 

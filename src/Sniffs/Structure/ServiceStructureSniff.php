@@ -109,8 +109,8 @@ final class ServiceStructureSniff implements Sniff
 
         $phpcsFile->addError(
             sprintf(
-                'Domain Service path segment "%s" must describe domain area, not a layer name.'
-                . ' Use Domain/Service/{DomainArea?}/..., not Domain/Service/%s/....' . self::DOC_REF,
+                'Domain Service path segment "%s" must describe a group, not a layer name.'
+                . ' Use Domain/Service/{GroupName?}/..., not Domain/Service/%s/....' . self::DOC_REF,
                 $segment,
                 $segment,
             ),

@@ -52,7 +52,7 @@ Integration слой отвечает за межмодульное взаимо
 
 - Реализует Domain Service-интерфейсы, когда реализация связывает модули или адаптирует внешний transport.
 - Application оркестрирует Domain через интерфейсы, не зная, где находится реализация — в Domain, Infrastructure или Integration.
-- Интерфейс остаётся в `Domain\Service\{DomainArea?}`, без сегмента `Integration` в namespace Domain.
+- Интерфейс остаётся в `Domain\Service\{GroupName?}`, без сегмента `Integration` в namespace Domain.
 
 ### Listener
 
