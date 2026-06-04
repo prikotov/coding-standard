@@ -52,6 +52,7 @@ Integration слой отвечает за межмодульное взаимо
 
 - Реализует Domain Service-интерфейсы, когда реализация связывает модули или адаптирует внешний transport.
 - Application оркестрирует Domain через интерфейсы, не зная, где находится реализация — в Domain, Infrastructure или Integration.
+- Интерфейс остаётся в `Domain\Service\{BusinessContext}`, без сегмента `Integration` в namespace Domain.
 
 ### Listener
 
@@ -75,4 +76,3 @@ Integration слой отвечает за межмодульное взаимо
 - [ ] Middleware адаптирует транспортный контекст, не реализуя бизнес-правила.
 - [ ] Нет прямых вызовов к Domain/Infrastructure из Listener.
 - [ ] Межмодульное взаимодействие идёт через Application-контракты.
-

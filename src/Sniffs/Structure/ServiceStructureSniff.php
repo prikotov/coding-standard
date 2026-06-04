@@ -13,12 +13,20 @@ final class ServiceStructureSniff implements Sniff
     private const ERROR_NO_INTERFACE = 'NoInterface';
     private const ERROR_SERVICE_OUTSIDE_SERVICE_DIR = 'ServiceOutsideServiceDirectory';
     private const ERROR_DOMAIN_SERVICE_IMPL_OUTSIDE_SERVICE_DIR = 'DomainServiceImplOutsideServiceDirectory';
+    private const ERROR_DOMAIN_SERVICE_LAYER_CONTEXT = 'DomainServiceLayerContext';
 
     private const DOC_REF = ' See: docs/conventions/core-patterns/service.md';
+    private const LAYER_CONTEXT_NAMES = [
+        'Domain',
+        'Application',
+        'Infrastructure',
+        'Integration',
+        'Presentation',
+    ];
 
     public function register(): array
     {
-        return [T_CLASS];
+        return [T_CLASS, T_INTERFACE];
     }
 
     public function process(File $phpcsFile, $stackPtr): void
@@ -32,6 +40,12 @@ final class ServiceStructureSniff implements Sniff
 
         $className = $phpcsFile->getDeclarationName($stackPtr);
         if ($className === '') {
+            return;
+        }
+
+        $this->assertDomainServiceContextIsNotLayerName($phpcsFile, $stackPtr, $relativePath);
+
+        if ($this->isInterfaceDeclaration($phpcsFile, $stackPtr)) {
             return;
         }
 
@@ -71,6 +85,43 @@ final class ServiceStructureSniff implements Sniff
                 self::ERROR_NO_INTERFACE,
             );
         }
+    }
+
+    private function assertDomainServiceContextIsNotLayerName(
+        File $phpcsFile,
+        int $classPtr,
+        string $relativePath,
+    ): void {
+        if (
+            preg_match(
+                '~^src/Module/[^/]+/Domain/Service/(?P<context>[^/]+)/~',
+                $relativePath,
+                $matches,
+            ) !== 1
+        ) {
+            return;
+        }
+
+        $context = $matches['context'];
+        if (in_array($context, self::LAYER_CONTEXT_NAMES, true) === false) {
+            return;
+        }
+
+        $phpcsFile->addError(
+            sprintf(
+                'Domain Service context "%s" must describe business context, not a layer name.'
+                . ' Use Domain/Service/{BusinessContext}/..., not Domain/Service/%s/....' . self::DOC_REF,
+                $context,
+                $context,
+            ),
+            $classPtr,
+            self::ERROR_DOMAIN_SERVICE_LAYER_CONTEXT,
+        );
+    }
+
+    private function isInterfaceDeclaration(File $phpcsFile, int $stackPtr): bool
+    {
+        return $phpcsFile->getTokensAsString($stackPtr, 1) === 'interface';
     }
 
     private function assertCompanionClassAllowed(

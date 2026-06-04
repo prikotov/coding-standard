@@ -27,13 +27,16 @@ src/Module/{ModuleName}/Domain/
 │       ├── {EntityName}RepositoryInterface.php
 │       └── Criteria/
 ├── Service/
-│   └── Integration/
-│       └── {ServiceName}Interface.php
+│   └── {Context}/
+│       └── {ServiceName}ServiceInterface.php
 ├── Specification/
 │   └── {SpecificationName}.php
 └── Calculator/
     └── {CalculatorName}.php
 ```
+
+- `{Context}` — предметная область или сценарий, а не название слоя.
+- Не используем в `Domain\Service\...` сегменты `Domain`, `Application`, `Infrastructure`, `Integration`, `Presentation`.
 
 ## Чек-лист для проведения ревью кода
 
@@ -42,4 +45,3 @@ src/Module/{ModuleName}/Domain/
 - [ ] Репозитории — интерфейсы, а не реализации.
 - [ ] Сущности проверяют инварианты.
 - [ ] VO неизменяемы и инкапсулируют валидацию.
-
