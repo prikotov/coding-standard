@@ -123,7 +123,7 @@ deptrac:
     - name: DomainDto
       collectors:
         - type: classLike
-          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\.*Dto$
+          value: ^(?:[A-Za-z_]+\\)?Common\\Module\\.*\\Domain\\Service\\.*Dto$
 
     - name: ApplicationDto
       collectors:

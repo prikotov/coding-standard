@@ -385,6 +385,14 @@ final class CrossModuleDomainRuleTest extends TestCase
     {
         $this->assertNoViolation(
             'App\Common\Module\DynamicLoop\Infrastructure\Service\SomeService',
+            'App\Common\Module\ChainExecution\Domain\Service\ChainResult\ChainResultAuditDto',
+        );
+    }
+
+    public function testInfrastructureUsesForeignDomainDtoFromCommonDtoDirectory(): void
+    {
+        $this->assertViolation(
+            'App\Common\Module\DynamicLoop\Infrastructure\Service\SomeService',
             'App\Common\Module\ChainExecution\Domain\Dto\ChainResultAuditDto',
         );
     }

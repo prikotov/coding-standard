@@ -22,7 +22,8 @@ description: Правила создания и использования фа�
 
 **Разрешено**:
 - Примитивы (только конфигурационные), Enum, VO своего модуля.
-- DTO — только в Application/Presentation, не в Domain.
+- DTO — в Application/Presentation. В Domain не создаём общие DTO; узкие DTO конкретного Domain Service допустимы
+  только по правилам [DTO](dto.md) и не размещаются в `Domain\Dto`.
 - Через DI Спецификации, другие фабрики своего модуля.
 
 **Запрещено**:
