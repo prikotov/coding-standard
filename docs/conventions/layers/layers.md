@@ -14,7 +14,7 @@ description: Правила зависимостей между слоями а�
 
 - Зависимости направлены **только внутрь**, к центру
 - Внутренние слои не зависят от внешних
-- Внешние слои зависят от внутренних через контракты и согласованные типы (`interface`/`DTO`/`VO`/`Enum`) в рамках разрешённых правил
+- Внешние слои зависят от внутренних через контракты (`interface`) и согласованные типы ([DTO](../core-patterns/dto.md), [VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md)) в рамках разрешённых правил
 - DI-контейнер связывает интерфейсы с реализациями на уровне конфигурации
 
 ## Диаграмма зависимостей
@@ -46,8 +46,8 @@ flowchart TB
 
 | Слой | Назначение | Зависимости |
 |------|------------|-------------|
-| **Domain** | Бизнес-логика, сущности, Value Object, интерфейсы репозиториев | Нет |
-| **Application** | Use Cases, оркестрация, DTO | Domain |
+| **Domain** | Бизнес-логика, [Entity](domain/entity.md), [VO](../core-patterns/value-object.md), интерфейсы [Repository](domain/repository.md) | Нет |
+| **Application** | Use Cases, оркестрация, [DTO](../core-patterns/dto.md) | Domain |
 | **Infrastructure** | Реализация репозиториев, кэш, персистентность | Domain (контракты и типы) |
 | **Integration** | Внешние API, события, межмодульное взаимодействие | Application, Domain (контракты и типы) |
 | **Presentation** | Web, API, Console, Blog — точки входа | Application |
@@ -63,16 +63,16 @@ Domain слой не зависит ни от кого:
 ### Application → Domain
 
 Application зависит только от Domain:
-- Вызывает методы сущностей и Value Object
-- Использует интерфейсы репозиториев из Domain
-- Использует спецификации и сервисы из Domain
-- Важно: `Application DTO` не должны зависеть от `Domain` и остаются только в рамках `Application`.
+- Вызывает методы [Entity](domain/entity.md) и [VO](../core-patterns/value-object.md)
+- Использует интерфейсы [Repository](domain/repository.md) из Domain
+- Использует [Specification](domain/specification.md) и [Service](../core-patterns/service.md) из Domain
+- Важно: [Application DTO](../core-patterns/dto.md) не должны зависеть от `Domain` и остаются только в рамках `Application`.
 
 ### Infrastructure → Domain
 
 Infrastructure реализует интерфейсы Domain:
-- Реализует `RepositoryInterface` из Domain
-- Может использовать доменные типы (`VO`, `Enum`, локальные для владельца контекста доменные `DTO`) в сигнатурах и маппинге
+- Реализует доменный `RepositoryInterface` ([Repository](domain/repository.md))
+- Может использовать доменные типы ([VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md)) в сигнатурах и маппинге
 - Подключается через DI-контейнер
 - Не используется напрямую из Application
 
@@ -80,8 +80,8 @@ Infrastructure реализует интерфейсы Domain:
 
 Integration вызывает Application чужого модуля:
 - Обрабатывает внешние события и инициирует соответствующие Use Cases.
-- Реализует интеграции через интерфейсы сервисов своего Domain.
-- Может использовать доменные типы в сигнатурах контрактов (`VO`, `Enum`, локальные для владельца контекста доменные `DTO`).
+- Реализует интеграции через интерфейсы доменных [Service](../core-patterns/service.md).
+- Может использовать доменные типы в сигнатурах контрактов ([VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md)).
 - Не зависит от слоя Infrastructure.
 - Формирует антикоррупционный слой (ACL) на границе с внешними системами.
 
@@ -102,7 +102,7 @@ Presentation зависит только от Application:
 | **Integration** | ✅* | ✅ | ❌ | — | ❌ |
 | **Presentation** | ❌ | ✅ | ❌ | ❌ | — |
 
-\* Только контракты и типы Domain (интерфейсы сервисов, `VO`/`Enum`/локальные для владельца контекста доменные `DTO` в сигнатурах), без зависимости на доменные реализации.
+\* Только контракты и типы Domain (интерфейсы доменных [Service](../core-patterns/service.md), [VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md) в сигнатурах), без зависимости на доменные реализации.
 
 ## Расположение
 
