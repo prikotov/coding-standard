@@ -80,10 +80,10 @@ description: Правила создания и использования об�
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{Component}\Dto\{Name}Dto
 ```
 
-- DTO доменного уровня размещаем рядом с доменным артефактом или группой, для которых он нужен:
+- DTO доменного уровня размещаем рядом с доменным объектом или группой, для которых он нужен:
 
 ```
-{ProjectName}\Common\Module\{ModuleName}\Domain\{ArtifactType}\{GroupName?}\{Name}Dto
+{ProjectName}\Common\Module\{ModuleName}\Domain\{DomainObjectType}\{GroupName?}\{Name}Dto
 ```
 
 Например, для результата доменного сервиса:
@@ -92,7 +92,7 @@ description: Правила создания и использования об�
 {ProjectName}\Common\Module\{ModuleName}\Domain\Service\{ServiceName}\{Name}Dto
 ```
 
-`Domain\Dto\*` не используем. Примеры `{ArtifactType}`: `Service`, `Calculator`, `Specification`. Если DTO начинает
+`Domain\Dto\*` не используем. `{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает
 переиспользоваться за пределами одной группы, заменяем его на `VO` или выносим контракт на уровень `Application`.
 
 ## Как используем
@@ -198,7 +198,7 @@ final readonly class InferenceRequestDto
 - [ ] Нет зависимостей на сервисы/репозитории/компоненты и внешнее окружение.
 - [ ] Коллекции типизированы через PHPDoc (`@var FooDto[]`).
 - [ ] Название и namespace отражают контекст использования (`Request/Response/Result` при необходимости).
-- [ ] Domain DTO лежит рядом с доменным артефактом или группой (`Domain\{ArtifactType}\...`); классов в `Domain\Dto\*` нет.
+- [ ] Domain DTO лежит рядом с доменным объектом или группой (`Domain\{DomainObjectType}\...`); классов в `Domain\Dto\*` нет.
 - [ ] Денежные/точные величины представлены `numeric-string` или VO.
 - [ ] DTO используется на границах слоя, а не подменяет доменные сущности.
 - [ ] Для Presentation transport DTO дополнительно соблюдены профильные presentation-conventions.
