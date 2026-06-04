@@ -13,7 +13,7 @@ description: Правила создания критериев для филь�
 
 ## Общие правила
 
-- **Структура:** интерфейс и реализации в `Domain`, имя `{EntityName}{CriteriaName}Criteria`.
+- **Структура:** интерфейс и реализации в `Domain`, имя `{EntityName}{SelectionName}Criteria`.
 - **Использование:** Репозиторий принимает интерфейс критерия. Один критерий описывает только один сценарий выборки.
 - **Ограничения:** без бизнес-логики, только фильтры/пагинация/сортировка.
 - **Способ задания:** через `set*()` или конструктор, `set*()` всегда `void` и с нормализацией.
@@ -37,16 +37,16 @@ description: Правила создания критериев для филь�
 
 ```php
 namespace {ProjectName}\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\{EntityName}CriteriaInterface
-namespace {ProjectName}\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\Criteria\{EntityName}{CriteriaName}Criteria
+namespace {ProjectName}\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\Criteria\{EntityName}{SelectionName}Criteria
 namespace {ProjectName}\Common\Module\{ModuleName}\Domain\Repository\{EntityName}\Enum\{EntityName}SortFieldEnum; // при использовании enum
 ```
 
-- `{CriteriaName}` — назначение или сценарий выборки без имени сущности и суффикса `Criteria`, например `Find`.
+- `{SelectionName}` — сценарий или назначение выборки без имени сущности и суффикса `Criteria`, например `Find`, `Active`, `ByStatus`.
 
 - Mapper в слое [Infrastructure](../infrastructure.md):
 
 ```php
-namespace {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\Criteria\Mapper\{EntityName}{CriteriaName}CriteriaMapper
+namespace {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\Criteria\Mapper\{EntityName}{SelectionName}CriteriaMapper
 ```
 
 ## Как используем
@@ -181,7 +181,7 @@ final class PaymentFindCriteria implements PaymentCriteriaInterface, SortableCri
 
 - [ ] Интерфейс критерия лежит в `Domain/Repository/{EntityName}`.
 - [ ] Реализация находится в `Domain/Repository/{EntityName}/Criteria`.
-- [ ] Название соответствует паттерну `{EntityName}{CriteriaName}Criteria`.
+- [ ] Название соответствует паттерну `{EntityName}{SelectionName}Criteria`.
 - [ ] В критерии нет бизнес-логики.
 - [ ] `set*()` возвращают `void` и нормализуют данные.
 - [ ] Пагинация/сортировка реализованы через унифицированные интерфейсы/трейты.
