@@ -28,7 +28,7 @@ description: Правила создания и использования об�
   [Query DTO](../layers/presentation/query-dto.md),
   [Response DTO](../layers/presentation/response-dto.md).
 - Именование: суффикс `Dto`. Контекст — в имени/namespace (`RequestDto`, `ResponseDto`, `ResultDto`, `...Dto`).
-- DTO в `Domain` — исключение для входа/выхода конкретного `Domain Service`; общий каталог `Domain\Dto` запрещён.
+- DTO в `Domain` — исключение для входа/выхода конкретного `Domain Service`; любые классы в `Domain\Dto\*` запрещены.
 
 ## Зависимости
 
@@ -86,7 +86,7 @@ description: Правила создания и использования об�
 {ProjectName}\Common\Module\{ModuleName}\Domain\Service\{ServiceName}\{Name}Dto
 ```
 
-`Domain\Dto\{Name}Dto` не используем: у доменного DTO всегда есть локальный контекст сервиса. Если DTO начинает
+`Domain\Dto\*` не используем: у доменного DTO всегда есть локальный контекст сервиса. Если DTO начинает
 переиспользоваться за пределами одного сервиса, заменяем его на `VO` или выносим контракт на уровень `Application`.
 
 ## Как используем
@@ -192,7 +192,7 @@ final readonly class InferenceRequestDto
 - [ ] Нет зависимостей на сервисы/репозитории/компоненты и внешнее окружение.
 - [ ] Коллекции типизированы через PHPDoc (`@var FooDto[]`).
 - [ ] Название и namespace отражают контекст использования (`Request/Response/Result` при необходимости).
-- [ ] Domain DTO лежит рядом с конкретным сервисом (`Domain\Service\...`), а не в общем `Domain\Dto`.
+- [ ] Domain DTO лежит рядом с конкретным сервисом (`Domain\Service\...`); классов в `Domain\Dto\*` нет.
 - [ ] Денежные/точные величины представлены `numeric-string` или VO.
 - [ ] DTO используется на границах слоя, а не подменяет доменные сущности.
 - [ ] Для Presentation transport DTO дополнительно соблюдены профильные presentation-conventions.
