@@ -28,6 +28,7 @@ description: Правила создания и использования об�
   [Query DTO](../layers/presentation/query-dto.md),
   [Response DTO](../layers/presentation/response-dto.md).
 - Именование: суффикс `Dto`. Контекст — в имени/namespace (`RequestDto`, `ResponseDto`, `ResultDto`, `...Dto`).
+- Если доменной операции нужен DTO, размещаем его рядом с классом или группой, которые его используют.
 
 ## Зависимости
 
@@ -79,11 +80,20 @@ description: Правила создания и использования об�
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{Component}\Dto\{Name}Dto
 ```
 
-- DTO доменного уровня (вход/выход конкретного Domain Service):
+- DTO доменного уровня размещаем рядом с доменным объектом или группой, для которых он нужен:
+
+```
+{ProjectName}\Common\Module\{ModuleName}\Domain\{DomainObjectType}\{GroupName?}\{Name}Dto
+```
+
+Например, для результата доменного сервиса:
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Domain\Service\{ServiceName}\{Name}Dto
 ```
+
+Общие `Domain\Dto\*` не используем. `{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает
+переиспользоваться за пределами одной группы, заменяем его на `VO`.
 
 ## Как используем
 
@@ -96,7 +106,8 @@ description: Правила создания и использования об�
 
 - Для передачи данных между слоями и границами подсистем.
 - В Application разрешено общее DTO, если один и тот же набор данных переиспользуется в нескольких Use Case.
-- В Domain используем DTO, когда нужно принять/вернуть данные конкретного сервиса. Если DTO начинает «гулять» по коду, рассмотрите перенос в Value Object (VO).
+- В Domain используем DTO только для компактного входа/выхода конкретной доменной операции. Если DTO начинает «гулять» по коду,
+  рассмотрите перенос в Value Object (VO).
 
 ## Пример
 
@@ -187,6 +198,7 @@ final readonly class InferenceRequestDto
 - [ ] Нет зависимостей на сервисы/репозитории/компоненты и внешнее окружение.
 - [ ] Коллекции типизированы через PHPDoc (`@var FooDto[]`).
 - [ ] Название и namespace отражают контекст использования (`Request/Response/Result` при необходимости).
+- [ ] Domain DTO лежит рядом с доменным объектом или группой (`Domain\{DomainObjectType}\...`); классов в `Domain\Dto\*` нет.
 - [ ] Денежные/точные величины представлены `numeric-string` или VO.
 - [ ] DTO используется на границах слоя, а не подменяет доменные сущности.
 - [ ] Для Presentation transport DTO дополнительно соблюдены профильные presentation-conventions.

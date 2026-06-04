@@ -27,6 +27,8 @@ final class DtoStructureSniff implements Sniff
 
     public function process(File $phpcsFile, $stackPtr): void
     {
+        $this->assertNoDomainDtoDirectory($phpcsFile, $stackPtr);
+
         $className = $phpcsFile->getDeclarationName($stackPtr);
         if ($className === '' || str_ends_with($className, 'Dto') === false) {
             return;
@@ -36,8 +38,6 @@ final class DtoStructureSniff implements Sniff
         if (isset($tokens[$stackPtr]['scope_opener'], $tokens[$stackPtr]['scope_closer']) === false) {
             return;
         }
-
-        $this->assertDomainDtoPath($phpcsFile, $stackPtr);
 
         $this->assertFinalReadonly($phpcsFile, $stackPtr);
 
@@ -53,7 +53,7 @@ final class DtoStructureSniff implements Sniff
         $this->assertNoMembers($phpcsFile, $stackPtr, $scopeStart, $scopeEnd);
     }
 
-    private function assertDomainDtoPath(File $phpcsFile, int $classPtr): void
+    private function assertNoDomainDtoDirectory(File $phpcsFile, int $classPtr): void
     {
         $normalizedPath = str_replace('\\', '/', $phpcsFile->getFilename());
 
@@ -62,8 +62,8 @@ final class DtoStructureSniff implements Sniff
         }
 
         $phpcsFile->addError(
-            'Domain DTOs must be placed inside a Service context:'
-            . ' Domain/Service/{ServiceName}/{Name}Dto, not Domain/Dto/{Name}Dto.' . self::DOC_REF,
+            'Classes must not be placed inside Domain/Dto.'
+            . ' Domain DTOs must be placed next to their owning Domain context.' . self::DOC_REF,
             $classPtr,
             self::ERROR_DOMAIN_DTO_PATH,
         );

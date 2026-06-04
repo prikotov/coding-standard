@@ -319,9 +319,23 @@ return [
         ],
         'warnings' => [],
     ],
-    // DtoStructureSniff — Domain DTO in Domain/Service/{GroupName}/ — correct path
+    // DtoStructureSniff — any class in Domain/Dto/ — wrong path
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Dto/WrongPathPayload.inc',
+        'errors' => [
+            6 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // DtoStructureSniff — Domain DTO in Domain/Service/{GroupName}/ — example of a correct contextual path
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Service/Payment/InitPaymentResultDto.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // DtoStructureSniff — Domain DTO outside Domain/Dto/ — correct contextual path
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Calculator/Pricing/PricingResultDto.inc',
         'errors' => [],
         'warnings' => [],
     ],
