@@ -27,8 +27,6 @@ src/Module/{ModuleName}/Domain/
 │       ├── {EntityName}RepositoryInterface.php
 │       └── Criteria/
 ├── Service/
-│   └── Integration/
-│       └── {ServiceName}Interface.php
 ├── Specification/
 │   └── {SpecificationName}.php
 └── Calculator/
@@ -42,4 +40,3 @@ src/Module/{ModuleName}/Domain/
 - [ ] Репозитории — интерфейсы, а не реализации.
 - [ ] Сущности проверяют инварианты.
 - [ ] VO неизменяемы и инкапсулируют валидацию.
-

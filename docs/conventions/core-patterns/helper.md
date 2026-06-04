@@ -53,12 +53,12 @@ description: Правила создания и использования хе�
 **Infrastructure слой** — утилитные методы для инфраструктурных операций:
 
 ```
-{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Service\{Context}\Helper\{Name}Helper
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Service\{GroupName}\Helper\{Name}Helper
 ```
 
 ## Как используем
 
-- Группирует утилиты одного узкого контекста.
+- Группирует утилиты одной узкой группы.
 - Используется через статический вызов.
 - В DI не регистрируется.
 - Хелпер не должен заменять сервисы — если нужна инъекция зависимостей, создавайте сервис.

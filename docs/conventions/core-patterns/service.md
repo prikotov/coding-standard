@@ -56,8 +56,8 @@ description: Правила создания и использования се�
 - Интерфейс и реализация в `Domain`:
 
 ```php
-{ProjectName}\Common\Module\{ModuleName}\Domain\Service\{Context?}\{ServiceName}ServiceInterface
-{ProjectName}\Common\Module\{ModuleName}\Domain\Service\{Context?}\{ServiceName}Service
+{ProjectName}\Common\Module\{ModuleName}\Domain\Service\{GroupName?}\{ServiceName}ServiceInterface
+{ProjectName}\Common\Module\{ModuleName}\Domain\Service\{GroupName?}\{ServiceName}Service
 ```
 
 ## Как используем
@@ -87,13 +87,13 @@ description: Правила создания и использования се�
 - Интерфейс:
 
 ```php
-{ProjectName}\Common\Module\{ModuleName}\Domain\Service\{Context?}\{ServiceName}ServiceInterface
+{ProjectName}\Common\Module\{ModuleName}\Domain\Service\{GroupName?}\{ServiceName}ServiceInterface
 ```
 
 - Реализация:
 
 ```php
-{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Service\{Context?}\{ServiceName}Service
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Service\{GroupName?}\{ServiceName}Service
 ```
 
 ## Как используем
@@ -126,8 +126,8 @@ description: Правила создания и использования се�
 - Интерфейс и реализация в `Application`:
 
 ```php
-{ProjectName}\Common\Module\{ModuleName}\Application\Service\{Context?}\{ServiceName}ServiceInterface
-{ProjectName}\Common\Module\{ModuleName}\Application\Service\{Context?}\{ServiceName}Service
+{ProjectName}\Common\Module\{ModuleName}\Application\Service\{GroupName?}\{ServiceName}ServiceInterface
+{ProjectName}\Common\Module\{ModuleName}\Application\Service\{GroupName?}\{ServiceName}Service
 ```
 
 ## Как используем
@@ -154,13 +154,13 @@ description: Правила создания и использования се�
 - Интерфейс:
 
 ```php
-{ProjectName}\Common\Module\{ModuleName}\Domain\Service\{Context?}\{ServiceName}ServiceInterface
+{ProjectName}\Common\Module\{ModuleName}\Domain\Service\{GroupName?}\{ServiceName}ServiceInterface
 ```
 
 - Реализация:
 
 ```php
-{ProjectName}\Common\Module\{ModuleName}\Integration\Service\{Context?}\{ServiceName}Service
+{ProjectName}\Common\Module\{ModuleName}\Integration\Service\{GroupName?}\{ServiceName}Service
 ```
 
 ## Как используем
