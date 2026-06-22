@@ -171,8 +171,8 @@ public function __invoke(CreateCommand $command): Uuid
 
 ### Application → инфраструктурные реализации через интерфейсы
 
-Application слой не импортирует классы Infrastructure напрямую. На runtime DI-контейнер подставляет инфраструктурные
-реализации для интерфейсов:
+Application слой не использует классы Infrastructure напрямую. Во время выполнения DI-контейнер подставляет
+инфраструктурные реализации для интерфейсов:
 
 - **Репозитории**: через интерфейсы из `Domain\Repository\*` (реализация в Infrastructure)
 - **Событийная шина**: через `EventBusInterface`
