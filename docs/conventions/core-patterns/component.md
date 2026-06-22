@@ -92,6 +92,10 @@ when@dev:
 - **Infrastructure**  
   `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}` — Компоненты внешних API/SDK и локальных технических ресурсов (ФС, кэш, процесс)
 
+- **Integration**  
+  `Integration\Component` не используем. Для внешнего API/SDK/ресурса создавайте `Infrastructure\Component`, для
+  локальной межмодульной реализации доменного интерфейса — `Integration\Service`.
+
 - **Presentation**  
   `{ProjectName}\{Web|Api|Console}\Component\{ComponentName}`
 

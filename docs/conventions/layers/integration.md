@@ -46,6 +46,7 @@ Integration слой отвечает за межмодульное взаимо
 - Реагирует на доменные события.
 - Адаптирует внешний framework/transport context перед входом в Application.
 - Не содержит HTTP/SDK-клиенты внешних API — такие адаптеры размещаются в [Infrastructure](infrastructure.md).
+- Не содержит `Component`: `Integration\Component` не используем.
 - Не содержит бизнес-логики.
 - Использует Application слой для выполнения операций.
 
@@ -85,3 +86,4 @@ Integration слой отвечает за межмодульное взаимо
 - [ ] Нет прямых вызовов к Domain/Infrastructure из Listener.
 - [ ] Межмодульное взаимодействие идёт через Application-контракты.
 - [ ] Исходящие внешние API/SDK-клиенты размещены в Infrastructure, а не в Integration.
+- [ ] В модуле нет каталога `Integration\Component`.
