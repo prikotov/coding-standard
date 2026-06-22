@@ -48,7 +48,7 @@ description: Правила создания и использования се�
     - [Specification](../layers/domain/specification.md);
     - [Calculator](../layers/domain/calculator.md);
     - [Repository](../layers/domain/repository.md);
-    - чистых общих компонентов без I/O и инфраструктурных зависимостей.
+    - доменных [Helper](helper.md) своего модуля, если это детерминированные утилиты без I/O.
 - ❗ **Запрещено** зависеть от внешней инфраструктуры.
 
 ## Расположение
@@ -119,8 +119,6 @@ description: Правила создания и использования се�
     - общих абстракций (PersistenceManagerInterface, EventBusInterface).
 - ❗ **Запрещено** содержать бизнес-логику — только оркестрация.
 - ❗ **Запрещено** зависеть от Infrastructure или Integration слоёв напрямую.
-- ❗ Для внешних сервисов не создаём отдельные Application-интерфейсы: контракт принадлежит Domain, реализация —
-  Infrastructure или Integration.
 - Используется только внутри слоя Application или вызывается из Use Cases.
 
 ## Расположение
