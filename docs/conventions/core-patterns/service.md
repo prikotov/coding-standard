@@ -48,7 +48,7 @@ description: Правила создания и использования се�
     - [Specification](../layers/domain/specification.md);
     - [Calculator](../layers/domain/calculator.md);
     - [Repository](../layers/domain/repository.md);
-    - общих компонентов проекта, разрешённых для Domain.
+    - общих компонентов.
 - ❗ **Запрещено** зависеть от внешней инфраструктуры.
 
 ## Расположение
@@ -116,7 +116,7 @@ description: Правила создания и использования се�
     - сервисов своего модуля (Domain и Application);
     - репозиториев (через интерфейсы из Domain);
     - внешних и межмодульных зависимостей только через интерфейсы из Domain;
-    - общих компонентов проекта (PersistenceManagerInterface, EventBusInterface).
+    - общих компонентов (PersistenceManagerInterface, EventBusInterface).
 - ❗ **Запрещено** содержать бизнес-логику — только оркестрация.
 - ❗ **Запрещено** зависеть от Infrastructure или Integration слоёв напрямую.
 - Используется только внутри слоя Application или вызывается из Use Cases.
