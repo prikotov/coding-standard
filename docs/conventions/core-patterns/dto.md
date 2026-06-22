@@ -73,10 +73,9 @@ description: Правила создания и использования об�
 {ProjectName}\Common\Module\{ModuleName}\Application\UseCase\{Command|Query}\{Case}\{Request|Result|Response}Dto
 ```
 
-- DTO для компонентов/интеграций:
+- DTO для инфраструктурных компонентов:
 
 ```
-{ProjectName}\Common\Module\{ModuleName}\Integration\Component\{Component}\Dto\{Name}Dto
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{Component}\Dto\{Name}Dto
 ```
 
@@ -98,7 +97,7 @@ description: Правила создания и использования об�
 ## Как используем
 
 - В Application `Use Case` принимает/возвращает DTO, маппит из/в доменные модели через мапперы.
-- В Integration/Infrastructure компоненты принимают/возвращают DTO. Сетевые ответы маппим в DTO через `Mapper`.
+- В Infrastructure-компонентах вход/выход оформляем через DTO. Сетевые ответы маппим в DTO через `Mapper`.
 - DTO не «знают» о слоях и не тянут зависимости — это переносимые структуры данных.
 - Для денежных и точных величин используем `numeric-string` или VO; числа с плавающей точкой не применяем для денег и курсов.
 
@@ -170,7 +169,7 @@ final readonly class ProjectDto
 }
 ```
 
-DTO запроса к внешнему компоненту (пример для Integration Component):
+DTO запроса к внешнему компоненту (пример для Infrastructure Component):
 
 ```php
 <?php

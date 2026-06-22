@@ -115,7 +115,7 @@ description: Правила создания и использования се�
 - Может зависеть от:
     - сервисов своего модуля (Domain и Application);
     - репозиториев (через интерфейсы из Domain);
-    - компонентов Infrastructure;
+    - внешних и межмодульных зависимостей только через интерфейсы из Domain;
     - общих компонентов (PersistenceManagerInterface, EventBusInterface).
 - ❗ **Запрещено** содержать бизнес-логику — только оркестрация.
 - ❗ **Запрещено** зависеть от Infrastructure или Integration слоёв напрямую.
@@ -140,14 +140,15 @@ description: Правила создания и использования се�
 
 # Интеграционный сервис (Integration Service)
 
-**Интеграционный сервис (Integration Service)** — класс, обеспечивающий связь между доменом и внешними API,
-микросервисами и другими системами.
+**Интеграционный сервис (Integration Service)** — класс, обеспечивающий межмодульное взаимодействие без обращения к
+исходящим внешним API/SDK.
 
 ## Общие правила
 
 - Интерфейс в `Domain`, реализация в `Integration`.
 - Возвращает и принимает: DTO, VO, Enum, примитивы, `UuidInterface`.
 - ❗ Не зависит от **реализаций** домена. Допускается только внедрение интерфейсов, определённых в доменном слое.
+- ❗ Исходящие HTTP/SDK-интеграции реализуются как Infrastructure Service/Component, а не как Integration Service.
 
 ## Расположение
 
@@ -165,7 +166,7 @@ description: Правила создания и использования се�
 
 ## Как используем
 
-- Внедряется через DI в Use Case, доменные или инфраструктурные сервисы.
+- Внедряется через DI в Use Case или доменные сервисы через интерфейс.
 
 ---
 
@@ -207,12 +208,12 @@ interface FetchFxRateServiceInterface
 
 declare(strict_types=1);
 
-namespace ProjectName\Common\Module\Billing\Integration\Service\FxRate\ExchangeRateApi;
+namespace ProjectName\Common\Module\Billing\Infrastructure\Service\FxRate\ExchangeRateApi;
 
 use ProjectName\Common\Module\Billing\Domain\Enum\CurrencyEnum;
 use ProjectName\Common\Module\Billing\Domain\Service\FxRate\FxRateDto;
 use ProjectName\Common\Module\Billing\Domain\Service\FxRate\FetchFxRateServiceInterface;
-use ProjectName\Common\Module\Billing\Integration\Component\ExchangeRateApi\ExchangeRateApiComponentInterface;
+use ProjectName\Common\Module\Billing\Infrastructure\Component\ExchangeRateApi\ExchangeRateApiComponentInterface;
 use Override;
 
 final readonly class FetchFxRateService implements FetchFxRateServiceInterface
@@ -252,7 +253,7 @@ final readonly class FetchFxRateService implements FetchFxRateServiceInterface
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] Сервис расположен в правильном слое (Domain/Application/Infrastructure).
+- [ ] Сервис расположен в правильном слое (Domain/Application/Infrastructure/Integration).
 - [ ] Сервис не содержит статических методов.
 - [ ] Сервис внедряется через DI, а не создаётся через `new`.
 - [ ] Сервис не хранит глобальное изменяемое состояние.

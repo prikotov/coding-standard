@@ -109,6 +109,28 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // ComponentStructureSniff — Integration/Component is forbidden
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Integration/Component/TBusiness/TBusinessPaymentsComponent.inc',
+        'errors' => [
+            5 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // ComponentStructureSniff — Integration/Component interfaces are forbidden too
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Integration/Component/TBusiness/TBusinessPaymentsComponentInterface.inc',
+        'errors' => [
+            5 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // ComponentStructureSniff — Infrastructure/Component is valid
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Component/TBusiness/TBusinessPaymentsComponent.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
     [
         'file' => __DIR__ . '/Namespaces/GlobalFunctionCallStyleUnitTest.inc',
         'errors' => [

@@ -16,7 +16,7 @@ Application слой не содержит бизнес-логики — он л
 - Command Handler выполняет одну логическую транзакцию.
 - Query Handler не изменяет состояние.
 - Взаимодействие с Domain — через публичные интерфейсы.
-- Взаимодействие с Infrastructure — через абстракции.
+- Нет прямых зависимостей на Infrastructure; используются только интерфейсы, реализации которых подключаются через DI.
 - Исключения внешних зависимостей оборачиваются в доменные.
 
 ## Назначение слоя Application
@@ -36,7 +36,7 @@ Application слой выполняет следующие функции:
 | Бизнес-логика | Содержит и реализует | Не содержит, только вызывает |
 | Инварианты | Проверяет внутри сущностей | Проверяет на уровне валидации входных данных |
 | Транзакции | Не управляет | Управляет границами транзакций |
-| Внешние сервисы | Не зависит | Координирует через абстракции |
+| Внешние сервисы | Не зависит | Координирует через интерфейсы |
 | DTO | Не использует | Использует для передачи данных между слоями |
 
 ### Почему Application слой не содержит бизнес-логику
@@ -169,14 +169,15 @@ public function __invoke(CreateCommand $command): Uuid
 }
 ```
 
-### Application → Infrastructure
+### Application → инфраструктурные реализации через интерфейсы
 
-Application слой взаимодействует с Infrastructure слоем через абстракции:
+Application слой не использует классы Infrastructure напрямую. Во время выполнения DI-контейнер подставляет
+инфраструктурные реализации для интерфейсов:
 
 - **Репозитории**: через интерфейсы из `Domain\Repository\*` (реализация в Infrastructure)
 - **Событийная шина**: через `EventBusInterface`
 - **Менеджер персистентности**: через `PersistenceManagerInterface`
-- **Внешние сервисы**: через компоненты из `Infrastructure\Component\*` или `Integration\Component\*`
+- **Внешние сервисы**: через интерфейсы из `Domain\Service\*`; HTTP/SDK-адаптеры скрыты в `Infrastructure\Component\*`
 
 **Пример взаимодействия:**
 
@@ -184,11 +185,11 @@ Application слой взаимодействует с Infrastructure слоем
 // Application слой (CommandHandler)
 public function __invoke(CreateCommand $command): Uuid
 {
-    // Используем менеджер персистентности (Infrastructure абстракция)
+    // Используем менеджер персистентности через интерфейс
     $this->persistenceManager->persist($project);
     $this->persistenceManager->flush();
     
-    // Диспетчеризируем событие (Infrastructure абстракция)
+    // Диспетчеризируем событие через интерфейс
     $this->eventBus->dispatch(new CreatedEvent(
         projectUuid: $project->getUuid(),
         projectTitle: $project->getTitle(),
@@ -548,7 +549,7 @@ src/Module/{ModuleName}/Application/
 - [ ] Command Handler выполняет только одну логическую транзакцию
 - [ ] Query Handler не изменяет состояние приложения
 - [ ] Взаимодействие с Domain слоем только через публичные интерфейсы
-- [ ] Взаимодействие с Infrastructure слоем через абстракции
+- [ ] Нет прямых зависимостей на Infrastructure; используются только интерфейсы.
 - [ ] Исключения внешних зависимостей оборачиваются в `{ProjectName}\Common\Exception\{ExceptionName}`
 - [ ] Мапперы расположены в `Application\Mapper\*`
 - [ ] Enum-ы Application слоя не смешиваются с Domain Enum-ами (есть мапперы)
