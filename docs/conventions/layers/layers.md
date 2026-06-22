@@ -85,6 +85,8 @@ Integration вызывает Application чужого модуля:
 - Не зависит от слоя Infrastructure.
 - Адаптирует внешний transport/framework context перед входом в Application.
 - Не содержит HTTP/SDK-клиенты внешних API — такие адаптеры размещаются в Infrastructure.
+- Если связь с возможностью происходит внутри процесса между модулями — это Integration; если связь идёт через внешний
+  transport/API/SDK, реализация относится к Infrastructure, даже когда внешний сервис вырос из бывшего модуля проекта.
 
 ### Presentation → Application
 
