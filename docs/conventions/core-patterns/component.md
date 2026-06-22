@@ -61,7 +61,7 @@ parameters:
 # ...
 services:
 # ...
-  ProjectName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponent:
+  ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\TBusinessPaymentsComponent:
     arguments:
       $baseUrl: '%module.billing.t_business.base_url%'
       $terminalKey: '%module.billing.t_business.terminal_key%'
@@ -71,13 +71,13 @@ services:
 # ...
 when@prod:
     services:
-        ProjectName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponentInterface:
-            alias: ProjectName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponent
+        ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\TBusinessPaymentsComponentInterface:
+            alias: ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\TBusinessPaymentsComponent
 
 when@dev:
     services:
-        ProjectName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsComponentInterface:
-            alias: ProjectName\Common\Module\Billing\Integration\Component\TBusiness\TBusinessPaymentsSandboxComponent
+        ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\TBusinessPaymentsComponentInterface:
+            alias: ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\TBusinessPaymentsSandboxComponent
 
 ```
 
@@ -89,11 +89,8 @@ when@dev:
 
 ## Расположение
 
-- **Integration**  
-  `{ProjectName}\Common\Module\{ModuleName}\Integration\Component\{ComponentName}` — Компоненты интеграций с внешними сервисами
-
 - **Infrastructure**  
-  `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}` — Компоненты, работающие с локальными ресурсами (ФС, кэш, процесс)
+  `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}` — Компоненты внешних API/SDK и локальных технических ресурсов (ФС, кэш, процесс)
 
 - **Presentation**  
   `{ProjectName}\{Web|Api|Console}\Component\{ComponentName}`
@@ -154,13 +151,13 @@ when@dev:
 
 declare(strict_types=1);
 
-namespace ProjectName\Common\Module\Billing\Integration\Component\TBusiness;
+namespace ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness;
 
 use ProjectName\Common\Exception\InfrastructureException;
-use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Dto\InitRequestDto;
-use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Dto\InitResponseDto;
-use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Mapper\InitRequestMapper;
-use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Mapper\InitResponseMapper;
+use ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\Dto\InitRequestDto;
+use ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\Dto\InitResponseDto;
+use ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\Mapper\InitRequestMapper;
+use ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\Mapper\InitResponseMapper;
 use Override;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;

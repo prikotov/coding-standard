@@ -41,7 +41,7 @@ description: Детальное описание слоя представлен
 |------|---------------|
 | Domain | Entity, ValueObject, Repository, Specification, Service |
 | Infrastructure | Repository implementation, Model, Cache, External API |
-| Integration | Listener, External Service, Event |
+| Integration | Listener, Middleware, Integration Service |
 
 Подробнее о взаимодействии слоёв: [layers.md](../layers.md)
 

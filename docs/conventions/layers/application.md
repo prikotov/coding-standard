@@ -16,7 +16,7 @@ Application слой не содержит бизнес-логики — он л
 - Command Handler выполняет одну логическую транзакцию.
 - Query Handler не изменяет состояние.
 - Взаимодействие с Domain — через публичные интерфейсы.
-- Взаимодействие с Infrastructure — через абстракции.
+- Нет прямых зависимостей на Infrastructure; используются только внутренние абстракции, реализации которых подключаются через DI.
 - Исключения внешних зависимостей оборачиваются в доменные.
 
 ## Назначение слоя Application
@@ -169,14 +169,15 @@ public function __invoke(CreateCommand $command): Uuid
 }
 ```
 
-### Application → Infrastructure
+### Application → инфраструктурные абстракции
 
-Application слой взаимодействует с Infrastructure слоем через абстракции:
+Application слой не импортирует классы Infrastructure напрямую. На runtime DI-контейнер подставляет инфраструктурные
+реализации для внутренних контрактов:
 
 - **Репозитории**: через интерфейсы из `Domain\Repository\*` (реализация в Infrastructure)
 - **Событийная шина**: через `EventBusInterface`
 - **Менеджер персистентности**: через `PersistenceManagerInterface`
-- **Внешние сервисы**: через компоненты из `Infrastructure\Component\*` или `Integration\Component\*`
+- **Внешние сервисы**: через интерфейсы из `Domain\Service\*`; HTTP/SDK-адаптеры скрыты в `Infrastructure\Component\*`
 
 **Пример взаимодействия:**
 
@@ -548,7 +549,7 @@ src/Module/{ModuleName}/Application/
 - [ ] Command Handler выполняет только одну логическую транзакцию
 - [ ] Query Handler не изменяет состояние приложения
 - [ ] Взаимодействие с Domain слоем только через публичные интерфейсы
-- [ ] Взаимодействие с Infrastructure слоем через абстракции
+- [ ] Нет прямых зависимостей на Infrastructure; используются только внутренние абстракции.
 - [ ] Исключения внешних зависимостей оборачиваются в `{ProjectName}\Common\Exception\{ExceptionName}`
 - [ ] Мапперы расположены в `Application\Mapper\*`
 - [ ] Enum-ы Application слоя не смешиваются с Domain Enum-ами (есть мапперы)

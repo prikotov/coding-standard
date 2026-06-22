@@ -35,7 +35,6 @@ description: Правила использования нативных PHP-пе
   - `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{SomeComponent}\Enum\{Name}Enum`
 * Integration
   - `{ProjectName}\Common\Module\{ModuleName}\Integration\Enum\{Name}Enum`
-  - `{ProjectName}\Common\Module\{ModuleName}\Integration\Component\{SomeComponent}\Enum\{Name}Enum`
 * Presentation
   - `{ProjectName}\Web\Module\{ModuleName}\Enum\{Name}Enum`
 * Common

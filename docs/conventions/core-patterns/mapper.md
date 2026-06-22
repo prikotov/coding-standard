@@ -62,10 +62,10 @@ description: Правила создания мапперов для преоб�
 {ProjectName}\Common\Module\{ModuleName}\Domain\Service\{ServiceName}\{Name}Mapper
 ```
 
-**Integration слой** — маппинг для внешних API:
+**Integration слой** — маппинг событий, transport context и межмодульных контрактов:
 
 ```
-{ProjectName}\Common\Module\{ModuleName}\Integration\Component\{Component}\Mapper\{Name}Mapper
+{ProjectName}\Common\Module\{ModuleName}\Integration\Mapper\{Name}Mapper
 ```
 
 **Presentation слой** — маппинг для контроллеров:
@@ -136,17 +136,17 @@ final readonly class SourceDtoMapper
 }
 ```
 
-### Пример 2: Маппинг DTO → массив (Integration слой)
+### Пример 2: Маппинг DTO → массив (Infrastructure слой)
 
 ```php
 <?php
 
 declare(strict_types=1);
 
-namespace ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Mapper;
+namespace ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\Mapper;
 
-use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Dto\InitRequestDto;
-use ProjectName\Common\Module\Billing\Integration\Component\TBusiness\Helper\TokenHelper;
+use ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\Dto\InitRequestDto;
+use ProjectName\Common\Module\Billing\Infrastructure\Component\TBusiness\Helper\TokenHelper;
 
 final readonly class InitRequestMapper
 {
