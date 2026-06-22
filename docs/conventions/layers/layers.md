@@ -49,7 +49,7 @@ flowchart TB
 | **Domain** | Бизнес-логика, [Entity](domain/entity.md), [VO](../core-patterns/value-object.md), интерфейсы [Repository](domain/repository.md) | Нет |
 | **Application** | Use Cases, оркестрация, [DTO](../core-patterns/dto.md) | Domain |
 | **Infrastructure** | Реализация репозиториев, кэш, персистентность, внешние API/SDK | Domain (контракты и типы) |
-| **Integration** | События, transport adapters, межмодульное взаимодействие | Application, Domain (контракты и типы) |
+| **Integration** | События, middleware, межмодульное взаимодействие | Application, Domain (контракты и типы) |
 | **Presentation** | Web, API, Console, Blog — точки входа | Application |
 
 ## Правила взаимодействия
@@ -83,10 +83,11 @@ Integration вызывает Application чужого модуля:
 - Реализует интеграции через интерфейсы доменных [Service](../core-patterns/service.md).
 - Может использовать доменные типы в сигнатурах контрактов ([VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md)).
 - Не зависит от слоя Infrastructure.
-- Адаптирует внешний transport/framework context перед входом в Application.
+- Адаптирует внешний контекст перед входом в Application.
 - Не содержит HTTP/SDK-клиенты внешних API — такие адаптеры размещаются в Infrastructure.
 - Если связь с возможностью происходит внутри процесса между модулями — это Integration; если связь идёт через внешний
-  transport/API/SDK, реализация относится к Infrastructure, даже когда внешний сервис вырос из бывшего модуля проекта.
+  HTTP/gRPC/API/SDK или клиент очереди, реализация относится к Infrastructure, даже когда внешний сервис вырос из бывшего
+  модуля проекта.
 
 ### Presentation → Application
 

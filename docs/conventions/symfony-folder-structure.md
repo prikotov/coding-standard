@@ -100,7 +100,7 @@ src/Module/{ModuleName}/
 │   └── Service/              # Инфраструктурные сервисы
 ├── Integration/              # Слой интеграций
 │   ├── Listener/             # Слушатели событий
-│   ├── Middleware/           # Transport/framework middleware
+│   ├── Middleware/           # Middleware внешнего фреймворка или очереди
 │   └── Service/              # Межмодульные интеграционные сервисы
 ├── Resource/                 # Ресурсы модуля
 │   └── config/               # Конфигурация модуля
@@ -112,7 +112,7 @@ src/Module/{ModuleName}/
 - **Domain**: только бизнес-логика, без зависимостей от других слоёв и внешних библиотек.
 - **Application**: координация бизнес-логики, без инфраструктурных деталей.
 - **Infrastructure**: реализации репозиториев, БД, кэш, файловая система, логирование, внешние API/SDK.
-- **Integration**: события, transport/framework adapters, межмодульное взаимодействие.
+- **Integration**: события, middleware, межмодульное взаимодействие.
 
 ## Организация приложений
 
