@@ -84,7 +84,7 @@ Integration вызывает Application чужого модуля:
 - Может использовать доменные типы в сигнатурах контрактов ([VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md)).
 - Не зависит от слоя Infrastructure.
 - Адаптирует внешний контекст перед входом в Application.
-- Не содержит HTTP/SDK-клиенты внешних API — такие адаптеры размещаются в Infrastructure.
+- Не содержит HTTP/SDK-клиенты внешних API — такие клиенты размещаются в Infrastructure.
 
 ### Presentation → Application
 
