@@ -48,7 +48,7 @@ description: Правила создания и использования се�
     - [Specification](../layers/domain/specification.md);
     - [Calculator](../layers/domain/calculator.md);
     - [Repository](../layers/domain/repository.md);
-    - доменных [Helper](helper.md) своего модуля, если это детерминированные утилиты без I/O.
+    - других доменных классов своего модуля без I/O и инфраструктурных зависимостей.
 - ❗ **Запрещено** зависеть от внешней инфраструктуры.
 
 ## Расположение
