@@ -39,7 +39,7 @@ Deptrac ловит такие нарушения **детерминирован�
 | `ApplicationQueryHandler` | Обработчик запросов |
 | `Infrastructure` | Репозитории, внешние сервисы |
 | `InfrastructureComponent` | Компоненты инфраструктуры |
-| `Integration` | Внешние API, события |
+| `Integration` | События, middleware, межмодульное взаимодействие |
 | `IntegrationListener` | Слушатели событий |
 | `Presentation` | Контроллеры, консольные команды |
 
@@ -48,6 +48,7 @@ Deptrac ловит такие нарушения **детерминирован�
 - **Domain** не знает ни о ком, кроме себя (DTO, VO, Enum)
 - **Application** → Domain, но не Infrastructure
 - **Infrastructure** реализует интерфейсы Domain, не зависит от Application
+- **Integration** → Application + контракты Domain, но не Infrastructure
 - **Command/Query** — чистые DTO без логики
 - **Handler** — единственная точка входа в use case
 - **Presentation** → Application (Command/Query + Handler)
