@@ -41,7 +41,7 @@ Middleware нужен, когда проекту требуется перехв
 - Используйте **Middleware**, если класс живёт внутри lifecycle внешнего фреймворка и работает через его контракт
   (`MiddlewareInterface`, pipeline API, consumer hooks).
 - Используйте **Infrastructure Component**, если нужен переносимый адаптер к внешнему API/SDK/ресурсу с собственным контрактом
-  `*ComponentInterface`; такой компонент не вызывается из Integration middleware/service.
+  `*ComponentInterface`; используйте его внутри Infrastructure-сервиса.
 
 `Symfony Messenger` как технология является внешним техническим миром, но не каждый адаптер вокруг него становится
 `Component`. Если класс завязан на конкретный message pipeline и знает о внутренних message/command типах модуля, это
