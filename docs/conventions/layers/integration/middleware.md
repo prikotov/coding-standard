@@ -28,10 +28,11 @@ Middleware нужен, когда проекту требуется перехв
 - **Разрешено:**
   - framework contracts и transport-specific типы (`Envelope`, `Stamp`, middleware interfaces);
   - DTO/Command/Event своего модуля для точечного ветвления;
-  - общие компоненты приложения, если middleware действительно кросс-секционный.
+  - общие компоненты приложения, не относящиеся к Infrastructure слоям, если middleware действительно кросс-секционный.
 - **Запрещено:**
   - бизнес-логика;
   - прямой доступ к БД, HTTP-клиентам, очередям, файловой системе;
+  - зависимости от `Infrastructure\Component`, его интерфейсов и DTO;
   - orchestration use case-сценария;
   - маскировка middleware под `Component`.
 
@@ -40,7 +41,7 @@ Middleware нужен, когда проекту требуется перехв
 - Используйте **Middleware**, если класс живёт внутри lifecycle внешнего фреймворка и работает через его контракт
   (`MiddlewareInterface`, pipeline API, consumer hooks).
 - Используйте **Infrastructure Component**, если нужен переносимый адаптер к внешнему API/SDK/ресурсу с собственным контрактом
-  `*ComponentInterface`.
+  `*ComponentInterface`; такой компонент вызывается Infrastructure-сервисом, а не Integration middleware/service.
 
 `Symfony Messenger` как технология является внешним техническим миром, но не каждый адаптер вокруг него становится
 `Component`. Если класс завязан на конкретный message pipeline и знает о внутренних message/command типах модуля, это
@@ -67,7 +68,7 @@ Common\Infrastructure\Component\{Technology}\Middleware\{Name}Middleware
 1. Размещаем module-specific middleware в `Integration\Middleware\{Technology}`.
 2. Внутри middleware оставляем только техническую адаптацию и передачу управления дальше.
 3. Если middleware становится кросс-модульным и не зависит от application-классов конкретного модуля, переносим его в
-   shared `Infrastructure\Component`.
+   shared `Infrastructure\Component`; module-specific Integration код после переноса не зависит от него напрямую.
 
 ## Пример
 
@@ -113,4 +114,5 @@ final readonly class WebhookDeliveryAttemptMiddleware implements MiddlewareInter
 - [ ] В классе нет бизнес-логики и orchestration.
 - [ ] Имя оканчивается на `Middleware`.
 - [ ] Namespace следует схеме `Integration\Middleware\{Technology}`.
+- [ ] Нет зависимостей от `Infrastructure\Component`, его интерфейсов и DTO.
 - [ ] Если реализация кросс-модульная, рассмотрен перенос в `Common\Infrastructure\Component\{Technology}\Middleware`.

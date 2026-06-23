@@ -39,7 +39,7 @@ Deptrac catches such violations **deterministically** — in CI, on every commit
 | `ApplicationQueryHandler` | Query handler |
 | `Infrastructure` | Repositories, external services |
 | `InfrastructureComponent` | Infrastructure components |
-| `Integration` | External APIs, events |
+| `Integration` | Events, middleware, cross-module interaction |
 | `IntegrationListener` | Event listeners |
 | `Presentation` | Controllers, console commands |
 
@@ -48,6 +48,7 @@ Deptrac catches such violations **deterministically** — in CI, on every commit
 - **Domain** knows nothing but itself (DTO, VO, Enum)
 - **Application** → Domain, but not Infrastructure
 - **Infrastructure** implements Domain interfaces, doesn't depend on Application
+- **Integration** → Application + Domain contracts, but not Infrastructure
 - **Command/Query** — pure DTOs without logic
 - **Handler** — single entry point to a use case
 - **Presentation** → Application (Command/Query + Handler)

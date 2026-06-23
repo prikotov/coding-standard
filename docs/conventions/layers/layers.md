@@ -82,7 +82,7 @@ Integration вызывает Application чужого модуля:
 - Обрабатывает внешние события и инициирует соответствующие Use Cases.
 - Реализует интеграции через интерфейсы доменных [Service](../core-patterns/service.md).
 - Может использовать доменные типы в сигнатурах контрактов ([VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md)).
-- Не зависит от слоя Infrastructure.
+- Не зависит от слоя Infrastructure, включая `Infrastructure\Component`, его интерфейсы и DTO.
 - Адаптирует внешний контекст перед входом в Application.
 - Не содержит HTTP/SDK-клиенты внешних API — такие клиенты размещаются в Infrastructure.
 

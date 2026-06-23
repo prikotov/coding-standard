@@ -77,7 +77,9 @@ description: Правила создания и использования се�
 - Интерфейс размещается в `Domain`, реализация — в `Infrastructure`.
 - Работает с DTO, VO, Enum, `UuidInterface`, примитивами.
 - Зависит только от компонентов или инфраструктурных интерфейсов.
-- ❗ **Не имеет доступа к доменному коду**, кроме интерфейсов.
+- Для исходящих HTTP/SDK-интеграций вызывает `Infrastructure\Component` и преобразует его DTO в доменный контракт.
+- ❗ **Не имеет доступа к доменным реализациям**. Допустимы только интерфейсы Domain и типы контрактов
+  (`DTO`/`VO`/`Enum`) в сигнатурах и маппинге.
 - Даже при включённом `autowire` в `services.yaml` всегда добавляй явный alias
   `Interface -> Implementation`, чтобы контейнер однозначно резолвил сервис и
   не зависел от эвристики "нашёлся единственный класс". Подробности: [Working with Interfaces](https://symfony.com/doc/current/service_container/interfaces.html).
@@ -148,6 +150,7 @@ description: Правила создания и использования се�
 - Интерфейс в `Domain`, реализация в `Integration`.
 - Возвращает и принимает: DTO, VO, Enum, примитивы, `UuidInterface`.
 - ❗ Не зависит от **реализаций** домена. Допускается только внедрение интерфейсов, определённых в доменном слое.
+- ❗ Не зависит от Infrastructure, включая `Infrastructure\Component`, его интерфейсы и DTO.
 - ❗ Исходящие HTTP/SDK-интеграции реализуются как Infrastructure Service/Component, а не как Integration Service.
 
 ## Расположение
@@ -183,7 +186,7 @@ description: Правила создания и использования се�
 - `Action` — глагол, обозначающий операцию (Send, Change, Create).
 - `Target` — предмет действия (Email, Status, Payment).
 
-# Пример
+# Пример Infrastructure Service для внешнего API
 
 ```php
 <?php

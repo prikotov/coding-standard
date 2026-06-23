@@ -39,7 +39,7 @@ Deptrac **确定性地**捕获此类违规——在 CI 中，每次提交时都�
 | `ApplicationQueryHandler` | 查询处理器 |
 | `Infrastructure` | 仓库、外部服务 |
 | `InfrastructureComponent` | 基础设施组件 |
-| `Integration` | 外部 API、事件 |
+| `Integration` | 事件、中间件、跨模块交互 |
 | `IntegrationListener` | 事件监听器 |
 | `Presentation` | 控制器、控制台命令 |
 
@@ -48,6 +48,7 @@ Deptrac **确定性地**捕获此类违规——在 CI 中，每次提交时都�
 - **Domain** 只了解自身（DTO、VO、Enum）
 - **Application** → Domain，但不依赖 Infrastructure
 - **Infrastructure** 实现 Domain 接口，不依赖 Application
+- **Integration** → Application + Domain 契约，但不依赖 Infrastructure
 - **Command/Query** — 纯 DTO，不含逻辑
 - **Handler** — 用例的唯一入口点
 - **Presentation** → Application（Command/Query + Handler）
