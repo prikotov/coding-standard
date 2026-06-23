@@ -45,14 +45,14 @@ Integration слой отвечает за межмодульное взаимо
 - Реагирует на доменные события.
 - Адаптирует внешний контекст фреймворка или очереди перед входом в Application.
 - Не содержит HTTP/SDK-клиенты внешних API — такие клиенты размещаются в [Infrastructure](infrastructure.md).
-- Не зависит от Infrastructure, включая `Infrastructure\Component`, его интерфейсы и DTO.
+- Не зависит от Infrastructure.
 - Не содержит бизнес-логики.
 - Использует Application слой для выполнения операций.
 
 ### Service
 
 - Реализует Domain Service-интерфейсы, когда реализация связывает модули внутри процесса.
-- Не внедряет и не вызывает `Infrastructure\Component` напрямую.
+- Не обращается к Infrastructure напрямую.
 - Если операция требует HTTP/SDK-клиента внешнего API, реализация доменного интерфейса размещается в Infrastructure,
   а Integration Service остаётся только для межмодульной оркестрации.
 - Application оркестрирует Domain через интерфейсы, не зная, где находится реализация — в Domain, Infrastructure или Integration.
@@ -75,7 +75,7 @@ Integration слой отвечает за межмодульное взаимо
 
 - [ ] Integration не содержит бизнес-логику.
 - [ ] Service реализует Domain Service-интерфейс и использует только разрешённые зависимости.
-- [ ] Service не зависит от `Infrastructure\Component`, его интерфейсов и DTO.
+- [ ] Service не зависит от Infrastructure.
 - [ ] Listener обрабатывает события через Application-слой.
 - [ ] Middleware адаптирует транспортный контекст, не реализуя бизнес-правила.
 - [ ] Нет прямых вызовов к Domain/Infrastructure из Listener.

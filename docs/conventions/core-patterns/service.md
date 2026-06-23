@@ -149,7 +149,7 @@ description: Правила создания и использования се�
 - Интерфейс в `Domain`, реализация в `Integration`.
 - Возвращает и принимает: DTO, VO, Enum, примитивы, `UuidInterface`.
 - ❗ Не зависит от **реализаций** домена. Допускается только внедрение интерфейсов, определённых в доменном слое.
-- ❗ Не зависит от Infrastructure, включая `Infrastructure\Component`, его интерфейсы и DTO.
+- ❗ Не зависит от Infrastructure.
 - ❗ Исходящие HTTP/SDK-интеграции реализуются как Infrastructure Service/Component, а не как Integration Service.
 
 ## Расположение
