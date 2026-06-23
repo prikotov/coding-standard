@@ -75,7 +75,7 @@ Integration слой отвечает за межмодульное взаимо
 
 - [ ] Integration не содержит бизнес-логику.
 - [ ] Service реализует Domain Service-интерфейс и использует только разрешённые зависимости.
-- [ ] Service не зависит от Infrastructure.
+- [ ] Service не обращается к Infrastructure напрямую.
 - [ ] Listener обрабатывает события через Application-слой.
 - [ ] Middleware адаптирует транспортный контекст, не реализуя бизнес-правила.
 - [ ] Нет прямых вызовов к Domain/Infrastructure из Listener.
