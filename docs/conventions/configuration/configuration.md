@@ -206,12 +206,12 @@ MAILER_DSN=smtp://mailer:1025
 - Используйте `autowire: true` и `autoconfigure: true` для автоматического внедрения зависимостей.
 - Параметры сервисов должны быть именованы с учётом контекста: `module.<module_name>.<context>`, `app.<context>`.
 - Для импорта каталогов с сервисами используйте `resource` с `exclude` для исключения ненужных файлов.
-- Сущности Doctrine не должны быть зарегистрированы как сервисы.
+- Сущности Doctrine, DTO, enum, value object, event payload, exception и command/query payload не должны быть зарегистрированы как сервисы.
 - Интерфейсы репозиториев должны быть внедрены, а реализации — автоматически загружены.
 
 ### Пример конфигурации сервисов
 
-Пример конфигурации сервисов модуля (`src/Module/Billing/Resource/config/services.yaml`):
+Пример конфигурации сервисов Common-модуля (`src/Module/Billing/Resource/config/services.yaml`):
 
 ```yaml
 parameters:
@@ -226,8 +226,15 @@ services:
   ProjectName\Common\Module\Billing\:
     resource: '%module.billing.module_dir%/'
     exclude:
-      - '%module.billing.module_dir%/Domain/Entity/'
       - '%module.billing.module_dir%/Resource/'
+      - '%module.billing.module_dir%/Domain/Entity/'
+      - '%module.billing.module_dir%/**/*Dto.php'
+      - '%module.billing.module_dir%/**/*Event.php'
+      - '%module.billing.module_dir%/**/*Exception.php'
+      - '%module.billing.module_dir%/**/*Enum.php'
+      - '%module.billing.module_dir%/**/*Vo.php'
+      - '%module.billing.module_dir%/Application/UseCase/Command/**/*Command.php'
+      - '%module.billing.module_dir%/Application/UseCase/Query/**/*Query.php'
       - '%module.billing.module_dir%/BillingModule.php'
 
   ProjectName\Common\Module\Billing\Application\Service\PaymentService:
@@ -235,6 +242,29 @@ services:
       $paymentProvider: '%module.billing.payment_provider%'
 
   ProjectName\Common\Module\Billing\Domain\Repository\PaymentRepositoryInterface: '@ProjectName\Common\Module\Billing\Infrastructure\Repository\PaymentRepository'
+```
+
+Пример конфигурации сервисов Presentation-модуля (`apps/web/src/Module/Source/Resource/config/services.yaml`):
+
+```yaml
+parameters:
+  web.module.source.module_dir: '%kernel.project_dir%/apps/web/src/Module/Source'
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  ProjectName\Web\Module\Source\:
+    resource: '%web.module.source.module_dir%/'
+    exclude:
+      - '%web.module.source.module_dir%/Resource/'
+      - '%web.module.source.module_dir%/**/*Dto.php'
+      - '%web.module.source.module_dir%/**/*Enum.php'
+      - '%web.module.source.module_dir%/**/*FormModel.php'
+      - '%web.module.source.module_dir%/**/*Vo.php'
+      - '%web.module.source.module_dir%/**/*Constraint.php'
+      - '%web.module.source.module_dir%/SourceModule.php'
 ```
 
 Пример конфигурации сервисов приложения (`config/services.yaml`):
@@ -278,7 +308,7 @@ services:
 - **Разделяйте конфигурацию** по окружениям — используйте `when@<environment>` для условной загрузки.
 - **Следуйте PSR-4** для именования пространств имён и путей к файлам.
 - **Используйте автоконфигурацию** — включайте `autowire` и `autoconfigure` для упрощения DI.
-- **Исключайте сущности** из автоконфигурации сервисов — Doctrine должна управлять ими сама.
+- **Исключайте несервисные типы** из автоконфигурации сервисов — Doctrine должна управлять сущностями сама, а DTO, enum, value object, event payload, exception и command/query payload не должны попадать в контейнер.
 - **Внедряйте интерфейсы** — зависимости должны быть абстракциями, а не конкретными реализациями.
 
 ### Безопасность
