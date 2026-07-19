@@ -9,17 +9,20 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 use PrikotovCodingStandard\Config\CodingStandardConfig;
 
 /**
- * Enforces the conventional contract on Domain repository interfaces.
+ * Type-locks the signatures of conventional repository methods declared on
+ * Domain repository interfaces.
  *
- * An interface located in Domain/Repository/ and ending with
- * `RepositoryInterface` (incl. `ReadRepositoryInterface` /
- * `WriteRepositoryInterface`) must declare the conventional methods:
+ * An interface located in Domain/Repository/ and ending with `RepositoryInterface`
+ * (incl. `ReadRepositoryInterface` / `WriteRepositoryInterface`) is NOT required
+ * to declare every conventional method — a domain may need only a subset
+ * (Interface Segregation). But whatever conventional methods ARE declared must
+ * follow the type-locked contract:
  *
- *  - Read/Full:  getById, getOneByCriteria, getByCriteria, getCountByCriteria
- *  - Write:      save
- *
- * Signatures are type-locked to the convention (entity model in/out, criteria
- * in, scalars/array/int out).
+ *  - getById(?int, ?Uuid): Model (non-nullable)
+ *  - getOneByCriteria(Criteria): ?Model
+ *  - getByCriteria(Criteria): array / list<*>
+ *  - getCountByCriteria(Criteria): int
+ *  - save(Model)/delete(Model): void
  *
  * Read-model / aggregate interfaces (those whose methods never accept or return
  * a domain entity, e.g. summaries returning VOs) are intentionally skipped —
@@ -29,7 +32,6 @@ use PrikotovCodingStandard\Config\CodingStandardConfig;
  */
 final class RepositoryInterfaceContractSniff implements Sniff
 {
-    private const ERROR_MISSING = 'MissingTypicalMethod';
     private const ERROR_GET_BY_ID = 'GetByIdMustReturnEntity';
     private const ERROR_GET_ONE = 'GetOneByCriteriaMustReturnNullableEntity';
     private const ERROR_GET_BY_CRITERIA = 'GetByCriteriaMustReturnCollection';
@@ -38,8 +40,6 @@ final class RepositoryInterfaceContractSniff implements Sniff
     private const ERROR_DELETE = 'DeleteMustTakeEntityReturnVoid';
 
     private const DOMAIN_REPOSITORY_PATH = 'Domain/Repository/';
-    private const READ_INTERFACE_SUFFIX = 'ReadRepositoryInterface';
-    private const WRITE_INTERFACE_SUFFIX = 'WriteRepositoryInterface';
     private const INTERFACE_SUFFIX = 'RepositoryInterface';
 
     private string $docRef = '';
@@ -111,45 +111,16 @@ final class RepositoryInterfaceContractSniff implements Sniff
             return;
         }
 
-        $kind = $this->kind($interfaceName);
-
         // Read-model / aggregate interfaces (no domain entity in any signature) are a
-        // different contract — only entity interfaces are type-locked. Write
-        // interfaces are always entity-oriented, so they are never skipped here.
-        if ($kind !== 'write' && $this->isEntityInterface($methods) === false) {
+        // different contract — only entity interfaces are type-locked.
+        if ($this->isEntityInterface($methods) === false) {
             return;
         }
 
-        $this->assertRequiredMethods($phpcsFile, $stackPtr, $interfaceName, $methods);
+        // Presence of conventional methods is not required (a domain may need only a
+        // subset — Interface Segregation). We only type-lock the methods that ARE
+        // declared so their signatures follow the convention.
         $this->assertSignatures($phpcsFile, $methods);
-    }
-
-    /**
-     * @param array<string, array{props: array<string, mixed>, params: list<mixed>}> $methods
-     */
-    private function assertRequiredMethods(
-        File $phpcsFile,
-        int $interfacePtr,
-        string $interfaceName,
-        array $methods,
-    ): void {
-        $required = $this->requiredMethods($interfaceName);
-
-        foreach ($required as $methodName) {
-            if (isset($methods[$methodName]) === true) {
-                continue;
-            }
-
-            $phpcsFile->addError(
-                sprintf(
-                    'Repository interface "%s" must declare the conventional method %s().' . $this->docRef,
-                    $interfaceName,
-                    $methodName,
-                ),
-                $interfacePtr,
-                self::ERROR_MISSING,
-            );
-        }
     }
 
     /**
@@ -191,29 +162,6 @@ final class RepositoryInterfaceContractSniff implements Sniff
                     break;
             }
         }
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function requiredMethods(string $interfaceName): array
-    {
-        return $this->kind($interfaceName) === 'write'
-            ? ['save']
-            : ['getById', 'getOneByCriteria', 'getByCriteria', 'getCountByCriteria'];
-    }
-
-    private function kind(string $interfaceName): string
-    {
-        if (str_ends_with($interfaceName, self::WRITE_INTERFACE_SUFFIX) === true) {
-            return 'write';
-        }
-
-        if (str_ends_with($interfaceName, self::READ_INTERFACE_SUFFIX) === true) {
-            return 'read';
-        }
-
-        return 'full';
     }
 
     /**

@@ -494,27 +494,11 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
-    // RepositoryInterfaceContractSniff — missing getByCriteria + getCountByCriteria → 2 errors
-    [
-        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/BadMissingReadMethodsRepositoryInterface.inc',
-        'errors' => [
-            11 => 2,
-        ],
-        'warnings' => [],
-    ],
     // RepositoryInterfaceContractSniff — getById must be non-nullable → 1 error
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/BadNullableGetByIdRepositoryInterface.inc',
         'errors' => [
             13 => 1,
-        ],
-        'warnings' => [],
-    ],
-    // RepositoryInterfaceContractSniff — write interface without save → 1 error
-    [
-        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/NoSaveWriteRepositoryInterface.inc',
-        'errors' => [
-            8 => 1,
         ],
         'warnings' => [],
     ],
