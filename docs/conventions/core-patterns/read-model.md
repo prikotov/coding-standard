@@ -11,12 +11,6 @@ description: Правила проектирования read-моделей (п
 бизнес-операцией напрямую, а вычисляется из хранилища или агрегирующего запроса и не имеет
 самостоятельного жизненного цикла, как persist'имая сущность.
 
-Read-модель подчиняется конвенциям [сущности](../layers/domain/entity.md) и [репозитория](../layers/domain/repository.md)
-без изменений; этот документ фиксирует только **отличия и способы реализации**.
-
-> См. также: [Сущность (Entity)](../layers/domain/entity.md), [Репозиторий (Repository)](../layers/domain/repository.md),
-> [CriteriaMapper](../layers/infrastructure/criteria-mapper.md).
-
 ## Общие правила
 
 - Это [сущность](../layers/domain/entity.md) с теми же структурными правилами (`final`/`readonly`, постфикс `Model`, `Domain\Entity\*`), читаемая через `*ReadRepositoryInterface` + [CriteriaMapper](../layers/infrastructure/criteria-mapper.md) — см. [репозиторий](../layers/domain/repository.md). Ниже — только отличия.
