@@ -41,10 +41,8 @@ final class RepositoryInterfaceContractSniff implements Sniff
     private const WRITE_INTERFACE_SUFFIX = 'WriteRepositoryInterface';
     private const INTERFACE_SUFFIX = 'RepositoryInterface';
 
-    private const DOC_REF = ' See: vendor/prikotov/coding-standard/'
-        . 'docs/conventions/layers/domain/repository.md'
-        . ' (https://github.com/prikotov/coding-standard/blob/master/'
-        . 'docs/conventions/layers/domain/repository.md)';
+    private const DOC_REF = ' See: docs/conventions/layers/domain/repository.md'
+        . ' (https://github.com/prikotov/coding-standard/blob/master/docs/conventions/layers/domain/repository.md)';
 
     /** @var array<string, true> */
     private const PRIMITIVE_TYPES = [

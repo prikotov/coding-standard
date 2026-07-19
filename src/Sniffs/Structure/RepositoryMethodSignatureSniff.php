@@ -39,12 +39,11 @@ final class RepositoryMethodSignatureSniff implements Sniff
 
     private const REPOSITORY_DIRECTORY_SEGMENT = 'Infrastructure/Repository/';
 
-    private const DOC_REF = ' See: vendor/prikotov/coding-standard/'
-        . 'docs/conventions/layers/domain/repository.md'
-        . ' (https://github.com/prikotov/coding-standard/blob/master/'
-        . 'docs/conventions/layers/domain/repository.md)';
+    private const DOC_REF = ' See: docs/conventions/layers/domain/repository.md'
+        . ' (https://github.com/prikotov/coding-standard/blob/master/docs/conventions/layers/domain/repository.md)';
     private const READ_MODEL_REF = ' For aggregate/read-model projections use the Read Model pattern:'
-        . ' vendor/prikotov/coding-standard/docs/conventions/core-patterns/read-model.md';
+        . ' docs/conventions/core-patterns/read-model.md'
+        . ' (https://github.com/prikotov/coding-standard/blob/master/docs/conventions/core-patterns/read-model.md)';
 
     /** @var array<string, true> */
     private const RAW_DBAL_METHODS = [
