@@ -43,9 +43,9 @@ Read-модель — `final readonly` класс без ORM-отображен�
 - Репозиторий работает через `EntityManagerInterface` + `QueryBuilder` (без `extends ServiceEntityRepository` — нет класса сущности для отображения через ORM). Внедрение `EntityManagerInterface` допустимо.
 - **Когда применять:** агрегат вычисляется по входным параметрам запроса, материализовать невыгодно (динамические группировки, редкие отчёты), но это по-прежнему «коллекция записей с фильтрами».
 
-## Пример — вариант B (query-formed)
+## Пример — вариант B (на основе агрегирующего запроса)
 
-### Модель — `final readonly` класс без ORM-маппинга
+### Модель — `final readonly` класс без ORM-отображения
 
 ```php
 <?php
@@ -67,7 +67,7 @@ final readonly class UserAccessTokenUsageSummaryModel
 }
 ```
 
-### Репозиторий — агрегирующий DQL через QueryBuilder + PHP-маппинг
+### Репозиторий — агрегирующий запрос через QueryBuilder с преобразованием результата в PHP
 
 ```php
 <?php
@@ -132,7 +132,7 @@ final class UserAccessTokenUsageSummaryReadRepository implements UserAccessToken
 ```
 
 > `CriteriaMapper::mapBase()` строит `FROM`/`WHERE` по критериям (без агрегатов); агрегирующий `select`/`groupBy`
-> добавляет репозиторий. Для варианта A репозиторий выглядит как обычный entity-репозиторий — см. пример в
+> добавляет репозиторий. Для варианта A репозиторий выглядит как обычный репозиторий сущности — см. пример в
 > [репозитории](../layers/infrastructure/repository.md).
 
 ## Чек-лист для ревью
