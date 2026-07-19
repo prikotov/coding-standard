@@ -43,16 +43,6 @@ Read-модель — `final readonly` класс без ORM-отображен�
 - Репозиторий работает через `EntityManagerInterface` + `QueryBuilder` (без `extends ServiceEntityRepository` — нет класса сущности для отображения через ORM). Внедрение `EntityManagerInterface` допустимо.
 - **Когда применять:** агрегат вычисляется по входным параметрам запроса, материализовать невыгодно (динамические группировки, редкие отчёты), но это по-прежнему «коллекция записей с фильтрами».
 
-## Граница с Query-Service
-
-Если проекция **потоковая** (window functions по входным параметрам, без группировки в «записи») или
-**мульти-источник** (DB + Redis + API) — это не Read-модель, а Query-Service: отдельный класс `*Query`/`*Projection`
-в `Infrastructure\...\Query\`, **без** суффикса `Repository` и **без** `*RepositoryInterface`. Raw SQL/Native Query
-в нём допустимы — сниффы его не трогают.
-
-❗ Raw SQL внутри `*Repository` — сигнал, что задача на самом деле либо Read-модель (постройте агрегат через
-DQL/QueryBuilder или вынесите в view), либо Query-Service (вынесите класс из `Repository/`).
-
 ## Пример — вариант B (query-formed)
 
 ### Модель — `final readonly` класс без ORM-маппинга
@@ -151,4 +141,4 @@ final class UserAccessTokenUsageSummaryReadRepository implements UserAccessToken
       `save()`/`delete()`.
 - [ ] Выбран корректный способ реализации: A (на основе хранилища) или B (на основе агрегирующего запроса).
 - [ ] В репозитории нет `Doctrine\DBAL\Connection` и raw DBAL-вызовов — чтение через ORM `QueryBuilder`/CriteriaMapper.
-- [ ] Если нужен raw SQL — это Query-Service вне `Repository/` (не `*Repository`, не `*RepositoryInterface`).
+- [ ] Если нужен raw SQL — это не Read-модель: либо вынесите агрегат в представление/агрегирующий запрос (варианты A/B), либо класс вне `Repository/`.
