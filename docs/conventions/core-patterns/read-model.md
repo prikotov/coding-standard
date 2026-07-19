@@ -21,7 +21,6 @@ description: Правила проектирования read-моделей (п
 
 - Модель — рядом с другими доменными моделями: `{ProjectName}\Common\Module\{ModuleName}\Domain\Entity\{GroupName?}\{Name}Model` (см. [Entity](../layers/domain/entity.md)).
 - Read-контракт, реализация и CriteriaMapper — по правилам [репозитория](../layers/domain/repository.md), с суффиксом `*ReadRepository`.
-- Query-Service (альтернатива, вне репозитория): `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\...\Query\{Name}Query`.
 
 ## Способы реализации
 
