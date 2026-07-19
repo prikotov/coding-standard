@@ -439,6 +439,264 @@ parameters:
 			path: src/Sniffs/Structure/EnumStructureSniff.php
 
 		-
+			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Cannot access offset ''type_hint'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 7
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Constant PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryInterfaceContractSniff\:\:READ_METHODS is unused\.$#'
+			identifier: classConstant.unused
+			count: 1
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryInterfaceContractSniff\:\:collectMethods\(\) should return array\<string, array\{ptr\: int, props\: array\<string, mixed\>, params\: list\<mixed\>\}\> but returns array\<non\-empty\-string, array\{ptr\: int, props\: array, params\: array\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Offset ''ptr'' does not exist on array\{props\: array\<string, mixed\>, params\: list\<mixed\>\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 5
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_last expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryInterfaceContractSniff\:\:belongsToInterface\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Parameter \#2 \$methodPtr of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryInterfaceContractSniff\:\:assertCollectionReturn\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Parameter \#2 \$methodPtr of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryInterfaceContractSniff\:\:assertEntityReturn\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Parameter \#2 \$methodPtr of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryInterfaceContractSniff\:\:assertMutationSignature\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Parameter \#2 \$methodPtr of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryInterfaceContractSniff\:\:assertReturnContains\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Parameter \#3 \$end of method PHP_CodeSniffer\\Files\\File\:\:findNext\(\) expects int\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
+
+		-
+			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Cannot access offset ''content'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Cannot access offset ''type_hint'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 11
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryMethodSignatureSniff\:\:checkMethod\(\) has parameter \$useMap with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_last expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryMethodSignatureSniff\:\:belongsToClass\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$end of method PHP_CodeSniffer\\Files\\File\:\:findNext\(\) expects int\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$methodProps of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryMethodSignatureSniff\:\:assertNoDoctrineLeak\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$methodProps of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryMethodSignatureSniff\:\:assertReturnTypeContains\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$methodProps of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryMethodSignatureSniff\:\:assertReturnTypeIsCollection\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$methodProps of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryMethodSignatureSniff\:\:assertReturnTypeIsEntity\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$methodProps of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryMethodSignatureSniff\:\:assertReturnTypeIsNullableEntity\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$methodProps of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryMethodSignatureSniff\:\:assertMutationSignature\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Parameter \#4 \$useMap of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryMethodSignatureSniff\:\:assertNoDoctrineLeak\(\) expects array\<string, string\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
+
+		-
+			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''content'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''type_hint'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 4
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_last expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryStructureSniff\:\:belongsToClass\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
+			message: '#^Parameter \#3 \$end of method PHP_CodeSniffer\\Files\\File\:\:findNext\(\) expects int\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 4
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
 			message: '#^Cannot access offset ''code'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -454,6 +712,12 @@ parameters:
 			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
+			path: src/Sniffs/Structure/ServiceStructureSniff.php
+
+		-
+			message: '#^Method PrikotovCodingStandard\\Sniffs\\Structure\\ServiceStructureSniff\:\:getImplementedInterfaceFqcns\(\) should return list\<string\> but returns list\.$#'
+			identifier: return.type
+			count: 1
 			path: src/Sniffs/Structure/ServiceStructureSniff.php
 
 		-
@@ -477,12 +741,6 @@ parameters:
 		-
 			message: '#^Possibly invalid array key type mixed\.$#'
 			identifier: offsetAccess.invalidOffset
-			count: 1
-			path: src/Sniffs/Structure/ServiceStructureSniff.php
-
-		-
-			message: '#^Method PrikotovCodingStandard\\Sniffs\\Structure\\ServiceStructureSniff\:\:getImplementedInterfaceFqcns\(\) should return list\<string\> but returns list\.$#'
-			identifier: return.type
 			count: 1
 			path: src/Sniffs/Structure/ServiceStructureSniff.php
 
