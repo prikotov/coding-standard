@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// RepositoryInterfaceContractSniff — read-model interface (returns VO, not Model) is skipped
+// RepositoryInterfaceContractSniff — aggregate interface (returns VO, not Model) is skipped
 namespace App\Module\Example\Domain\Repository\Payment;
 
 use App\Module\Example\Domain\Repository\Payment\Criteria\PaymentSummaryCriteriaInterface;

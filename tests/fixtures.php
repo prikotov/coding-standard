@@ -488,7 +488,7 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
-    // RepositoryInterfaceContractSniff — read-model interface (no Model) is skipped
+    // RepositoryInterfaceContractSniff — aggregate interface (no Model) is skipped
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/PaymentSummaryRepositoryInterface.inc',
         'errors' => [],

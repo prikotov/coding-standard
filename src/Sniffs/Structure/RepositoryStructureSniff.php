@@ -19,7 +19,7 @@ use PrikotovCodingStandard\Config\CodingStandardConfig;
  * of ORM persistence and CriteriaMapper-driven queries.
  *
  * Note: inheritance of `ServiceEntityRepository` is intentionally NOT enforced —
- * write-only repositories (EntityManager-based), DBAL/SQL read-models, filesystem
+ * write-only repositories (EntityManager-based), DBAL/SQL read-side repositories, filesystem
  * and in-memory repositories legitimately use other bases.
  *
  * See: docs/conventions/layers/infrastructure/repository.md
@@ -39,7 +39,6 @@ final class RepositoryStructureSniff implements Sniff
     private const REPOSITORY_INTERFACE_SUFFIX = 'RepositoryInterface';
 
     private string $docRef = '';
-    private string $readModelRef = '';
 
     public function register(): array
     {
@@ -54,7 +53,6 @@ final class RepositoryStructureSniff implements Sniff
         }
 
         $this->docRef = $this->buildRef($docsPath, 'layers/infrastructure/repository.md');
-        $this->readModelRef = $this->buildReadModelRef($docsPath);
 
         $relativePath = $this->resolveRelativeSrcPath(str_replace('\\', '/', $phpcsFile->getFilename()));
         if ($relativePath === null || str_starts_with($relativePath, 'src/Module/') === false) {
@@ -170,8 +168,7 @@ final class RepositoryStructureSniff implements Sniff
                         $phpcsFile->addError(
                             sprintf(
                                 'Repository must not depend on Doctrine\\DBAL\\Connection ("%s");'
-                                . ' persist via ORM and read via CriteriaMapper/QueryBuilder.' . $this->docRef
-                                . $this->readModelRef,
+                                . ' persist via ORM and read via CriteriaMapper/QueryBuilder.' . $this->docRef,
                                 $fqcn,
                             ),
                             $classPtr,
@@ -431,15 +428,6 @@ final class RepositoryStructureSniff implements Sniff
             '%1$s %2$s (https://github.com/prikotov/coding-standard/blob/master/%2$s)',
             $prefix,
             $localPath,
-        );
-    }
-
-    private function buildReadModelRef(string $docsPath): string
-    {
-        return $this->buildRef(
-            $docsPath,
-            'core-patterns/read-model.md',
-            ' For aggregate/read-model projections use the Read Model pattern:',
         );
     }
 }

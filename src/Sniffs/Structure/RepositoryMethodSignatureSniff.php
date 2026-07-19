@@ -41,7 +41,6 @@ final class RepositoryMethodSignatureSniff implements Sniff
     private const REPOSITORY_DIRECTORY_SEGMENT = 'Infrastructure/Repository/';
 
     private string $docRef = '';
-    private string $readModelRef = '';
 
     /** @var array<string, true> */
     private const RAW_DBAL_METHODS = [
@@ -107,7 +106,6 @@ final class RepositoryMethodSignatureSniff implements Sniff
         }
 
         $this->docRef = $this->buildRef($docsPath, 'layers/domain/repository.md');
-        $this->readModelRef = $this->buildReadModelRef($docsPath);
 
         $relativePath = $this->resolveRelativeSrcPath(str_replace('\\', '/', $phpcsFile->getFilename()));
         if ($relativePath === null || str_starts_with($relativePath, 'src/Module/') === false) {
@@ -231,7 +229,7 @@ final class RepositoryMethodSignatureSniff implements Sniff
             $phpcsFile->addError(
                 sprintf(
                     'Repository must not call raw DBAL method %s(); read via CriteriaMapper/QueryBuilder,'
-                    . ' write via ORM persistence.' . $this->docRef . $this->readModelRef,
+                    . ' write via ORM persistence.' . $this->docRef,
                     $methodName,
                 ),
                 $methodNamePtr,
@@ -549,15 +547,6 @@ final class RepositoryMethodSignatureSniff implements Sniff
             '%1$s %2$s (https://github.com/prikotov/coding-standard/blob/master/%2$s)',
             $prefix,
             $localPath,
-        );
-    }
-
-    private function buildReadModelRef(string $docsPath): string
-    {
-        return $this->buildRef(
-            $docsPath,
-            'core-patterns/read-model.md',
-            ' For aggregate/read-model projections use the Read Model pattern:',
         );
     }
 }
