@@ -21,6 +21,7 @@ description: Индекс всех конвенций проекта
 - [Маппер (Mapper)](core-patterns/mapper.md)
 - [Map-класс (Map)](core-patterns/map.md)
 - [Сервис (Service)](core-patterns/service.md)
+- [Read-модель (Read Model)](core-patterns/read-model.md)
 - [Объект передачи данных (DTO)](core-patterns/dto.md)
 - [Трейт (Trait)](core-patterns/trait.md)
 - [Объект-Значение (Value Object)](core-patterns/value-object.md)
