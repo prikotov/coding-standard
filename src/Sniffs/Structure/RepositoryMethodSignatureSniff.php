@@ -6,6 +6,7 @@ namespace PrikotovCodingStandard\Sniffs\Structure;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
+use PrikotovCodingStandard\Config\CodingStandardConfig;
 
 /**
  * Validates method signatures inside Doctrine repository implementations.
@@ -39,11 +40,8 @@ final class RepositoryMethodSignatureSniff implements Sniff
 
     private const REPOSITORY_DIRECTORY_SEGMENT = 'Infrastructure/Repository/';
 
-    private const DOC_REF = ' See: docs/conventions/layers/domain/repository.md'
-        . ' (https://github.com/prikotov/coding-standard/blob/master/docs/conventions/layers/domain/repository.md)';
-    private const READ_MODEL_REF = ' For aggregate/read-model projections use the Read Model pattern:'
-        . ' docs/conventions/core-patterns/read-model.md'
-        . ' (https://github.com/prikotov/coding-standard/blob/master/docs/conventions/core-patterns/read-model.md)';
+    private string $docRef = '';
+    private string $readModelRef = '';
 
     /** @var array<string, true> */
     private const RAW_DBAL_METHODS = [
@@ -103,6 +101,14 @@ final class RepositoryMethodSignatureSniff implements Sniff
 
     public function process(File $phpcsFile, $stackPtr): void
     {
+        $docsPath = CodingStandardConfig::docsPath($phpcsFile);
+        if ($docsPath === null) {
+            return;
+        }
+
+        $this->docRef = $this->buildRef($docsPath, 'layers/domain/repository.md');
+        $this->readModelRef = $this->buildReadModelRef($docsPath);
+
         $relativePath = $this->resolveRelativeSrcPath(str_replace('\\', '/', $phpcsFile->getFilename()));
         if ($relativePath === null || str_starts_with($relativePath, 'src/Module/') === false) {
             return;
@@ -225,7 +231,7 @@ final class RepositoryMethodSignatureSniff implements Sniff
             $phpcsFile->addError(
                 sprintf(
                     'Repository must not call raw DBAL method %s(); read via CriteriaMapper/QueryBuilder,'
-                    . ' write via ORM persistence.' . self::DOC_REF . self::READ_MODEL_REF,
+                    . ' write via ORM persistence.' . $this->docRef . $this->readModelRef,
                     $methodName,
                 ),
                 $methodNamePtr,
@@ -259,7 +265,7 @@ final class RepositoryMethodSignatureSniff implements Sniff
                         sprintf(
                             'Repository public methods must not expose Doctrine infrastructure type'
                             . ' "%s"; operate on domain entities, value objects, criteria or scalars.'
-                            . self::DOC_REF,
+                            . $this->docRef,
                             $fqcn,
                         ),
                         $methodPtr,
@@ -300,7 +306,7 @@ final class RepositoryMethodSignatureSniff implements Sniff
 
         $phpcsFile->addError(
             sprintf(
-                'Repository %s() must accept a single domain entity (*Model) and return void.' . self::DOC_REF,
+                'Repository %s() must accept a single domain entity (*Model) and return void.' . $this->docRef,
                 $methodName,
             ),
             $methodPtr,
@@ -324,7 +330,7 @@ final class RepositoryMethodSignatureSniff implements Sniff
             return;
         }
 
-        $phpcsFile->addError($message . self::DOC_REF, $methodPtr, $code);
+        $phpcsFile->addError($message . $this->docRef, $methodPtr, $code);
     }
 
     /**
@@ -341,7 +347,7 @@ final class RepositoryMethodSignatureSniff implements Sniff
         }
 
         $phpcsFile->addError(
-            'getByCriteria() must return a collection (array or list<*>), never null.' . self::DOC_REF,
+            'getByCriteria() must return a collection (array or list<*>), never null.' . $this->docRef,
             $methodPtr,
             self::ERROR_GET_BY_CRITERIA_RETURN,
         );
@@ -363,7 +369,7 @@ final class RepositoryMethodSignatureSniff implements Sniff
         }
 
         $phpcsFile->addError(
-            'getOneByCriteria() must return a nullable domain entity (?*Model).' . self::DOC_REF,
+            'getOneByCriteria() must return a nullable domain entity (?*Model).' . $this->docRef,
             $methodPtr,
             self::ERROR_GET_ONE_RETURN,
         );
@@ -383,7 +389,7 @@ final class RepositoryMethodSignatureSniff implements Sniff
 
         $phpcsFile->addError(
             'getById() must return a domain entity (*Model), not nullable and not a scalar.'
-            . ' For a nullable lookup use getOneByCriteria().' . self::DOC_REF,
+            . ' For a nullable lookup use getOneByCriteria().' . $this->docRef,
             $methodPtr,
             self::ERROR_GET_BY_ID_RETURN,
         );
@@ -533,5 +539,25 @@ final class RepositoryMethodSignatureSniff implements Sniff
         }
 
         return null;
+    }
+
+    private function buildRef(string $docsPath, string $conventionFile, string $prefix = ' See:'): string
+    {
+        $localPath = $docsPath . '/' . $conventionFile;
+
+        return sprintf(
+            '%1$s %2$s (https://github.com/prikotov/coding-standard/blob/master/%2$s)',
+            $prefix,
+            $localPath,
+        );
+    }
+
+    private function buildReadModelRef(string $docsPath): string
+    {
+        return $this->buildRef(
+            $docsPath,
+            'core-patterns/read-model.md',
+            ' For aggregate/read-model projections use the Read Model pattern:',
+        );
     }
 }

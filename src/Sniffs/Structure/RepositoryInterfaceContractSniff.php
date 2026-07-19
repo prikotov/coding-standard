@@ -6,6 +6,7 @@ namespace PrikotovCodingStandard\Sniffs\Structure;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
+use PrikotovCodingStandard\Config\CodingStandardConfig;
 
 /**
  * Enforces the conventional contract on Domain repository interfaces.
@@ -41,8 +42,7 @@ final class RepositoryInterfaceContractSniff implements Sniff
     private const WRITE_INTERFACE_SUFFIX = 'WriteRepositoryInterface';
     private const INTERFACE_SUFFIX = 'RepositoryInterface';
 
-    private const DOC_REF = ' See: docs/conventions/layers/domain/repository.md'
-        . ' (https://github.com/prikotov/coding-standard/blob/master/docs/conventions/layers/domain/repository.md)';
+    private string $docRef = '';
 
     /** @var array<string, true> */
     private const PRIMITIVE_TYPES = [
@@ -80,6 +80,13 @@ final class RepositoryInterfaceContractSniff implements Sniff
 
     public function process(File $phpcsFile, $stackPtr): void
     {
+        $docsPath = CodingStandardConfig::docsPath($phpcsFile);
+        if ($docsPath === null) {
+            return;
+        }
+
+        $this->docRef = $this->buildRef($docsPath, 'layers/domain/repository.md');
+
         $relativePath = $this->resolveRelativeSrcPath(str_replace('\\', '/', $phpcsFile->getFilename()));
         if ($relativePath === null || str_starts_with($relativePath, 'src/Module/') === false) {
             return;
@@ -135,7 +142,7 @@ final class RepositoryInterfaceContractSniff implements Sniff
 
             $phpcsFile->addError(
                 sprintf(
-                    'Repository interface "%s" must declare the conventional method %s().' . self::DOC_REF,
+                    'Repository interface "%s" must declare the conventional method %s().' . $this->docRef,
                     $interfaceName,
                     $methodName,
                 ),
@@ -288,7 +295,7 @@ final class RepositoryInterfaceContractSniff implements Sniff
         $methodName = $phpcsFile->getDeclarationName($methodPtr);
         $phpcsFile->addError(
             sprintf(
-                '%s() must return %sdomain entity (*Model).' . self::DOC_REF,
+                '%s() must return %sdomain entity (*Model).' . $this->docRef,
                 $methodName,
                 $nullable === true ? 'a nullable ' : 'a non-nullable ',
             ),
@@ -311,7 +318,7 @@ final class RepositoryInterfaceContractSniff implements Sniff
         }
 
         $phpcsFile->addError(
-            'getByCriteria() must return a collection (array or list<*>), never null.' . self::DOC_REF,
+            'getByCriteria() must return a collection (array or list<*>), never null.' . $this->docRef,
             $methodPtr,
             self::ERROR_GET_BY_CRITERIA,
         );
@@ -333,7 +340,7 @@ final class RepositoryInterfaceContractSniff implements Sniff
             return;
         }
 
-        $phpcsFile->addError($message . self::DOC_REF, $methodPtr, $code);
+        $phpcsFile->addError($message . $this->docRef, $methodPtr, $code);
     }
 
     /**
@@ -364,7 +371,7 @@ final class RepositoryInterfaceContractSniff implements Sniff
 
         $phpcsFile->addError(
             sprintf(
-                'Repository %s() must accept a single domain entity (*Model) and return void.' . self::DOC_REF,
+                'Repository %s() must accept a single domain entity (*Model) and return void.' . $this->docRef,
                 $methodName,
             ),
             $methodPtr,
@@ -420,5 +427,15 @@ final class RepositoryInterfaceContractSniff implements Sniff
         }
 
         return null;
+    }
+
+    private function buildRef(string $docsPath, string $conventionFile): string
+    {
+        $localPath = $docsPath . '/' . $conventionFile;
+
+        return sprintf(
+            ' See: %1$s (https://github.com/prikotov/coding-standard/blob/master/%1$s)',
+            $localPath,
+        );
     }
 }

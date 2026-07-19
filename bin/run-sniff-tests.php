@@ -32,6 +32,7 @@ $config->sniffs   = [
     'PrikotovCodingStandard.Structure.RepositoryStructure',
     'PrikotovCodingStandard.Structure.RepositoryMethodSignature',
     'PrikotovCodingStandard.Structure.RepositoryInterfaceContract',
+    'PrikotovCodingStandard.Config.ConfigRequired',
     'PrikotovCodingStandard.Structure.ServiceStructure',
     'PrikotovCodingStandard.Structure.ValueObjectStructure',
     'PrikotovCodingStandard.Namespaces.PresentationLayerNamespace',

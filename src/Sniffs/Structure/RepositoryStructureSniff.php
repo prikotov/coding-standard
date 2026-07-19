@@ -6,6 +6,7 @@ namespace PrikotovCodingStandard\Sniffs\Structure;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
+use PrikotovCodingStandard\Config\CodingStandardConfig;
 
 /**
  * Validates the structure of Doctrine repository implementations against the
@@ -37,12 +38,8 @@ final class RepositoryStructureSniff implements Sniff
     private const DOMAIN_REPOSITORY_FQCN_FRAGMENT = '/Domain/Repository/';
     private const REPOSITORY_INTERFACE_SUFFIX = 'RepositoryInterface';
 
-    private const DOC_REF = ' See: docs/conventions/layers/infrastructure/repository.md'
-        . ' (https://github.com/prikotov/coding-standard/blob/master/'
-        . 'docs/conventions/layers/infrastructure/repository.md)';
-    private const READ_MODEL_REF = ' For aggregate/read-model projections use the Read Model pattern:'
-        . ' docs/conventions/core-patterns/read-model.md'
-        . ' (https://github.com/prikotov/coding-standard/blob/master/docs/conventions/core-patterns/read-model.md)';
+    private string $docRef = '';
+    private string $readModelRef = '';
 
     public function register(): array
     {
@@ -51,6 +48,14 @@ final class RepositoryStructureSniff implements Sniff
 
     public function process(File $phpcsFile, $stackPtr): void
     {
+        $docsPath = CodingStandardConfig::docsPath($phpcsFile);
+        if ($docsPath === null) {
+            return;
+        }
+
+        $this->docRef = $this->buildRef($docsPath, 'layers/infrastructure/repository.md');
+        $this->readModelRef = $this->buildReadModelRef($docsPath);
+
         $relativePath = $this->resolveRelativeSrcPath(str_replace('\\', '/', $phpcsFile->getFilename()));
         if ($relativePath === null || str_starts_with($relativePath, 'src/Module/') === false) {
             return;
@@ -70,7 +75,7 @@ final class RepositoryStructureSniff implements Sniff
                 $phpcsFile->addError(
                     sprintf(
                         'Repository class "%s" must be placed in an Infrastructure/Repository/ directory.'
-                        . ' Move it to .../Infrastructure/Repository/{Entity}/%s.' . self::DOC_REF,
+                        . ' Move it to .../Infrastructure/Repository/{Entity}/%s.' . $this->docRef,
                         $className,
                         $className,
                     ),
@@ -82,7 +87,7 @@ final class RepositoryStructureSniff implements Sniff
                     sprintf(
                         'Class "%s" implements a Domain repository interface'
                         . ' but is not in an Infrastructure/Repository/ directory.'
-                        . ' Move it to .../Infrastructure/Repository/{Entity}/%s.' . self::DOC_REF,
+                        . ' Move it to .../Infrastructure/Repository/{Entity}/%s.' . $this->docRef,
                         $className,
                         $className,
                     ),
@@ -102,7 +107,7 @@ final class RepositoryStructureSniff implements Sniff
                         'Class "%s" is in an Infrastructure/Repository/ directory and implements a Domain repository'
                         . ' interface, but does not have a "Repository" suffix.'
                         . ' Rename to "%sRepository" (or "...ReadRepository"/"...WriteRepository" for CQRS).'
-                        . self::DOC_REF,
+                        . $this->docRef,
                         $className,
                         $className,
                     ),
@@ -119,7 +124,7 @@ final class RepositoryStructureSniff implements Sniff
             $phpcsFile->addError(
                 sprintf(
                     'Repository class "%s" must implement a corresponding Domain repository interface'
-                    . ' ({Entity}RepositoryInterface).' . self::DOC_REF,
+                    . ' ({Entity}RepositoryInterface).' . $this->docRef,
                     $className,
                 ),
                 $stackPtr,
@@ -165,8 +170,8 @@ final class RepositoryStructureSniff implements Sniff
                         $phpcsFile->addError(
                             sprintf(
                                 'Repository must not depend on Doctrine\\DBAL\\Connection ("%s");'
-                                . ' persist via ORM and read via CriteriaMapper/QueryBuilder.' . self::DOC_REF
-                                . self::READ_MODEL_REF,
+                                . ' persist via ORM and read via CriteriaMapper/QueryBuilder.' . $this->docRef
+                                . $this->readModelRef,
                                 $fqcn,
                             ),
                             $classPtr,
@@ -210,7 +215,7 @@ final class RepositoryStructureSniff implements Sniff
 
             $phpcsFile->addError(
                 'Repository methods must not call flush(); the transaction boundary'
-                . ' (flush) belongs to the CommandHandler/UseCase.' . self::DOC_REF,
+                . ' (flush) belongs to the CommandHandler/UseCase.' . $this->docRef,
                 $methodNamePtr,
                 self::ERROR_FLUSH_FORBIDDEN,
             );
@@ -416,5 +421,25 @@ final class RepositoryStructureSniff implements Sniff
         }
 
         return null;
+    }
+
+    private function buildRef(string $docsPath, string $conventionFile, string $prefix = ' See:'): string
+    {
+        $localPath = $docsPath . '/' . $conventionFile;
+
+        return sprintf(
+            '%1$s %2$s (https://github.com/prikotov/coding-standard/blob/master/%2$s)',
+            $prefix,
+            $localPath,
+        );
+    }
+
+    private function buildReadModelRef(string $docsPath): string
+    {
+        return $this->buildRef(
+            $docsPath,
+            'core-patterns/read-model.md',
+            ' For aggregate/read-model projections use the Read Model pattern:',
+        );
     }
 }
