@@ -502,4 +502,15 @@ return [
         ],
         'warnings' => [],
     ],
+    // RepositoryInterfaceContractSniff — Doctrine-legacy / non-conventional names → 4 errors
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/SuspectNamesRepositoryInterface.inc',
+        'errors' => [
+            13 => 1,
+            15 => 1,
+            17 => 1,
+            19 => 1,
+        ],
+        'warnings' => [],
+    ],
 ];

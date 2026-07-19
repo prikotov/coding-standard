@@ -28,11 +28,17 @@ use PrikotovCodingStandard\Config\CodingStandardConfig;
  * a domain entity, e.g. summaries returning VOs) are intentionally skipped —
  * they are a different kind of contract.
  *
+ * Additionally rejects Doctrine-legacy / near-conventional method names
+ * (find, findById, findBy, findOneBy, findAll, count, findByCriteria, …) that
+ * leak the legacy ORM API or mimic a conventional name with a wrong suffix —
+ * each maps to the conventional method the developer most likely meant.
+ *
  * See: docs/conventions/layers/domain/repository.md
  */
 final class RepositoryInterfaceContractSniff implements Sniff
 {
     private const ERROR_GET_BY_ID = 'GetByIdMustReturnEntity';
+    private const ERROR_SUSPICIOUS = 'SuspiciousMethodName';
     private const ERROR_GET_ONE = 'GetOneByCriteriaMustReturnNullableEntity';
     private const ERROR_GET_BY_CRITERIA = 'GetByCriteriaMustReturnCollection';
     private const ERROR_GET_COUNT = 'GetCountByCriteriaMustReturnInt';
@@ -43,6 +49,21 @@ final class RepositoryInterfaceContractSniff implements Sniff
     private const INTERFACE_SUFFIX = 'RepositoryInterface';
 
     private string $docRef = '';
+
+    /** @var array<string, string> Doctrine-legacy / near-conventional names → the conventional replacement */
+    private const SUSPICIOUS_METHODS = [
+        'find'              => 'getById',
+        'findById'          => 'getById',
+        'findOne'           => 'getOneByCriteria',
+        'getOne'            => 'getOneByCriteria',
+        'findOneBy'         => 'getOneByCriteria',
+        'findOneByCriteria' => 'getOneByCriteria',
+        'findBy'            => 'getByCriteria',
+        'findByCriteria'    => 'getByCriteria',
+        'findAll'           => 'getByCriteria',
+        'count'             => 'getCountByCriteria',
+        'countBy'           => 'getCountByCriteria',
+    ];
 
     /** @var array<string, true> */
     private const PRIMITIVE_TYPES = [
@@ -120,7 +141,38 @@ final class RepositoryInterfaceContractSniff implements Sniff
         // Presence of conventional methods is not required (a domain may need only a
         // subset — Interface Segregation). We only type-lock the methods that ARE
         // declared so their signatures follow the convention.
+        $this->assertNoSuspiciousMethods($phpcsFile, $methods);
         $this->assertSignatures($phpcsFile, $methods);
+    }
+
+    /**
+     * Rejects Doctrine-legacy and near-conventional method names (find, findById,
+     * findBy, findOneBy, findAll, count, findByCriteria, …) that leak the legacy
+     * ORM API or mimic conventional names with a wrong suffix. Each maps to the
+     * conventional method the developer most likely meant.
+     *
+     * @param array<string, array{ptr: int, props: array<string, mixed>, params: list<mixed>}> $methods
+     */
+    private function assertNoSuspiciousMethods(File $phpcsFile, array $methods): void
+    {
+        foreach ($methods as $methodName => $method) {
+            $conventional = self::SUSPICIOUS_METHODS[$methodName] ?? null;
+            if ($conventional === null) {
+                continue;
+            }
+
+            $phpcsFile->addError(
+                sprintf(
+                    'Method %1$s() in a repository interface is a Doctrine-legacy or non-conventional name.'
+                    . ' Rename to the conventional %2$s() (or drop it if the operation is not needed).'
+                    . $this->docRef,
+                    $methodName,
+                    $conventional,
+                ),
+                $method['ptr'],
+                self::ERROR_SUSPICIOUS,
+            );
+        }
     }
 
     /**
