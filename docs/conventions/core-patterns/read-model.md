@@ -40,7 +40,7 @@ Read-модель — `final readonly` класс без ORM-отображен�
 
 - Агрегация (`GROUP BY`/`SUM`/`COUNT`/JOIN) — в DQL через `QueryBuilder`/CriteriaMapper; результат (`->getResult()`) преобразуется в Read-модель на стороне PHP.
 - `getById()` обычно не нужен; контракт ограничен `getByCriteria`/`getCountByCriteria`.
-- Репозиторий работает через `EntityManagerInterface` + `QueryBuilder` (без `extends ServiceEntityRepository` — нет класса сущности для отображения через ORM). Внедрение `EntityManagerInterface` допустимо (это ORM, а не `DBAL\Connection`).
+- Репозиторий работает через `EntityManagerInterface` + `QueryBuilder` (без `extends ServiceEntityRepository` — нет класса сущности для отображения через ORM). Внедрение `EntityManagerInterface` допустимо.
 - **Когда применять:** агрегат вычисляется по входным параметрам запроса, материализовать невыгодно (динамические группировки, редкие отчёты), но это по-прежнему «коллекция записей с фильтрами».
 
 ### C. PHP-агрегация (узкий случай)
