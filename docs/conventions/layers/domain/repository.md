@@ -13,13 +13,23 @@ description: Правила создания доменных контракто
 
 - Репозиторий объявляется в `Domain\Repository\*` и работает на доменных сущностях (`*Model`).
 - Интерфейс репозитория именуется `{EntityName}RepositoryInterface`.
-- Обязательные методы:
+- **Conventional-контракт** — если домену нужна соответствующая операция, она объявляется строго под conventional-именем и сигнатурой (присутствие метода не обязательно: не каждой сущности нужны все операции — Interface Segregation):
   - `save(Entity $entity): void` — добавление/обновление сущности.
-  - `getById(?int $id = null, ?Uuid $uuid = null): Entity` — загрузка по идентификатору или UUID, при отсутствии выбрасывает `NotFoundExceptionInterface`.
+  - `getById(?int $id = null, ?Uuid $uuid = null): Entity` — загрузка по идентификатору или UUID, при отсутствии выбрасывает `NotFoundExceptionInterface` (**не nullable**).
   - `getOneByCriteria(Criteria): ?Entity` — возвращает сущность или `null`.
   - `getByCriteria(Criteria): Entity[]` — всегда массив (возможно пустой), **никогда не `null`**.
   - `getCountByCriteria(Criteria): int` — подсчитать количество сущностей по критерию.
   - `delete(Entity $entity): void` — допускается только для hard-delete.
+- **Запрещены Doctrine-legacy и near-conventional имена** методов в контракте репозитория — они протекают из `ServiceEntityRepository`/`EntityRepository` либо имитируют conventional-имя с ошибкой в суффиксе. Каждый имеет conventional-замену:
+
+  | Запрещено | Использовать |
+  |----------|--------------|
+  | `find`, `findById` | `getById` |
+  | `findOne`, `getOne`, `findOneBy`, `findOneByCriteria` | `getOneByCriteria` |
+  | `findBy`, `findByCriteria`, `findAll` | `getByCriteria` |
+  | `count`, `countBy` | `getCountByCriteria` |
+
+  Специфичные доменные query-методы (`findActive`, `getChart`, `existsForSession` и т.п.) допустимы — запрет касается только имён, близких к conventional.
 - Если в домене предусмотрен только **soft-delete**, метод `delete()` в репозитории не объявляется.
 - При soft-delete используем бизнес-методы сущности (`markAsDeleted()`, `deactivate()` и др.).
 - Для поддержки CQRS интерфейсы на чтение и запись рекомендуется разделять на `{EntityName}ReadRepositoryInterface` и `{EntityName}WriteRepositoryInterface`.
@@ -118,6 +128,7 @@ final readonly class InitCommandHandler
 - [ ] Интерфейс лежит в `Domain` и зависит только от доменных типов.
 - [ ] Реализация лежит в `Infrastructure`.
 - [ ] Методы по критериям используют интерфейсы Criteria; нет именованных «findByXxxAndYyy».
+- [ ] Нет Doctrine-legacy и near-conventional имён (`find`/`findById`/`findBy`/`findOneBy`/`findAll`/`count` и вариаций `findByCriteria`/`findOneByCriteria`/`getOne`/`countBy`) — используются conventional `getById`/`getOneByCriteria`/`getByCriteria`/`getCountByCriteria`.
 - [ ] `getByCriteria()` возвращает массив (возможен пустой), `getOneByCriteria()` — `?Entity`.
 - [ ] Исключения ORM маппятся в доменные интерфейсы исключений.
 - [ ] Пагинация/сортировка — через Criteria (Limit/Offset/Sortable).
