@@ -19,6 +19,7 @@ description: Правила создания доменных контракто
   - `getOneByCriteria(Criteria): ?Entity` — возвращает сущность или `null`.
   - `getByCriteria(Criteria): Entity[]` — всегда массив (возможно пустой), **никогда не `null`**.
   - `getCountByCriteria(Criteria): int` — подсчитать количество сущностей по критерию.
+  - `exists(Criteria): bool` — проверить наличие сущности по критерию (без загрузки).
   - `delete(Entity $entity): void` — только для hard-delete.
 - Если в домене предусмотрен только **soft-delete**, метод `delete()` в репозитории не объявляется.
 - При soft-delete используем бизнес-методы сущности (`markAsDeleted()`, `deactivate()` и др.).
@@ -118,7 +119,7 @@ final readonly class InitCommandHandler
 - [ ] Интерфейс лежит в `Domain` и зависит только от доменных типов.
 - [ ] Реализация лежит в `Infrastructure`.
 - [ ] Методы по критериям используют интерфейсы Criteria; нет именованных «findByXxxAndYyy».
-- [ ] Для типовых операций используются рекомендованные имена методов (`getById`/`getByCriteria`/`getCountByCriteria`/`getOneByCriteria`/`save`/`delete`).
+- [ ] Для типовых операций используются рекомендованные имена методов (`getById`/`getByCriteria`/`getCountByCriteria`/`exists`/`getOneByCriteria`/`save`/`delete`).
 - [ ] `getByCriteria()` возвращает массив (возможен пустой), `getOneByCriteria()` — `?Entity`.
 - [ ] Исключения ORM маппятся в доменные интерфейсы исключений.
 - [ ] Пагинация/сортировка — через Criteria (Limit/Offset/Sortable).

@@ -483,7 +483,7 @@ parameters:
 		-
 			message: '#^Offset ''ptr'' does not exist on array\{props\: array\<string, mixed\>, params\: list\<mixed\>\}\.$#'
 			identifier: offsetAccess.notFound
-			count: 5
+			count: 6
 			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
 
 		-
@@ -519,7 +519,7 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$methodPtr of method PrikotovCodingStandard\\Sniffs\\Structure\\RepositoryInterfaceContractSniff\:\:assertReturnContains\(\) expects int, mixed given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: src/Sniffs/Structure/RepositoryInterfaceContractSniff.php
 
 		-

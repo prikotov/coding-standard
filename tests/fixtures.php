@@ -502,6 +502,14 @@ return [
         ],
         'warnings' => [],
     ],
+    // RepositoryInterfaceContractSniff — exists() must return bool → 1 error
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/BadExistsRepositoryInterface.inc',
+        'errors' => [
+            24 => 1,
+        ],
+        'warnings' => [],
+    ],
     // RepositoryInterfaceContractSniff — Doctrine-legacy / non-conventional names → 4 errors
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/SuspectNamesRepositoryInterface.inc',

@@ -22,6 +22,7 @@ use PrikotovCodingStandard\Config\CodingStandardConfig;
  *  - getOneByCriteria(Criteria): ?Model
  *  - getByCriteria(Criteria): array / list<*>
  *  - getCountByCriteria(Criteria): int
+ *  - exists(Criteria): bool
  *  - save(Model)/delete(Model): void
  *
  * Read-model / aggregate interfaces (those whose methods never accept or return
@@ -42,6 +43,7 @@ final class RepositoryInterfaceContractSniff implements Sniff
     private const ERROR_GET_ONE = 'GetOneByCriteriaMustReturnNullableEntity';
     private const ERROR_GET_BY_CRITERIA = 'GetByCriteriaMustReturnCollection';
     private const ERROR_GET_COUNT = 'GetCountByCriteriaMustReturnInt';
+    private const ERROR_EXISTS = 'ExistsMustReturnBool';
     private const ERROR_SAVE = 'SaveMustTakeEntityReturnVoid';
     private const ERROR_DELETE = 'DeleteMustTakeEntityReturnVoid';
 
@@ -204,6 +206,17 @@ final class RepositoryInterfaceContractSniff implements Sniff
                         'int',
                         'getCountByCriteria() must return int.',
                         self::ERROR_GET_COUNT,
+                    );
+
+                    break;
+                case 'exists':
+                    $this->assertReturnContains(
+                        $phpcsFile,
+                        $method['ptr'],
+                        $props,
+                        'bool',
+                        'exists() must return bool.',
+                        self::ERROR_EXISTS,
                     );
 
                     break;
