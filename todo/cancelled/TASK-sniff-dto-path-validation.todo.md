@@ -12,7 +12,7 @@ author: Dev (Pi)
 assignee:
 branch:
 pr:
-status: backlog
+status: cancelled
 ---
 
 # TASK-sniff-dto-path-validation: Валидация путей DTO для всех слоёв
@@ -88,6 +88,8 @@ composer check
 
 ## 9. Comments (Комментарии)
 Доменные DTO уже проверяются: `assertDomainDtoPath` в DtoStructureSniff запрещает `Domain/Dto/`.
+
+**Отменено:** strict-whitelist по слоям неприменим — даёт ложные срабатывания на легитимные DTO «рядом с владельцем» (`Application\Service\`, `Application\Event\`, `Infrastructure\Service\`, `Integration\Dto\`, `Infrastructure\Component\{Component}` без `/Dto/`). Вместо этого в `dto.md` зафиксирован принцип «рядом с владельцем» для всех слоёв, а проверка злоупотреблений общим пулом `Module\{M}\Application\Dto\` выделена в `TASK-feat-shared-dto-reuse-validator` (анализ реального переиспользования DTO в query-handler'ах).
 
 ## Change History (История изменений)
 | Дата | Автор (роль) | Изменение |
