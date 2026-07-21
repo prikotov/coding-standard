@@ -55,44 +55,71 @@ description: Правила создания и использования об�
 
 ## Расположение
 
-- Общие DTO приложения:
+Основной принцип — DTO размещается **рядом с владельцем** (классом или группой, которая его использует): use case'ом, сервисом, компонентом, событием, доменным объектом, интеграцией. Исключение — **общие переиспользуемые DTO**.
+
+### Общие DTO
+
+- **Общие DTO приложения** (переиспользуются во всём приложении — `PaginationDto`, `IdDto`, `SortDto`):
 
 ```
 {ProjectName}\Common\Application\Dto\{Name}Dto
 ```
 
-- DTO уровня модуля (Application):
+- **Общие DTO модуля** — проекции доменных сущностей (`Model → DTO` для передачи в другие слои), переиспользуемые в нескольких use case'ах:
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Application\Dto\{Name}Dto
 ```
 
-- DTO, связанные с конкретным Use Case (запрос/ответ):
+Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) сюда не кладём — их место рядом с use case'ом.
+
+### Рядом с владельцем
+
+- **UseCase** (запрос/ответ конкретного use case):
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Application\UseCase\{Command|Query}\{Case}\{Request|Result|Response}Dto
 ```
 
-- DTO для инфраструктурных компонентов:
+- **Application Service**:
 
 ```
-{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{Component}\Dto\{Name}Dto
+{ProjectName}\Common\Module\{ModuleName}\Application\Service\{ServiceName}\{Name}Dto
 ```
 
-- DTO доменного уровня размещаем рядом с доменным объектом или группой, для которых он нужен:
+- **Application Event**:
+
+```
+{ProjectName}\Common\Module\{ModuleName}\Application\Event\{EventName}\{Name}Dto
+```
+
+- **Infrastructure Component**:
+
+```
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}\Dto\{Name}Dto
+```
+
+- **Infrastructure Service**:
+
+```
+{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Service\{ServiceName}\{Name}Dto
+```
+
+- **Domain** — рядом с доменным объектом или группой:
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Domain\{DomainObjectType}\{GroupName?}\{Name}Dto
 ```
 
-Например, для результата доменного сервиса:
+Например, для результата доменного сервиса: `...\Domain\Service\{ServiceName}\{Name}Dto`.
+
+- **Integration** — рядом с интеграцией, реализующей доменный интерфейс:
 
 ```
-{ProjectName}\Common\Module\{ModuleName}\Domain\Service\{ServiceName}\{Name}Dto
+{ProjectName}\Common\Module\{ModuleName}\Integration\...\{Name}Dto
 ```
 
-Общие `Domain\Dto\*` не используем. `{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает
-переиспользоваться за пределами одной группы, заменяем его на `VO`.
+Общие пулы `Domain\Dto\*` и `Module\{ModuleName}\Dto\*` не используем — DTO живёт рядом с владельцем. `{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает переиспользоваться за пределами одной группы — заменяем его на `VO`.
 
 ## Как используем
 
