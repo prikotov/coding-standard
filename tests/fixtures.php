@@ -367,4 +367,158 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // RepositoryStructureSniff — repository without a Domain interface → MustImplementDomainRepositoryInterface
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/NoInterfaceRepository.inc',
+        'errors' => [
+            10 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryStructureSniff — calls flush() inside repository → FlushForbidden
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/FlushRepository.inc',
+        'errors' => [
+            16 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryStructureSniff — implements Domain interface but no Repository suffix → MissingRepositorySuffix
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/ProjectGateway.inc',
+        'errors' => [
+            10 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryStructureSniff — valid repository (extends + implements)
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/ValidProjectRepository.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // RepositoryStructureSniff — In-memory implementation is exempt from ServiceEntityRepository
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/ServiceStatus/InMemoryServiceStatusRepository.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // RepositoryStructureSniff + MethodSignature — write-repository without ServiceEntityRepository is valid
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/ProjectWriteRepository.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // RepositoryStructureSniff + MethodSignature — DBAL Connection dependency + raw fetchOne call
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/RawSqlRepository.inc',
+        'errors' => [
+            11 => 1, // ForbiddenDbalConnectionDependency
+            19 => 1, // RawDbalCallForbidden (fetchOne)
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryStructureSniff — Repository class outside Infrastructure/Repository/
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/ServiceOutsideDir/SomeRepository.inc',
+        'errors' => [
+            8 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryStructureSniff — implements Domain repository interface outside Infrastructure/Repository/
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Integration/Listener/DomainRepoImplOutside.inc',
+        'errors' => [
+            10 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryMethodSignatureSniff — public method returns a Doctrine type → DoctrineInfrastructureLeak
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/LeakReturnRepository.inc',
+        'errors' => [
+            14 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryMethodSignatureSniff — public method takes a Doctrine type → DoctrineInfrastructureLeak
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/LeakParameterRepository.inc',
+        'errors' => [
+            14 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryMethodSignatureSniff — bad save/delete/getCount/getByCriteria signatures
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/BadSaveRepository.inc',
+        'errors' => [
+            13 => 1,
+            18 => 1,
+            22 => 1,
+            27 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryMethodSignatureSniff — getById must be non-nullable, getOneByCriteria nullable
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/BadReadRepository.inc',
+        'errors' => [
+            13 => 1,
+            18 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryMethodSignatureSniff — fully valid repository signatures
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/ValidMethodsRepository.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // RepositoryInterfaceContractSniff — valid read interface
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/ValidPaymentReadRepositoryInterface.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // RepositoryInterfaceContractSniff — valid write interface
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/ValidPaymentWriteRepositoryInterface.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // RepositoryInterfaceContractSniff — aggregate interface (no Model) is skipped
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/PaymentSummaryRepositoryInterface.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // RepositoryInterfaceContractSniff — getById must be non-nullable → 1 error
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/BadNullableGetByIdRepositoryInterface.inc',
+        'errors' => [
+            13 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryInterfaceContractSniff — exists() must return bool → 1 error
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/BadExistsRepositoryInterface.inc',
+        'errors' => [
+            24 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryInterfaceContractSniff — Doctrine-legacy / non-conventional names → 4 errors
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/SuspectNamesRepositoryInterface.inc',
+        'errors' => [
+            13 => 1,
+            15 => 1,
+            17 => 1,
+            19 => 1,
+        ],
+        'warnings' => [],
+    ],
 ];

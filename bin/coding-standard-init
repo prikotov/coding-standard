@@ -128,6 +128,38 @@ foreach ($iterator as $item) {
     $copied++;
 }
 
+// ── 1b. Write .coding-standard.php (mandatory project config) ───────────────
+
+$configTarget  = $targetDir . '/.coding-standard.php';
+$configContent = <<<PHP
+<?php
+
+declare(strict_types=1);
+
+// Project-level configuration for prikotov/coding-standard.
+// Required by the package's sniffs (ConfigRequiredSniff): `docs_path` tells
+// sniff error messages where the conventions documentation was copied.
+return [
+    'docs_path' => '{$docsPath}',
+];
+
+PHP;
+
+if (file_exists($configTarget)) {
+    if ($force) {
+        file_put_contents($configTarget, $configContent);
+        echo "  Updated  .coding-standard.php" . PHP_EOL;
+        $updated++;
+    } else {
+        echo "  Skip     .coding-standard.php (already exists)" . PHP_EOL;
+        $skipped++;
+    }
+} else {
+    file_put_contents($configTarget, $configContent);
+    echo "  Copied   .coding-standard.php" . PHP_EOL;
+    $copied++;
+}
+
 // ── 2. Copy depfile.yaml ───────────────────────────────────────────────────
 
 if ($deptracPath !== '') {
