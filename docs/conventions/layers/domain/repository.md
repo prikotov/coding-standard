@@ -20,7 +20,6 @@ description: Правила создания доменных контракто
   - `getByCriteria(Criteria): Entity[]` — всегда массив (возможно пустой), **никогда не `null`**.
   - `getCountByCriteria(Criteria): int` — подсчитать количество сущностей по критерию.
   - `delete(Entity $entity): void` — только для hard-delete.
-- Специфичные доменные query-методы (`findActive`, `getChart`, `existsForSession` и т.п.) допустимы помимо рекомендованных выше.
 - Если в домене предусмотрен только **soft-delete**, метод `delete()` в репозитории не объявляется.
 - При soft-delete используем бизнес-методы сущности (`markAsDeleted()`, `deactivate()` и др.).
 - Для поддержки CQRS интерфейсы на чтение и запись рекомендуется разделять на `{EntityName}ReadRepositoryInterface` и `{EntityName}WriteRepositoryInterface`.
