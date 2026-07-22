@@ -55,11 +55,11 @@ description: Правила создания и использования об�
 
 ## Расположение
 
-Основной принцип — DTO размещается **рядом с владельцем** (классом или группой, которая его использует): use case'ом, сервисом, компонентом, событием, доменным объектом, интеграцией. Исключение — **общие переиспользуемые DTO**.
+Основной принцип — DTO размещается **рядом с владельцем** — в той же папке, что владелец, либо в её поддиректории `Dto/`. Владелец — класс, который отдаёт этот DTO (непосредственно или как часть структуры ответа). Исключение — **общие переиспользуемые DTO**.
 
 ### Общие DTO
 
-- **Общие DTO приложения** (переиспользуются во всём приложении — `PaginationDto`, `IdDto`, `SortDto`):
+- **Общие DTO приложения** (переиспользуются во всём приложении такие как `PaginationDto`, `IdDto`, `SortDto`):
 
 ```
 {ProjectName}\Common\Application\Dto\{Name}Dto
@@ -81,10 +81,10 @@ Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) 
 {ProjectName}\Common\Module\{ModuleName}\Application\UseCase\{Command|Query}\{Case}\{Request|Result|Response}Dto
 ```
 
-- **Application Service**:
+- **Service** (в любом слое — Application, Infrastructure, Integration):
 
 ```
-{ProjectName}\Common\Module\{ModuleName}\Application\Service\{ServiceName}\{Name}Dto
+{ProjectName}\Common\Module\{ModuleName}\{LayerName}\Service\{ServiceName}\{Name}Dto
 ```
 
 - **Application Event**:
@@ -93,16 +93,10 @@ Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) 
 {ProjectName}\Common\Module\{ModuleName}\Application\Event\{EventName}\{Name}Dto
 ```
 
-- **Infrastructure Component**:
+- **Component** (в любом слое — Infrastructure, Integration):
 
 ```
-{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}\Dto\{Name}Dto
-```
-
-- **Infrastructure Service**:
-
-```
-{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Service\{ServiceName}\{Name}Dto
+{ProjectName}\Common\Module\{ModuleName}\{LayerName}\Component\{ComponentName}\Dto\{Name}Dto
 ```
 
 - **Domain** — рядом с доменным объектом или группой:
@@ -112,14 +106,7 @@ Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) 
 ```
 
 Например, для результата доменного сервиса: `...\Domain\Service\{ServiceName}\{Name}Dto`.
-
-- **Integration** — рядом с интеграцией, реализующей доменный интерфейс:
-
-```
-{ProjectName}\Common\Module\{ModuleName}\Integration\...\{Name}Dto
-```
-
-Общие пулы `Domain\Dto\*` и `Module\{ModuleName}\Dto\*` не используем — DTO живёт рядом с владельцем. `{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает переиспользоваться за пределами одной группы — заменяем его на `VO`.
+`{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает переиспользоваться за пределами одной группы — заменяем его на `VO`.
 
 ## Как используем
 
