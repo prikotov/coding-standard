@@ -20,10 +20,11 @@ declare(strict_types=1);
  * front matter (`lang:`) или суффиксу имени файла (`name.<lang>.md`);
  * при отсутствии признака документ считается русским.
  *
- * anglicism_ratio = (слова в английских фразах) / (все слова). Фраза — пробежка
- * ≥2 латинских слов в mixed-строке (русская проза с английской вставкой).
- * Файлы, где ratio превышает порог, помечаются warning. Порог по умолчанию
- * 2% — терпит немного технических терминов, ловит замусоренные тексты.
+ * anglicism_ratio = (латинские слова вне allowlist) / (все слова). Учитываются
+ * и одиночные англицизмы (`allowlist`), и обороты (`persisted rows`). Термины
+ * в inline code исключаются экстрактором. Файлы, где ratio превышает порог,
+ * помечаются warning. Порог по умолчанию 2% — терпит немного терминов,
+ * ловит замусоренные тексты.
  *
  * Режим по умолчанию — warning: выводит файлы с превышением, но завершается
  * кодом 0. Флаг --strict — завершать кодом 1 при наличии англицизмов.
@@ -200,7 +201,6 @@ foreach ($files as $filePath) {
         'file' => $relativePath,
         'total' => $analysis->totalWords,
         'anglicisms' => $analysis->anglicismWords,
-        'latin' => $analysis->latinWords,
         'ratio' => $analysis->ratio,
         'over' => $overThreshold,
         'phrases' => $analysis->suspiciousPhrases,
@@ -221,7 +221,7 @@ if ($jsonOutput) {
 }
 
 $maxRatioPct = number_format($maxRatio * 100, 1);
-echo "Language check: anglicism ratio in " . count($files) . " file(s) (max ratio {$maxRatioPct}% of words in English phrases)";
+echo "Language check: anglicism ratio in " . count($files) . " file(s) (max ratio {$maxRatioPct}% of latin words outside allowlist)";
 if ($skipped > 0) {
     echo "; skipped {$skipped} non-Russian file(s)";
 }
@@ -234,7 +234,7 @@ foreach ($results as $r) {
     }
     $shown++;
     $pct = number_format($r['ratio'] * 100, 1);
-    echo "  ⚠ {$r['file']} — ratio {$pct}% ({$r['anglicisms']} word(s) in phrases / {$r['total']})\n";
+    echo "  ⚠ {$r['file']} — ratio {$pct}% ({$r['anglicisms']} latin word(s) / {$r['total']})\n";
     if ($r['phrases'] !== []) {
         $phrasesList = implode(', ', array_slice($r['phrases'], 0, 5));
         echo "      Phrases: {$phrasesList}\n";

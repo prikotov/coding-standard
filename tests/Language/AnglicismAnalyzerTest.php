@@ -6,6 +6,7 @@ namespace PrikotovCodingStandard\Tests\Language;
 
 use PHPUnit\Framework\TestCase;
 use PrikotovCodingStandard\Language\AnglicismAnalyzer;
+use PrikotovCodingStandard\Language\MarkdownTextExtractor;
 
 final class AnglicismAnalyzerTest extends TestCase
 {
@@ -82,28 +83,40 @@ final class AnglicismAnalyzerTest extends TestCase
         self::assertSame(0.4, $result->ratio);
     }
 
-    public function testSingleEnglishWordNotCountedInRatio(): void
+    public function testSingleEnglishWordCountsAsAnglicism(): void
     {
         $analyzer = new AnglicismAnalyzer();
 
-        // Одиночное «persisted» — не фраза, в ratio не входит (ловим обороты из ≥2 слов).
-        $result = $analyzer->analyze('Используем persisted для хранения.');
+        // Одиночное «allowlist» в русском тексте — англицизм, входит в ratio.
+        // (Термины в backticks исключаются экстрактором до analyze — см. MarkdownTextExtractorTest.)
+        $result = $analyzer->analyze('Слова вне allowlist не входят в метрику.');
 
-        self::assertSame(0, $result->anglicismWords);
-        self::assertSame([], $result->suspiciousPhrases);
-        // Но учитывается в общем счётчике латинских слов (info).
-        self::assertSame(1, $result->latinWords);
+        self::assertSame(1, $result->anglicismWords);
+        self::assertContains('allowlist', $result->sampleWords);
     }
 
     public function testHyphenatedWordCountedAsOne(): void
     {
         $analyzer = new AnglicismAnalyzer();
 
-        // «read-only facts» — фраза из 2 слов (read-only одним токеном, facts вторым).
-        $result = $analyzer->analyze('используем read-only facts систему');
+        // «read-only» — один токен с дефисом.
+        $result = $analyzer->analyze('используем read-only режим');
 
-        self::assertSame(2, $result->anglicismWords);
-        self::assertContains('read-only facts', $result->suspiciousPhrases);
+        self::assertSame(1, $result->anglicismWords);
+    }
+
+    public function testInlineCodeTermExcludedViaExtractorPipeline(): void
+    {
+        // Сценарий из конвенции: `ratio` в backticks — inline code, исключается
+        // экстрактором; одиночный англицизм allowlist — ловится.
+        $extractor = new MarkdownTextExtractor();
+        $analyzer = new AnglicismAnalyzer();
+
+        $prose = $extractor->extract('Слова вне allowlist не входят в `ratio`.');
+        $result = $analyzer->analyze($prose);
+
+        self::assertSame(1, $result->anglicismWords);
+        self::assertContains('allowlist', $result->sampleWords);
     }
 
     public function testEmptyText(): void

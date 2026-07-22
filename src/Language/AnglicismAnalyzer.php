@@ -62,32 +62,25 @@ final class AnglicismAnalyzer
         $words = $this->extractWords($text);
         $total = count($words);
 
-        $latinCount = 0;
+        $anglicismCount = 0;
         $sample = [];
         foreach ($words as $word) {
             if (!$this->isLatin($word) || $this->isAllowed($word)) {
                 continue;
             }
-            $latinCount++;
+            $anglicismCount++;
             if (count($sample) < 15) {
                 $sample[] = $word;
             }
         }
 
-        $phrases = $this->findSuspiciousPhrases($text);
-        $anglicismWords = 0;
-        foreach ($phrases as $phrase) {
-            $anglicismWords += count(preg_split('/\s+/', trim($phrase)) ?: []);
-        }
-
-        $ratio = $total > 0 ? $anglicismWords / $total : 0.0;
+        $ratio = $total > 0 ? $anglicismCount / $total : 0.0;
 
         return new AnalysisResult(
             totalWords: $total,
-            anglicismWords: $anglicismWords,
-            latinWords: $latinCount,
+            anglicismWords: $anglicismCount,
             ratio: $ratio,
-            suspiciousPhrases: $phrases,
+            suspiciousPhrases: $this->findSuspiciousPhrases($text),
             sampleWords: $sample,
         );
     }
