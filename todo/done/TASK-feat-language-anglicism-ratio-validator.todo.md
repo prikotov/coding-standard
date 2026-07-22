@@ -9,8 +9,8 @@ epic:
 author: Лид Арагорн (codex-cli)
 assignee:
 branch: task/language-anglicism-ratio-validator
-pr:
-status: in_progress
+pr: "#69"
+status: done
 ---
 
 # TASK-feat-language-anglicism-ratio-validator: Проверка коэффициента англицизмов в документации
@@ -115,3 +115,4 @@ composer check
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-07-21 | Dev (Pi) | Реализация: `MarkdownTextExtractor` + `AnglicismAnalyzer` + CLI `bin/validate-language`; тесты (24); doc `docs/conventions/ops/validate-language.md`; подключение в composer `bin`/scripts (opt-in, не в `@check`). Warning основан на английских фразах в смешанных строках (точнее, чем ratio на технических docs). |
+| 2026-07-22 | Dev (Pi) | Релиз v0.22.0 (PR #69). Эволюция в ревью: ratio = латинские слова вне allowlist / total (одиночные ловятся); allowlist вынесен из кода в `.coding-standard.php`; язык документа по front matter/имени файла с детектом конфликта; латиница в скобках/кавычках исключается; заголовки анализируются. 35 тестов. |
