@@ -16,6 +16,10 @@ declare(strict_types=1);
  * UPPER_SNAKE-идентификаторы, плейсхолдеры и латиница в скобках
  * (переводы терминов вроде «(Command Handler)»).
  *
+ * Проверяются только русскоязычные документы. Язык определяется по
+ * front matter (`lang:`) или суффиксу имени файла (`name.<lang>.md`);
+ * при отсутствии признака документ считается русским.
+ *
  * anglicism_ratio = (латинские слова вне allowlist) / (все слова) считается
  * и показывается как info, но не триггерит warning сама по себе —
  * на технических docs baseline латиницы высокий из-за терминологии.
@@ -57,6 +61,7 @@ foreach ($autoloadCandidates as $candidate) {
 }
 
 use PrikotovCodingStandard\Language\AnglicismAnalyzer;
+use PrikotovCodingStandard\Language\DocumentLanguageDetector;
 use PrikotovCodingStandard\Language\MarkdownTextExtractor;
 
 // ── Defaults ───────────────────────────────────────────────────────────────
@@ -158,13 +163,20 @@ $files = collectTextFiles($paths, $skipDirs, $excludePatterns);
 
 $extractor = new MarkdownTextExtractor();
 $analyzer = new AnglicismAnalyzer($allowlist);
+$detector = new DocumentLanguageDetector();
 
 $results = [];
 $alarms = 0;
+$skipped = 0;
 
 foreach ($files as $filePath) {
     $content = file_get_contents($filePath);
     if ($content === false) {
+        continue;
+    }
+    $lang = $detector->detect($filePath, $content);
+    if ($lang !== DocumentLanguageDetector::DEFAULT_LANGUAGE) {
+        $skipped++;
         continue;
     }
     $prose = $extractor->extract($content);
@@ -197,7 +209,11 @@ if ($jsonOutput) {
     exit($strict && $alarms > 0 ? 1 : 0);
 }
 
-echo "Language check: anglicisms in " . count($files) . " file(s) (warning on English phrases in Russian prose; ratio shown as info)
+echo "Language check: anglicisms in " . count($files) . " file(s) (warning on English phrases in Russian prose; ratio shown as info)";
+if ($skipped > 0) {
+    echo "; skipped {$skipped} non-Russian file(s)";
+}
+echo "
 
 ";
 
