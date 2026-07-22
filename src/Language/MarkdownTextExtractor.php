@@ -150,7 +150,7 @@ final class MarkdownTextExtractor
 
     /**
      * Удаляет латиницу в кавычках-ёмочках «...» — цитирование терминов
-     * и примеров («allowlist», «persisted rows»), а не англицизмы в прозе.
+     * и примеров («allowlist», «persisted rows»), а не англицизмы в тексте.
      */
     private function stripQuotedLatin(string $text): string
     {
