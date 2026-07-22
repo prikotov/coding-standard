@@ -106,12 +106,13 @@ final class MarkdownTextExtractorTest extends TestCase
 
     public function testStripsQuotedLatin(): void
     {
-        // «Command Handler» в кавычках — цитирование термина, удаляется.
+        // «Command Handler» и "allowlist" в кавычках — цитирование, удаляются.
         $extractor = new MarkdownTextExtractor();
 
-        $result = $extractor->extract('Пример термина «Command Handler» в тексте.');
+        $result = $extractor->extract('Пример термина «Command Handler» и "allowlist" в тексте.');
 
         self::assertStringNotContainsString('Command', $result);
+        self::assertStringNotContainsString('allowlist', $result);
         self::assertStringContainsString('Пример термина', $result);
     }
 

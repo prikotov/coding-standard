@@ -21,8 +21,8 @@ namespace PrikotovCodingStandard\Language;
  *  - плейсхолдеры ({ProjectName});
  *  - латиницу в круглых скобках — переводы терминов и технические уточнения
  *    («обработчик команд (Command Handler)», «(read-only)»);
- *  - латиницу в кавычках-ёмочках — цитирование терминов и примеров
- *    («allowlist», «persisted rows»).
+ *  - латиницу в кавычках (ёмочках «...» и двойных "...") — цитирование
+ *    терминов и примеров («allowlist», "persisted rows").
  */
 final class MarkdownTextExtractor
 {
@@ -142,11 +142,11 @@ final class MarkdownTextExtractor
     }
 
     /**
-     * Удаляет латиницу в кавычках-ёмочках «...» — цитирование терминов
-     * и примеров («allowlist», «persisted rows»), а не англицизмы в тексте.
+     * Удаляет латиницу в кавычках — ёмочках «...» и двойных "...".
+     * Это цитирование терминов и примеров, а не англицизмы в тексте.
      */
     private function stripQuotedLatin(string $text): string
     {
-        return preg_replace('/«[^«»]*[A-Za-z][^«»]*»/u', '', $text) ?? $text;
+        return preg_replace('/«[^«»]*[A-Za-z][^«»]*»|"[^"]*[A-Za-z][^"]*"/u', '', $text) ?? $text;
     }
 }
