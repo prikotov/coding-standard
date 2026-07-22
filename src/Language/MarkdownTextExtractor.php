@@ -17,7 +17,9 @@ namespace PrikotovCodingStandard\Language;
  *  - reference IDs (#123, @user, gh-123);
  *  - плейсхолдеры ({ProjectName});
  *  - латиницу в круглых скобках — переводы терминов и технические уточнения
- *    («обработчик команд (Command Handler)», «(read-only)»).
+ *    («обработчик команд (Command Handler)», «(read-only)»);
+ *  - латиницу в кавычках-ёмочках — цитирование терминов и примеров
+ *    («allowlist», «persisted rows»).
  */
 final class MarkdownTextExtractor
 {
@@ -38,6 +40,7 @@ final class MarkdownTextExtractor
         $text = $this->stripSnakeIdentifiers($text);
         $text = $this->stripPlaceholders($text);
         $text = $this->stripParenthesisedLatin($text);
+        $text = $this->stripQuotedLatin($text);
 
         return $text;
     }
@@ -143,5 +146,14 @@ final class MarkdownTextExtractor
     private function stripParenthesisedLatin(string $text): string
     {
         return preg_replace('/\([^()]*[A-Za-z][^()]*\)/', '', $text) ?? $text;
+    }
+
+    /**
+     * Удаляет латиницу в кавычках-ёмочках «...» — цитирование терминов
+     * и примеров («allowlist», «persisted rows»), а не англицизмы в прозе.
+     */
+    private function stripQuotedLatin(string $text): string
+    {
+        return preg_replace('/«[^«»]*[A-Za-z][^«»]*»/u', '', $text) ?? $text;
     }
 }

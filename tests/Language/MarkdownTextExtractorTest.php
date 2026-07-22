@@ -104,6 +104,17 @@ final class MarkdownTextExtractorTest extends TestCase
         self::assertStringContainsString('Обработчик команд', $extractor->extract($md));
     }
 
+    public function testStripsQuotedLatin(): void
+    {
+        // «Command Handler» в кавычках — цитирование термина, удаляется.
+        $extractor = new MarkdownTextExtractor();
+
+        $result = $extractor->extract('Пример термина «Command Handler» в тексте.');
+
+        self::assertStringNotContainsString('Command', $result);
+        self::assertStringContainsString('Пример термина', $result);
+    }
+
     public function testKeepsCyrillicParentheses(): void
     {
         $md = 'Термин (на русском) остаётся.';
