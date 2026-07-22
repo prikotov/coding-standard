@@ -1,0 +1,281 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * validate-language — поиск англицизмов в Markdown/text файлах.
+ *
+ * Находит английские фразы в русском тексте — пробежки из ≥2 латинских слов
+ * в строках, где есть и кириллица, и латиница. Это точный сигнал англицизма
+ * (например «persisted rows», «read-only facts»), в отличие от технической
+ * терминологии в отдельных списках и английских справочников целиком.
+ *
+ * Из анализа исключаются: YAML front matter, заголовки, code blocks,
+ * inline code, URL, namespaces, references, task IDs, имена файлов,
+ * UPPER_SNAKE-идентификаторы, плейсхолдеры и латиница в скобках
+ * (переводы терминов вроде «(Command Handler)»).
+ *
+ * Проверяются только русскоязычные документы. Язык определяется по
+ * front matter (`lang:`) или суффиксу имени файла (`name.<lang>.md`);
+ * при отсутствии признака документ считается русским.
+ *
+ * anglicism_ratio = (латинские слова вне allowlist) / (все слова). Учитываются
+ * и одиночные англицизмы (`allowlist`), и обороты (`persisted rows`). Термины
+ * в inline code исключаются экстрактором. Файлы, где ratio превышает порог,
+ * помечаются warning. Порог по умолчанию 2% — терпит немного терминов,
+ * ловит замусоренные тексты.
+ *
+ * Режим по умолчанию — warning: выводит файлы с превышением, но завершается
+ * кодом 0. Флаг --strict — завершать кодом 1 при наличии англицизмов.
+ *
+ * Usage:
+ *   php bin/validate-language [options] [<path>...]
+ *
+ * Options:
+ *   --config=<file>     PHP-конфиг (по умолчанию .coding-standard.php в корне).
+ *   --max-ratio=<f>    Максимально допустимая доля, 0..1 (по умолчанию 0.02 = 2%).
+ *   --allow=<term>      Добавить термин в allowlist (повторяемый).
+ *   --exclude=<pat>     Исключить пути по фрагменту (повторяемый).
+ *   --strict            Завершать кодом 1 при превышении порога.
+ *   --json              Машиночитаемый вывод (для будущей CI-интеграции).
+ *
+ * Конфиг читается из `.coding-standard.php` (ключ `language`), возвращая:
+ *   paths     => string[]   — файлы/директории для сканирования.
+ *   exclude   => string[]   — фрагменты путей для исключения.
+ *   max_ratio => float      — максимально допустимая доля латинских слов вне allowlist.
+ *   allowlist => string[]   — дополнительные разрешённые термины.
+ *
+ * Exit codes:
+ *   0 — нет превышений (или режим warning)
+ *   1 — найдены превышения в режиме --strict
+ */
+
+// ── Autoload (dev и consumer) ──────────────────────────────────────────────
+
+$autoloadCandidates = [
+    __DIR__ . '/../vendor/autoload.php',   // dev: корень пакета.
+    __DIR__ . '/../../../autoload.php',    // consumer: vendor/<pkg>/bin → vendor/.
+];
+foreach ($autoloadCandidates as $candidate) {
+    if (is_file($candidate)) {
+        require_once $candidate;
+        break;
+    }
+}
+
+use PrikotovCodingStandard\Language\AnglicismAnalyzer;
+use PrikotovCodingStandard\Language\DocumentLanguageDetector;
+use PrikotovCodingStandard\Language\MarkdownTextExtractor;
+
+// ── Defaults ───────────────────────────────────────────────────────────────
+
+$DEFAULT_PATHS = ['docs/', 'todo/', 'README.md', 'AGENTS.md'];
+$DEFAULT_SKIP_DIRS = ['vendor/', '.git/', 'var/', 'tmp/', 'cache/', 'node_modules/'];
+$DEFAULT_MAX_RATIO = 0.02;
+$DEFAULT_EXCLUDE = [];
+
+// ── Parse arguments ────────────────────────────────────────────────────────
+
+$argPaths = [];
+$argExcludes = [];
+$argAllow = [];
+$maxRatio = null;
+$configFile = null;
+$strict = false;
+$jsonOutput = false;
+
+foreach (array_slice($argv, 1) as $arg) {
+    if ($arg === '--strict') {
+        $strict = true;
+    } elseif ($arg === '--json') {
+        $jsonOutput = true;
+    } elseif (str_starts_with($arg, '--config=')) {
+        $configFile = substr($arg, strlen('--config='));
+    } elseif (str_starts_with($arg, '--max-ratio=')) {
+        $maxRatio = (float) substr($arg, strlen('--max-ratio='));
+    } elseif (str_starts_with($arg, '--allow=')) {
+        $argAllow[] = substr($arg, strlen('--allow='));
+    } elseif (str_starts_with($arg, '--exclude=')) {
+        $argExcludes[] = substr($arg, strlen('--exclude='));
+    } else {
+        $argPaths[] = $arg;
+    }
+}
+
+// ── Load config (.coding-standard.php, ключ `language`) ──────────────
+
+$projectRoot = getcwd() ?: '.';
+$configFilePath = $configFile ?? "{$projectRoot}/.coding-standard.php";
+
+$fullConfig = is_file($configFilePath) ? (array) require $configFilePath : [];
+$config = $fullConfig['language'] ?? [];
+
+$paths = $argPaths !== [] ? $argPaths : ($config['paths'] ?? $DEFAULT_PATHS);
+$excludePatterns = array_values(array_unique(array_merge(
+    $config['exclude'] ?? $DEFAULT_EXCLUDE,
+    $argExcludes,
+)));
+$skipDirs = $DEFAULT_SKIP_DIRS;
+$maxRatio ??= $config['max_ratio'] ?? $DEFAULT_MAX_RATIO;
+$allowlist = array_values(array_unique(array_merge(
+    $config['allowlist'] ?? [],
+    $argAllow,
+)));
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+/**
+ * Собрать .md/.txt файлы из путей.
+ *
+ * @param string[] $paths
+ * @return string[]
+ */
+function collectTextFiles(array $paths, array $skipDirs, array $excludePatterns): array
+{
+    $files = [];
+    foreach ($paths as $path) {
+        if (is_file($path)) {
+            $files[] = realpath($path) ?: $path;
+            continue;
+        }
+        if (!is_dir($path)) {
+            fwrite(STDERR, "  Warning: path not found: {$path}\n");
+            continue;
+        }
+        $iter = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
+        );
+        foreach ($iter as $item) {
+            if (!$item->isFile()) {
+                continue;
+            }
+            if (!in_array($item->getExtension(), ['md', 'txt'], true)) {
+                continue;
+            }
+            $full = $item->getPathname();
+            foreach ([...$skipDirs, ...$excludePatterns] as $skip) {
+                if (str_contains($full, $skip)) {
+                    continue 2;
+                }
+            }
+            $files[] = $full;
+        }
+    }
+    sort($files);
+
+    return array_unique($files);
+}
+
+// ── Run ────────────────────────────────────────────────────────────────────
+
+$files = collectTextFiles($paths, $skipDirs, $excludePatterns);
+
+$extractor = new MarkdownTextExtractor();
+$analyzer = new AnglicismAnalyzer($allowlist);
+$detector = new DocumentLanguageDetector();
+
+$results = [];
+$alarms = 0;
+$skipped = 0;
+$conflicts = [];
+
+foreach ($files as $filePath) {
+    $content = file_get_contents($filePath);
+    if ($content === false) {
+        continue;
+    }
+    $detection = $detector->detect($filePath, $content);
+    $relativePath = ltrim(str_replace($projectRoot, '', $filePath), '/');
+    if ($detection->conflict) {
+        $conflicts[] = [
+            'file' => $relativePath,
+            'front_matter' => $detection->fromFrontMatter,
+            'filename' => $detection->fromFilename,
+        ];
+        continue;
+    }
+    if ($detection->language !== DocumentLanguageDetector::DEFAULT_LANGUAGE) {
+        $skipped++;
+        continue;
+    }
+    $text = $extractor->extract($content);
+    $analysis = $analyzer->analyze($text);
+
+    $overThreshold = $analysis->ratio > $maxRatio;
+    if ($overThreshold) {
+        $alarms++;
+    }
+    $results[] = [
+        'file' => $relativePath,
+        'total' => $analysis->totalWords,
+        'anglicisms' => $analysis->anglicismWords,
+        'ratio' => $analysis->ratio,
+        'over' => $overThreshold,
+        'sample' => $analysis->sampleWords,
+    ];
+}
+
+// ── Report ─────────────────────────────────────────────────────────────────
+
+if ($jsonOutput) {
+    echo json_encode([
+        'max_ratio' => $maxRatio,
+        'files_over_threshold' => $alarms,
+        'conflicts' => $conflicts,
+        'files' => array_values(array_filter($results, static fn (array $r): bool => $r['over'])),
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
+
+    $hasErrors = $alarms > 0 || $conflicts !== [];
+    exit($strict && $hasErrors ? 1 : 0);
+}
+
+$maxRatioPct = number_format($maxRatio * 100, 1);
+echo "Language check: anglicism ratio in " . count($files) . " file(s) (max ratio {$maxRatioPct}% of latin words outside allowlist)";
+if ($skipped > 0) {
+    echo "; skipped {$skipped} non-Russian file(s)";
+}
+echo "\n\n";
+
+$shown = 0;
+foreach ($results as $r) {
+    if (!$r['over']) {
+        continue;
+    }
+    $shown++;
+    $pct = number_format($r['ratio'] * 100, 1);
+    echo "  ⚠ {$r['file']} — ratio {$pct}% ({$r['anglicisms']} latin word(s) / {$r['total']})\n";
+    if ($r['sample'] !== []) {
+        $wordsList = implode(', ', array_slice($r['sample'], 0, 10));
+        echo "      Words: {$wordsList}\n";
+    }
+}
+if ($shown === 0) {
+    $highestRatio = empty($results) ? 0.0 : max(array_column($results, 'ratio'));
+    echo "  ✓ No file exceeds max ratio (highest ratio " . number_format($highestRatio * 100, 1) . "%)\n";
+}
+if ($conflicts !== []) {
+    echo "\n";
+    foreach ($conflicts as $c) {
+        echo "  ✗ {$c['file']} — conflicting language markers: "
+            . "front matter `{$c['front_matter']}` vs filename `{$c['filename']}`\n";
+    }
+}
+echo "\n";
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+if ($conflicts !== []) {
+    echo "✗ " . count($conflicts) . " file(s) with conflicting language markers\n";
+}
+if ($alarms > 0) {
+    $mode = $strict ? 'STRICT' : 'warning';
+    echo "⚠ {$alarms} file(s) exceed max ratio ({$mode} mode)\n";
+}
+if ($conflicts !== []) {
+    exit($strict ? 1 : 0);
+}
+if ($alarms > 0) {
+    exit($strict ? 1 : 0);
+}
+echo "✓ All checks passed\n";
+exit(0);

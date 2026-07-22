@@ -10,7 +10,7 @@
             "email": "prikotov@gmail.com"
         }
     ],
-    "bin": ["bin/coding-standard-init", "bin/validate-md-links"],
+    "bin": ["bin/coding-standard-init", "bin/validate-md-links", "bin/validate-language"],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
@@ -54,6 +54,7 @@
         "sniff-test": "php bin/run-sniff-tests.php",
         "validate-docs": "php bin/validate-docs.php",
         "validate-md-links": "php bin/validate-md-links",
+        "validate-language": "php bin/validate-language",
         "validate-todo": [
             "php vendor/bin/todo-md-validate todo/*.todo.md",
             "php vendor/bin/todo-md-validate todo/backlog/"
