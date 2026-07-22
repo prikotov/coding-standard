@@ -14,5 +14,6 @@ final class LanguageDetection
         public readonly bool $conflict,
         public readonly ?string $fromFrontMatter,
         public readonly ?string $fromFilename,
-    ) {}
+    ) {
+    }
 }
