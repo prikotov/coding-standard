@@ -15,6 +15,9 @@ namespace PrikotovCodingStandard\Language;
  *  - URL и email;
  *  - namespaces (\Foo\Bar\Baz);
  *  - reference IDs (#123, @user, gh-123);
+ *  - task IDs (TASK-feat-...);
+ *  - имена файлов (AGENTS.md, config.php);
+ *  - UPPER_SNAKE идентификаторы;
  *  - плейсхолдеры ({ProjectName});
  *  - латиницу в круглых скобках — переводы терминов и технические уточнения
  *    («обработчик команд (Command Handler)», «(read-only)»);
@@ -27,7 +30,6 @@ final class MarkdownTextExtractor
     {
         $text = $markdown;
         $text = $this->stripFrontMatter($text);
-        $text = $this->stripHeadings($text);
         $text = $this->stripFencedCodeBlocks($text);
         $text = $this->stripInlineCode($text);
         $text = $this->stripHtmlTags($text);
@@ -56,15 +58,6 @@ final class MarkdownTextExtractor
         }
 
         return substr($text, $end + 5);
-    }
-
-    /**
-     * Убирает строки ATX-заголовков (# ... ######) — это структура документа,
-     * не running text. Особенно важно для todo-шаблона с английскими секциями.
-     */
-    private function stripHeadings(string $text): string
-    {
-        return preg_replace('/^[ \t>]*#{1,6}\s+.*$/m', '', $text) ?? $text;
     }
 
     private function stripFencedCodeBlocks(string $text): string

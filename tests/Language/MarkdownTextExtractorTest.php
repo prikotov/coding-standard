@@ -124,13 +124,14 @@ final class MarkdownTextExtractorTest extends TestCase
         self::assertSame('Термин (на русском) остаётся.', $extractor->extract($md));
     }
 
-    public function testStripsMarkdownHeadings(): void
+    public function testHeadingsAreAnalysedNotStripped(): void
     {
-        $md = "# Title\n\n## Section\n\nПроза документа.";
-
+        // Заголовок — часть документа, английский заголовок ловится как англицизм.
         $extractor = new MarkdownTextExtractor();
 
-        self::assertSame("\n\n\n\nПроза документа.", $extractor->extract($md));
+        $result = $extractor->extract('# Persisted Rows Header');
+
+        self::assertStringContainsString('Persisted', $result);
     }
 
     public function testStripsReferences(): void
