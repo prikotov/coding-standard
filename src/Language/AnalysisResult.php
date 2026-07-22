@@ -10,7 +10,7 @@ namespace PrikotovCodingStandard\Language;
 final class AnalysisResult
 {
     /**
-     * @param int $totalWords Всего слов-токенов в прозе.
+     * @param int $totalWords Всего слов-токенов в тексте.
      * @param int $anglicismWords Латинских слов вне allowlist.
      * @param float $ratio anglicismWords / totalWords.
      * @param list<string> $suspiciousPhrases Пробежки из ≥2 латинских слов с хотя бы одним не из allowlist.

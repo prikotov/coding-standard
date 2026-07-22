@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PrikotovCodingStandard\Language;
 
 /**
- * Извлекатель человекочитаемой прозы из Markdown.
+ * Извлекатель человекочитаемого текста из Markdown.
  *
  * Удаляет техническое содержимое, оставляя текст для языкового анализа:
  *  - YAML front matter;
@@ -57,7 +57,7 @@ final class MarkdownTextExtractor
 
     /**
      * Убирает строки ATX-заголовков (# ... ######) — это структура документа,
-     * не running prose. Особенно важно для todo-шаблона с английскими секциями.
+     * не running text. Особенно важно для todo-шаблона с английскими секциями.
      */
     private function stripHeadings(string $text): string
     {

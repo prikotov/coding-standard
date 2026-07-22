@@ -6,7 +6,7 @@ declare(strict_types=1);
 /**
  * validate-language — поиск англицизмов в Markdown/text файлах.
  *
- * Находит английские фразы в русской прозе — пробежки из ≥2 латинских слов
+ * Находит английские фразы в русском тексте — пробежки из ≥2 латинских слов
  * в строках, где есть и кириллица, и латиница. Это точный сигнал англицизма
  * (например «persisted rows», «read-only facts»), в отличие от технической
  * терминологии в отдельных списках и английских справочников целиком.
@@ -179,8 +179,8 @@ foreach ($files as $filePath) {
         $skipped++;
         continue;
     }
-    $prose = $extractor->extract($content);
-    $analysis = $analyzer->analyze($prose);
+    $text = $extractor->extract($content);
+    $analysis = $analyzer->analyze($text);
 
     $relativePath = ltrim(str_replace($projectRoot, '', $filePath), '/');
     $hasPhrases = $analysis->suspiciousPhrases !== [];
@@ -209,7 +209,7 @@ if ($jsonOutput) {
     exit($strict && $alarms > 0 ? 1 : 0);
 }
 
-echo "Language check: anglicisms in " . count($files) . " file(s) (warning on English phrases in Russian prose; ratio shown as info)";
+echo "Language check: anglicisms in " . count($files) . " file(s) (warning on English phrases in Russian text; ratio shown as info)";
 if ($skipped > 0) {
     echo "; skipped {$skipped} non-Russian file(s)";
 }
@@ -232,7 +232,7 @@ foreach ($results as $r) {
 }
 if ($shown === 0) {
     $maxRatio = empty($results) ? 0.0 : max(array_column($results, 'ratio'));
-    echo "  ✓ No English phrases in Russian prose found (max latin ratio " . number_format($maxRatio * 100, 1) . "%)
+    echo "  ✓ No English phrases in Russian text found (max latin ratio " . number_format($maxRatio * 100, 1) . "%)
 ";
 }
 echo "\n";
@@ -240,7 +240,7 @@ echo "\n";
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 if ($alarms > 0) {
     $mode = $strict ? 'STRICT' : 'warning';
-    echo "⚠ {$alarms} file(s) with anglicisms in prose ({$mode} mode)\n";
+    echo "⚠ {$alarms} file(s) with anglicisms in text ({$mode} mode)\n";
     exit($strict ? 1 : 0);
 }
 echo "✓ All checks passed\n";
