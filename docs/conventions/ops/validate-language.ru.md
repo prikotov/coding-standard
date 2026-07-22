@@ -33,20 +33,20 @@ description: Настройка и использование валидатор
 
 Из подсчёта исключаются технические фрагменты (они не относятся к тексту):
 
-| Фрагмент | Пример | Обработка |
-|---|---|---|
-| YAML front matter | `---\nname: ...\n---` | удаляется |
-| Fenced code blocks | ` ``` ... ``` ` | удаляется |
-| Inline code | `` `code` `` | удаляется |
-| URL | `https://example.com` | удаляется |
-| Namespaces | `\App\Module\Foo` | удаляется |
-| References | `#65`, `@user`, `gh-123` | удаляется |
-| Task IDs | `TASK-feat-...` | удаляется |
-| Имена файлов | `AGENTS.md`, `config.php` | удаляется |
-| UPPER_SNAKE идентификаторы | `AGENTS_TASK_WRITING_GUIDE` | удаляется |
-| Плейсхолдеры | `{ProjectName}` | удаляется |
-| Латиница в скобках | `(Command Handler)` | удаляется (перевод термина) |
-| Латиница в кавычках | «allowlist», "persisted rows" | удаляется (цитирование термина) |
+| Фрагмент | Пример |
+|---|---|
+| YAML front matter | `---\nname: ...\n---` |
+| Fenced code blocks | ` ``` ... ``` ` |
+| Inline code | `` `code` `` |
+| URL | `https://example.com` |
+| Namespaces | `\App\Module\Foo` |
+| References | `#65`, `@user`, `gh-123` |
+| Task IDs | `TASK-feat-...` |
+| Имена файлов | `AGENTS.md`, `config.php` |
+| UPPER_SNAKE идентификаторы | `AGENTS_TASK_WRITING_GUIDE` |
+| Плейсхолдеры | `{ProjectName}` |
+| Латиница в скобках (перевод термина) | `(Command Handler)` |
+| Латиница в кавычках (цитирование термина) | «allowlist», "persisted rows" |
 
 ### Allowlist технических терминов
 
