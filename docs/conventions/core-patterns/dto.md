@@ -93,10 +93,10 @@ Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) 
 {ProjectName}\Common\Module\{ModuleName}\Application\Event\{EventName}\{Name}Dto
 ```
 
-- **Infrastructure Component**:
+- **Component** (в любом слое — Infrastructure, Integration):
 
 ```
-{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}\Dto\{Name}Dto
+{ProjectName}\Common\Module\{ModuleName}\{LayerName}\Component\{ComponentName}\Dto\{Name}Dto
 ```
 
 - **Domain** — рядом с доменным объектом или группой:
@@ -107,12 +107,6 @@ Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) 
 
 Например, для результата доменного сервиса: `...\Domain\Service\{ServiceName}\{Name}Dto`.
 `{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает переиспользоваться за пределами одной группы — заменяем его на `VO`.
-
-- **Integration** — рядом с интеграцией, реализующей доменный интерфейс:
-
-```
-{ProjectName}\Common\Module\{ModuleName}\Integration\...\{Name}Dto
-```
 
 ## Как используем
 
