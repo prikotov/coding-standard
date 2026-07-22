@@ -33,7 +33,7 @@ final class AnglicismAnalyzerTest extends TestCase
 
     public function testAllowlistedTermsAreNotAnglicisms(): void
     {
-        $analyzer = new AnglicismAnalyzer();
+        $analyzer = new AnglicismAnalyzer(['Symfony', 'DTO']);
 
         // Symfony и DTO — в allowlist.
         $result = $analyzer->analyze('Используем Symfony и DTO в проекте.');
@@ -52,7 +52,7 @@ final class AnglicismAnalyzerTest extends TestCase
 
     public function testAllowlistedOnlyEnglishLineHasNoAnglicisms(): void
     {
-        $analyzer = new AnglicismAnalyzer();
+        $analyzer = new AnglicismAnalyzer(['Symfony', 'PHPUnit', 'PHPStan']);
 
         // Строка целиком из allowlist-терминов — англицизмов нет.
         $result = $analyzer->analyze('Symfony PHPUnit PHPStan');
@@ -121,7 +121,7 @@ final class AnglicismAnalyzerTest extends TestCase
 
     public function testDddLayerTermsAreAllowed(): void
     {
-        $analyzer = new AnglicismAnalyzer();
+        $analyzer = new AnglicismAnalyzer(['Domain', 'Service', 'Repository']);
 
         // Domain, Service, Repository — названия слоёв/паттернов в allowlist.
         $result = $analyzer->analyze('Domain Service возвращает Repository.');

@@ -50,9 +50,7 @@ description: Настройка и использование валидатор
 
 ### Allowlist технических терминов
 
-Базовый allowlist (case-insensitive) включает имена собственные, аббревиатуры, названия DDD-слоёв/паттернов и базовую терминологию Markdown: `Symfony`, `Doctrine`, `PHP`, `SQL`, `API`, `DTO`, `Command`, `Query`, `Domain`, `Application`, `Service`, `Repository`, `Entity`, `VO`, `front`, `matter`, `code`, `block` и т.п. Слова из allowlist не считаются англицизмами.
-
-Расширение allowlist под проект — через конфиг (ключ `allowlist`).
+Allowlist (case-insensitive) задаётся в конфиге `.coding-standard.php` (ключ `language.allowlist`) — захардкоженного списка в коде нет, проект сам решает что считать термином, а не англицизмом. `coding-standard-init` записывает начальный набор — имена собственные и аббревиатуры (`Symfony`, `Doctrine`, `PHP`, `SQL`, `API`, `DTO`, ...).
 
 ## Использование
 
@@ -102,7 +100,7 @@ return [
         // Максимально допустимая доля слов в английских фразах (по умолчанию 0.02 = 2%).
         'max_ratio' => 0.05,
 
-        // Дополнительные разрешённые термины (базовый allowlist расширяется, не заменяется).
+        // Разрешённые термины (дополняйте под проект).
         'allowlist' => ['Panther', 'Twig', 'AssetMapper'],
     ],
 ];

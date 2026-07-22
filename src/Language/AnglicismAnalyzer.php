@@ -9,45 +9,20 @@ namespace PrikotovCodingStandard\Language;
  *
  * Англицизм — любое латинское слово вне allowlist технических терминов
  * (включая одиночные). Метрика: ratio = anglicismWords / totalWords.
+ * Allowlist задаётся проектом через конфиг, захардкоженного списка нет.
  */
 final class AnglicismAnalyzer
 {
-    /**
-     * Базовый allowlist технических терминов (case-insensitive).
-     * Имена собственные, аббревиатуры, паттерны из DDD-конвенций.
-     */
-    public const DEFAULT_ALLOWLIST = [
-        // Инструменты и фреймворки.
-        'Symfony', 'Doctrine', 'PHPUnit', 'PHPStan', 'Deptrac', 'Composer',
-        'Git', 'GitHub', 'Docker',
-        // Аббревиатуры.
-        'PHP', 'SQL', 'JSON', 'YAML', 'HTML', 'CSS', 'HTTP', 'HTTPS',
-        'DB', 'DBAL', 'ORM', 'API', 'CRUD', 'DDD', 'SOLID', 'CI', 'CD',
-        'URL', 'URI', 'ID', 'UUID', 'VO', 'DAO', 'REST', 'RPC', 'SDK',
-        'CLI', 'UI', 'UX', 'IO', 'OS', 'PR', 'DTO', 'MOEX',
-        // Паттерны и термины конвенций.
-        'Command', 'Query', 'T-Invest',
-        // Слои и паттерны DDD (названия слоёв/концепций как термины).
-        'Application', 'Domain', 'Infrastructure', 'Integration', 'Presentation',
-        'Module', 'Layer', 'Service', 'Event', 'Handler', 'Repository',
-        'Entity', 'Component', 'Factory', 'Builder', 'Gateway', 'Calculator',
-        'Specification', 'Subscriber', 'Listener', 'Controller', 'Validator',
-        'Voter', 'Rule', 'Value', 'Object', 'Enum', 'Migration', 'Fixture',
-        // Терминология Markdown (базовые термины синтаксиса/структуры).
-        'Markdown', 'matter', 'front', 'fenced', 'inline', 'code', 'block',
-        'blocks', 'link', 'links', 'reference', 'slug', 'anchor', 'heading',
-    ];
-
     /** @var array<string, true> */
     private array $allowlistSet;
 
     /**
-     * @param list<string> $extraAllowlist Дополнительные разрешённые термины.
+     * @param list<string> $allowlist Разрешённые термины (case-insensitive).
      */
-    public function __construct(array $extraAllowlist = [])
+    public function __construct(array $allowlist = [])
     {
         $this->allowlistSet = [];
-        foreach (array_merge(self::DEFAULT_ALLOWLIST, $extraAllowlist) as $term) {
+        foreach ($allowlist as $term) {
             $trimmed = trim($term);
             if ($trimmed !== '') {
                 $this->allowlistSet[mb_strtolower($trimmed)] = true;
