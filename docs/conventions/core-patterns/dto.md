@@ -81,10 +81,10 @@ Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) 
 {ProjectName}\Common\Module\{ModuleName}\Application\UseCase\{Command|Query}\{Case}\{Request|Result|Response}Dto
 ```
 
-- **Application Service**:
+- **Service** (в любом слое — Application, Infrastructure, Integration):
 
 ```
-{ProjectName}\Common\Module\{ModuleName}\Application\Service\{ServiceName}\{Name}Dto
+{ProjectName}\Common\Module\{ModuleName}\{LayerName}\Service\{ServiceName}\{Name}Dto
 ```
 
 - **Application Event**:
@@ -97,12 +97,6 @@ Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) 
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}\Dto\{Name}Dto
-```
-
-- **Infrastructure Service**:
-
-```
-{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Service\{ServiceName}\{Name}Dto
 ```
 
 - **Domain** — рядом с доменным объектом или группой:
