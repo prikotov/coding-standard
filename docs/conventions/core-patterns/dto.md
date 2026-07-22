@@ -106,14 +106,13 @@ Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) 
 ```
 
 Например, для результата доменного сервиса: `...\Domain\Service\{ServiceName}\{Name}Dto`.
+`{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает переиспользоваться за пределами одной группы — заменяем его на `VO`.
 
 - **Integration** — рядом с интеграцией, реализующей доменный интерфейс:
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Integration\...\{Name}Dto
 ```
-
-Если DTO начинает переиспользоваться за пределами одной группы — заменяем его на `VO`.
 
 ## Как используем
 
