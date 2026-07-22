@@ -1,0 +1,231 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * validate-language — поиск англицизмов в Markdown/text файлах.
+ *
+ * Находит английские фразы в русской прозе — пробежки из ≥2 латинских слов
+ * в строках, где есть и кириллица, и латиница. Это точный сигнал англицизма
+ * (например «persisted rows», «read-only facts»), в отличие от технической
+ * терминологии в отдельных списках и английских справочников целиком.
+ *
+ * Из анализа исключаются: YAML front matter, заголовки, code blocks,
+ * inline code, URL, namespaces, references, task IDs, имена файлов,
+ * UPPER_SNAKE-идентификаторы, плейсхолдеры и латиница в скобках
+ * (переводы терминов вроде «(Command Handler)»).
+ *
+ * anglicism_ratio = (латинские слова вне allowlist) / (все слова) считается
+ * и показывается как info, но не триггерит warning сама по себе —
+ * на технических docs baseline латиницы высокий из-за терминологии.
+ *
+ * Режим по умолчанию — warning: выводит файлы с англицизмами, но завершается
+ * кодом 0. Флаг --strict — завершать кодом 1 при наличии англицизмов.
+ *
+ * Usage:
+ *   php bin/validate-language [options] [<path>...]
+ *
+ * Options:
+ *   --config=<file>     PHP-конфиг (по умолчанию .language-lint.php в корне).
+ *   --allow=<term>      Добавить термин в allowlist (повторяемый).
+ *   --exclude=<pat>     Исключить пути по фрагменту (повторяемый).
+ *   --strict            Завершать кодом 1 при наличии англицизмов.
+ *   --json              Машиночитаемый вывод (для будущей CI-интеграции).
+ *
+ * Конфиг (.language-lint.php) возвращает массив с ключами:
+ *   paths     => string[]   — файлы/директории для сканирования.
+ *   exclude   => string[]   — фрагменты путей для исключения.
+ *   allowlist => string[]   — дополнительные разрешённые термины.
+ *
+ * Exit codes:
+ *   0 — англицизмов нет (или режим warning)
+ *   1 — найдены англицизмы в режиме --strict
+ */
+
+// ── Autoload (dev и consumer) ──────────────────────────────────────────────
+
+$autoloadCandidates = [
+    __DIR__ . '/../vendor/autoload.php',   // dev: корень пакета.
+    __DIR__ . '/../../../autoload.php',    // consumer: vendor/<pkg>/bin → vendor/.
+];
+foreach ($autoloadCandidates as $candidate) {
+    if (is_file($candidate)) {
+        require_once $candidate;
+        break;
+    }
+}
+
+use PrikotovCodingStandard\Language\AnglicismAnalyzer;
+use PrikotovCodingStandard\Language\MarkdownTextExtractor;
+
+// ── Defaults ───────────────────────────────────────────────────────────────
+
+$DEFAULT_PATHS = ['docs/', 'todo/', 'README.md', 'AGENTS.md'];
+$DEFAULT_SKIP_DIRS = ['vendor/', '.git/', 'var/', 'tmp/', 'cache/', 'node_modules/'];
+$DEFAULT_EXCLUDE = [];
+
+// ── Parse arguments ────────────────────────────────────────────────────────
+
+$argPaths = [];
+$argExcludes = [];
+$argAllow = [];
+$configFile = null;
+$strict = false;
+$jsonOutput = false;
+
+foreach (array_slice($argv, 1) as $arg) {
+    if ($arg === '--strict') {
+        $strict = true;
+    } elseif ($arg === '--json') {
+        $jsonOutput = true;
+    } elseif (str_starts_with($arg, '--config=')) {
+        $configFile = substr($arg, strlen('--config='));
+    } elseif (str_starts_with($arg, '--allow=')) {
+        $argAllow[] = substr($arg, strlen('--allow='));
+    } elseif (str_starts_with($arg, '--exclude=')) {
+        $argExcludes[] = substr($arg, strlen('--exclude='));
+    } else {
+        $argPaths[] = $arg;
+    }
+}
+
+// ── Load config ────────────────────────────────────────────────────────────
+
+$projectRoot = getcwd() ?: '.';
+$configFilePath = $configFile ?? "{$projectRoot}/.language-lint.php";
+
+$config = is_file($configFilePath) ? (array) require $configFilePath : [];
+
+$paths = $argPaths !== [] ? $argPaths : ($config['paths'] ?? $DEFAULT_PATHS);
+$excludePatterns = array_values(array_unique(array_merge(
+    $config['exclude'] ?? $DEFAULT_EXCLUDE,
+    $argExcludes,
+)));
+$skipDirs = $DEFAULT_SKIP_DIRS;
+$allowlist = array_values(array_unique(array_merge(
+    $config['allowlist'] ?? [],
+    $argAllow,
+)));
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+/**
+ * Собрать .md/.txt файлы из путей.
+ *
+ * @param string[] $paths
+ * @return string[]
+ */
+function collectTextFiles(array $paths, array $skipDirs, array $excludePatterns): array
+{
+    $files = [];
+    foreach ($paths as $path) {
+        if (is_file($path)) {
+            $files[] = realpath($path) ?: $path;
+            continue;
+        }
+        if (!is_dir($path)) {
+            fwrite(STDERR, "  Warning: path not found: {$path}\n");
+            continue;
+        }
+        $iter = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
+        );
+        foreach ($iter as $item) {
+            if (!$item->isFile()) {
+                continue;
+            }
+            if (!in_array($item->getExtension(), ['md', 'txt'], true)) {
+                continue;
+            }
+            $full = $item->getPathname();
+            foreach ([...$skipDirs, ...$excludePatterns] as $skip) {
+                if (str_contains($full, $skip)) {
+                    continue 2;
+                }
+            }
+            $files[] = $full;
+        }
+    }
+    sort($files);
+
+    return array_unique($files);
+}
+
+// ── Run ────────────────────────────────────────────────────────────────────
+
+$files = collectTextFiles($paths, $skipDirs, $excludePatterns);
+
+$extractor = new MarkdownTextExtractor();
+$analyzer = new AnglicismAnalyzer($allowlist);
+
+$results = [];
+$alarms = 0;
+
+foreach ($files as $filePath) {
+    $content = file_get_contents($filePath);
+    if ($content === false) {
+        continue;
+    }
+    $prose = $extractor->extract($content);
+    $analysis = $analyzer->analyze($prose);
+
+    $relativePath = ltrim(str_replace($projectRoot, '', $filePath), '/');
+    $hasPhrases = $analysis->suspiciousPhrases !== [];
+    if ($hasPhrases) {
+        $alarms++;
+    }
+    $results[] = [
+        'file' => $relativePath,
+        'total' => $analysis->totalWords,
+        'anglicisms' => $analysis->anglicismWords,
+        'ratio' => $analysis->ratio,
+        'has_phrases' => $hasPhrases,
+        'phrases' => $analysis->suspiciousPhrases,
+        'sample' => $analysis->sampleWords,
+    ];
+}
+
+// ── Report ─────────────────────────────────────────────────────────────────
+
+if ($jsonOutput) {
+    echo json_encode([
+        'files_with_anglicisms' => $alarms,
+        'files' => array_values(array_filter($results, static fn (array $r): bool => $r['has_phrases'])),
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
+
+    exit($strict && $alarms > 0 ? 1 : 0);
+}
+
+echo "Language check: anglicisms in " . count($files) . " file(s) (warning on English phrases in Russian prose; ratio shown as info)
+
+";
+
+$shown = 0;
+foreach ($results as $r) {
+    if (!$r['has_phrases']) {
+        continue;
+    }
+    $shown++;
+    $pct = number_format($r['ratio'] * 100, 1);
+    echo "  ⚠ {$r['file']} — {$r['anglicisms']} latin word(s), ratio {$pct}%
+";
+    $phrasesList = implode(', ', array_slice($r['phrases'], 0, 5));
+    echo "      Phrases: {$phrasesList}
+";
+}
+if ($shown === 0) {
+    $maxRatio = empty($results) ? 0.0 : max(array_column($results, 'ratio'));
+    echo "  ✓ No English phrases in Russian prose found (max latin ratio " . number_format($maxRatio * 100, 1) . "%)
+";
+}
+echo "\n";
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+if ($alarms > 0) {
+    $mode = $strict ? 'STRICT' : 'warning';
+    echo "⚠ {$alarms} file(s) with anglicisms in prose ({$mode} mode)\n";
+    exit($strict ? 1 : 0);
+}
+echo "✓ All checks passed\n";
+exit(0);
