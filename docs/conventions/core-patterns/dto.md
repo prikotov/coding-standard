@@ -59,7 +59,7 @@ description: Правила создания и использования об�
 
 ### Общие DTO
 
-- **Общие DTO приложения** (переиспользуются во всём приложении — `PaginationDto`, `IdDto`, `SortDto`):
+- **Общие DTO приложения** (переиспользуются во всём приложении):
 
 ```
 {ProjectName}\Common\Application\Dto\{Name}Dto
