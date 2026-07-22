@@ -178,21 +178,30 @@ $detector = new DocumentLanguageDetector();
 $results = [];
 $alarms = 0;
 $skipped = 0;
+$conflicts = [];
 
 foreach ($files as $filePath) {
     $content = file_get_contents($filePath);
     if ($content === false) {
         continue;
     }
-    $lang = $detector->detect($filePath, $content);
-    if ($lang !== DocumentLanguageDetector::DEFAULT_LANGUAGE) {
+    $detection = $detector->detect($filePath, $content);
+    $relativePath = ltrim(str_replace($projectRoot, '', $filePath), '/');
+    if ($detection->conflict) {
+        $conflicts[] = [
+            'file' => $relativePath,
+            'front_matter' => $detection->fromFrontMatter,
+            'filename' => $detection->fromFilename,
+        ];
+        continue;
+    }
+    if ($detection->language !== DocumentLanguageDetector::DEFAULT_LANGUAGE) {
         $skipped++;
         continue;
     }
     $text = $extractor->extract($content);
     $analysis = $analyzer->analyze($text);
 
-    $relativePath = ltrim(str_replace($projectRoot, '', $filePath), '/');
     $overThreshold = $analysis->ratio > $maxRatio;
     if ($overThreshold) {
         $alarms++;
@@ -213,10 +222,12 @@ if ($jsonOutput) {
     echo json_encode([
         'max_ratio' => $maxRatio,
         'files_over_threshold' => $alarms,
+        'conflicts' => $conflicts,
         'files' => array_values(array_filter($results, static fn (array $r): bool => $r['over'])),
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
 
-    exit($strict && $alarms > 0 ? 1 : 0);
+    $hasErrors = $alarms > 0 || $conflicts !== [];
+    exit($strict && $hasErrors ? 1 : 0);
 }
 
 $maxRatioPct = number_format($maxRatio * 100, 1);
@@ -243,12 +254,27 @@ if ($shown === 0) {
     $highestRatio = empty($results) ? 0.0 : max(array_column($results, 'ratio'));
     echo "  ✓ No file exceeds max ratio (highest ratio " . number_format($highestRatio * 100, 1) . "%)\n";
 }
+if ($conflicts !== []) {
+    echo "\n";
+    foreach ($conflicts as $c) {
+        echo "  ✗ {$c['file']} — conflicting language markers: "
+            . "front matter `{$c['front_matter']}` vs filename `{$c['filename']}`\n";
+    }
+}
 echo "\n";
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+if ($conflicts !== []) {
+    echo "✗ " . count($conflicts) . " file(s) with conflicting language markers\n";
+}
 if ($alarms > 0) {
     $mode = $strict ? 'STRICT' : 'warning';
     echo "⚠ {$alarms} file(s) exceed max ratio ({$mode} mode)\n";
+}
+if ($conflicts !== []) {
+    exit($strict ? 1 : 0);
+}
+if ($alarms > 0) {
     exit($strict ? 1 : 0);
 }
 echo "✓ All checks passed\n";

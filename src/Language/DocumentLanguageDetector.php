@@ -7,31 +7,40 @@ namespace PrikotovCodingStandard\Language;
 /**
  * Определяет язык документа по имени файла и front matter.
  *
- * Приоритет: front matter `lang` > суффикс имени файла `.<lang>.md`.
- * По умолчанию (нет признака) — русский (`ru`): документы без явной пометки
- * считаются русскоязычными и проверяются на англицизмы.
+ * Признаки языка:
+ *  - front matter: `lang: en`;
+ *  - суффикс имени файла: `name.en.md`.
+ *
+ * Если язык указан в обоих местах и значения совпадают — берётся оно.
+ * Если различаются — это ошибка конфигурации: {@see LanguageDetection::$conflict}.
+ * Без признака язык считается русским (DocumentLanguageDetector::DEFAULT_LANGUAGE).
  */
 final class DocumentLanguageDetector
 {
     public const DEFAULT_LANGUAGE = 'ru';
 
-    /**
-     * @param string $filePath Путь к файлу (для имени).
-     * @param string $content  Содержимое (для front matter).
-     */
-    public function detect(string $filePath, string $content): string
+    public function detect(string $filePath, string $content): LanguageDetection
     {
         $fromFrontMatter = $this->detectFromFrontMatter($content);
-        if ($fromFrontMatter !== null) {
-            return $fromFrontMatter;
-        }
-
         $fromFilename = $this->detectFromFilename($filePath);
-        if ($fromFilename !== null) {
-            return $fromFilename;
+
+        if ($fromFrontMatter !== null && $fromFilename !== null && $fromFrontMatter !== $fromFilename) {
+            return new LanguageDetection(
+                language: self::DEFAULT_LANGUAGE,
+                conflict: true,
+                fromFrontMatter: $fromFrontMatter,
+                fromFilename: $fromFilename,
+            );
         }
 
-        return self::DEFAULT_LANGUAGE;
+        $language = $fromFrontMatter ?? $fromFilename ?? self::DEFAULT_LANGUAGE;
+
+        return new LanguageDetection(
+            language: $language,
+            conflict: false,
+            fromFrontMatter: $fromFrontMatter,
+            fromFilename: $fromFilename,
+        );
     }
 
     private function detectFromFrontMatter(string $content): ?string
