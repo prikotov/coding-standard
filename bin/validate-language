@@ -43,7 +43,7 @@ declare(strict_types=1);
  * Конфиг читается из `.coding-standard.php` (ключ `language`), возвращая:
  *   paths     => string[]   — файлы/директории для сканирования.
  *   exclude   => string[]   — фрагменты путей для исключения.
- *   max_ratio => float      — максимально допустимая доля слов в английских фразах.
+ *   max_ratio => float      — максимально допустимая доля латинских слов вне allowlist.
  *   allowlist => string[]   — дополнительные разрешённые термины.
  *
  * Exit codes:
@@ -203,7 +203,6 @@ foreach ($files as $filePath) {
         'anglicisms' => $analysis->anglicismWords,
         'ratio' => $analysis->ratio,
         'over' => $overThreshold,
-        'phrases' => $analysis->suspiciousPhrases,
         'sample' => $analysis->sampleWords,
     ];
 }
@@ -235,9 +234,9 @@ foreach ($results as $r) {
     $shown++;
     $pct = number_format($r['ratio'] * 100, 1);
     echo "  ⚠ {$r['file']} — ratio {$pct}% ({$r['anglicisms']} latin word(s) / {$r['total']})\n";
-    if ($r['phrases'] !== []) {
-        $phrasesList = implode(', ', array_slice($r['phrases'], 0, 5));
-        echo "      Phrases: {$phrasesList}\n";
+    if ($r['sample'] !== []) {
+        $wordsList = implode(', ', array_slice($r['sample'], 0, 10));
+        echo "      Words: {$wordsList}\n";
     }
 }
 if ($shown === 0) {

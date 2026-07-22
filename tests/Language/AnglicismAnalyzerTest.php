@@ -18,27 +18,17 @@ final class AnglicismAnalyzerTest extends TestCase
 
         self::assertSame(0, $result->anglicismWords);
         self::assertSame(0.0, $result->ratio);
-        self::assertSame([], $result->suspiciousPhrases);
     }
 
-    public function testDetectsEnglishPhraseInRussianProse(): void
+    public function testDetectsAnglicismWords(): void
     {
         $analyzer = new AnglicismAnalyzer();
 
         $result = $analyzer->analyze('Мы сохраняем persisted rows в базу данных.');
 
-        self::assertGreaterThan(0, $result->anglicismWords);
-        self::assertContains('persisted rows', $result->suspiciousPhrases);
-    }
-
-    public function testDetectsMultipleEnglishPhrases(): void
-    {
-        $analyzer = new AnglicismAnalyzer();
-
-        $result = $analyzer->analyze("persisted rows — это одно.\nRead-only facts — другое.");
-
-        self::assertContains('persisted rows', $result->suspiciousPhrases);
-        self::assertContains('Read-only facts', $result->suspiciousPhrases);
+        self::assertSame(2, $result->anglicismWords);
+        self::assertContains('persisted', $result->sampleWords);
+        self::assertContains('rows', $result->sampleWords);
     }
 
     public function testAllowlistedTermsAreNotAnglicisms(): void
@@ -60,14 +50,14 @@ final class AnglicismAnalyzerTest extends TestCase
         self::assertSame(0, $result->anglicismWords);
     }
 
-    public function testEnglishOnlyLineIsNotSuspiciousPhrase(): void
+    public function testAllowlistedOnlyEnglishLineHasNoAnglicisms(): void
     {
         $analyzer = new AnglicismAnalyzer();
 
-        // Строка целиком английская — не «mixed», не англицизм в русском тексте.
-        $result = $analyzer->analyze("Symfony Panther PHPUnit PHPStan\nРусская строка.");
+        // Строка целиком из allowlist-терминов — англицизмов нет.
+        $result = $analyzer->analyze('Symfony PHPUnit PHPStan');
 
-        self::assertSame([], $result->suspiciousPhrases);
+        self::assertSame(0, $result->anglicismWords);
     }
 
     public function testRatioCalculation(): void
@@ -127,7 +117,6 @@ final class AnglicismAnalyzerTest extends TestCase
 
         self::assertSame(0, $result->totalWords);
         self::assertSame(0.0, $result->ratio);
-        self::assertSame([], $result->suspiciousPhrases);
     }
 
     public function testDddLayerTermsAreAllowed(): void
@@ -138,6 +127,5 @@ final class AnglicismAnalyzerTest extends TestCase
         $result = $analyzer->analyze('Domain Service возвращает Repository.');
 
         self::assertSame(0, $result->anglicismWords);
-        self::assertSame([], $result->suspiciousPhrases);
     }
 }

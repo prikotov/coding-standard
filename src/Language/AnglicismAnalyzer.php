@@ -7,10 +7,8 @@ namespace PrikotovCodingStandard\Language;
 /**
  * Считает долю англицизмов в человекочитаемом тексте.
  *
- * Англицизм — латинское слово вне allowlist технических терминов.
- * Метрика: ratio = anglicismWords / totalWords.
- * Дополнительно находит подозрительные фразы (пробежки ≥2 латинских слов
- * подряд), чтобы подсветить именно английские обороты, а не одиночные термины.
+ * Англицизм — любое латинское слово вне allowlist технических терминов
+ * (включая одиночные). Метрика: ratio = anglicismWords / totalWords.
  */
 final class AnglicismAnalyzer
 {
@@ -80,8 +78,7 @@ final class AnglicismAnalyzer
             totalWords: $total,
             anglicismWords: $anglicismCount,
             ratio: $ratio,
-            suspiciousPhrases: $this->findSuspiciousPhrases($text),
-            sampleWords: $sample,
+            sampleWords: array_values(array_unique($sample)),
         );
     }
 
@@ -112,45 +109,5 @@ final class AnglicismAnalyzer
     private function isAllowed(string $word): bool
     {
         return isset($this->allowlistSet[mb_strtolower($word)]);
-    }
-
-    /**
-     * Пробежки ≥2 латинских слов в «mixed» строках (где есть и кириллица, и латиница).
-     * Это русский текст с английской вставкой — точный сигнал англицизма в тексте,
-     * в отличие от технических списков и английских справочников целиком.
-     *
-     * @return list<string>
-     */
-    private function findSuspiciousPhrases(string $text): array
-    {
-        $phrases = [];
-        foreach (preg_split('/\n/', $text) ?: [] as $line) {
-            if (!preg_match('/\p{Cyrillic}/u', $line) || !preg_match('/[A-Za-z]/', $line)) {
-                continue;
-            }
-            preg_match_all('/[A-Za-z][A-Za-z-]*(?:\s+[A-Za-z][A-Za-z-]*)+/u', $line, $matches);
-            foreach ($matches[0] as $run) {
-                $words = preg_split('/\s+/', trim($run)) ?: [];
-                if ($this->runHasNonAllowed($words) && count($phrases) < 10) {
-                    $phrases[] = trim($run);
-                }
-            }
-        }
-
-        return array_values(array_unique($phrases));
-    }
-
-    /**
-     * @param list<string> $run
-     */
-    private function runHasNonAllowed(array $run): bool
-    {
-        foreach ($run as $word) {
-            if (!$this->isAllowed($word)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
