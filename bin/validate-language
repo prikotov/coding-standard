@@ -32,17 +32,17 @@ declare(strict_types=1);
  *   php bin/validate-language [options] [<path>...]
  *
  * Options:
- *   --config=<file>     PHP-конфиг (по умолчанию .language-lint.php в корне).
- *   --threshold=<f>     Порог warning, 0..1 (по умолчанию 0.02 = 2%).
+ *   --config=<file>     PHP-конфиг (по умолчанию .coding-standard.php в корне).
+ *   --max-ratio=<f>    Максимально допустимая доля, 0..1 (по умолчанию 0.02 = 2%).
  *   --allow=<term>      Добавить термин в allowlist (повторяемый).
  *   --exclude=<pat>     Исключить пути по фрагменту (повторяемый).
  *   --strict            Завершать кодом 1 при превышении порога.
  *   --json              Машиночитаемый вывод (для будущей CI-интеграции).
  *
- * Конфиг (.language-lint.php) возвращает массив с ключами:
+ * Конфиг читается из `.coding-standard.php` (ключ `language`), возвращая:
  *   paths     => string[]   — файлы/директории для сканирования.
  *   exclude   => string[]   — фрагменты путей для исключения.
- *   threshold => float      — порог warning.
+ *   max_ratio => float      — максимально допустимая доля слов в английских фразах.
  *   allowlist => string[]   — дополнительные разрешённые термины.
  *
  * Exit codes:
@@ -71,7 +71,7 @@ use PrikotovCodingStandard\Language\MarkdownTextExtractor;
 
 $DEFAULT_PATHS = ['docs/', 'todo/', 'README.md', 'AGENTS.md'];
 $DEFAULT_SKIP_DIRS = ['vendor/', '.git/', 'var/', 'tmp/', 'cache/', 'node_modules/'];
-$DEFAULT_THRESHOLD = 0.02;
+$DEFAULT_MAX_RATIO = 0.02;
 $DEFAULT_EXCLUDE = [];
 
 // ── Parse arguments ────────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ $DEFAULT_EXCLUDE = [];
 $argPaths = [];
 $argExcludes = [];
 $argAllow = [];
-$threshold = null;
+$maxRatio = null;
 $configFile = null;
 $strict = false;
 $jsonOutput = false;
@@ -91,8 +91,8 @@ foreach (array_slice($argv, 1) as $arg) {
         $jsonOutput = true;
     } elseif (str_starts_with($arg, '--config=')) {
         $configFile = substr($arg, strlen('--config='));
-    } elseif (str_starts_with($arg, '--threshold=')) {
-        $threshold = (float) substr($arg, strlen('--threshold='));
+    } elseif (str_starts_with($arg, '--max-ratio=')) {
+        $maxRatio = (float) substr($arg, strlen('--max-ratio='));
     } elseif (str_starts_with($arg, '--allow=')) {
         $argAllow[] = substr($arg, strlen('--allow='));
     } elseif (str_starts_with($arg, '--exclude=')) {
@@ -102,12 +102,13 @@ foreach (array_slice($argv, 1) as $arg) {
     }
 }
 
-// ── Load config ────────────────────────────────────────────────────────────
+// ── Load config (.coding-standard.php, ключ `language`) ──────────────
 
 $projectRoot = getcwd() ?: '.';
-$configFilePath = $configFile ?? "{$projectRoot}/.language-lint.php";
+$configFilePath = $configFile ?? "{$projectRoot}/.coding-standard.php";
 
-$config = is_file($configFilePath) ? (array) require $configFilePath : [];
+$fullConfig = is_file($configFilePath) ? (array) require $configFilePath : [];
+$config = $fullConfig['language'] ?? [];
 
 $paths = $argPaths !== [] ? $argPaths : ($config['paths'] ?? $DEFAULT_PATHS);
 $excludePatterns = array_values(array_unique(array_merge(
@@ -115,7 +116,7 @@ $excludePatterns = array_values(array_unique(array_merge(
     $argExcludes,
 )));
 $skipDirs = $DEFAULT_SKIP_DIRS;
-$threshold ??= $config['threshold'] ?? $DEFAULT_THRESHOLD;
+$maxRatio ??= $config['max_ratio'] ?? $DEFAULT_MAX_RATIO;
 $allowlist = array_values(array_unique(array_merge(
     $config['allowlist'] ?? [],
     $argAllow,
@@ -191,7 +192,7 @@ foreach ($files as $filePath) {
     $analysis = $analyzer->analyze($text);
 
     $relativePath = ltrim(str_replace($projectRoot, '', $filePath), '/');
-    $overThreshold = $analysis->ratio > $threshold;
+    $overThreshold = $analysis->ratio > $maxRatio;
     if ($overThreshold) {
         $alarms++;
     }
@@ -211,7 +212,7 @@ foreach ($files as $filePath) {
 
 if ($jsonOutput) {
     echo json_encode([
-        'threshold' => $threshold,
+        'max_ratio' => $maxRatio,
         'files_over_threshold' => $alarms,
         'files' => array_values(array_filter($results, static fn (array $r): bool => $r['over'])),
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
@@ -219,8 +220,8 @@ if ($jsonOutput) {
     exit($strict && $alarms > 0 ? 1 : 0);
 }
 
-$thresholdPct = number_format($threshold * 100, 1);
-echo "Language check: anglicism ratio in " . count($files) . " file(s) (threshold {$thresholdPct}% of words in English phrases)";
+$maxRatioPct = number_format($maxRatio * 100, 1);
+echo "Language check: anglicism ratio in " . count($files) . " file(s) (max ratio {$maxRatioPct}% of words in English phrases)";
 if ($skipped > 0) {
     echo "; skipped {$skipped} non-Russian file(s)";
 }
@@ -240,15 +241,15 @@ foreach ($results as $r) {
     }
 }
 if ($shown === 0) {
-    $maxRatio = empty($results) ? 0.0 : max(array_column($results, 'ratio'));
-    echo "  ✓ No file exceeds threshold (max ratio " . number_format($maxRatio * 100, 1) . "%)\n";
+    $highestRatio = empty($results) ? 0.0 : max(array_column($results, 'ratio'));
+    echo "  ✓ No file exceeds max ratio (highest ratio " . number_format($highestRatio * 100, 1) . "%)\n";
 }
 echo "\n";
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 if ($alarms > 0) {
     $mode = $strict ? 'STRICT' : 'warning';
-    echo "⚠ {$alarms} file(s) exceed threshold ({$mode} mode)\n";
+    echo "⚠ {$alarms} file(s) exceed max ratio ({$mode} mode)\n";
     exit($strict ? 1 : 0);
 }
 echo "✓ All checks passed\n";

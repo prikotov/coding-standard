@@ -8,4 +8,11 @@ declare(strict_types=1);
 // stay silent without this file.
 return [
     'docs_path' => 'docs/conventions',
+
+    // Конфигурация validate-language (поиск англицизмов в русскоязычной документации).
+    'language' => [
+        'paths' => ['docs/', 'todo/', 'README.md', 'AGENTS.md'],
+        // Максимально допустимая доля слов в английских фразах (по умолчанию 0.02 = 2%).
+        'max_ratio' => 0.02,
+    ],
 ];
