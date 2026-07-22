@@ -1,6 +1,7 @@
 ---
 name: Валидация англицизмов в Markdown (validate-language)
 type: rule
+lang: ru
 description: Настройка и использование валидатора английских фраз в русскоязычном тексте Markdown-файлов
 ---
 
