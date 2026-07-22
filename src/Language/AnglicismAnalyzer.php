@@ -35,6 +35,9 @@ final class AnglicismAnalyzer
         'Entity', 'Component', 'Factory', 'Builder', 'Gateway', 'Calculator',
         'Specification', 'Subscriber', 'Listener', 'Controller', 'Validator',
         'Voter', 'Rule', 'Value', 'Object', 'Enum', 'Migration', 'Fixture',
+        // Терминология Markdown (базовые термины синтаксиса/структуры).
+        'Markdown', 'matter', 'front', 'fenced', 'inline', 'code', 'block',
+        'blocks', 'link', 'links', 'reference', 'slug', 'anchor', 'heading',
     ];
 
     /** @var array<string, true> */
@@ -59,25 +62,32 @@ final class AnglicismAnalyzer
         $words = $this->extractWords($text);
         $total = count($words);
 
-        $anglicismCount = 0;
+        $latinCount = 0;
         $sample = [];
         foreach ($words as $word) {
             if (!$this->isLatin($word) || $this->isAllowed($word)) {
                 continue;
             }
-            $anglicismCount++;
+            $latinCount++;
             if (count($sample) < 15) {
                 $sample[] = $word;
             }
         }
 
-        $ratio = $total > 0 ? $anglicismCount / $total : 0.0;
+        $phrases = $this->findSuspiciousPhrases($text);
+        $anglicismWords = 0;
+        foreach ($phrases as $phrase) {
+            $anglicismWords += count(preg_split('/\s+/', trim($phrase)) ?: []);
+        }
+
+        $ratio = $total > 0 ? $anglicismWords / $total : 0.0;
 
         return new AnalysisResult(
             totalWords: $total,
-            anglicismWords: $anglicismCount,
+            anglicismWords: $anglicismWords,
+            latinWords: $latinCount,
             ratio: $ratio,
-            suspiciousPhrases: $this->findSuspiciousPhrases($text),
+            suspiciousPhrases: $phrases,
             sampleWords: $sample,
         );
     }

@@ -82,26 +82,28 @@ final class AnglicismAnalyzerTest extends TestCase
         self::assertSame(0.4, $result->ratio);
     }
 
-    public function testSingleEnglishWordInRussianProseCountsAsAnglicism(): void
+    public function testSingleEnglishWordNotCountedInRatio(): void
     {
         $analyzer = new AnglicismAnalyzer();
 
-        // Одиночное «persisted» в русском — англицизм по словам, но не фраза.
+        // Одиночное «persisted» — не фраза, в ratio не входит (ловим обороты из ≥2 слов).
         $result = $analyzer->analyze('Используем persisted для хранения.');
 
-        self::assertSame(1, $result->anglicismWords);
-        // Одиночное слово — не suspicious phrase (нужно ≥2).
+        self::assertSame(0, $result->anglicismWords);
         self::assertSame([], $result->suspiciousPhrases);
+        // Но учитывается в общем счётчике латинских слов (info).
+        self::assertSame(1, $result->latinWords);
     }
 
     public function testHyphenatedWordCountedAsOne(): void
     {
         $analyzer = new AnglicismAnalyzer();
 
-        // «read-only» — один токен с дефисом.
-        $result = $analyzer->analyze('используем read-only режим');
+        // «read-only facts» — фраза из 2 слов (read-only одним токеном, facts вторым).
+        $result = $analyzer->analyze('используем read-only facts систему');
 
-        self::assertSame(1, $result->anglicismWords);
+        self::assertSame(2, $result->anglicismWords);
+        self::assertContains('read-only facts', $result->suspiciousPhrases);
     }
 
     public function testEmptyText(): void

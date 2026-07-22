@@ -20,11 +20,12 @@ declare(strict_types=1);
  * front matter (`lang:`) или суффиксу имени файла (`name.<lang>.md`);
  * при отсутствии признака документ считается русским.
  *
- * anglicism_ratio = (латинские слова вне allowlist) / (все слова) считается
- * и показывается как info, но не триггерит warning сама по себе —
- * на технических docs baseline латиницы высокий из-за терминологии.
+ * anglicism_ratio = (слова в английских фразах) / (все слова). Фраза — пробежка
+ * ≥2 латинских слов в mixed-строке (русская проза с английской вставкой).
+ * Файлы, где ratio превышает порог, помечаются warning. Порог по умолчанию
+ * 2% — терпит немного технических терминов, ловит замусоренные тексты.
  *
- * Режим по умолчанию — warning: выводит файлы с англицизмами, но завершается
+ * Режим по умолчанию — warning: выводит файлы с превышением, но завершается
  * кодом 0. Флаг --strict — завершать кодом 1 при наличии англицизмов.
  *
  * Usage:
@@ -32,19 +33,21 @@ declare(strict_types=1);
  *
  * Options:
  *   --config=<file>     PHP-конфиг (по умолчанию .language-lint.php в корне).
+ *   --threshold=<f>     Порог warning, 0..1 (по умолчанию 0.02 = 2%).
  *   --allow=<term>      Добавить термин в allowlist (повторяемый).
  *   --exclude=<pat>     Исключить пути по фрагменту (повторяемый).
- *   --strict            Завершать кодом 1 при наличии англицизмов.
+ *   --strict            Завершать кодом 1 при превышении порога.
  *   --json              Машиночитаемый вывод (для будущей CI-интеграции).
  *
  * Конфиг (.language-lint.php) возвращает массив с ключами:
  *   paths     => string[]   — файлы/директории для сканирования.
  *   exclude   => string[]   — фрагменты путей для исключения.
+ *   threshold => float      — порог warning.
  *   allowlist => string[]   — дополнительные разрешённые термины.
  *
  * Exit codes:
- *   0 — англицизмов нет (или режим warning)
- *   1 — найдены англицизмы в режиме --strict
+ *   0 — нет превышений (или режим warning)
+ *   1 — найдены превышения в режиме --strict
  */
 
 // ── Autoload (dev и consumer) ──────────────────────────────────────────────
@@ -68,6 +71,7 @@ use PrikotovCodingStandard\Language\MarkdownTextExtractor;
 
 $DEFAULT_PATHS = ['docs/', 'todo/', 'README.md', 'AGENTS.md'];
 $DEFAULT_SKIP_DIRS = ['vendor/', '.git/', 'var/', 'tmp/', 'cache/', 'node_modules/'];
+$DEFAULT_THRESHOLD = 0.02;
 $DEFAULT_EXCLUDE = [];
 
 // ── Parse arguments ────────────────────────────────────────────────────────
@@ -75,6 +79,7 @@ $DEFAULT_EXCLUDE = [];
 $argPaths = [];
 $argExcludes = [];
 $argAllow = [];
+$threshold = null;
 $configFile = null;
 $strict = false;
 $jsonOutput = false;
@@ -86,6 +91,8 @@ foreach (array_slice($argv, 1) as $arg) {
         $jsonOutput = true;
     } elseif (str_starts_with($arg, '--config=')) {
         $configFile = substr($arg, strlen('--config='));
+    } elseif (str_starts_with($arg, '--threshold=')) {
+        $threshold = (float) substr($arg, strlen('--threshold='));
     } elseif (str_starts_with($arg, '--allow=')) {
         $argAllow[] = substr($arg, strlen('--allow='));
     } elseif (str_starts_with($arg, '--exclude=')) {
@@ -108,6 +115,7 @@ $excludePatterns = array_values(array_unique(array_merge(
     $argExcludes,
 )));
 $skipDirs = $DEFAULT_SKIP_DIRS;
+$threshold ??= $config['threshold'] ?? $DEFAULT_THRESHOLD;
 $allowlist = array_values(array_unique(array_merge(
     $config['allowlist'] ?? [],
     $argAllow,
@@ -183,16 +191,17 @@ foreach ($files as $filePath) {
     $analysis = $analyzer->analyze($text);
 
     $relativePath = ltrim(str_replace($projectRoot, '', $filePath), '/');
-    $hasPhrases = $analysis->suspiciousPhrases !== [];
-    if ($hasPhrases) {
+    $overThreshold = $analysis->ratio > $threshold;
+    if ($overThreshold) {
         $alarms++;
     }
     $results[] = [
         'file' => $relativePath,
         'total' => $analysis->totalWords,
         'anglicisms' => $analysis->anglicismWords,
+        'latin' => $analysis->latinWords,
         'ratio' => $analysis->ratio,
-        'has_phrases' => $hasPhrases,
+        'over' => $overThreshold,
         'phrases' => $analysis->suspiciousPhrases,
         'sample' => $analysis->sampleWords,
     ];
@@ -202,45 +211,44 @@ foreach ($files as $filePath) {
 
 if ($jsonOutput) {
     echo json_encode([
-        'files_with_anglicisms' => $alarms,
-        'files' => array_values(array_filter($results, static fn (array $r): bool => $r['has_phrases'])),
+        'threshold' => $threshold,
+        'files_over_threshold' => $alarms,
+        'files' => array_values(array_filter($results, static fn (array $r): bool => $r['over'])),
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
 
     exit($strict && $alarms > 0 ? 1 : 0);
 }
 
-echo "Language check: anglicisms in " . count($files) . " file(s) (warning on English phrases in Russian text; ratio shown as info)";
+$thresholdPct = number_format($threshold * 100, 1);
+echo "Language check: anglicism ratio in " . count($files) . " file(s) (threshold {$thresholdPct}% of words in English phrases)";
 if ($skipped > 0) {
     echo "; skipped {$skipped} non-Russian file(s)";
 }
-echo "
-
-";
+echo "\n\n";
 
 $shown = 0;
 foreach ($results as $r) {
-    if (!$r['has_phrases']) {
+    if (!$r['over']) {
         continue;
     }
     $shown++;
     $pct = number_format($r['ratio'] * 100, 1);
-    echo "  ⚠ {$r['file']} — {$r['anglicisms']} latin word(s), ratio {$pct}%
-";
-    $phrasesList = implode(', ', array_slice($r['phrases'], 0, 5));
-    echo "      Phrases: {$phrasesList}
-";
+    echo "  ⚠ {$r['file']} — ratio {$pct}% ({$r['anglicisms']} word(s) in phrases / {$r['total']})\n";
+    if ($r['phrases'] !== []) {
+        $phrasesList = implode(', ', array_slice($r['phrases'], 0, 5));
+        echo "      Phrases: {$phrasesList}\n";
+    }
 }
 if ($shown === 0) {
     $maxRatio = empty($results) ? 0.0 : max(array_column($results, 'ratio'));
-    echo "  ✓ No English phrases in Russian text found (max latin ratio " . number_format($maxRatio * 100, 1) . "%)
-";
+    echo "  ✓ No file exceeds threshold (max ratio " . number_format($maxRatio * 100, 1) . "%)\n";
 }
 echo "\n";
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 if ($alarms > 0) {
     $mode = $strict ? 'STRICT' : 'warning';
-    echo "⚠ {$alarms} file(s) with anglicisms in text ({$mode} mode)\n";
+    echo "⚠ {$alarms} file(s) exceed threshold ({$mode} mode)\n";
     exit($strict ? 1 : 0);
 }
 echo "✓ All checks passed\n";
