@@ -113,7 +113,7 @@ Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) 
 {ProjectName}\Common\Module\{ModuleName}\Integration\...\{Name}Dto
 ```
 
-Общие пулы `Domain\Dto\*` и `Module\{ModuleName}\Dto\*` не используем — DTO живёт рядом с владельцем. `{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает переиспользоваться за пределами одной группы — заменяем его на `VO`.
+Общий пул `Module\{ModuleName}\Dto\*` не используем — DTO живёт рядом с владельцем. `{DomainObjectType}` — тип доменного объекта: `Service`, `Calculator`, `Specification` и т.п. Если DTO начинает переиспользоваться за пределами одной группы — заменяем его на `VO`.
 
 ## Как используем
 
