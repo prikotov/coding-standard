@@ -20,16 +20,16 @@ final class MarkdownTextExtractorTest extends TestCase
 
     public function testStripsFencedCodeBlocks(): void
     {
-        $md = "Проза.\n\n```\nenglish words here\n```\n\nЕщё проза.";
+        $md = "Текст.\n\n```\nenglish words here\n```\n\nЕщё текст.";
 
         $extractor = new MarkdownTextExtractor();
 
-        self::assertSame('Проза.' . "\n\n\n\nЕщё проза.", $extractor->extract($md));
+        self::assertSame('Текст.' . "\n\n\n\nЕщё текст.", $extractor->extract($md));
     }
 
     public function testStripsTildeFencedCodeBlocks(): void
     {
-        $md = "Проза.\n\n~~~\nenglish words\n~~~\n\nЕщё проза.";
+        $md = "Текст.\n\n~~~\nenglish words\n~~~\n\nЕщё текст.";
 
         $extractor = new MarkdownTextExtractor();
 

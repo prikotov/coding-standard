@@ -63,7 +63,7 @@ final class AnglicismAnalyzerTest extends TestCase
     {
         $analyzer = new AnglicismAnalyzer();
 
-        // Строка целиком английская — не «mixed», не англицизм в русской прозе.
+        // Строка целиком английская — не «mixed», не англицизм в русском тексте.
         $result = $analyzer->analyze("Symfony Panther PHPUnit PHPStan\nРусская строка.");
 
         self::assertSame([], $result->suspiciousPhrases);
