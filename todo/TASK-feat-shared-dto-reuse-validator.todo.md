@@ -7,10 +7,10 @@ priority: P2
 depends_on:
 epic:
 author: Dev (Pi)
-assignee:
-branch:
+assignee: Dev (Pi)
+branch: task/dto-reuse-phpstan-extension
 pr:
-status: backlog
+status: in_progress
 ---
 
 # TASK-feat-shared-dto-reuse-validator: Проверка общих DTO модуля на переиспользование (PHPStan extension)
@@ -75,20 +75,21 @@ status: backlog
 - [ ] Psalm plugin — Psalm не имеет нативного cross-file aggregation для правил; потребители добавляют PHPStan в `require-dev`.
 
 ## 4. Implementation Plan (План реализации)
-*Заполняется исполнителем перед стартом.*
-- `src/PhpStan/DtoReturnCollector.php` — `@implements Collector<ClassMethod, array{class: string, returns: list<string>}>`; проверка что класс handler (namespace) → resolved return type FQCN(s).
-- `src/PhpStan/DtoReuseRule.php` — `@implements Rule<Class_>`; из `CollectedDataNode` фильтрует data где `returns` содержит FQCN этого DTO → count уникальных handler-классов → < порога → error.
-- `phpstan-rules.neon` — регистрация rule+collector + `parameters: dtoReuseMinUses: 2`.
-- Распространение: `phpstan/extension-installer` (автоподхват) или ручной `includes:` в `phpstan.neon` потребителя.
-- Тесты: `tests/PhpStan/DtoReuseRuleTest.php` extends `RuleTestCase`, fixture PHP-строки с handlers/DTOs.
-- Документация: `docs/conventions/ops/phpstan-dto-reuse.ru.md` — как подключить extension.
+
+- [x] `src/PhpStan/HandlerReturnCollector.php` — на `ClassMethod` (`__invoke`) handler'а (`UseCase\{Query|Command}` namespace) → resolved FQCN return-типа (`Name`/`NullableType` → `Scope::resolveTypeByName` → `getObjectClassNames`).
+- [x] `src/PhpStan/DtoLocationCollector.php` — на `Class_` DTO в `Module\...\Application\Dto` (через `namespacedName`, без `getClassReflection`) → FQCN + файл + строка.
+- [x] `src/PhpStan/DtoReuseRule.php` — `Rule<CollectedDataNode>`: `$node->get(...)` (keyed by file → list items) → count handler'ов на DTO → < порога → `RuleErrorBuilder` с `file`/`line`/`identifier`.
+- [x] `phpstan-rules.neon` — регистрация services с явными `tags: [phpstan.collector]` / `[phpstan.rules.rule]`; `minUses` через аргумент сервиса (default 2).
+- [x] `composer.json` — `extra.phpstan/extension-installer.extensions` для автоподхвата.
+- [x] Тесты `tests/PhpStan/DtoReuseRuleTest.php` через `RuleTestCase` + `getCollectors()`; fixtures `tests/PhpStan/data/{underused,reusable,common}`.
+- [x] Doc `docs/conventions/ops/phpstan-dto-reuse.ru.md`.
 
 ## 5. Definition of Done (Критерии приёмки)
-- [ ] Rule + Collector подсвечивают DTO из `Module\{M}\Application\Dto\`, используемые < порога use case'ами.
-- [ ] Корневой `Common\Application\Dto\` не проверяется.
-- [ ] Не зависит от имени DTO (только переиспользование).
-- [ ] Потребитель подключает extension (extension-installer или `includes:`) одной настройкой.
-- [ ] `composer check` пройден, `RuleTestCase`-тесты покрывают ключевые сценарии.
+- [x] Rule + Collector подсвечивают DTO из `Module\{M}\Application\Dto\`, используемые < порога use case'ами.
+- [x] Корневой `Common\Application\Dto\` не проверяется.
+- [x] Не зависит от имени DTO (только переиспользование).
+- [x] Потребитель подключает extension (extension-installer или `includes:`) одной настройкой.
+- [x] `composer check` пройден, `RuleTestCase`-тесты покрывают ключевые сценарии.
 
 ## 6. Verification (Самопроверка)
 ```bash
@@ -103,7 +104,7 @@ composer check
 - Ложные срабатывания на DTO, возвращаемых одним query, но легитимно общих — сглаживается allowlist-параметром (Should Have) или `@phpstan-ignore`.
 
 ## 8. Sources (Источники)
-- [dto.md](../../docs/conventions/core-patterns/dto.md) — раздел «Расположение» (принцип «рядом с владельцем», общие DTO).
+- [dto.md](../docs/conventions/core-patterns/dto.md) — раздел «Расположение» (принцип «рядом с владельцем», общие DTO).
 - Замечено в `prikotov/TasK`: 2 DTO в `Module\...\Application\Dto\` (`InitializeRegistrationResultDto`, `SessionLifecycleResultDto`), используемые одним query.
 - PHPStan docs: Collectors, Custom rules, `extension-installer`.
 
