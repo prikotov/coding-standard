@@ -1,6 +1,6 @@
 services:
     -
-        class: PrikotovCodingStandard\PhpStan\HandlerReturnCollector
+        class: PrikotovCodingStandard\PhpStan\DtoReferenceCollector
         tags: [phpstan.collector]
     -
         class: PrikotovCodingStandard\PhpStan\DtoLocationCollector
@@ -8,5 +8,3 @@ services:
     -
         class: PrikotovCodingStandard\PhpStan\DtoReuseRule
         tags: [phpstan.rules.rule]
-        arguments:
-            minUses: 2
