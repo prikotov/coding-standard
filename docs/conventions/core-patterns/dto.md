@@ -212,7 +212,6 @@ final readonly class InferenceRequestDto
 - [ ] Коллекции типизированы через PHPDoc (`@var FooDto[]`).
 - [ ] Название и namespace отражают контекст использования (`Request/Response/Result` при необходимости).
 - [ ] Domain DTO лежит рядом с доменным объектом или группой (`Domain\{DomainObjectType}\...`); классов в `Domain\Dto\*` нет.
-- [ ] Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) лежат рядом с use case'ом, а не в общем пуле `Application\Dto\`.
 - [ ] Денежные/точные величины представлены `numeric-string` или VO.
 - [ ] DTO используется на границах слоя, а не подменяет доменные сущности.
 - [ ] Для Presentation transport DTO дополнительно соблюдены профильные presentation-conventions.

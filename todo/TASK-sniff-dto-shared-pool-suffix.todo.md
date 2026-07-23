@@ -65,9 +65,10 @@ status: in_progress
 - [ ] Fixture-тесты: violation (ResultDto в Module pool); valid (ResultDto в `UseCase\Query\{Case}\`); valid (проекция `PaymentSummaryDto` в Module pool); valid (DTO в `Common\Application\Dto\`).
 
 ### 🟡 Should Have (Желательно)
-- [ ] Усилить `dto.md` чек-листом для ревью/агента (best-effort: «кладёшь DTO в `Application\Dto\` — это должна быть переиспользуемая проекция, не use-case-специфичный Result/Request/Response»). Помечено как дополнение к автоматике, не замена.
+_Нет — см. Won't Have._
 
 ### ⚫ Won't Have (Не будем делать)
+- [ ] Дублировать правило «use-case-DTO не в общем пуле» в чек-листе `dto.md`. Sniff уже enforcement'ит его автоматически, а в разделе «Расположение» (строка 74) оно уже заявлено. Doc — не барьер для агента (может не прочитать), поэтому добавлять пункт в чек-лист бессмысленно.
 - [ ] Cross-file подсчёт использований (отложено, см. раздел 0).
 - [ ] Автоматический рефакторинг (перемещение файлов).
 - [ ] Проверка DTO вне `Module\{M}\Application\Dto\`.
