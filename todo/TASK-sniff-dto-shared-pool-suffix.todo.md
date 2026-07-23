@@ -7,10 +7,10 @@ priority: P2
 depends_on:
 epic:
 author: Dev (Pi)
-assignee:
-branch:
+assignee: Dev (Pi)
+branch: task/dto-shared-pool-suffix
 pr:
-status: backlog
+status: in_progress
 ---
 
 # TASK-sniff-dto-shared-pool-suffix: Запрет use-case-специфичных DTO (Request/Result/Response) в общем пуле модуля
@@ -80,9 +80,9 @@ status: backlog
 - Fixture-тесты по Must Have.
 
 ## 5. Definition of Done (Критерии приёмки)
-- [ ] Sniff ловит use-case-суффикс в `Module\{M}\Application\Dto\`.
-- [ ] Корневой `Common\Application\Dto\` не проверяется.
-- [ ] `composer check` пройден, fixture-тесты покрывают ключевые сценарии.
+- [x] Sniff ловит use-case-суффикс в `Module\{M}\Application\Dto\`.
+- [x] Корневой `Common\Application\Dto\` не проверяется.
+- [x] `composer check` пройден, fixture-тесты покрывают ключевые сценарии.
 
 ## 6. Verification (Самопроверка)
 ```bash
@@ -95,7 +95,7 @@ composer check
 - Полагаться на doc-инструкцию для AI-агента как на барьер нельзя (агент может не прочитать) — поэтому sniff = основной барьер.
 
 ## 8. Sources (Источники)
-- [dto.md](../../docs/conventions/core-patterns/dto.md) — раздел «Расположение»: «Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) [в общий пул] не кладём».
+- [dto.md](../docs/conventions/core-patterns/dto.md) — раздел «Расположение»: «Use-case-специфичные DTO (`*RequestDto`/`*ResultDto`/`*ResponseDto`) [в общий пул] не кладём».
 - `prikotov/TasK`: `InitializeRegistrationResultDto`, `SessionLifecycleResultDto` в `Module\...\Application\Dto\` — оба со суффиксом `ResultDto`.
 
 ## 9. Comments (Комментарии)

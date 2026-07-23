@@ -521,4 +521,30 @@ return [
         ],
         'warnings' => [],
     ],
+    // DtoSharedPoolUseCaseSuffixSniff — use-case-specific DTO (ResultDto) in module shared pool → error
+    [
+        'file' => __DIR__ . '/Structure/DtoSharedPoolUseCaseSuffixUnitTest.inc',
+        'errors' => [
+            6 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // DtoSharedPoolUseCaseSuffixSniff — use-case-specific DTO placed next to use case (valid)
+    [
+        'file' => __DIR__ . '/Structure/DtoSharedPoolUseCaseSuffixUnitTestValidUseCase.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // DtoSharedPoolUseCaseSuffixSniff — reusable projection in module shared pool (valid)
+    [
+        'file' => __DIR__ . '/Structure/DtoSharedPoolUseCaseSuffixUnitTestValidProjection.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // DtoSharedPoolUseCaseSuffixSniff — root shared pool (Common) is not checked (valid)
+    [
+        'file' => __DIR__ . '/Structure/DtoSharedPoolUseCaseSuffixUnitTestValidCommon.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
 ];

@@ -27,6 +27,7 @@ $config->sniffs   = [
     'PrikotovCodingStandard.Application.UseCaseNaming',
     'PrikotovCodingStandard.Namespaces.GlobalFunctionCallStyle',
     'PrikotovCodingStandard.Structure.ComponentStructure',
+    'PrikotovCodingStandard.Structure.DtoSharedPoolUseCaseSuffix',
     'PrikotovCodingStandard.Structure.DtoStructure',
     'PrikotovCodingStandard.Structure.EnumStructure',
     'PrikotovCodingStandard.Structure.RepositoryStructure',
