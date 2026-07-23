@@ -15,7 +15,6 @@ description: Правила и гайды по операционным прак
 - [Обоснованные подавления PHPMD](phpmd-suppressions-guidelines.md) — когда и как подавлять предупреждения PHPMD
 - [Валидация внутренних ссылок](validate-md-links.md) — настройка и использование `validate-md-links`
 - [Валидация англицизмов](validate-language.ru.md) — расчёт доли англицизмов в русскоязычном тексте
-- [PHPStan DTO Reuse](phpstan-dto-reuse.ru.md) — проверка переиспользования общих DTO модуля
 
 ## Примеры
 

@@ -50,6 +50,23 @@ AI-агенты склонны отклоняться от конвенций. �
 
 Готовый `depfile.yaml` с правилами для DDD-слоёв и модульных границ: [`config/deptrac/`](config/deptrac/). Копируется в проект через `coding-standard-init` или вручную.
 
+### PHPStan-правила
+
+Пользовательское PHPStan-расширение (Collector + Rule) для cross-file проверок:
+
+| Правило | Что проверяет |
+|---|---|
+| `DtoReuseRule` | Общие DTO в `Module\{M}\Application\Dto\`, используемые < порога use case'ами (по умолчанию 2), помечаются — им место рядом с владельцем. Не зависит от имени DTO. |
+
+**Подключение:** потребитель добавляет `phpstan/phpstan` в `require-dev` (сосуществует с Psalm) и расширение подхватывается автоматически через `phpstan/extension-installer`, либо вручную через `includes:` в `phpstan.neon`:
+
+```neon
+includes:
+    - vendor/prikotov/coding-standard/phpstan-rules.neon
+```
+
+Порог настраивается аргументом сервиса `minUses` в `phpstan.neon`. Конвенция размещения DTO: [`docs/conventions/core-patterns/dto.md`](docs/conventions/core-patterns/dto.md).
+
 Примеры конфигураций: [`docs/conventions/examples/`](docs/conventions/examples/)
 
 | Файл | Назначение |
