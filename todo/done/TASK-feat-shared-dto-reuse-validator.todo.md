@@ -104,7 +104,7 @@ composer check
 - Ложные срабатывания на DTO, возвращаемых одним query, но легитимно общих — сглаживается allowlist-параметром (Should Have) или `@phpstan-ignore`.
 
 ## 8. Sources (Источники)
-- [dto.md](../docs/conventions/core-patterns/dto.md) — раздел «Расположение» (принцип «рядом с владельцем», общие DTO).
+- [dto.md](../../docs/conventions/core-patterns/dto.md) — раздел «Расположение» (принцип «рядом с владельцем», общие DTO).
 - Замечено в `prikotov/TasK`: 2 DTO в `Module\...\Application\Dto\` (`InitializeRegistrationResultDto`, `SessionLifecycleResultDto`), используемые одним query.
 - PHPStan docs: Collectors, Custom rules, `extension-installer`.
 
