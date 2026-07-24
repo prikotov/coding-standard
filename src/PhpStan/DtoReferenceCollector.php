@@ -78,7 +78,7 @@ final class DtoReferenceCollector implements Collector
      * Класс-сообщение use case — *Command или *Query (не *CommandHandler/*QueryHandler):
      * DTO в его поле — часть внешнего контракта, не внутренняя деталь.
      */
-    private static function isMessageContract(Scope $scope): bool
+    public static function isMessageContract(Scope $scope): bool
     {
         if ($scope->isInClass() === false) {
             return false;

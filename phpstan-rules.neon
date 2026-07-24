@@ -6,5 +6,11 @@ services:
         class: PrikotovCodingStandard\PhpStan\DtoLocationCollector
         tags: [phpstan.collector]
     -
+        class: PrikotovCodingStandard\PhpStan\MessageContractDtoCollector
+        tags: [phpstan.collector]
+    -
         class: PrikotovCodingStandard\PhpStan\DtoReuseRule
+        tags: [phpstan.rules.rule]
+    -
+        class: PrikotovCodingStandard\PhpStan\MessageContractDtoLocationRule
         tags: [phpstan.rules.rule]
