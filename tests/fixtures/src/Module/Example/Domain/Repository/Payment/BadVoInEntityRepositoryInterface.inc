@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// RepositoryInterfaceContractSniff — VO return in entity repository → 1 error
+// RepositoryInterfaceContractSniff — mixing *Model and *Vo in one interface is forbidden
 namespace App\Module\Example\Domain\Repository\Payment;
 
 use App\Module\Example\Domain\Entity\PaymentModel;
@@ -13,5 +13,5 @@ interface BadVoInEntityRepositoryInterface
 {
     public function getById(?int $id = null): PaymentModel;
 
-    public function getBalance(PaymentCriteriaInterface $criteria): PaymentBalanceVo;
+    public function getOneByCriteria(PaymentCriteriaInterface $criteria): ?PaymentBalanceVo;
 }

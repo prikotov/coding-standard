@@ -15,60 +15,52 @@ use PrikotovCodingStandard\Config\CodingStandardConfig;
  * An interface located in Domain/Repository/ and ending with `RepositoryInterface`
  * (incl. `ReadRepositoryInterface` / `WriteRepositoryInterface`) is NOT required
  * to declare every conventional method — a domain may need only a subset
- * (Interface Segregation). But whatever conventional methods ARE declared must
- * follow the type-locked contract:
+ * (Interface Segregation). But every method that IS declared must follow the
+ * conventional contract — only `getById`, `getOneByCriteria`, `getByCriteria`,
+ * `getCountByCriteria`, `exists`, `save`, `delete` are allowed; any other method
+ * name is an error. The element type may be a domain entity (`*Model`) or a
+ * domain Value Object (`*Vo`) — a VO repository follows the same contract, it
+ * just omits `save`/`delete` and returns `*Vo`.
  *
- *  - getById(?int, ?Uuid): Model (non-nullable)
- *  - getOneByCriteria(Criteria): ?Model
+ * Type-locked contract:
+ *  - getById(?int, ?Uuid): Model|Vo (non-nullable)
+ *  - getOneByCriteria(Criteria): ?Model|?Vo
  *  - getByCriteria(Criteria): array / list<*>
  *  - getCountByCriteria(Criteria): int
  *  - exists(Criteria): bool
  *  - save(Model)/delete(Model): void
  *
- * Read-model / aggregate interfaces (those whose methods never accept or return
- * a domain entity, e.g. summaries returning VOs) are intentionally skipped —
- * they are a different kind of contract.
- *
- * Additionally rejects Doctrine-legacy / near-conventional method names
- * (find, findById, findBy, findOneBy, findAll, count, findByCriteria, …) that
- * leak the legacy ORM API or mimic a conventional name with a wrong suffix —
- * each maps to the conventional method the developer most likely meant.
- *
- * Additionally rejects Value Object (*Vo) returns from an entity repository:
- * a VO must live in its own repository, not be mixed into the entity contract.
+ * Mixing `*Model` and `*Vo` in one interface is forbidden — a VO belongs in its
+ * own repository.
  *
  * See: docs/conventions/layers/domain/repository.md
  */
 final class RepositoryInterfaceContractSniff implements Sniff
 {
-    private const ERROR_GET_BY_ID = 'GetByIdMustReturnEntity';
-    private const ERROR_SUSPICIOUS = 'SuspiciousMethodName';
-    private const ERROR_GET_ONE = 'GetOneByCriteriaMustReturnNullableEntity';
+    private const ERROR_GET_BY_ID = 'GetByIdMustReturnDomainType';
+    private const ERROR_NON_CONVENTIONAL_METHOD = 'NonConventionalMethodName';
+    private const ERROR_GET_ONE = 'GetOneByCriteriaMustReturnNullableDomainType';
     private const ERROR_GET_BY_CRITERIA = 'GetByCriteriaMustReturnCollection';
     private const ERROR_GET_COUNT = 'GetCountByCriteriaMustReturnInt';
     private const ERROR_EXISTS = 'ExistsMustReturnBool';
     private const ERROR_SAVE = 'SaveMustTakeEntityReturnVoid';
     private const ERROR_DELETE = 'DeleteMustTakeEntityReturnVoid';
-    private const ERROR_VO_IN_ENTITY_REPO = 'ValueObjectInEntityRepository';
+    private const ERROR_MIXED_TYPES = 'MixedModelAndValueObject';
 
     private const DOMAIN_REPOSITORY_PATH = 'Domain/Repository/';
     private const INTERFACE_SUFFIX = 'RepositoryInterface';
 
     private string $docRef = '';
 
-    /** @var array<string, string> Doctrine-legacy / near-conventional names → the conventional replacement */
-    private const SUSPICIOUS_METHODS = [
-        'find'              => 'getById',
-        'findById'          => 'getById',
-        'findOne'           => 'getOneByCriteria',
-        'getOne'            => 'getOneByCriteria',
-        'findOneBy'         => 'getOneByCriteria',
-        'findOneByCriteria' => 'getOneByCriteria',
-        'findBy'            => 'getByCriteria',
-        'findByCriteria'    => 'getByCriteria',
-        'findAll'           => 'getByCriteria',
-        'count'             => 'getCountByCriteria',
-        'countBy'           => 'getCountByCriteria',
+    /** @var array<string, true> Conventional repository operations allowed in an interface. */
+    private const CONVENTIONAL_METHODS = [
+        'getById'            => true,
+        'getOneByCriteria'   => true,
+        'getByCriteria'      => true,
+        'getCountByCriteria' => true,
+        'exists'             => true,
+        'save'               => true,
+        'delete'             => true,
     ];
 
     /** @var array<string, true> */
@@ -138,46 +130,38 @@ final class RepositoryInterfaceContractSniff implements Sniff
             return;
         }
 
-        // Read-model / aggregate interfaces (no domain entity in any signature) are a
-        // different contract — only entity interfaces are type-locked.
-        if ($this->isEntityInterface($methods) === false) {
-            return;
-        }
-
         // Presence of conventional methods is not required (a domain may need only a
-        // subset — Interface Segregation). We only type-lock the methods that ARE
-        // declared so their signatures follow the convention.
-        $this->assertNoSuspiciousMethods($phpcsFile, $methods);
+        // subset — Interface Segregation). But every declared method must follow the
+        // conventional contract: a repository — entity or VO — operates only through
+        // the conventional operation set.
+        $this->assertConventionalMethodNames($phpcsFile, $methods);
         $this->assertSignatures($phpcsFile, $methods);
-        $this->assertNoValueObjects($phpcsFile, $methods);
+        $this->assertNoMixedTypes($phpcsFile, $methods);
     }
 
     /**
-     * Rejects Doctrine-legacy and near-conventional method names (find, findById,
-     * findBy, findOneBy, findAll, count, findByCriteria, …) that leak the legacy
-     * ORM API or mimic conventional names with a wrong suffix. Each maps to the
-     * conventional method the developer most likely meant.
+     * A repository interface must expose only conventional repository operations.
+     * Any other method name (Doctrine-legacy `find`/`findBy`, named queries like
+     * `getBalanceOnDate`, helpers, …) fragments the contract and is rejected.
      *
      * @param array<string, array{ptr: int, props: array<string, mixed>, params: list<mixed>}> $methods
      */
-    private function assertNoSuspiciousMethods(File $phpcsFile, array $methods): void
+    private function assertConventionalMethodNames(File $phpcsFile, array $methods): void
     {
         foreach ($methods as $methodName => $method) {
-            $conventional = self::SUSPICIOUS_METHODS[$methodName] ?? null;
-            if ($conventional === null) {
+            if (isset(self::CONVENTIONAL_METHODS[$methodName]) === true) {
                 continue;
             }
 
             $phpcsFile->addError(
                 sprintf(
-                    'Method %1$s() in a repository interface is a Doctrine-legacy or non-conventional name.'
-                    . ' Rename to the conventional %2$s() (or drop it if the operation is not needed).'
+                    'Method %s() in a repository interface is not a conventional repository operation.'
+                    . ' Allowed: getById/getOneByCriteria/getByCriteria/getCountByCriteria/exists/save/delete.'
                     . $this->docRef,
                     $methodName,
-                    $conventional,
                 ),
                 $method['ptr'],
-                self::ERROR_SUSPICIOUS,
+                self::ERROR_NON_CONVENTIONAL_METHOD,
             );
         }
     }
@@ -235,32 +219,6 @@ final class RepositoryInterfaceContractSniff implements Sniff
     }
 
     /**
-     * @param array<string, array{props: array<string, mixed>, params: list<mixed>}> $methods
-     */
-    private function isEntityInterface(array $methods): bool
-    {
-        foreach ($methods as $method) {
-            $returnType = (string) ($method['props']['return_type'] ?? '');
-            foreach ($this->extractClassNames($returnType) as $name) {
-                if (str_ends_with($name, 'Model') === true) {
-                    return true;
-                }
-            }
-
-            foreach ($method['params'] as $parameter) {
-                $typeHint = (string) ($parameter['type_hint'] ?? '');
-                foreach ($this->extractClassNames($typeHint) as $name) {
-                    if (str_ends_with($name, 'Model') === true) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * @return array<string, array{ptr: int, props: array<string, mixed>, params: list<mixed>}>
      */
     private function collectMethods(File $phpcsFile, int $interfacePtr): array
@@ -304,16 +262,16 @@ final class RepositoryInterfaceContractSniff implements Sniff
         $returnType = (string) ($methodProps['return_type'] ?? '');
         $isNullable = ($methodProps['nullable_return_type'] ?? false) === true
             || str_contains($returnType, 'null') === true;
-        $isEntity   = $this->returnTypeLooksLikeEntity($returnType);
+        $isDomainType = $this->returnTypeLooksLikeDomainType($returnType);
 
-        if ($isEntity === true && $isNullable === $nullable) {
+        if ($isDomainType === true && $isNullable === $nullable) {
             return;
         }
 
         $methodName = $phpcsFile->getDeclarationName($methodPtr);
         $phpcsFile->addError(
             sprintf(
-                '%s() must return %sdomain entity (*Model).' . $this->docRef,
+                '%s() must return %sdomain type (*Model or *Vo).' . $this->docRef,
                 $methodName,
                 $nullable === true ? 'a nullable ' : 'a non-nullable ',
             ),
@@ -397,14 +355,14 @@ final class RepositoryInterfaceContractSniff implements Sniff
         );
     }
 
-    private function returnTypeLooksLikeEntity(string $returnType): bool
+    private function returnTypeLooksLikeDomainType(string $returnType): bool
     {
         foreach ($this->extractClassNames($returnType) as $name) {
             if (isset(self::PRIMITIVE_TYPES[strtolower($name)]) === true) {
                 continue;
             }
 
-            if (str_ends_with($name, 'Model') === true) {
+            if (str_ends_with($name, 'Model') === true || str_ends_with($name, 'Vo') === true) {
                 return true;
             }
         }
@@ -413,28 +371,42 @@ final class RepositoryInterfaceContractSniff implements Sniff
     }
 
     /**
-     * Rejects Value Object returns from an entity repository: a VO must live in
-     * its own repository, not be mixed into the entity contract.
+     * A repository interface must not mix `*Model` and `*Vo`: a VO belongs in its
+     * own repository. A pure VO repository (only `*Vo`) is valid. Reported on the
+     * first method returning a `*Vo` when a `*Model` is also present.
      *
-     * @param array<string, array{ptr: int, props: array<string, mixed>}> $methods
+     * @param array<string, array{ptr: int, props: array<string, mixed>, params: list<mixed>}> $methods
      */
-    private function assertNoValueObjects(File $phpcsFile, array $methods): void
+    private function assertNoMixedTypes(File $phpcsFile, array $methods): void
     {
-        foreach ($methods as $methodName => $method) {
-            $returnType = (string) ($method['props']['return_type'] ?? '');
-            foreach ($this->extractClassNames($returnType) as $name) {
+        $hasModel = false;
+        foreach ($methods as $method) {
+            foreach ($this->extractClassNames((string) ($method['props']['return_type'] ?? '')) as $name) {
+                $hasModel = $hasModel || str_ends_with($name, 'Model');
+            }
+
+            foreach ($method['params'] as $parameter) {
+                foreach ($this->extractClassNames((string) ($parameter['type_hint'] ?? '')) as $name) {
+                    $hasModel = $hasModel || str_ends_with($name, 'Model');
+                }
+            }
+        }
+
+        if ($hasModel === false) {
+            return;
+        }
+
+        foreach ($methods as $method) {
+            foreach ($this->extractClassNames((string) ($method['props']['return_type'] ?? '')) as $name) {
                 if (str_ends_with($name, 'Vo') === true) {
                     $phpcsFile->addError(
-                        sprintf(
-                            '%s() returns a Value Object (*Vo); VO must be returned from a separate repository,'
-                            . ' not mixed into the entity repository.' . $this->docRef,
-                            $methodName,
-                        ),
+                        'Repository interface must not mix *Model and *Vo; a VO belongs in its own repository.'
+                        . $this->docRef,
                         $method['ptr'],
-                        self::ERROR_VO_IN_ENTITY_REPO,
+                        self::ERROR_MIXED_TYPES,
                     );
 
-                    break;
+                    return;
                 }
             }
         }
