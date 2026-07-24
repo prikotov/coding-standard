@@ -9,8 +9,8 @@ epic:
 author: Dev (Pi)
 assignee: Dev (Pi)
 branch: task/dto-reuse-phpstan-extension
-pr:
-status: in_progress
+pr: "#72"
+status: done
 ---
 
 # TASK-feat-shared-dto-reuse-validator: Проверка общих DTO модуля на переиспользование (PHPStan extension)
@@ -125,3 +125,4 @@ composer check
 | 2026-07-22 | Dev (Pi) | Откат имя-сниффа (суффикс — симптом). Возврат к cross-file CLI-анализатору. |
 | 2026-07-22 | Dev (Pi) | Переформулирование в Psalm plugin (`findReferencesToClass`). |
 | 2026-07-22 | Dev (Pi) | Откат Psalm: `findReferencesToClassLike` не работает в обычном plugin-run (нужен `--find-references`); рабочий путь через `AfterCodebasePopulated` + custom Issue — высокий уровень internals. Потребитель (TasK) на Psalm, но готов добавить PHPStan в `require-dev`. Переход на **PHPStan Collector + Rule** — нативный cross-file aggregation, проще и корректнее. Rename обратно в `TASK-feat-shared-dto-reuse-validator`. |
+| 2026-07-22 | Dev (Pi) | Релиз v0.23.0 (PR #72). Реализация: `DtoReferenceCollector` (Name node → resolve FQCN, контекст use case/shared) + `DtoReuseRule` (ровно 1 use case + нет shared → error). Первая итерация (HandlerReturnCollector по return-типу `__invoke`) дала 103 ложных на TasK — метрика перепроектирована на reference-based. На TasK: 4 flagged, все точные. |
