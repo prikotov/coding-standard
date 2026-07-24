@@ -521,4 +521,12 @@ return [
         ],
         'warnings' => [],
     ],
+    // RepositoryInterfaceContractSniff — VO return in entity repository → 1 error
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/BadVoInEntityRepositoryInterface.inc',
+        'errors' => [
+            16 => 1,
+        ],
+        'warnings' => [],
+    ],
 ];

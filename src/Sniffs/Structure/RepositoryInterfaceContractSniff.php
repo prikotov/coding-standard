@@ -34,6 +34,9 @@ use PrikotovCodingStandard\Config\CodingStandardConfig;
  * leak the legacy ORM API or mimic a conventional name with a wrong suffix —
  * each maps to the conventional method the developer most likely meant.
  *
+ * Additionally rejects Value Object (*Vo) returns from an entity repository:
+ * a VO must live in its own repository, not be mixed into the entity contract.
+ *
  * See: docs/conventions/layers/domain/repository.md
  */
 final class RepositoryInterfaceContractSniff implements Sniff
@@ -46,6 +49,7 @@ final class RepositoryInterfaceContractSniff implements Sniff
     private const ERROR_EXISTS = 'ExistsMustReturnBool';
     private const ERROR_SAVE = 'SaveMustTakeEntityReturnVoid';
     private const ERROR_DELETE = 'DeleteMustTakeEntityReturnVoid';
+    private const ERROR_VO_IN_ENTITY_REPO = 'ValueObjectInEntityRepository';
 
     private const DOMAIN_REPOSITORY_PATH = 'Domain/Repository/';
     private const INTERFACE_SUFFIX = 'RepositoryInterface';
@@ -145,6 +149,7 @@ final class RepositoryInterfaceContractSniff implements Sniff
         // declared so their signatures follow the convention.
         $this->assertNoSuspiciousMethods($phpcsFile, $methods);
         $this->assertSignatures($phpcsFile, $methods);
+        $this->assertNoValueObjects($phpcsFile, $methods);
     }
 
     /**
@@ -405,6 +410,34 @@ final class RepositoryInterfaceContractSniff implements Sniff
         }
 
         return false;
+    }
+
+    /**
+     * Rejects Value Object returns from an entity repository: a VO must live in
+     * its own repository, not be mixed into the entity contract.
+     *
+     * @param array<string, array{ptr: int, props: array<string, mixed>}> $methods
+     */
+    private function assertNoValueObjects(File $phpcsFile, array $methods): void
+    {
+        foreach ($methods as $methodName => $method) {
+            $returnType = (string) ($method['props']['return_type'] ?? '');
+            foreach ($this->extractClassNames($returnType) as $name) {
+                if (str_ends_with($name, 'Vo') === true) {
+                    $phpcsFile->addError(
+                        sprintf(
+                            '%s() returns a Value Object (*Vo); VO must be returned from a separate repository,'
+                            . ' not mixed into the entity repository.' . $this->docRef,
+                            $methodName,
+                        ),
+                        $method['ptr'],
+                        self::ERROR_VO_IN_ENTITY_REPO,
+                    );
+
+                    break;
+                }
+            }
+        }
     }
 
     /**
