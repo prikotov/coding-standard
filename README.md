@@ -52,11 +52,11 @@ AI-агенты склонны отклоняться от конвенций. �
 
 ### PHPStan-правила
 
-Пользовательское PHPStan-расширение (Collector + Rule) для cross-file проверок:
+Пользовательское PHPStan-расширение (Collector + Rule) для межфайловых проверок:
 
 | Правило | Что проверяет |
 |---|---|
-| `DtoReuseRule` | Общие DTO в `Module\{M}\Application\Dto\`, используемые < порога use case'ами (по умолчанию 2), помечаются — им место рядом с владельцем. Не зависит от имени DTO. |
+| `DtoReuseRule` | Находит DTO в общей папке модуля (`Module\{ModuleName}\Application\Dto`), которые по факту использует только один use case, и предлагает переложить их рядом с владельцем. |
 
 **Подключение:** потребитель добавляет `phpstan/phpstan` в `require-dev` (сосуществует с Psalm) и расширение подхватывается автоматически через `phpstan/extension-installer`, либо вручную через `includes:` в `phpstan.neon`:
 
@@ -65,7 +65,7 @@ includes:
     - vendor/prikotov/coding-standard/phpstan-rules.neon
 ```
 
-Порог настраивается аргументом сервиса `minUses` в `phpstan.neon`. Конвенция размещения DTO: [`docs/conventions/core-patterns/dto.md`](docs/conventions/core-patterns/dto.md).
+Конвенция размещения DTO: [`docs/conventions/core-patterns/dto.md`](docs/conventions/core-patterns/dto.md).
 
 Примеры конфигураций: [`docs/conventions/examples/`](docs/conventions/examples/)
 

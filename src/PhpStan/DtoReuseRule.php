@@ -12,27 +12,19 @@ use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
- * Помечает общие DTO модуля, используемые меньшим числом use case'ов, чем порог.
+ * Помечает общие DTO модуля, которые referenced только файлами одного use case'а
+ * (и ничем общим) — use-case-специфичный DTO лежит в общем пуле не на своём месте.
  *
- * Данные: из HandlerReturnCollector (handler → возвращаемые DTO) и
- * DtoLocationCollector (DTO в Application\Dto + позиция).
- * Cross-file aggregation делает PHPStan (collectors → rule на CollectedDataNode).
+ * Данные: из DtoReferenceCollector (dto → useCase|null) и DtoLocationCollector
+ * (DTO в Application\Dto + позиция). Cross-file aggregation делает PHPStan.
  *
- * Не зависит от имени DTO — только от фактического переиспользования.
+ * Не зависит от имени DTO — только от фактических ссылок по коду.
  *
  * @implements Rule<CollectedDataNode>
  */
 final class DtoReuseRule implements Rule
 {
     private const DOC_REF = ' See: docs/conventions/core-patterns/dto.md';
-
-    /**
-     * @param positive-int $minUses Минимум use case'ов для «общего» DTO.
-     */
-    public function __construct(
-        private readonly int $minUses,
-    ) {
-    }
 
     public function getNodeType(): string
     {
@@ -49,23 +41,23 @@ final class DtoReuseRule implements Rule
         $errors = [];
         foreach ($node->get(DtoLocationCollector::class) as $fileItems) {
             foreach ($fileItems as $item) {
-                $uses = count($usages[$item['dto']] ?? []);
+                $data = $usages[$item['dto']] ?? ['useCases' => [], 'shared' => false];
 
-                if ($uses >= $this->minUses) {
+                // use-case-специфичный: ровно один use case ссылается и нет shared.
+                if (count($data['useCases']) !== 1 || $data['shared'] === true) {
                     continue;
                 }
 
+                $useCase = array_key_first($data['useCases']);
                 $errors[] = RuleErrorBuilder::message(sprintf(
-                    'DTO %s в общем пуле Application\Dto используется %d use case\'ом(ами),'
-                    . ' порог %d. Перенесите рядом с владельцем в UseCase\{Case}\.'
-                    . self::DOC_REF,
+                    'DTO %s в общем пуле Application\Dto используется только одним use case\'ом (%s).'
+                    . ' Перенесите рядом с владельцем в UseCase\{Case}\.' . self::DOC_REF,
                     $item['dto'],
-                    $uses,
-                    $this->minUses,
+                    $useCase,
                 ))
                     ->file($item['file'])
                     ->line($item['line'])
-                    ->identifier('prikotov.dtoReuse.underused')
+                    ->identifier('prikotov.dtoReuse.singleUseCase')
                     ->build();
             }
         }
@@ -76,15 +68,22 @@ final class DtoReuseRule implements Rule
     /**
      * @param CollectedDataNode $node
      *
-     * @return array<non-empty-string, array<non-empty-string, true>>
+     * @return array<non-empty-string, array{useCases: array<string, true>, shared: bool}>
      */
     private function collectUsages(Node $node): array
     {
         $usages = [];
-        foreach ($node->get(HandlerReturnCollector::class) as $fileItems) {
+        foreach ($node->get(DtoReferenceCollector::class) as $fileItems) {
             foreach ($fileItems as $item) {
-                foreach ($item['returns'] as $dtoFqcn) {
-                    $usages[$dtoFqcn][$item['handler']] = true;
+                $dto = $item['dto'];
+                if (isset($usages[$dto]) === false) {
+                    $usages[$dto] = ['useCases' => [], 'shared' => false];
+                }
+
+                if ($item['useCase'] === null) {
+                    $usages[$dto]['shared'] = true;
+                } else {
+                    $usages[$dto]['useCases'][$item['useCase']] = true;
                 }
             }
         }

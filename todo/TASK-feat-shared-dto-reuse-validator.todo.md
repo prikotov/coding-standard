@@ -24,14 +24,14 @@ status: in_progress
 - Разработка ведётся AI-агентами; агент может не прочитать конвенцию → текст-doc не барьер. Нужна **автоматическая валидация**.
 
 ### Варианты или путь решения (Solution Sketch)
-- **PHPStan extension**: `Collector` собирает return-типы всех query/command-handler'ов (handler → FQCN возвращаемых DTO), затем `Rule` на DTO из `Module\{M}\Application\Dto` считает уникальные handler'ы из агрегированных данных.
+- **PHPStan extension**: `Collector` собирает return-типы всех query/command-handler'ов (handler → FQCN возвращаемых DTO), затем `Rule` на DTO из `Module\{ModuleName}\Application\Dto` считает уникальные handler'ы из агрегированных данных.
 - Если DTO используется < порога (по умолчанию 2 — т.е. нужен ≥2 use case'ов) → error: «перенеси рядом с владельцем».
 - Проверка **не привязана к имени DTO** (суффиксу/префиксу) — только к фактическому переиспользованию. Не обходится переименованием.
 - Семантически точна: PHPStan различает return-тип / комментарий / импорт (AST + Reflection через `Scope`); cross-file aggregation делает сам PHPStan (collectors → rules).
 - Потребитель добавляет `phpstan/phpstan` в `require-dev` (сосуществует с Psalm, не конфликтует) и подключает extension.
 
 ### Ожидаемый результат (Expected Result)
-- PHPStan extension подсвечивает DTO в `Module\{M}\Application\Dto\`, используемые < порога use case'ами, и предлагает перенести рядом с владельцем.
+- PHPStan extension подсвечивает DTO в `Module\{ModuleName}\Application\Dto\`, используемые < порога use case'ами, и предлагает перенести рядом с владельцем.
 - Ручной разбор «общих» DTO на ревью перестаёт быть основным барьером.
 
 ## 1. Concept and Goal (Концепция и Цель)
@@ -51,7 +51,7 @@ status: in_progress
 - **Где делаем:** `src/PhpStan/` (`DtoReuseRule.php`, `DtoReturnCollector.php`) + `phpstan-rules.neon` (регистрация + параметры) + `tests/PhpStan/` (fixtures через `RuleTestCase`).
 - **Текущее поведение:** `DtoStructureSniff` (PHPCS) проверяет структуру DTO и запрещает `Domain\Dto\`. Переиспользование общих DTO не анализируется.
 - **Границы (Out of Scope):**
-  - Корневой `Common\Application\Dto\` (общие DTO приложения — `PaginationDto`, `IdDto`, `SortDto`) не проверяем — заведомо общий. Только `Module\{M}\Application\Dto\`.
+  - Корневой `Common\Application\Dto\` (общие DTO приложения — `PaginationDto`, `IdDto`, `SortDto`) не проверяем — заведомо общий. Только `Module\{ModuleName}\Application\Dto\`.
   - Глобальный граф зависимостей не строим — collected data по return-типам.
   - Автоматическое перемещение DTO не делаем — только диагностика.
 
@@ -59,7 +59,7 @@ status: in_progress
 
 ### 🔴 Must Have (Обязательно)
 - [ ] `Collector`: на `ClassMethod` query/command-handler'а (класс в namespace `...\UseCase\{Query|Command}\...`) собирает resolved FQCN return-типа метода (по умолчанию `__invoke`; учесть nullable `?Dto`).
-- [ ] `Rule`: на `Class_` DTO в namespace `...\Module\{M}\Application\Dto` → из collected data считает уникальные handler'ы; если < порога → error со ссылкой на `dto.md`.
+- [ ] `Rule`: на `Class_` DTO в namespace `...\Module\{ModuleName}\Application\Dto` → из collected data считает уникальные handler'ы; если < порога → error со ссылкой на `dto.md`.
 - [ ] Порог настраивается (по умолчанию 2) — PHPStan parameter в `phpstan-rules.neon`.
 - [ ] Корневой `Common\Application\Dto\` не проверяется.
 - [ ] Тесты через `PHPStan\Testing\RuleTestCase`: 0, 1, 2+ использований DTO; игнор корневого пула; прямой return-тип `: XxxDto` и `: ?XxxDto`.
@@ -85,7 +85,7 @@ status: in_progress
 - [x] Doc `docs/conventions/ops/phpstan-dto-reuse.ru.md`.
 
 ## 5. Definition of Done (Критерии приёмки)
-- [x] Rule + Collector подсвечивают DTO из `Module\{M}\Application\Dto\`, используемые < порога use case'ами.
+- [x] Rule + Collector подсвечивают DTO из `Module\{ModuleName}\Application\Dto\`, используемые < порога use case'ами.
 - [x] Корневой `Common\Application\Dto\` не проверяется.
 - [x] Не зависит от имени DTO (только переиспользование).
 - [x] Потребитель подключает extension (extension-installer или `includes:`) одной настройкой.
