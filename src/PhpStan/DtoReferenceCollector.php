@@ -17,6 +17,10 @@ use PHPStan\Collectors\Collector;
  * то это использование конкретным use case'ом; иначе (Mapper/Service/Integration/...)
  * — shared использование, делающее DTO общим.
  *
+ * Reference из класса-сообщения use case (*Command/*Query) тоже считается shared:
+ * DTO в поле сообщения — часть внешнего контракта, сериализуется и пересекает
+ * границы, это не внутренняя деталь одного use case'а.
+ *
  * @implements Collector<Name, array{dto: non-falsy-string, useCase: string|null}>
  */
 final class DtoReferenceCollector implements Collector
@@ -40,9 +44,19 @@ final class DtoReferenceCollector implements Collector
             return null;
         }
 
+        $useCase = self::extractUseCaseId($scope->getNamespace());
+
+        // Reference из класса-сообщения use case (*Command/*Query) — это внешний
+        // контракт: DTO в поле сообщения сериализуется и пересекает границы, это
+        // не внутренняя деталь одного use case'а. Считаем shared, чтобы правило не
+        // предлагало scoped-перенос для DTO, который является частью контракта.
+        if ($useCase !== null && self::isMessageContract($scope)) {
+            $useCase = null;
+        }
+
         return [
             'dto' => $fqcn,
-            'useCase' => self::extractUseCaseId($scope->getNamespace()),
+            'useCase' => $useCase,
         ];
     }
 
@@ -58,5 +72,21 @@ final class DtoReferenceCollector implements Collector
         }
 
         return null;
+    }
+
+    /**
+     * Класс-сообщение use case — *Command или *Query (не *CommandHandler/*QueryHandler):
+     * DTO в его поле — часть внешнего контракта, не внутренняя деталь.
+     */
+    private static function isMessageContract(Scope $scope): bool
+    {
+        if ($scope->isInClass() === false) {
+            return false;
+        }
+
+        $shortName = $scope->getClassReflection()->getNativeReflection()->getShortName();
+
+        return str_ends_with($shortName, 'Command') === true
+            || str_ends_with($shortName, 'Query') === true;
     }
 }
