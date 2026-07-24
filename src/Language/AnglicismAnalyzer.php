@@ -77,8 +77,9 @@ final class AnglicismAnalyzer
 
     private function isLatin(string $word): bool
     {
-        // Только латинские буквы (возможно с дефисами), без кириллицы.
-        return preg_match('/^[A-Za-z][A-Za-z-]*[A-Za-z]$|^[A-Za-z]$/', $word) === 1;
+        // Минимум 2 символа: однобуквенные латинские (a, i, x) в русском тексте —
+        // артефакты экстрактора, не англицизмы.
+        return preg_match('/^[A-Za-z][A-Za-z-]+$/', $word) === 1;
     }
 
     private function isAllowed(string $word): bool

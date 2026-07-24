@@ -64,6 +64,7 @@
             "@sniff-test",
             "@validate-docs",
             "@validate-md-links",
+            "@validate-language",
             "@validate-todo",
             "@phpstan",
             "phpcs src/"
