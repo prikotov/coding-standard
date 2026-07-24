@@ -409,12 +409,20 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
-    // RepositoryStructureSniff + MethodSignature — DBAL Connection dependency + raw fetchOne call
+    // RepositoryStructureSniff + MethodSignature — DBAL Connection dependency + non-conventional method name
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/RawSqlRepository.inc',
         'errors' => [
             11 => 1, // ForbiddenDbalConnectionDependency
-            19 => 1, // RawDbalCallForbidden (fetchOne)
+            17 => 1, // NonConventionalRepositoryMethod (findSomething)
+        ],
+        'warnings' => [],
+    ],
+    // RepositoryStructureSniff — DBAL Connection smuggled via a class property type-hint
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/DbalPropertyRepository.inc',
+        'errors' => [
+            12 => 1, // ForbiddenDbalConnectionDependency (private readonly Connection $connection)
         ],
         'warnings' => [],
     ],
@@ -435,18 +443,20 @@ return [
         'warnings' => [],
     ],
     // RepositoryMethodSignatureSniff — public method returns a Doctrine type → DoctrineInfrastructureLeak
+    // (also a non-conventional method name → two errors on the same line)
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/LeakReturnRepository.inc',
         'errors' => [
-            14 => 1,
+            14 => 2, // NonConventionalRepositoryMethod + DoctrineInfrastructureLeak
         ],
         'warnings' => [],
     ],
     // RepositoryMethodSignatureSniff — public method takes a Doctrine type → DoctrineInfrastructureLeak
+    // (also a non-conventional method name → two errors on the same line)
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Infrastructure/Repository/Project/LeakParameterRepository.inc',
         'errors' => [
-            14 => 1,
+            14 => 2, // NonConventionalRepositoryMethod + DoctrineInfrastructureLeak
         ],
         'warnings' => [],
     ],
@@ -488,9 +498,15 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
-    // RepositoryInterfaceContractSniff — aggregate interface (no Model) is skipped
+    // RepositoryInterfaceContractSniff — VO repository follows the same contract (returns *Vo); valid
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/PaymentSummaryRepositoryInterface.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // RepositoryInterfaceContractSniff — valid VO repository: full read contract, element type *Vo
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/ValidPaymentSummaryRepositoryInterface.inc',
         'errors' => [],
         'warnings' => [],
     ],
@@ -510,22 +526,22 @@ return [
         ],
         'warnings' => [],
     ],
-    // RepositoryInterfaceContractSniff — Doctrine-legacy / non-conventional names → 4 errors
+    // RepositoryInterfaceContractSniff — non-conventional method names → 4 errors
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/SuspectNamesRepositoryInterface.inc',
         'errors' => [
-            13 => 1,
-            15 => 1,
-            17 => 1,
-            19 => 1,
+            13 => 1, // NonConventionalMethodName (findById)
+            15 => 1, // NonConventionalMethodName (findByCriteria)
+            17 => 1, // NonConventionalMethodName (findOneBy)
+            19 => 1, // NonConventionalMethodName (count)
         ],
         'warnings' => [],
     ],
-    // RepositoryInterfaceContractSniff — VO return in entity repository → 1 error
+    // RepositoryInterfaceContractSniff — mixing *Model and *Vo in one interface → 1 error
     [
         'file' => __DIR__ . '/fixtures/src/Module/Example/Domain/Repository/Payment/BadVoInEntityRepositoryInterface.inc',
         'errors' => [
-            16 => 1,
+            16 => 1, // MixedModelAndValueObject (getOneByCriteria returns *Vo while getById returns *Model)
         ],
         'warnings' => [],
     ],

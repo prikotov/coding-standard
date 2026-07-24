@@ -14,13 +14,15 @@ use PrikotovCodingStandard\Config\CodingStandardConfig;
  * `{Entity}Repository` naming (incl. CQRS `ReadRepository`/`WriteRepository`),
  * implementation of a Domain repository interface. Also forbids `flush()`
  * inside repositories — the transaction boundary belongs to the
- * CommandHandler/UseCase — and rejects a direct dependency on
- * `Doctrine\DBAL\Connection`, which forces raw SQL / column operations instead
- * of ORM persistence and CriteriaMapper-driven queries.
+ * CommandHandler/UseCase — and rejects any dependency on `Doctrine\DBAL\*`
+ * (in constructor parameters or class properties), which forces raw SQL /
+ * column operations instead of ORM persistence and CriteriaMapper-driven
+ * queries. A repository is an orchestrator: SQL is built outside it.
  *
- * Note: inheritance of `ServiceEntityRepository` is intentionally NOT enforced —
- * write-only repositories (EntityManager-based), DBAL/SQL read-side repositories, filesystem
- * and in-memory repositories legitimately use other bases.
+ * Note: inheritance of `ServiceEntityRepository` is intentionally NOT enforced –
+ * write-only repositories (EntityManager-based), filesystem and in-memory
+ * repositories legitimately use other bases. DBAL, however, is forbidden in any
+ * repository (read via CriteriaMapper/QueryBuilder, write via ORM persist).
  *
  * See: docs/conventions/layers/infrastructure/repository.md
  *      docs/conventions/layers/domain/repository.md
@@ -135,9 +137,14 @@ final class RepositoryStructureSniff implements Sniff
     }
 
     /**
-     * Rejects a constructor dependency on Doctrine\DBAL\Connection — repositories
-     * must persist entities via ORM and read via CriteriaMapper/QueryBuilder, not
-     * via raw DBAL column operations or hand-written SQL.
+     * Rejects any dependency on Doctrine\DBAL\* — in constructor parameters or
+     * class properties. Repositories must persist entities via ORM and read via
+     * CriteriaMapper/QueryBuilder, never via raw DBAL column operations or
+     * hand-written SQL. A repository is an orchestrator; SQL is built outside it.
+     *
+     * Properties are checked too so the dependency cannot be smuggled in via the
+     * constructor body (e.g. `$this->connection = $registry->getManagerForClass(...)
+     * ->getConnection();`).
      */
     private function assertNoDbalConnection(File $phpcsFile, int $classPtr): void
     {
@@ -146,9 +153,40 @@ final class RepositoryStructureSniff implements Sniff
             return;
         }
 
-        $scopeStart = $tokens[$classPtr]['scope_opener'];
-        $scopeEnd   = $tokens[$classPtr]['scope_closer'];
+        $scopeStart = (int) $tokens[$classPtr]['scope_opener'];
+        $scopeEnd   = (int) $tokens[$classPtr]['scope_closer'];
         $useMap     = $this->buildUseMap($phpcsFile, $classPtr);
+
+        $dbalFqcn = $this->findDbalInConstructor($phpcsFile, $classPtr, $scopeStart, $scopeEnd, $useMap)
+            ?? $this->findDbalInProperties($phpcsFile, $classPtr, $scopeStart, $scopeEnd, $useMap);
+
+        if ($dbalFqcn === null) {
+            return;
+        }
+
+        $phpcsFile->addError(
+            sprintf(
+                'Repository must not depend on Doctrine\\DBAL\\* ("%s"); persist via ORM and read via'
+                . ' CriteriaMapper/QueryBuilder. A repository is an orchestrator — SQL is built outside it.'
+                . $this->docRef,
+                $dbalFqcn,
+            ),
+            $classPtr,
+            self::ERROR_DBAL_CONNECTION,
+        );
+    }
+
+    /**
+     * @param array<string, string> $useMap
+     */
+    private function findDbalInConstructor(
+        File $phpcsFile,
+        int $classPtr,
+        int $scopeStart,
+        int $scopeEnd,
+        array $useMap,
+    ): ?string {
+        $tokens = $phpcsFile->getTokens();
 
         $pointer = $scopeStart;
         while (($pointer = $phpcsFile->findNext(T_FUNCTION, $pointer + 1, $scopeEnd)) !== false) {
@@ -161,27 +199,48 @@ final class RepositoryStructureSniff implements Sniff
             }
 
             foreach ($phpcsFile->getMethodParameters($pointer) as $parameter) {
-                $typeHint = (string) ($parameter['type_hint'] ?? '');
-                foreach ($this->extractClassNames($typeHint) as $name) {
+                foreach ($this->extractClassNames((string) ($parameter['type_hint'] ?? '')) as $name) {
                     $fqcn = $this->resolveFqcn($name, $useMap);
                     if (str_starts_with($fqcn, 'Doctrine\\DBAL\\') === true) {
-                        $phpcsFile->addError(
-                            sprintf(
-                                'Repository must not depend on Doctrine\\DBAL\\Connection ("%s");'
-                                . ' persist via ORM and read via CriteriaMapper/QueryBuilder.' . $this->docRef,
-                                $fqcn,
-                            ),
-                            $classPtr,
-                            self::ERROR_DBAL_CONNECTION,
-                        );
-
-                        return;
+                        return $fqcn;
                     }
                 }
             }
 
-            return;
+            return null;
         }
+
+        return null;
+    }
+
+    /**
+     * @param array<string, string> $useMap
+     */
+    private function findDbalInProperties(
+        File $phpcsFile,
+        int $classPtr,
+        int $scopeStart,
+        int $scopeEnd,
+        array $useMap,
+    ): ?string {
+        $tokens = $phpcsFile->getTokens();
+
+        $pointer = $scopeStart;
+        while (($pointer = $phpcsFile->findNext(T_VARIABLE, $pointer + 1, $scopeEnd)) !== false) {
+            if ($this->isClassProperty($tokens, $pointer, $classPtr) === false) {
+                continue;
+            }
+
+            $properties = $phpcsFile->getMemberProperties($pointer);
+            foreach ($this->extractClassNames((string) ($properties['type'] ?? '')) as $name) {
+                $fqcn = $this->resolveFqcn($name, $useMap);
+                if (str_starts_with($fqcn, 'Doctrine\\DBAL\\') === true) {
+                    return $fqcn;
+                }
+            }
+        }
+
+        return null;
     }
 
     private function assertNoFlush(File $phpcsFile, int $classPtr): void
@@ -368,6 +427,37 @@ final class RepositoryStructureSniff implements Sniff
         }
 
         return array_key_last($tokens[$tokenPtr]['conditions']) === $classPtr;
+    }
+
+    /**
+     * A real class property declaration: nested directly in the class scope, not
+     * inside a method/closure (which also makes its T_VARIABLE satisfy
+     * belongsToClass, but getMemberProperties() would throw on it).
+     */
+    private function isClassProperty(array $tokens, int $tokenPtr, int $classPtr): bool
+    {
+        $conditions = $tokens[$tokenPtr]['conditions'] ?? null;
+        if (is_array($conditions) === false || $conditions === []) {
+            return false;
+        }
+
+        if (array_key_last($conditions) !== $classPtr) {
+            return false;
+        }
+
+        foreach ($conditions as $scopePtr => $code) {
+            if (in_array($tokens[$scopePtr]['code'] ?? null, [T_FUNCTION, T_CLOSURE, T_FN], true) === true) {
+                return false;
+            }
+        }
+
+        // Exclude method/closure parameters — they sit in parentheses owned by T_FUNCTION
+        // and getMemberProperties() throws on them.
+        if (empty($tokens[$tokenPtr]['nested_parenthesis']) === false) {
+            return false;
+        }
+
+        return true;
     }
 
     private function extractFqcnFromUse(File $phpcsFile, int $start, int $end): ?string

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// RepositoryInterfaceContractSniff — Doctrine-legacy / non-conventional method names
+// RepositoryInterfaceContractSniff — non-conventional method names (not in the allowed set)
 namespace App\Module\Example\Domain\Repository\Payment;
 
 use App\Module\Example\Domain\Entity\PaymentModel;

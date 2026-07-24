@@ -11,14 +11,16 @@ use PrikotovCodingStandard\Config\CodingStandardConfig;
 /**
  * Validates method signatures inside Doctrine repository implementations.
  *
- * A repository is a Domain contract implemented against the persistence layer,
- * so its public methods must operate on domain types (entities, value objects,
- * criteria, scalars) and must not leak Doctrine infrastructure types
- * (QueryBuilder, EntityManager, Connection, …) to the outside. Raw DBAL query
- * execution (executeQuery / fetch* / prepare / …) is forbidden entirely — reads
- * go through CriteriaMapper/QueryBuilder, writes through ORM persistence.
- * The constructor is exempt — it legitimately injects ManagerRegistry /
- * CriteriaMapper.
+ * A repository is an orchestrator implementing a Domain contract: it accepts
+ * domain types (entities, value objects, criteria, scalars) and returns domain
+ * types. Its public methods must follow the conventional contract — only
+ * `getById`, `getOneByCriteria`, `getByCriteria`, `getCountByCriteria`,
+ * `exists`, `save`, `delete` are allowed; any other public method name is an
+ * error (no `findSomething`/`getBalanceOnDate`/…). Doctrine infrastructure
+ * types (QueryBuilder, EntityManager, Connection, …) must not leak through a
+ * public signature; DBAL is forbidden in the repository altogether (see
+ * RepositoryStructureSniff). The constructor is exempt — it legitimately
+ * injects ManagerRegistry / CriteriaMapper.
  *
  * Type-locked signatures are checked for the conventional methods when they
  * are declared in the class: `save`, `delete`, `getCountByCriteria`,
@@ -30,7 +32,7 @@ use PrikotovCodingStandard\Config\CodingStandardConfig;
 final class RepositoryMethodSignatureSniff implements Sniff
 {
     private const ERROR_DOCTRINE_LEAK = 'DoctrineInfrastructureLeak';
-    private const ERROR_RAW_DBAL = 'RawDbalCallForbidden';
+    private const ERROR_NON_CONVENTIONAL_METHOD = 'NonConventionalRepositoryMethod';
     private const ERROR_SAVE_SIGNATURE = 'SaveMustTakeEntityReturnVoid';
     private const ERROR_DELETE_SIGNATURE = 'DeleteMustTakeEntityReturnVoid';
     private const ERROR_GET_COUNT_RETURN = 'GetCountByCriteriaMustReturnInt';
@@ -43,17 +45,14 @@ final class RepositoryMethodSignatureSniff implements Sniff
     private string $docRef = '';
 
     /** @var array<string, true> */
-    private const RAW_DBAL_METHODS = [
-        'executeQuery'        => true,
-        'executeStatement'    => true,
-        'executeUpdate'       => true,
-        'prepare'             => true,
-        'fetchAssociative'    => true,
-        'fetchOne'            => true,
-        'fetchNumeric'        => true,
-        'fetchAllAssociative' => true,
-        'fetchAllNumeric'     => true,
-        'fetchFirstColumn'    => true,
+    private const CONVENTIONAL_METHODS = [
+        'getById'            => true,
+        'getOneByCriteria'   => true,
+        'getByCriteria'      => true,
+        'getCountByCriteria' => true,
+        'exists'             => true,
+        'save'               => true,
+        'delete'             => true,
     ];
 
     /** @var array<string, true> */
@@ -138,8 +137,6 @@ final class RepositoryMethodSignatureSniff implements Sniff
 
             $this->checkMethod($phpcsFile, $pointer, $useMap);
         }
-
-        $this->assertNoRawDbalCalls($phpcsFile, $stackPtr);
     }
 
     private function checkMethod(File $phpcsFile, int $methodPtr, array $useMap): void
@@ -155,6 +152,7 @@ final class RepositoryMethodSignatureSniff implements Sniff
         }
 
         if ($methodName !== '__construct') {
+            $this->assertConventionalMethodName($phpcsFile, $methodPtr, $methodName);
             $this->assertNoDoctrineLeak($phpcsFile, $methodPtr, $methodProps, $useMap);
         }
 
@@ -195,47 +193,31 @@ final class RepositoryMethodSignatureSniff implements Sniff
     }
 
     /**
-     * Forbids raw DBAL query execution calls anywhere in the repository. These
-     * method names are unambiguous (they do not exist on the ORM QueryBuilder),
-     * so any call points at hand-written SQL that should live in a mapper.
+     * A repository public method must be a conventional repository operation.
+     * Named queries / helpers (`findSomething`, `getBalanceOnDate`, …) fragment
+     * the contract and are rejected; the element type (Model or Vo) is checked
+     * separately by the type-locked signature rules.
      */
-    private function assertNoRawDbalCalls(File $phpcsFile, int $classPtr): void
+    private function assertConventionalMethodName(File $phpcsFile, int $methodPtr, string $methodName): void
     {
-        $tokens = $phpcsFile->getTokens();
-        if (isset($tokens[$classPtr]['scope_opener'], $tokens[$classPtr]['scope_closer']) === false) {
+        if (str_starts_with($methodName, '__') === true) {
             return;
         }
 
-        $scopeStart = $tokens[$classPtr]['scope_opener'];
-        $scopeEnd   = $tokens[$classPtr]['scope_closer'];
-
-        $pointer = $scopeStart;
-        while (($pointer = $phpcsFile->findNext(T_OBJECT_OPERATOR, $pointer + 1, $scopeEnd)) !== false) {
-            $methodNamePtr = $phpcsFile->findNext(T_STRING, $pointer + 1, $scopeEnd);
-            if ($methodNamePtr === false) {
-                continue;
-            }
-
-            $methodName = (string) $tokens[$methodNamePtr]['content'];
-            if (isset(self::RAW_DBAL_METHODS[$methodName]) === false) {
-                continue;
-            }
-
-            $openParenthesis = $phpcsFile->findNext(T_OPEN_PARENTHESIS, $methodNamePtr + 1, $methodNamePtr + 4);
-            if ($openParenthesis === false) {
-                continue;
-            }
-
-            $phpcsFile->addError(
-                sprintf(
-                    'Repository must not call raw DBAL method %s(); read via CriteriaMapper/QueryBuilder,'
-                    . ' write via ORM persistence.' . $this->docRef,
-                    $methodName,
-                ),
-                $methodNamePtr,
-                self::ERROR_RAW_DBAL,
-            );
+        if (isset(self::CONVENTIONAL_METHODS[$methodName]) === true) {
+            return;
         }
+
+        $phpcsFile->addError(
+            sprintf(
+                'Repository public method "%s()" is not a conventional repository operation.'
+                . ' Allowed: getById/getOneByCriteria/getByCriteria/getCountByCriteria/exists/save/delete.'
+                . $this->docRef,
+                $methodName,
+            ),
+            $methodPtr,
+            self::ERROR_NON_CONVENTIONAL_METHOD,
+        );
     }
 
     /**
@@ -360,7 +342,7 @@ final class RepositoryMethodSignatureSniff implements Sniff
         $isNullable   = ($methodProps['nullable_return_type'] ?? false) === true
             || str_contains($returnType, 'null') === true
             || str_contains($returnType, 'Null') === true;
-        $isEntityLike = $this->returnTypeLooksLikeEntity($returnType);
+        $isEntityLike = $this->returnTypeLooksLikeDomainType($returnType);
 
         if ($isNullable === true && $isEntityLike === true) {
             return;
@@ -381,7 +363,7 @@ final class RepositoryMethodSignatureSniff implements Sniff
         $returnType = (string) ($methodProps['return_type'] ?? '');
         $isNullable = ($methodProps['nullable_return_type'] ?? false) === true;
 
-        if ($isNullable === false && $this->returnTypeLooksLikeEntity($returnType) === true) {
+        if ($isNullable === false && $this->returnTypeLooksLikeDomainType($returnType) === true) {
             return;
         }
 
@@ -393,14 +375,14 @@ final class RepositoryMethodSignatureSniff implements Sniff
         );
     }
 
-    private function returnTypeLooksLikeEntity(string $returnType): bool
+    private function returnTypeLooksLikeDomainType(string $returnType): bool
     {
         foreach ($this->extractClassNames($returnType) as $name) {
             if (isset(self::PRIMITIVE_TYPES[strtolower($name)]) === true) {
                 continue;
             }
 
-            if (str_ends_with($name, 'Model') === true) {
+            if (str_ends_with($name, 'Model') === true || str_ends_with($name, 'Vo') === true) {
                 return true;
             }
         }
