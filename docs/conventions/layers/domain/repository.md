@@ -24,6 +24,7 @@ description: Правила создания доменных контракто
 - Если в домене предусмотрен только **soft-delete**, метод `delete()` в репозитории не объявляется.
 - При soft-delete используем бизнес-методы сущности (`markAsDeleted()`, `deactivate()` и др.).
 - Для поддержки CQRS интерфейсы на чтение и запись рекомендуется разделять на `{EntityName}ReadRepositoryInterface` и `{EntityName}WriteRepositoryInterface`.
+- Репозиторий может возвращать [Value Object](../../core-patterns/value-object.md), а не сущность (`*Model`), когда результат — вычисляемое или сводное доменное значение (баланс на дату, сумма операций, статистика), а не сама сущность. Имя такого метода выражает доменную операцию (`getBalanceOn()`, `loadTotals()`), а не имитирует выборку сущности: `findById`/`getOne`/`findOne` зарезервированы за методами, возвращающими сущность.
 - Репозиторий не управляет Unit of Work (`flush`, `commit`). Контроль транзакции всегда на уровне CommandHandler/UseCase, чтобы обеспечить атомарность бизнес-операции.
 - Транзакционная граница (`flush()`) устанавливается в [CommandHandler](../application/command-handler.md) через `PersistenceManagerInterface::flush()`; в методах репозитория вызывается только `persist()` (регистрация сущности в Unit of Work).
 - Репозиторий маппит исключения ORM/SDK в доменные: `NotFoundExceptionInterface` для отсутствия сущности, `InfrastructureExceptionInterface` для ошибок работы хранилища.
