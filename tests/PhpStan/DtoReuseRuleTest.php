@@ -52,4 +52,16 @@ final class DtoReuseRuleTest extends RuleTestCase
         // Корневой общий пул Common\Application\Dto — не проверяется.
         $this->analyse([__DIR__ . '/data/common/PaginationResultDto.php'], []);
     }
+
+    public function testDtoInMessageContractIsNotFlagged(): void
+    {
+        // DTO в поле *Command (внешний контракт use case) — не use-case-специфичный,
+        // даже если handler того же use case тоже ссылается: DTO сериализуется в
+        // сообщении и пересекает границы. Не flagged.
+        $this->analyse([
+            __DIR__ . '/data/message-contract/EventPayloadDto.php',
+            __DIR__ . '/data/message-contract/DeliverCommand.php',
+            __DIR__ . '/data/message-contract/DeliverCommandHandler.php',
+        ], []);
+    }
 }
