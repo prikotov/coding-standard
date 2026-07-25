@@ -19,7 +19,7 @@ use Symfony\Component\Uid\Uuid;
  * In-memory реализация репозитория статусов сервисов.
  * Используется для хранения результатов health checks в памяти.
  *
- * @see repository.md — правила создания доменных контрактов репозиториев
+ * @see repository.md — правила реализации репозиториев
  */
 final class InMemoryServiceStatusRepository implements ServiceStatusRepositoryInterface
 {

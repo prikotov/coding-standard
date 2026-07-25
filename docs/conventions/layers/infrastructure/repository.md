@@ -10,12 +10,14 @@ description: Правила реализации репозиториев
 
 > **Фильтрация:** Для изоляции условий выборки используется [CriteriaMapper](criteria-mapper.md).
 
+> См. также: [доменный контракт репозитория](../domain/repository.md), [CriteriaMapper](criteria-mapper.md)
+
 ## Общие правила
 
 1. Каждый репозиторий наследует `ServiceEntityRepository` и реализует доменный интерфейс `{EntityName}RepositoryInterface`.
 2. Репозиторий не содержит условных запросов напрямую; все фильтры строятся через [CriteriaMapper](criteria-mapper.md).
 3. Репозиторий оперирует только доменными сущностями и критериями; никаких зависимостей из Application/Presentation.
-4. Исключения Doctrine маппятся в `NotFoundException` или `InfrastructureException`.
+4. Исключения Doctrine маппятся в [NotFoundException](../../core-patterns/exception.md#notfoundexception) или [InfrastructureException](../../core-patterns/exception.md#infrastructureexception).
 
 ## Зависимости
 
@@ -62,6 +64,14 @@ final class ProjectRepository extends ServiceEntityRepository implements Project
         private readonly CriteriaMapper $criteriaMapper,
     ) {
         parent::__construct($registry, ProjectModel::class);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function save(ProjectModel $model): void
+    {
+        $this->getEntityManager()->persist($model);
     }
 
     /**
@@ -138,3 +148,139 @@ final class ProjectRepository extends ServiceEntityRepository implements Project
 - [ ] Маппинг критериев изолирован (CriteriaMapper или аналогичный).
 - [ ] Нет утечек Doctrine QueryBuilder за пределы репозитория.
 - [ ] Транзакции управляются на уровне Application-слоя, а не в репозитории.
+
+## In-memory реализация для тестов
+
+Для unit-тестов и сценариев, где не требуется персистентность, используется in-memory реализация репозитория.
+Данные хранятся в PHP-массиве внутри объекта, что обеспечивает высокую скорость и изоляцию от БД.
+In-memory репозиторий подчиняется тем же правилам, что и Doctrine-реализация: реализует доменный интерфейс, оперирует только доменными сущностями и критериями, не вызывает `flush()`.
+
+### Пример In-memory репозитория
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace ProjectName\Common\Module\Health\Infrastructure\Repository\ServiceStatus;
+
+use ProjectName\Common\Exception\NotFoundException;
+use ProjectName\Common\Module\Health\Domain\Entity\ServiceStatusModel;
+use ProjectName\Common\Module\Health\Domain\Repository\ServiceStatus\Criteria\ServiceStatusFindCriteria;
+use ProjectName\Common\Module\Health\Domain\Repository\ServiceStatus\ServiceStatusCriteriaInterface;
+use ProjectName\Common\Module\Health\Domain\Repository\ServiceStatus\ServiceStatusRepositoryInterface;
+use Override;
+use Symfony\Component\Uid\Uuid;
+
+/**
+ * In-memory реализация репозитория статусов сервисов.
+ * Используется для тестов и сценариев без требования персистентности.
+ */
+final class InMemoryServiceStatusRepository implements ServiceStatusRepositoryInterface
+{
+    /** @var array<string, ServiceStatusModel> */
+    private array $storage = [];
+
+    #[Override]
+    public function getById(?int $id = null, ?Uuid $uuid = null): ServiceStatusModel
+    {
+        if ($id !== null) {
+            foreach ($this->storage as $model) {
+                if ($model->getId() === $id) {
+                    return $model;
+                }
+            }
+            throw new NotFoundException(sprintf('Service status with ID "%d" not found.', $id));
+        }
+
+        if ($uuid !== null) {
+            foreach ($this->storage as $model) {
+                if ($model->getUuid()->equals($uuid)) {
+                    return $model;
+                }
+            }
+            throw new NotFoundException(sprintf('Service status with UUID "%s" not found.', $uuid->toString()));
+        }
+
+        throw new NotFoundException('Service status not found: no ID or UUID provided.');
+    }
+
+    #[Override]
+    public function getOneByCriteria(ServiceStatusCriteriaInterface $criteria): ?ServiceStatusModel
+    {
+        $results = $this->getByCriteria($criteria);
+        return $results[0] ?? null;
+    }
+
+    #[Override]
+    public function getByCriteria(ServiceStatusCriteriaInterface $criteria): array
+    {
+        $results = [];
+        foreach ($this->storage as $model) {
+            if ($this->matchesCriteria($model, $criteria)) {
+                $results[] = $model;
+            }
+        }
+        return $results;
+    }
+
+    #[Override]
+    public function getCountByCriteria(ServiceStatusCriteriaInterface $criteria): int
+    {
+        return count($this->getByCriteria($criteria));
+    }
+
+    #[Override]
+    public function exists(ServiceStatusCriteriaInterface $criteria): bool
+    {
+        return $this->getCountByCriteria($criteria) > 0;
+    }
+
+    #[Override]
+    public function save(ServiceStatusModel $serviceStatus): void
+    {
+        $name = $serviceStatus->getName();
+        $this->storage[$name] = $serviceStatus;
+    }
+
+    #[Override]
+    public function delete(ServiceStatusModel $serviceStatus): void
+    {
+        $name = $serviceStatus->getName();
+        unset($this->storage[$name]);
+    }
+
+    private function matchesCriteria(ServiceStatusModel $model, ServiceStatusCriteriaInterface $criteria): bool
+    {
+        if (!($criteria instanceof ServiceStatusFindCriteria)) {
+            return true;
+        }
+
+        $name = $criteria->getName();
+        if ($name !== null && $model->getName() !== $name) {
+            return false;
+        }
+
+        $category = $criteria->getCategory();
+        if ($category !== null && $model->getCategory() !== $category) {
+            return false;
+        }
+
+        $status = $criteria->getStatus();
+        if ($status !== null && $model->getStatus() !== $status) {
+            return false;
+        }
+
+        return true;
+    }
+}
+```
+
+### Особенности In-memory реализации
+
+1. **Временное хранение** — данные существуют только во время жизни процесса PHP.
+2. **Быстродействие** — нет сетевых запросов к БД, всё в памяти.
+3. **Идеально для тестов** — изоляция от БД, детерминированные результаты.
+4. **Ключ хранилища** — выбирается на основе бизнес-логики (например, уникальное имя сервиса).
+
+Полный пример: [`InMemoryServiceStatusRepository.php`](examples/InMemoryServiceStatusRepository.php)
