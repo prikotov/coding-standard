@@ -17,7 +17,7 @@ description: Правила реализации репозиториев
 1. Каждый репозиторий наследует `ServiceEntityRepository` и реализует доменный интерфейс `{EntityName}RepositoryInterface`.
 2. Репозиторий не содержит условных запросов напрямую; все фильтры строятся через [CriteriaMapper](criteria-mapper.md).
 3. Репозиторий оперирует только доменными сущностями и критериями; никаких зависимостей из Application/Presentation.
-4. Исключения Doctrine маппятся в [NotFoundException](../../core-patterns/exception.md#notfoundexception) или [InfrastructureException](../../core-patterns/exception.md#infrastructureexception).
+4. Исключения Doctrine маппятся в [NotFoundException](../../core-patterns/exception.md) или [InfrastructureException](../../core-patterns/exception.md).
 
 ## Зависимости
 
