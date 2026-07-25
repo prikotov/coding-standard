@@ -69,6 +69,20 @@ description: Правила проектирования и использова
 Неожиданный бизнес-кейс.
 *Пример*: попытка заправить бензином электромобиль.
 
+## Интерфейсы исключений
+
+Каждое исключение реализует интерфейс (`*Interface`). В `catch` и `@throws` указывают интерфейс, а не класс — так код зависит от категории ошибки, а не от реализации (см. «Общие правила»).
+
+| Исключение | Интерфейс |
+|------------|-----------|
+| `ValidationException` | `ValidationExceptionInterface` |
+| `NotFoundException` | `NotFoundExceptionInterface` |
+| `ConflictException` | `ConflictExceptionInterface` |
+| `AccessDeniedException` | `AccessDeniedExceptionInterface` |
+| `InfrastructureException` | `InfrastructureExceptionInterface` |
+| `ConfigurationException` | `ConfigurationExceptionInterface` |
+| `DomainException` | `DomainExceptionInterface` |
+
 ## Зависимости
 
 * Исключения сторонних библиотек перехватываются **сразу**.
