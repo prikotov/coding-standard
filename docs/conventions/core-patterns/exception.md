@@ -41,10 +41,6 @@ description: Правила проектирования и использова
 Клиент запросил несуществующие данные.
 *Пример*: запрос статуса по несуществующему идентификатору.
 
-#### NotFoundExceptionInterface
-
-Маркерный интерфейс исключения `NotFoundException`. Используется в `catch` и `@throws` вместо конкретного класса (см. «выбрасываем реализацию, ловим интерфейс» в «Общие правила»).
-
 #### ConflictException
 Конфликт состояния ресурса.
 *Пример*: пользователь с таким email уже существует.
@@ -64,10 +60,6 @@ description: Правила проектирования и использова
 Ошибки окружения или внешних сервисов.
 *Примеры*: Redis недоступен, интеграционный API вернул неожиданный ответ.
 
-#### InfrastructureExceptionInterface
-
-Маркерный интерфейс исключения `InfrastructureException`. Используется в `catch` и `@throws` вместо конкретного класса.
-
 #### ConfigurationException
 
 Неверные или отсутствующие параметры в конфигурации.
@@ -76,6 +68,20 @@ description: Правила проектирования и использова
 
 Неожиданный бизнес-кейс.
 *Пример*: попытка заправить бензином электромобиль.
+
+## Маркерные интерфейсы
+
+Каждое исключение реализует маркерный интерфейс (`*Interface`). В `catch` и `@throws` указывают интерфейс, а не класс — код зависит от категории ошибки, а не от реализации (см. «Общие правила»).
+
+| Исключение | Интерфейс |
+|------------|-----------|
+| `ValidationException` | `ValidationExceptionInterface` |
+| `NotFoundException` | `NotFoundExceptionInterface` |
+| `ConflictException` | `ConflictExceptionInterface` |
+| `AccessDeniedException` | `AccessDeniedExceptionInterface` |
+| `InfrastructureException` | `InfrastructureExceptionInterface` |
+| `ConfigurationException` | `ConfigurationExceptionInterface` |
+| `DomainException` | `DomainExceptionInterface` |
 
 ## Зависимости
 
