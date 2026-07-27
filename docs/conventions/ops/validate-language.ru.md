@@ -67,7 +67,7 @@ Allowlist (case-insensitive) задаётся в конфиге `.coding-standar
 ## Использование
 
 ```bash
-# Проверка дефолтных путей (docs/, todo/, README.md, AGENTS.md).
+# Проверка дефолтных путей (docs/, README.md, AGENTS.md).
 vendor/bin/validate-language
 
 # Указанные пути.
@@ -103,8 +103,9 @@ return [
 
     // Конфигурация validate-language.
     'language' => [
-        // Файлы/директории для сканирования (по умолчанию docs/, todo/, README.md, AGENTS.md).
-        'paths' => ['docs/', 'todo/', 'README.md'],
+        // Файлы/директории для сканирования (по умолчанию docs/, README.md, AGENTS.md).
+        // todo/ исключён: это скаффолд задач (шаблонные англ. заголовки), не продуктовая докa.
+        'paths' => ['docs/', 'README.md'],
 
         // Фрагменты путей для исключения.
         'exclude' => ['docs/todo-md/reference'],
