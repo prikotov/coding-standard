@@ -54,7 +54,7 @@
         "sniff-test": "php bin/run-sniff-tests.php",
         "validate-docs": "php bin/validate-docs.php",
         "validate-md-links": "php bin/validate-md-links",
-        "validate-language": "php bin/validate-language",
+        "validate-language": "php bin/validate-language --strict",
         "validate-todo": [
             "php vendor/bin/todo-md-validate todo/*.todo.md",
             "php vendor/bin/todo-md-validate todo/backlog/"
