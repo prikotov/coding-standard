@@ -14,12 +14,16 @@ final class AnalysisResult
      * @param int $anglicismWords Латинских слов вне allowlist (включая одиночные).
      * @param float $ratio anglicismWords / totalWords.
      * @param list<string> $sampleWords Образец латинских слов-нарушителей (уникальные).
+     * @param array<string, string> $suggestions Найденные англицизмы (слово/фраза) →
+     *   стандартный перевод из language.dictionary. Только для реально встретившихся
+     *   англицизмов; пусто, если dictionary не задан или совпадений нет.
      */
     public function __construct(
         public readonly int $totalWords,
         public readonly int $anglicismWords,
         public readonly float $ratio,
         public readonly array $sampleWords,
+        public readonly array $suggestions = [],
     ) {
     }
 }
