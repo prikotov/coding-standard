@@ -10,7 +10,7 @@ author: Тимлид (Алекс) [task-orchestrator, потребитель п�
 assignee: Dev (Pi)
 branch: task/feat-validate-language-dictionary
 pr: "https://github.com/prikotov/coding-standard/pull/78"
-status: review
+status: done
 ---
 
 # TASK-feat-validate-language-dictionary: Словарь стандартных переводов (dictionary) для validate-language
