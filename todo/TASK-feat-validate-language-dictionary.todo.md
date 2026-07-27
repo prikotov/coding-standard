@@ -9,7 +9,7 @@ epic:
 author: Тимлид (Алекс) [task-orchestrator, потребитель пакета]
 assignee: Dev (Pi)
 branch: task/feat-validate-language-dictionary
-pr: "#78"
+pr: "https://github.com/prikotov/coding-standard/pull/78"
 status: review
 ---
 
