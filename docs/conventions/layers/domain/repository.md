@@ -16,23 +16,23 @@ description: Правила создания доменных контракто
 - Интерфейс репозитория именуется `{EntityName}RepositoryInterface`.
 - **Рекомендуемые методы** — для типовых операций используются следующие имена и сигнатуры (набор выбирается по потребности: не каждой сущности нужны все операции — например, read-only сущности не требуют `save`/`delete`):
   - `save(Entity $entity): void` — добавление/обновление сущности.
-  - `getById(?int $id = null, ?Uuid $uuid = null): Entity` — загрузка по идентификатору или UUID, при отсутствии выбрасывает [NotFoundExceptionInterface](../../core-patterns/exception.md) (**не nullable**).
+  - `getById(?int $id = null, ?Uuid $uuid = null): Entity` — загрузка по идентификатору или UUID, при отсутствии выбрасывает [`NotFoundExceptionInterface`](../../core-patterns/exception.md) (**не nullable**).
   - `getOneByCriteria(Criteria): ?Entity` — возвращает сущность или `null`.
   - `getByCriteria(Criteria): list<*Model|*Vo>` — коллекция доменных объектов (возможно пустая, не null).
   - `getCountByCriteria(Criteria): int` — подсчитать количество сущностей по критерию.
   - `exists(Criteria): bool` — проверить наличие сущности по критерию (без загрузки).
-  - `delete(Entity $entity): void` — только для hard-delete.
-- Если в домене предусмотрен только **soft-delete**, метод `delete()` в репозитории не объявляется.
-- При soft-delete используем бизнес-методы сущности (`markAsDeleted()`, `deactivate()` и др.).
-- Для поддержки CQRS интерфейсы на чтение и запись рекомендуется разделять на `{EntityName}ReadRepositoryInterface` и `{EntityName}WriteRepositoryInterface`.
-- Репозиторий не управляет Unit of Work (`flush`, `commit`). Контроль транзакции всегда на уровне CommandHandler/UseCase, чтобы обеспечить атомарность бизнес-операции.
-- Транзакционная граница (`flush()`) устанавливается в [CommandHandler](../application/command-handler.md) через `PersistenceManagerInterface::flush()`; в методах репозитория вызывается только `persist()` (регистрация сущности в Unit of Work).
-- Репозиторий маппит исключения ORM/SDK в доменные: `NotFoundExceptionInterface` для отсутствия сущности, [InfrastructureExceptionInterface](../../core-patterns/exception.md) для ошибок работы хранилища.
+  - `delete(Entity $entity): void` — только для жёсткого удаления (hard-delete).
+- Если в домене предусмотрен только **мягкое удаление** (soft-delete), метод `delete()` в репозитории не объявляется.
+- При мягком удалении (soft-delete) используем бизнес-методы сущности (`markAsDeleted()`, `deactivate()` и др.).
+- Для поддержки `CQRS` интерфейсы на чтение и запись рекомендуется разделять на `{EntityName}ReadRepositoryInterface` и `{EntityName}WriteRepositoryInterface`.
+- Репозиторий не управляет `Unit of Work` (`flush`, `commit`). Контроль транзакции всегда на уровне `CommandHandler`/UseCase, чтобы обеспечить атомарность бизнес-операции.
+- Транзакционная граница (`flush()`) устанавливается в [`CommandHandler`](../application/command-handler.md) через `PersistenceManagerInterface::flush()`; в методах репозитория вызывается только `persist()` (регистрация сущности в Unit of Work).
+- Репозиторий маппит исключения ORM/SDK в доменные: `NotFoundExceptionInterface` для отсутствия сущности, [`InfrastructureExceptionInterface`](../../core-patterns/exception.md) для ошибок работы хранилища.
 - Реализации интерфейса размещаются в слое [Infrastructure](../infrastructure.md). Интерфейс репозитория — часть домена, реализация — часть инфраструктуры.
-- Правила построения инфраструктурных репозиториев и CriteriaMapper описаны в [разделе Infrastructure](../infrastructure/repository.md); при добавлении реализации следуем этому шаблону.
+- Правила построения инфраструктурных репозиториев и `CriteriaMapper` описаны в [разделе Infrastructure](../infrastructure/repository.md); при добавлении реализации следуем этому шаблону.
 - Интерфейсы репозиториев зависят только от доменных типов (Entity/VO/Criteria); инфраструктурные классы (Doctrine, PDO и т.п.) в домен не протекают.
 
-Критерии (Criteria) инкапсулируют фильтры/сортировки/пагинацию для выборок. Репозитории принимают интерфейсы критериев вместо именованных методов. См. [Criteria](../domain/criteria.md).
+Критерии (Criteria) инкапсулируют фильтры/сортировки/пагинацию для выборок. Репозитории принимают интерфейсы критериев вместо именованных методов. См. [`Criteria`](../domain/criteria.md).
 
 ## Расположение
 
@@ -83,7 +83,7 @@ interface PaymentRepositoryInterface
 }
 ```
 
-### Использование в CommandHandler
+### Использование в `CommandHandler`
 ```php
 <?php
 
@@ -120,6 +120,6 @@ final readonly class InitCommandHandler
 - [ ] Для типовых операций используются **только** рекомендованные имена методов (`getById`/`getByCriteria`/`getCountByCriteria`/`exists`/`getOneByCriteria`/`save`/`delete`).
 - [ ] `getByCriteria()` возвращает коллекцию доменных объектов (`list<*Model|*Vo>`, возможна пустая, не null); `getOneByCriteria()` — `?Entity`.
 - [ ] Исключения ORM маппятся в доменные интерфейсы исключений.
-- [ ] Пагинация/сортировка — через Criteria (Limit/Offset/Sortable).
+- [ ] Пагинация/сортировка — через `Criteria` (Limit/Offset/Sortable).
 - [ ] Принимаемые и возвращаемые типы максимально конкретны; для массивов оформлен PHPDoc.
 - [ ] `flush()` не вызывается в репозитории; `save()` делает только `persist()`.

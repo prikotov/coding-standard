@@ -46,20 +46,20 @@ Application слой выполняет следующие функции:
 1. **Переиспользование**: бизнес-правила, реализованные в домене, могут использоваться из разных Use Case-ов
 2. **Тестируемость**: доменную логику проще тестировать в изоляции от оркестрации
 3. **Чистота архитектуры**: разделение ответственности упрощает понимание и поддержку кода
-4. **DDD принципы**: Domain-Driven Design требует концентрации бизнес-знаний в домене
+4. **DDD принципы**: предметно-ориентированное проектирование (Domain-Driven Design) требует концентрации бизнес-знаний в домене
 
 ## Компоненты слоя Application
 
-### Use Cases
+### Сценарии использования (Use Cases)
 
 Use Case (сценарий использования) — реализует конкретное действие, которое может выполнить пользователь или система. Use Case-ы делятся на два типа:
 
 - **Command** — изменяет состояние приложения (создание, обновление, удаление)
 - **Query** — возвращает данные из приложения без изменения состояния
 
-Подробнее: [Use Cases](application/use-case.md) | [Symfony Messenger](https://symfony.com/doc/current/messenger.html)
+Подробнее: [сценарии использования](application/use-case.md) | «Symfony Messenger» — [документация](https://symfony.com/doc/current/messenger.html).
 
-### Command Handlers
+### Обработчики команд (Command Handler)
 
 **Command Handler** — обработчик команды, который реализует изменение состояния приложения. Хендлер:
 
@@ -74,11 +74,11 @@ Use Case (сценарий использования) — реализует к
 - Хендлер должен завершиться успешно или выбросить исключение
 - Не может прокидывать исключения внешних зависимостей напрямую — оборачивать их в `{ProjectName}\Common\Exception\{ExceptionName}`
 - Выполняет только одну логическую транзакцию
-- Запрещено вызывать другие Use Case внутри CommandHandler
+- Запрещено вызывать другие Use Case внутри `CommandHandler`
 
-Подробнее: [Command и CommandHandler](application/command-handler.md)
+Подробнее: [о команде и её обработчике](application/command-handler.md)
 
-### Query Handlers
+### Обработчики запросов (Query Handler)
 
 **Query Handler** — обработчик запроса, который возвращает данные из приложения. Хендлер:
 
@@ -90,13 +90,13 @@ Use Case (сценарий использования) — реализует к
 **Правила реализации:**
 
 - Query Handler не должен изменять состояние приложения
-- Запрещено вызывать другие Use Case внутри QueryHandler
+- Запрещено вызывать другие Use Case внутри `QueryHandler`
 - Название запроса должно начинаться с глагола (например: `GetCustomerQuery`)
 - Класс обработчика должен иметь постфикс `QueryHandler`
 
 Подробнее: [Query и Query Handler](application/query-handler.md)
 
-### DTOs (Data Transfer Objects)
+### DTO (Data Transfer Objects)
 
 **DTO** — простой неизменяемый объект для передачи данных между слоями. В Application слое DTO используются для:
 
@@ -108,15 +108,15 @@ Use Case (сценарий использования) — реализует к
 
 - Только данные, без бизнес-логики
 - Неизменяемость: `final readonly class`
-- Строгая типизация: скаляры, Enum, Uuid, DateTimeImmutable, другие DTO
+- Строгая типизация: скаляры, Enum, Uuid, `DateTimeImmutable`, другие DTO
 - Никаких сервисов внутри DTO
 - Конструктор не содержит логики и преобразований
 
 Подробнее: [DTO](../core-patterns/dto.md)
 
-### Mappers
+### Мапперы
 
-**Mapper** — класс, выполняющий преобразование данных между слоями. В Application слое мапперы используются для:
+**Маппер** — класс, выполняющий преобразование данных между слоями. В Application слое мапперы используются для:
 
 - Преобразования доменных моделей в DTO (для ответов)
 - Преобразования DTO в доменные VO или примитивы (для запросов)
@@ -248,7 +248,7 @@ final readonly class CreateCommand implements CommandInterface
 }
 ```
 
-**CommandHandler:**
+**`CommandHandler`:**
 
 ```php
 <?php
@@ -372,7 +372,7 @@ final readonly class FindQuery implements QueryInterface
 }
 ```
 
-**QueryHandler:**
+**`QueryHandler`:**
 
 ```php
 <?php
@@ -471,7 +471,7 @@ final readonly class ProjectDto
 }
 ```
 
-**Mapper:**
+**Маппер:**
 
 ```php
 <?php

@@ -4,7 +4,7 @@ type: index
 description: Система тестирования: виды тестов, инструменты, правила написания
 ---
 
-# Testing
+# Тестирование (Testing)
 
 Система тестирования: виды тестов, инструменты, правила написания и примеры.
 
@@ -198,7 +198,7 @@ make tests-integration-fixtures  # С фикстурами
 make coverage                 # С покрытием
 ```
 
-### Psalm
+### `Psalm`
 
 Статический анализ типов. Уровень ошибок: `2`. Конфигурация: [`psalm.xml`](../examples/psalm.xml)
 
@@ -222,7 +222,7 @@ make deptrac
 make phpcs
 ```
 
-### Composer audit
+### Composer `audit`
 
 ```bash
 make audit
@@ -238,7 +238,7 @@ make audit
 - Ядро в integration-тестах через `self::bootKernel()`
 - Без реальных внешних сервисов и секретных данных в тестах
 
-### Структура: AAA (Arrange-Act-Assert)
+### Структура: `AAA` (Arrange-Act-Assert)
 
 ```php
 public function testInvokeValidDataReturnsUserUuid(): void
@@ -258,8 +258,8 @@ public function testInvokeValidDataReturnsUserUuid(): void
 
 Правила:
 - Разделяйте секции пустой строкой
-- Act — одна строка (или минимум)
-- Assert группируйте по смыслу
+- Действие (Act) — одна строка (или минимум)
+- Утверждения (Assert) группируйте по смыслу
 
 ### BDD-стиль именования
 
@@ -301,7 +301,7 @@ make coverage                 # Покрытие
 make e2e-up                   # Поднять E2E окружение
 ```
 
-## Структура директории tests/
+## Структура директории `tests/`
 
 ```
 tests/
@@ -318,17 +318,17 @@ tests/
 | Файл | Описание |
 |------|----------|
 | [`phpunit.xml.dist`](../examples/phpunit.xml.dist) | Конфигурация PHPUnit |
-| [`psalm.xml`](../examples/psalm.xml) | Конфигурация Psalm |
+| [`psalm.xml`](../examples/psalm.xml) | Конфигурация `Psalm` |
 | [`phpcs.xml.dist`](../examples/phpcs.xml.dist) | Конфигурация PHP_CodeSniffer |
-| [`phpmd.xml`](../examples/phpmd.xml) | Конфигурация PHP Mess Detector |
+| [`phpmd.xml`](../examples/phpmd.xml) | Конфигурация `PHP Mess Detector` |
 | [`Makefile`](../examples/Makefile) | Команды для проверок |
 | [`depfile.yaml`](../../../config/deptrac/depfile.yaml) | Конфигурация Deptrac |
 
 ## Дополнительные ресурсы
 
-- [Symfony Testing](https://symfony.com/doc/current/testing.html)
+- [Тестирование в Symfony](https://symfony.com/doc/current/testing.html)
 - [PHPUnit](https://phpunit.de/documentation.html)
-- [Psalm](https://psalm.dev/docs/)
+- [`Psalm`](https://psalm.dev/docs/)
 - [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
 
 ## Связанная документация

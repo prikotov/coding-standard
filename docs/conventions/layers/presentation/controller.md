@@ -19,7 +19,7 @@ description: Правила создания контроллеров презе
 - Внедряем только публичные интерфейсы Application-слоя (CommandBus, QueryBus, DTO-мапперы) и сервисы Presentation.
 - Все данные из запроса валидируем до вызова Application (DTO, формы, атрибуты `#[MapQueryString]`).
 - Flash-сообщения отправляем через `$this->addFlash()` с переводами, редирект выполняем сразу после успешного действия.
-- Rate limiting для web controller выполняем явно в presentation-коде до вызова Application (см. [«Ограничение частоты запросов»](rate-limiter.md)).
+- Ограничение частоты запросов (rate limiting) для web-контроллера выполняем явно в presentation-коде до вызова Application (см. [«Ограничение частоты запросов»](rate-limiter.md)).
 
 ## Зависимости
 
@@ -43,7 +43,7 @@ apps/<app>/src/Module/<ModuleName>/Controller/<Context>/{Request|Response}/{Name
 1. Принимаем необходимые аргументы (`Request`, DTO из `#[MapQueryString]`, `#[CurrentUser]`).
 2. Выполняем проверку прав (см. [«Проверка прав в Presentation»](authorization.md)).
 3. Создаём и обрабатываем форму/DTO для входных данных.
-4. Вызываем Application-UseCase через CommandBus/QueryBus.
+4. Вызываем UseCase Application-слоя через `CommandBus`/`QueryBus`.
 5. Формируем ответ: рендер шаблона, JSON или редирект с flash-сообщениями.
 6. Исключения отдаем на обработку `ProjectName\Web\EventSubscriber\ExceptionSubscriber`.
 
@@ -121,14 +121,14 @@ final class CreateController extends AbstractController
 
 ### Паттерн загрузки
 
-1. FormModel содержит поле `?UploadedFile $uploadFile`.
-2. FormType использует `FileType` с валидацией MIME-type и размера.
+1. `FormModel` содержит поле `?UploadedFile $uploadFile`.
+2. `FormType` использует `FileType` с валидацией MIME-типа и размера.
 3. Контроллер сохраняет файл в `var/uploads/` с уникальным именем.
 4. Путь к файлу передаётся в Command для дальнейшей обработки.
 
 ### Пример
 
-**FormModel:**
+**`FormModel`:**
 
 ```php
 final class CreateFormModel
@@ -141,7 +141,7 @@ final class CreateFormModel
 }
 ```
 
-**FormType:**
+**`FormType`:**
 
 ```php
 $builder
@@ -189,15 +189,15 @@ if ($formModel->uploadFile instanceof UploadedFile) {
 
 ### Валидация
 
-- **Тип файла:** через `mimeTypes` в constraint `File`.
+- **Тип файла:** через `mimeTypes` в ограничении (constraint) `File`.
 - **Размер:** через `maxSize` (например, `100M`).
 - **Обработка ошибок:** `FileException` пробрасывается или логируется.
 
 ## Чек-лист для проведения ревью кода
 
 - [ ] Контроллер хранится в каталоге Presentation и объявлен `final`.
-- [ ] Права проверяются через Permission Enum / атрибуты, а не вручную.
+- [ ] Права проверяются через `Permission Enum` / атрибуты, а не вручную.
 - [ ] Внедрены только Presentation- и Application-зависимости.
 - [ ] Валидация входных данных выполняется до вызова UseCase.
 - [ ] Возврат идёт через рендер/редирект, исключения обрабатывает `ExceptionSubscriber`.
-- [ ] Загрузка файлов использует валидацию через constraints и безопасное именование.
+- [ ] Загрузка файлов использует валидацию через ограничения (constraints) и безопасное именование.

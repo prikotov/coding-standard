@@ -10,7 +10,7 @@ description: Принципы конфигурирования в Symfony: па�
 
 ## Общие принципы конфигурирования в Symfony
 
-**Конфигурирование (Configuration)** — процесс определения поведения приложения через параметры, сервисы, пакеты и окружения. Symfony использует YAML/XML/PHP для конфигурации и поддерживает наследование между окружениями. Подробности: [Symfony Configuration](https://symfony.com/doc/current/configuration.html).
+**Конфигурация (Configuration)** — процесс определения поведения приложения через параметры, сервисы, пакеты и окружения. Symfony использует YAML/XML/PHP для конфигурации и поддерживает наследование между окружениями. Подробности: [Конфигурация Symfony](https://symfony.com/doc/current/configuration.html).
 
 ### Общие правила
 
@@ -32,7 +32,7 @@ description: Принципы конфигурирования в Symfony: па�
 
 ## Конфигурация пакетов (bundles)
 
-**Bundle (Bundle)** — переиспользуемый компонент Symfony, предоставляющий функциональность через сервисы, конфигурацию и ресурсы. Подробности: [Symfony Bundles](https://symfony.com/doc/current/bundles.html).
+**Пакет (Bundle)** — переиспользуемый компонент Symfony, предоставляющий функциональность через сервисы, конфигурацию и ресурсы. Подробности: [Пакеты Symfony](https://symfony.com/doc/current/bundles.html).
 
 ### Общие правила
 
@@ -91,7 +91,7 @@ when@prod:
 
 ## Конфигурация окружений (dev, test, prod)
 
-**Окружение (Environment)** — набор конфигурационных настроек для конкретной среды выполнения (разработка, тестирование, продакшн). Подробности: [Symfony Environments](https://symfony.com/doc/current/configuration/environments.html).
+**Окружение (Environment)** — набор конфигурационных настроек для конкретной среды выполнения (разработка, тестирование, продакшн). Подробности: [Окружения Symfony](https://symfony.com/doc/current/configuration/environments.html).
 
 ### Общие правила
 
@@ -150,7 +150,7 @@ monolog:
 
 ## Переменные окружения и `.env`
 
-**Переменные окружения (Environment Variables)** — значения, которые передаются в приложение извне и используются в конфигурации. Подробности: [Symfony Environment Variables](https://symfony.com/doc/current/configuration.html#environment-variables).
+**Переменные окружения (Environment Variables)** — значения, которые передаются в приложение извне и используются в конфигурации. Подробности: [Переменные окружения Symfony](https://symfony.com/doc/current/configuration.html#environment-variables).
 
 ### Общие правила
 
@@ -198,7 +198,7 @@ MAILER_DSN=smtp://mailer:1025
 
 ## Конфигурация сервисов
 
-**Сервис (Service)** — объект, который выполняет определённую функцию и управляется через Symfony Service Container. Подробности: [Symfony Service Container](https://symfony.com/doc/current/service_container.html).
+**Сервис (Service)** — объект, который выполняет определённую функцию и управляется через контейнер сервисов Symfony (Service Container). Подробности: [Контейнер сервисов Symfony](https://symfony.com/doc/current/service_container.html).
 
 ### Общие правила
 
@@ -206,12 +206,12 @@ MAILER_DSN=smtp://mailer:1025
 - Используйте `autowire: true` и `autoconfigure: true` для автоматического внедрения зависимостей.
 - Параметры сервисов должны быть именованы с учётом контекста: `module.<module_name>.<context>`, `app.<context>`.
 - Для импорта каталогов с сервисами используйте `resource` с `exclude` для исключения ненужных файлов.
-- Сущности Doctrine, DTO, enum, value object, event payload, exception и command/query payload не должны быть зарегистрированы как сервисы.
+- Сущности Doctrine, DTO, enum, value object, полезная нагрузка событий (event payload), исключения (exception) и полезная нагрузка команд/запросов (command/query payload) не должны быть зарегистрированы как сервисы.
 - Интерфейсы репозиториев должны быть внедрены, а реализации — автоматически загружены.
 
 ### Пример конфигурации сервисов
 
-Пример конфигурации сервисов Common-модуля (`src/Module/Billing/Resource/config/services.yaml`):
+Пример конфигурации сервисов модуля `Common` (`src/Module/Billing/Resource/config/services.yaml`):
 
 ```yaml
 parameters:
@@ -308,7 +308,7 @@ services:
 - **Разделяйте конфигурацию** по окружениям — используйте `when@<environment>` для условной загрузки.
 - **Следуйте PSR-4** для именования пространств имён и путей к файлам.
 - **Используйте автоконфигурацию** — включайте `autowire` и `autoconfigure` для упрощения DI.
-- **Исключайте несервисные типы** из автоконфигурации сервисов — Doctrine должна управлять сущностями сама, а DTO, enum, value object, event payload, exception и command/query payload не должны попадать в контейнер.
+- **Исключайте несервисные типы** из автоконфигурации сервисов — Doctrine должна управлять сущностями сама, а DTO, enum, value object, полезная нагрузка событий (event payload), исключения (exception) и полезная нагрузка команд/запросов (command/query payload) не должны попадать в контейнер.
 - **Внедряйте интерфейсы** — зависимости должны быть абстракциями, а не конкретными реализациями.
 
 ### Безопасность

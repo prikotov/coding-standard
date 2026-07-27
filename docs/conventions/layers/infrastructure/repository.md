@@ -8,20 +8,20 @@ description: Правила реализации репозиториев
 
 **Репозиторий** — инфраструктурная реализация доменного репозитория, которая скрывает работу с БД.
 
-> **Фильтрация:** Для изоляции условий выборки используется [CriteriaMapper](criteria-mapper.md).
+> **Фильтрация:** Для изоляции условий выборки используется [`CriteriaMapper`](criteria-mapper.md).
 
-> См. также: [доменный контракт репозитория](../domain/repository.md), [CriteriaMapper](criteria-mapper.md)
+> См. также: [доменный контракт репозитория](../domain/repository.md), [`CriteriaMapper`](criteria-mapper.md)
 
 ## Общие правила
 
 1. Каждый репозиторий наследует `ServiceEntityRepository` и реализует доменный интерфейс `{EntityName}RepositoryInterface`.
-2. Репозиторий не содержит условных запросов напрямую; все фильтры строятся через [CriteriaMapper](criteria-mapper.md).
+2. Репозиторий не содержит условных запросов напрямую; все фильтры строятся через [`CriteriaMapper`](criteria-mapper.md).
 3. Репозиторий оперирует только доменными сущностями и критериями; никаких зависимостей из Application/Presentation.
-4. Исключения Doctrine маппятся в [NotFoundException](../../core-patterns/exception.md) или [InfrastructureException](../../core-patterns/exception.md).
+4. Исключения Doctrine маппятся в [`NotFoundException`](../../core-patterns/exception.md) или [`InfrastructureException`](../../core-patterns/exception.md).
 
 ## Зависимости
 
-- Разрешено: `ManagerRegistry`, [CriteriaMapper](criteria-mapper.md), доменные сущности и критерии, сервисы Doctrine.
+- Разрешено: `ManagerRegistry`, [`CriteriaMapper`](criteria-mapper.md), доменные сущности и критерии, сервисы Doctrine.
 - Запрещено: сервисы Application/Presentation, внешние API.
 
 ## Расположение
@@ -146,16 +146,16 @@ final class ProjectRepository extends ServiceEntityRepository implements Project
 
 - [ ] Репозиторий реализует доменный интерфейс (контракт).
 - [ ] Маппинг критериев изолирован (CriteriaMapper или аналогичный).
-- [ ] Нет утечек Doctrine QueryBuilder за пределы репозитория.
+- [ ] Нет утечек Doctrine `QueryBuilder` за пределы репозитория.
 - [ ] Транзакции управляются на уровне Application-слоя, а не в репозитории.
 
-## In-memory реализация для тестов
+## Внутрипроцессная реализация (in-memory) для тестов
 
-Для unit-тестов и сценариев, где не требуется персистентность, используется in-memory реализация репозитория.
+Для модульных тестов и сценариев, где не требуется персистентность, используется внутрипроцессная реализация репозитория.
 Данные хранятся в PHP-массиве внутри объекта, что обеспечивает высокую скорость и изоляцию от БД.
-In-memory репозиторий подчиняется тем же правилам, что и Doctrine-реализация: реализует доменный интерфейс, оперирует только доменными сущностями и критериями, не вызывает `flush()`.
+Внутрипроцессный репозиторий подчиняется тем же правилам, что и Doctrine-реализация: реализует доменный интерфейс, оперирует только доменными сущностями и критериями, не вызывает `flush()`.
 
-### Пример In-memory репозитория
+### Пример внутрипроцессного репозитория
 
 ```php
 <?php
@@ -276,7 +276,7 @@ final class InMemoryServiceStatusRepository implements ServiceStatusRepositoryIn
 }
 ```
 
-### Особенности In-memory реализации
+### Особенности внутрипроцессной реализации
 
 1. **Временное хранение** — данные существуют только во время жизни процесса PHP.
 2. **Быстродействие** — нет сетевых запросов к БД, всё в памяти.

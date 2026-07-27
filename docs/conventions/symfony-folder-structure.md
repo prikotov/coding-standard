@@ -14,7 +14,7 @@ description: Организация директорий проекта на о�
 - Каждое приложение находится в `apps/<app_name>/` и наследуется от общего [`ProjectName\Common\Kernel`](examples/Kernel.php).
 - Все модули размещаются в `src/Module/{ModuleName}/`.
 - Конфигурация разделена на общую (`config/`) и приложения (`apps/<app_name>/config/`).
-- Тесты разделены по типам: Unit (`tests/Unit/`), Integration (`tests/Integration/`), E2E (`apps/*/tests/`).
+- Тесты разделены по типам: модульные (`tests/Unit/`), интеграционные (`tests/Integration/`), сквозные (E2E) (`apps/*/tests/`).
 
 ### Namespace и PSR-4
 
@@ -142,9 +142,9 @@ apps/<app_name>/
 ### Приложения проекта
 
 - **Web** (`apps/web`): основной пользовательский интерфейс с аутентификацией, авторизацией и UI-компонентами.
-- **API** (`apps/api`): RESTful API для внешних интеграций и мобильных клиентов.
-- **Console** (`apps/console`): CLI-интерфейс для фоновых задач, cron-заданий и административных операций.
-- **Blog** (`apps/blog`): публичный блог с контентом и статическими страницами.
+- **API** (`apps/api`): `RESTful` API для внешних интеграций и мобильных клиентов.
+- **Консоль** (`apps/console`): CLI-интерфейс для фоновых задач, регулярных заданий (cron) и административных операций.
+- **Блог** (`apps/blog`): публичный блог с контентом и статическими страницами.
 
 ## Конфигурационные файлы
 
@@ -235,7 +235,7 @@ bin/
 
 ### `public/`
 
-Публичные файлы и entry points.
+Публичные файлы и точки входа (entry points).
 
 ```
 public/
@@ -257,7 +257,7 @@ docs/
 
 ### `devops/`
 
-DevOps скрипты и конфигурации.
+Скрипты и конфигурации `DevOps`.
 
 ```
 devops/
@@ -275,10 +275,10 @@ devops/
 ## Как используем
 
 - **Создание нового модуля**: создайте директорию `src/Module/{ModuleName}/` с четырьмя слоями (Domain, Application, Infrastructure, Integration).
-- **Создание нового приложения**: создайте директорию `apps/<app_name>/` с Kernel, наследуемым от `ProjectName\Common\Kernel`.
+- **Создание нового приложения**: создайте директорию `apps/<app_name>/` с ядром (Kernel), наследуемым от `ProjectName\Common\Kernel`.
 - **Добавление модуля в приложение**: зарегистрируйте модуль в `apps/<app_name>/config/modules.php`.
 - **Создание миграции**: создайте файл `VersionYYYYMMDDHHMMSS.php` в `migrations/`.
-- **Написание тестов**: размещайте unit-тесты в `tests/Unit/`, integration-тесты в `tests/Integration/`.
+- **Написание тестов**: размещайте модульные тесты в `tests/Unit/`, интеграционные тесты в `tests/Integration/`.
 
 ## Пример
 
@@ -368,12 +368,12 @@ return [
 - [ ] Модуль находится в `src/Module/{ModuleName}/`.
 - [ ] Модуль содержит четыре слоя: Domain, Application, Infrastructure, Integration.
 - [ ] Приложение находится в `apps/<app_name>/`.
-- [ ] Kernel приложения наследуется от `ProjectName\Common\Kernel`.
+- [ ] Ядро приложения наследуется от `ProjectName\Common\Kernel`.
 - [ ] Модули зарегистрированы в `apps/<app_name>/config/modules.php`.
 - [ ] PSR-4 маппинг в `composer.json` корректно связывает namespace с директориями.
 - [ ] Namespace классов следует паттерну `{ProjectName}\{AppGroup}\Module\{ModuleName}\...`.
 - [ ] Конфигурация разделена на общую (`config/`) и приложения (`apps/<app_name>/config/`).
-- [ ] Unit-тесты находятся в `tests/Unit/`.
+- [ ] Модульные тесты находятся в `tests/Unit/`.
 - [ ] Integration-тесты находятся в `tests/Integration/`.
 - [ ] Миграции находятся в `migrations/` и следуют формату `VersionYYYYMMDDHHMMSS.php`.
 - [ ] Документация соответствует правилам из `docs/conventions/doc-writing-rules.md`.

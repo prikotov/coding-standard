@@ -9,7 +9,7 @@ description: Правила создания Twig-расширений
 ## Определение
 
 **Twig-расширение (Twig Extension)** — presentation-механизм Twig для выноса повторяющихся вычислений и форматирования в единое место.
-Детали по механике см. в [Symfony Twig Extensions](https://symfony.com/doc/current/templating/twig-extension.html).
+Детали по механике см. в [расширениях Twig Symfony](https://symfony.com/doc/current/templating/twig-extension.html).
 
 Цель Twig Extension:
 - уменьшить дублирование presentation-логики в шаблонах;
@@ -21,13 +21,13 @@ description: Правила создания Twig-расширений
 - Twig Extension объявляем `final` и наследуем от `Twig\Extension\AbstractExtension`.
 - Регистрируем extension как сервис с тегом `twig.extension` в `apps/<app>/config/services.yaml`.
 - Публичные функции extension должны быть детерминированными и побочно-безопасными.
-- В extension допускается презентационная логика: нормализация строк, truncation, сборка meta-map, выбор display-классов/лейблов.
+- В extension допускается презентационная логика: нормализация строк, усечение (truncation), сборка meta-структуры (meta-map), выбор display-классов/лейблов.
 - В extension запрещена бизнес-логика домена, вызовы UseCase, доступ к репозиториям, ORM и внешним API.
 - Если функция возвращает HTML, указываем `is_safe => ['html']` только при явной необходимости. Предпочтительно возвращать структурированные данные (array/scalar), а HTML рендерить в Twig.
 
 ## Зависимости
 
-- Разрешено: `TranslatorInterface`, route/helper-сервисы Presentation, утилиты форматирования уровня Presentation.
+- Разрешено: `TranslatorInterface`, сервисы маршрутов (route) и хелперов (helper) уровня Presentation, утилиты форматирования уровня Presentation.
 - Запрещено: зависимости из `Domain/*`, `Infrastructure/*`, `Integration/*`.
 
 ## Расположение
@@ -39,7 +39,7 @@ apps/<app>/tests/Unit/Component/Twig/Extension/<Name>ExtensionTest.php
 
 ## Как используем
 
-1. Создаём extension-класс и регистрируем TwigFunction/TwigFilter.
+1. Создаём extension-класс и регистрируем `TwigFunction`/`TwigFilter`.
 2. Выносим в extension повторяющуюся презентационную логику (нормализация, форматирование, подготовка map-структур).
 3. Подключаем extension-функцию в шаблоне и рендерим только результат.
 4. Добавляем unit-тест extension (fallback, truncation, normalization, контракт ключей).
@@ -53,7 +53,7 @@ apps/<app>/tests/Unit/Component/Twig/Extension/<Name>ExtensionTest.php
 - Когда требуется единый контракт функции/фильтра для presentation-логики без создания отдельного UI-блока.
 - Для правил по Twig Component используем документ [Twig-компонент (Twig Component)](twig-component.md).
 
-### Быстрый decision checklist
+### Быстрый чек-лист (decision checklist)
 
 - [ ] Нужна функция/фильтр для вычислений и подготовки данных -> `Twig Extension`.
 - [ ] После удаления HTML из решения остается ценная логика данных -> `Twig Extension`.

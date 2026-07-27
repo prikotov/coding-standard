@@ -14,11 +14,11 @@ description: Правила использования нативных PHP-пе
 ## Общие правила
 
 * Разрешены в любом слое (Domain, Application, Infrastructure, Integration, Presentation).
-* ApplicationEnum — перечисления уровня Application, используемые в публичных контрактах (DTO/UseCase), чтобы не "подтягивать" доменные enum в Presentation/Integration. Для соответствия доменной модели используйте явные мапперы между `Domain\Enum` и `Application\Enum`.
+* `ApplicationEnum` — перечисления уровня Application, используемые в публичных контрактах (DTO/UseCase), чтобы не "подтягивать" доменные enum в Presentation/Integration. Для соответствия доменной модели используйте явные мапперы между `Domain\Enum` и `Application\Enum`.
 * ❗ **Enum не содержит бизнес-логики**, зависимостей, магических методов и дополнительных констант.
-* Используются [backed enum](https://www.php.net/manual/en/language.enumerations.backed.php) (int|string) при
+* Используются [`backed enum`](https://www.php.net/manual/en/language.enumerations.backed.php) (int|string) при
   необходимости хранить/отображать читаемое значение.
-* Названия самих `enum` — в PascalCase с постфиксом `Enum`.
+* Названия самих `enum` — в `PascalCase` с постфиксом `Enum`.
 * Названия `case` — в `camelCase`.
 * Если enum универсален и не связан с конкретным модулем (например: `LanguageEnum`, `GenderEnum`), его размещают в
   `ProjectName\Common\Enum`.
@@ -37,7 +37,7 @@ description: Правила использования нативных PHP-пе
   - `{ProjectName}\Common\Module\{ModuleName}\Integration\Enum\{Name}Enum`
 * Presentation
   - `{ProjectName}\Web\Module\{ModuleName}\Enum\{Name}Enum`
-* Common
+* `Common`
   - `{ProjectName}\Common\Enum\{Name}Enum`
 
 ## Как используем
@@ -67,7 +67,7 @@ enum ChatMessageRoleEnum: int
 }
 ```
 
-Пример использования Enum в match:
+Пример использования Enum в `match`:
 
 ```php
 <?php
@@ -103,7 +103,7 @@ final class StatusBadge extends Badge
 }
 ```
 
-Пример обработки исключения \ValueError:
+Пример обработки исключения `\ValueError`:
 
 ```php
 use ProjectName\Common\Exception\ValidationException;

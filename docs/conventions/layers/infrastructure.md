@@ -35,7 +35,7 @@ Infrastructure слой содержит технические детали р�
 
 ## Компоненты
 
-- [CriteriaMapper](infrastructure/criteria-mapper.md) — паттерн маппинга критериев в QueryBuilder
+- [`CriteriaMapper`](infrastructure/criteria-mapper.md) — паттерн маппинга критериев в `QueryBuilder`
 - [Репозитории](infrastructure/repository.md) — реализация репозиториев
 - Кэш — реализация кэширования
 - Внешние API — интеграция с внешними сервисами
@@ -57,7 +57,7 @@ Infrastructure слой содержит технические детали р�
 
 - [ ] Infrastructure не содержит бизнес-логику.
 - [ ] Репозитории реализуют доменные интерфейсы.
-- [ ] CriteriaMapper изолирует логику фильтрации.
+- [ ] `CriteriaMapper` изолирует логику фильтрации.
 - [ ] Нет утечек Doctrine/ORM за пределы Infrastructure.
 - [ ] Зависимости от сторонних библиотек обоснованы.
 

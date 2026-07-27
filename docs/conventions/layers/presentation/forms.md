@@ -9,17 +9,17 @@ description: Правила создания форм презентационн
 ## Определение
 
 **Форма презентационного слоя (Presentation Form)** — набор объектов, отвечающих за ввод и валидацию данных
-до вызова Application-UseCase. Базируемся на [Symfony Forms](https://symfony.com/doc/current/forms.html).
+до вызова UseCase Application-слоя. Базируемся на [формах Symfony](https://symfony.com/doc/current/forms.html).
 
 ## Общие правила
 
 - Разделяем данные (`FormModel`), описание полей (`FormType`) и представление (Twig-шаблон).
 - Формы объявляем `final` и строго типизируем поля, используем PHPDoc `@template-extends AbstractType<…>`.
-- Для фильтров включаем метод `GET` и отключаем CSRF; для действий (`create`, `edit`) используем `POST`.
+- Для фильтров включаем метод `GET` и отключаем `CSRF`; для действий (`create`, `edit`) используем `POST`.
 - Переводы (`label`, `help`, `placeholder`) задаём через `translation_domain` либо ключи в YAML.
 - В контроллере проверяем `isSubmitted()` до `isValid()`, работаем с типизированной моделью.
-- В `FormModel` допускаем declarative field metadata, но cross-field и reusable validation выносим в custom validator pair; `#[Assert\Callback]` и методы `validate*()` в `FormModel` не используем.
-- Для custom validators форм применяем правила из [Validator](validator.md).
+- В `FormModel` допускаем декларативные метаданные полей (declarative field metadata), но межполевую (cross-field) и переиспользуемую валидацию (reusable validation) выносим в пользовательскую пару валидаторов (custom validator pair); `#[Assert\Callback]` и методы `validate*()` в `FormModel` не используем.
+- Для пользовательских валидаторов (custom validators) форм применяем правила из [Validator](validator.md).
 
 ## Зависимости
 
@@ -38,9 +38,9 @@ apps/<app>/src/Module/<ModuleName>/Resource/templates/<context>/_*.html.twig
 
 1. Создаём `FormModel` с начальными данными (для фильтров — пустой объект).
 2. Контроллер вызывает `createForm(FormType::class, $model)` и обрабатывает запрос.
-3. После успешной валидации берём данные из модели и передаём в Application-UseCase.
+3. После успешной валидации берём данные из модели и передаём в UseCase Application-слоя.
 4. Шаблон отображает форму через `form_start`/`form_widget`, опционально подключая Phoenix-компоненты.
-5. Для фильтров сериализуем состояние в query string через вспомогательные методы модели.
+5. Для фильтров сериализуем состояние в `query string` через вспомогательные методы модели.
 
 ## Пример
 
@@ -178,7 +178,7 @@ final class FilterFormType extends AbstractType
 
 ## Получение списков через QueryBus
 
-Для заполнения select-полей (проекты, пользователи, тарифы) FormType может внедрять `QueryBusComponentInterface`.
+Для заполнения select-полей (проекты, пользователи, тарифы) `FormType` может внедрять `QueryBusComponentInterface`.
 
 ### Когда использовать
 
@@ -238,13 +238,13 @@ final class CreateFormType extends AbstractType
 
 ### Кэширование списков
 
-Для часто используемых списков применяйте кэширование на уровне QueryHandler или используйте List-сервисы (см. [List-сервисы](list-controller.md)).
+Для часто используемых списков применяйте кэширование на уровне `QueryHandler` или используйте List-сервисы (см. [List-сервисы](list-controller.md)).
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] FormModel и FormType лежат в каталоге `Form` и объявлены `final`.
+- [ ] `FormModel` и `FormType` лежат в каталоге `Form` и объявлены `final`.
 - [ ] Поля формы типизированы, отсутствуют прямые зависимости от Domain/Infrastructure.
-- [ ] Формы фильтров используют метод `GET` и сериализуют состояние в query string.
+- [ ] Формы фильтров используют метод `GET` и сериализуют состояние в `query string`.
 - [ ] Контроллер получает типизированную модель и проверяет `isSubmitted()`/`isValid()`.
 - [ ] Twig-шаблон подключает тему и выключает `render_rest`, если поля рендерятся вручную.
-- [ ] QueryBus в FormType используется только для динамических списков, не для бизнес-логики.
+- [ ] `QueryBus` в `FormType` используется только для динамических списков, не для бизнес-логики.

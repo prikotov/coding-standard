@@ -9,20 +9,20 @@ description: Правила создания голосующих объекто
 ## Определение
 
 **Голосующий объект (Voter)** — класс, реализующий интерфейс авторизации Symfony и принимающий решение о
-доступе на основании Permission Enum и Rule. Подробности — в официальной документации
-[Security Voters](https://symfony.com/doc/current/security/voters.html).
+доступе на основании перечисления прав и Rule. Подробности — в официальной документации
+[голосующих объектах](https://symfony.com/doc/current/security/voters.html).
 
 ## Общие правила
 
 - Класс наследуется от `Symfony\Component\Security\Core\Authorization\Voter\Voter`.
 - Используем PHPDoc `@template-extends` с атрибутом/субъектом для статики.
 - Внедряем Rule через конструктор, никакой логики напрямую в Voter.
-- Метод `supports()` проверяет и атрибут, и валидность subject.
+- Метод `supports()` проверяет и атрибут, и валидность субъекта (subject).
 - Метод `voteOnAttribute()` преобразует атрибут в enum действия и делегирует Rule.
 
 ## Зависимости
 
-- Разрешено: Rule, Permission Enum, `TokenInterface`, DTO/Value Object Presentation.
+- Разрешено: Rule, перечисление прав, `TokenInterface`, DTO/Value Object Presentation.
 - Запрещено: прямой доступ к контейнеру, сервисам Domain/Infrastructure.
 
 ## Расположение
@@ -36,7 +36,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Voter.php
 1. Регистрируем Voter как сервис (автоконфигурация делает это автоматически).
 2. Контроллеры вызывают `$this->isGranted(ActionEnum::case->value, $subject)`.
 3. Voter преобразует строковый атрибут в `ActionEnum` и делегирует проверку Rule.
-4. Subject должен быть простой структурой (`array`, `Uuid`, DTO), понятной Voter.
+4. Субъект должен быть простой структурой (`array`, `Uuid`, DTO), понятной Voter.
 
 ## Пример
 
@@ -130,8 +130,8 @@ final class ProjectVoter extends Voter
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] Voter лежит в каталоге Security и объявлен `final`.
-- [ ] Метод `supports()` валидирует и атрибут, и subject.
+- [ ] Voter лежит в каталоге `Security` и объявлен `final`.
+- [ ] Метод `supports()` валидирует и атрибут, и субъект.
 - [ ] В `voteOnAttribute()` нет сложной логики — все делегируется Rule.
-- [ ] Используем Action Enum/Permission Enum вместо строк.
-- [ ] Subject описан и типизирован (через phpdoc) так, чтобы избежать ошибок времени выполнения.
+- [ ] Используем `ActionEnum`/`PermissionEnum` вместо строк.
+- [ ] Субъект описан и типизирован (через phpdoc) так, чтобы избежать ошибок времени выполнения.

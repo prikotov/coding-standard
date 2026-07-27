@@ -13,11 +13,11 @@ description: Правила создания и использования сп�
 - Разрешены на уровне любого слоя (Domain, Application, Infrastructure, Integration, Presentation).
 - Должен содержать только один публичный метод `all()`. Больше никаких методов в классе быть не должно.
 - Возвращает `list<scalar|BackedEnum>` без ключей. Ассоциативные массивы запрещены.
-- `all()` не принимает аргументов. Для контекста создай отдельный List под контекст.
+- `all()` не принимает аргументов. Для контекста создай отдельный `List` под контекст.
 - Класс не должен быть хранилищем текстовых представлений — это предназначение [Map-классов](map.md).
 - Сложная логика в [Query](../layers/application/query-handler.md). Доменные условия в [Specification](../layers/domain/specification.md).
-- Приватные методы запрещены. Если логика не помещается в один метод — это не List.
-- Запрещены любые I/O: БД (включая чтение), HTTP, FS, очереди, внешние SDK. Запрещены env/random/time. Класс детерминированный.
+- Приватные методы запрещены. Если логика не помещается в один метод — это не `List`.
+- Запрещены любые I/O: БД (включая чтение), HTTP, ФС, очереди, внешние SDK. Запрещены `env`/`random`/`time`. Класс детерминированный.
 - Получаем через DI.
 
 ## Расположение
@@ -41,9 +41,9 @@ description: Правила создания и использования сп�
 - `ProjectName\Common\Module\Project\Domain\List\ProjectUserSharedRolesList`
 - `ProjectName\Common\Module\Billing\Infrastructure\List\CurrencyList`
 
-### Use-case-специфичные списки (Application)
+### Списки для конкретного сценария использования (Application)
 
-Для списков, используемых только в конкретном use-case:
+Для списков, используемых только в конкретном сценарии использования:
 
 ```php
 {ProjectName}\Common\Module\{ModuleName}\Application\UseCase\{Command|Query}\{QueryGroup?}\{CaseName}\{Name}List
@@ -83,7 +83,7 @@ description: Правила создания и использования сп�
 
 ## Пример
 
-List-класс для ролей пользователей проекта (Domain):
+`List`-класс для ролей пользователей проекта (Domain):
 
 ```php
 <?php
@@ -110,7 +110,7 @@ final class ProjectUserRolesList
 }
 ```
 
-List-класс для фильтрации проектов по статусу (Presentation):
+`List`-класс для фильтрации проектов по статусу (Presentation):
 
 ```php
 <?php
@@ -141,7 +141,7 @@ final class FastFilterProjectStatusList
 
 - [ ] Класс `final`, без свойств и состояния..
 - [ ] Содержит только один публичный метод `all()`.
-- [ ] all() не принимает аргументов.
+- [ ] `all()` не принимает аргументов.
 - [ ] Метод возвращает `list<scalar|BackedEnum>` без ключей.
 - [ ] Нет приватных методов (признак необходимости refactor в query-handler).
 - [ ] Нет обращений к БД, HTTP, файлам и другим внешним ресурсам.

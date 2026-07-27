@@ -6,45 +6,45 @@ description: Правила создания и использования middl
 
 # Middleware
 
-**Middleware** — элемент слоя интеграций, встраиваемый в pipeline внешнего фреймворка или транспорта
+**Middleware** — элемент слоя интеграций, встраиваемый в конвейер внешнего фреймворка или транспорта
 (`Symfony Messenger`, HTTP pipeline, queue consumer lifecycle) для технической адаптации данных и контекста перед
 передачей управления дальше.
 
-Middleware нужен, когда проекту требуется перехватить framework-specific контекст и преобразовать его в удобную для
+Middleware нужен, когда проекту требуется перехватить контекст, специфичный фреймворку, и преобразовать его в удобную для
 следующего слоя форму, не протаскивая детали внешнего механизма в `Application` или `Domain`.
 
 ## Общие правила
 
-- **Назначение:** техническая адаптация framework/transport context, а не реализация бизнес-логики.
+- **Назначение:** техническая адаптация контекста фреймворка/транспорта, а не реализация бизнес-логики.
 - **Именование:** `{Subject}{Purpose}Middleware`. Пример: `WebhookDeliveryAttemptMiddleware`.
 - **Размещение:** сначала тип артефакта, потом технологический контекст:
   `Integration\Middleware\{Technology}\{Name}Middleware`.
-- **Область ответственности:** читает/добавляет framework metadata (`Stamp`, headers, context attributes), выполняет
-  guard-проверки, делегирует выполнение дальше по pipeline.
+- **Область ответственности:** читает/добавляет метаданные фреймворка (`Stamp`, заголовки, атрибуты контекста), выполняет
+  защитные проверки, делегирует выполнение дальше по конвейеру.
 - **Границы:** не заменяет `Use Case`, `Service` или `Component`.
 
 ## Зависимости
 
 - **Разрешено:**
-  - framework contracts и transport-specific типы (`Envelope`, `Stamp`, middleware interfaces);
+  - контракты фреймворка и типы, специфичные транспорту (`Envelope`, `Stamp`, интерфейсы middleware);
   - DTO/Command/Event своего модуля для точечного ветвления;
   - общие компоненты приложения, не относящиеся к Infrastructure слоям, если middleware действительно кросс-секционный.
 - **Запрещено:**
   - бизнес-логика;
   - прямой доступ к БД, HTTP-клиентам, очередям, файловой системе;
   - зависимости от Infrastructure;
-  - orchestration use case-сценария;
+  - оркестрацию сценария использования (use case);
   - маскировка middleware под `Component`.
 
 ## Когда это `Middleware`, а не `Component`
 
-- Используйте **Middleware**, если класс живёт внутри lifecycle внешнего фреймворка и работает через его контракт
+- Используйте **Middleware**, если класс живёт внутри жизненного цикла внешнего фреймворка и работает через его контракт
   (`MiddlewareInterface`, pipeline API, consumer hooks).
 - Используйте **Infrastructure Component**, если нужен переносимый адаптер к внешнему API/SDK/ресурсу с собственным контрактом
   `*ComponentInterface`; используйте его внутри Infrastructure-сервиса.
 
 `Symfony Messenger` как технология является внешним техническим миром, но не каждый адаптер вокруг него становится
-`Component`. Если класс завязан на конкретный message pipeline и знает о внутренних message/command типах модуля, это
+`Component`. Если класс завязан на конкретный конвейер сообщений и знает о внутренних типах сообщений/команд модуля, это
 `Middleware`, а не `Component`.
 
 ## Расположение
@@ -55,7 +55,7 @@ Middleware нужен, когда проекту требуется перехв
 {ProjectName}\Common\Module\{ModuleName}\Integration\Middleware\{Technology}\{Name}Middleware
 ```
 
-- **Shared Infrastructure**
+- **Общая Infrastructure**
 
 Если middleware переиспользуется на уровне всей платформы, а не одного модуля, размещайте его в:
 
@@ -65,10 +65,10 @@ Common\Infrastructure\Component\{Technology}\Middleware\{Name}Middleware
 
 ## Как используем
 
-1. Размещаем module-specific middleware в `Integration\Middleware\{Technology}`.
+1. Размещаем модульный middleware в `Integration\Middleware\{Technology}`.
 2. Внутри middleware оставляем только техническую адаптацию и передачу управления дальше.
 3. Если middleware становится кросс-модульным и не зависит от application-классов конкретного модуля, переносим его в
-   shared Infrastructure; module-specific Integration код после переноса не зависит от него напрямую.
+   общую Infrastructure; модульный Integration-код после переноса не зависит от него напрямую.
 
 ## Пример
 
@@ -110,8 +110,8 @@ final readonly class WebhookDeliveryAttemptMiddleware implements MiddlewareInter
 
 ## Чек-лист для код ревью
 
-- [ ] Класс действительно встроен в lifecycle внешнего framework/transport pipeline.
-- [ ] В классе нет бизнес-логики и orchestration.
+- [ ] Класс действительно встроен в жизненный цикл внешнего конвейера фреймворка/транспорта.
+- [ ] В классе нет бизнес-логики и оркестрации.
 - [ ] Имя оканчивается на `Middleware`.
 - [ ] Namespace следует схеме `Integration\Middleware\{Technology}`.
 - [ ] Нет зависимостей от Infrastructure.

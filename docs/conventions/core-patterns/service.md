@@ -18,10 +18,10 @@ description: Правила создания и использования се�
 - Методы сервиса должны быть **чётко именованы** и отражать выполняемое действие.
 - Допустимо наличие **нескольких методов** в одном сервисе, если они логически связаны.
 - Название сервиса — глагол + предмет + `Service` (например, `ChangeStatusService`).
-- Внедрение через DI (constructor injection). Подробности: [Symfony Service Container](https://symfony.com/doc/current/service_container.html).
-- Для всех сервисов, внедряемых по интерфейсу, обязательно задаём явный alias
+- Внедрение через DI (constructor injection). Подробности: [контейнер сервисов Symfony](https://symfony.com/doc/current/service_container.html).
+- Для всех сервисов, внедряемых по интерфейсу, обязательно задаём явный `alias`
   `Interface -> Implementation` в `services.yaml`, независимо от настроек
-  autowire. Подробности: [Working with Interfaces](https://symfony.com/doc/current/service_container/interfaces.html).
+  `autowire`. Подробности: [работа с интерфейсами](https://symfony.com/doc/current/service_container/interfaces.html).
 
 ## Зависимости
 
@@ -79,9 +79,9 @@ description: Правила создания и использования се�
 - Зависит только от компонентов или инфраструктурных интерфейсов.
 - Для исходящих HTTP/SDK-интеграций использует [Component](component.md).
 - ❗ **Не имеет доступа к доменным реализациям**. Допустимы только интерфейсы Domain и доменные типы интерфейса.
-- Даже при включённом `autowire` в `services.yaml` всегда добавляй явный alias
+- Даже при включённом `autowire` в `services.yaml` всегда добавляй явный `alias`
   `Interface -> Implementation`, чтобы контейнер однозначно резолвил сервис и
-  не зависел от эвристики "нашёлся единственный класс". Подробности: [Working with Interfaces](https://symfony.com/doc/current/service_container/interfaces.html).
+  не зависел от эвристики "нашёлся единственный класс". Подробности: [работа с интерфейсами](https://symfony.com/doc/current/service_container/interfaces.html).
 
 ## Расположение
 
@@ -120,7 +120,7 @@ description: Правила создания и использования се�
     - общих компонентов (PersistenceManagerInterface, EventBusInterface).
 - ❗ **Запрещено** содержать бизнес-логику — только оркестрация.
 - ❗ **Запрещено** зависеть от Infrastructure или Integration слоёв напрямую.
-- Используется только внутри слоя Application или вызывается из Use Cases.
+- Используется только внутри слоя Application или вызывается из сценариев использования.
 
 ## Расположение
 
@@ -177,8 +177,8 @@ description: Правила создания и использования се�
 
 | Элемент   | Правило                            | Пример                            |
 |-----------|------------------------------------|-----------------------------------|
-| Класс     | `{Action}{Target}Service`          | ChangeStatusService               |
-| Интерфейс | `{Action}{Target}ServiceInterface` | ChangeStatusServiceInterface      |
+| Класс     | `{Action}{Target}Service`          | `ChangeStatusService`             |
+| Интерфейс | `{Action}{Target}ServiceInterface` | `ChangeStatusServiceInterface`    |
 | Метод     | Глагол в названии                  | `change()`, `send()`, `getById()` |
 
 - `Action` — глагол, обозначающий операцию (Send, Change, Create).

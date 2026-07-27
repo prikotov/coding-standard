@@ -6,9 +6,9 @@ description: Правила зависимостей между слоями а�
 
 # Взаимодействие слоёв (Layer Interaction)
 
-**Взаимодействие слоёв** — правила зависимостей между слоями архитектуры, основанные на принципах Clean Architecture (луковичная архитектура).
+**Взаимодействие слоёв** — правила зависимостей между слоями архитектуры, основанные на принципах «чистой архитектуры» (Clean Architecture) — луковичной модели.
 
-Подробнее: [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+Подробнее: [«Чистая архитектура» Роберта Мартина (Clean Architecture by Robert C. Martin)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 
 ## Общие правила
 
@@ -47,10 +47,10 @@ flowchart TB
 | Слой | Назначение | Зависимости |
 |------|------------|-------------|
 | **Domain** | Бизнес-логика, [Entity](domain/entity.md), [VO](../core-patterns/value-object.md), интерфейсы [Repository](domain/repository.md) | Нет |
-| **Application** | Use Cases, оркестрация, [DTO](../core-patterns/dto.md) | Domain |
+| **Application** | сценарии использования (Use Cases), оркестрация, [DTO](../core-patterns/dto.md) | Domain |
 | **Infrastructure** | Реализация репозиториев, кэш, персистентность, внешние API/SDK | Domain (контракты и типы) |
 | **Integration** | События, middleware, межмодульное взаимодействие | Application, Domain (контракты и типы) |
-| **Presentation** | Web, API, Console, Blog — точки входа | Application |
+| **Presentation** | Web, API, консоль, блог — точки входа | Application |
 
 ## Правила взаимодействия
 
@@ -79,7 +79,7 @@ Infrastructure реализует интерфейсы Domain:
 ### Integration → Application
 
 Integration вызывает Application чужого модуля:
-- Обрабатывает внешние события и инициирует соответствующие Use Cases.
+- Обрабатывает внешние события и инициирует соответствующие сценарии использования (Use Cases).
 - Реализует интеграции через интерфейсы доменных [Service](../core-patterns/service.md).
 - Может использовать доменные типы в сигнатурах контрактов ([VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md)).
 - Не зависит от слоя Infrastructure.
