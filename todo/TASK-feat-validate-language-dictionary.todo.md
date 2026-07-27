@@ -125,4 +125,5 @@ vendor/bin/validate-language --json | jq '.files[].sample' # содержит п
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-07-27 | Dev (Pi) | Реализация: `AnalysisResult.suggestions` + `AnglicismAnalyzer` (однословные ключи и многословные фразы, case-insensitive, шум-фильтр по allowlist) + `bin/validate-language` (`Hints:` в text, `suggestions` в `--json`) + starter `dictionary` в `coding-standard-init` + 8 тестов + раздел в доке. |
+| 2026-07-27 | Dev (Pi) | Уточнение принципа стартового `dictionary` (ревью тимлида): только жаргон/проектно-специфичные термины с неоднозначным переводом (`hook`, `god object`); обычные слова с очевидным переводом (`parallel`, `path`, `execution`, `resume`, `design`, `action`) убраны — им словарь не нужен. Правки в `bin/coding-standard-init`, `.coding-standard.php`, доке. |
 | 2026-07-26 | Тимлид (Алекс) [task-orchestrator] | Создание задачи. Контекст: validate-language не подсказывает переводы → несогласованность переводов у потребителя; нужен dictionary в конфиге + подсказки в валидаторе. |
