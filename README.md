@@ -10,7 +10,7 @@ AI-агенты склонны отклоняться от конвенций. �
 
 Документация описывает принципы, паттерны, слои, модули, тестирование и структуру Symfony-приложения. Служит справочником для команды и AI-агентов.
 
-Полное содержание: [docs/conventions/index.md](docs/conventions/index.md).
+Полное содержание — в [индексе конвенций](docs/conventions/index.md).
 
 ---
 
@@ -32,12 +32,12 @@ AI-агенты склонны отклоняться от конвенций. �
 | Снифф | Что проверяет |
 |---|---|
 | `DtoStructureSniff` | DTO — `final readonly`, только promoted-параметры в конструкторе, без методов и свойств |
-| `EnumStructureSniff` | Enum — чистый (без методов, констант, трейтов), case'ы в camelCase |
+| `EnumStructureSniff` | Enum — чистый (без методов, констант, трейтов), case'ы в `camelCase` |
 | `ValueObjectStructureSniff` | Value Object — `final readonly`, неизменяемый, приватный конструктор, статические фабрики |
 | `CommandQueryStructureSniff` | Command/Query — конструктор только с promoted-параметрами, без свойств и методов |
-| `CommandHandlerStructureSniff` | CommandHandler — только `__invoke`, без публичных свойств |
-| `QueryHandlerReturnTypeSniff` | QueryHandler — должен возвращать `Result` или `ResultDto` |
-| `CommandHandlerReturnTypeSniff` | CommandHandler — должен возвращать `void` или `Result` |
+| `CommandHandlerStructureSniff` | `CommandHandler` — только `__invoke`, без публичных свойств |
+| `QueryHandlerReturnTypeSniff` | `QueryHandler` — должен возвращать `Result` или `ResultDto` |
+| `CommandHandlerReturnTypeSniff` | `CommandHandler` — должен возвращать `void` или `Result` |
 | `UseCaseNamingSniff` | UseCase — обязательный суффикс; имя файла и неймспейс совпадают с путём |
 | `GlobalFunctionCallStyleSniff` | Глобальные функции вызываются без обратного слеша и без `use function` |
 
@@ -58,7 +58,7 @@ AI-агенты склонны отклоняться от конвенций. �
 |---|---|
 | `DtoReuseRule` | Находит DTO в общей папке модуля (`Module\{ModuleName}\Application\Dto`), которые по факту использует только один use case, и предлагает переложить их рядом с владельцем. |
 
-**Подключение:** потребитель добавляет `phpstan/phpstan` в `require-dev` (сосуществует с Psalm) и расширение подхватывается автоматически через `phpstan/extension-installer`, либо вручную через `includes:` в `phpstan.neon`:
+**Подключение:** потребитель добавляет `phpstan/phpstan` в `require-dev` (сосуществует с `Psalm`) и расширение подхватывается автоматически через `phpstan/extension-installer`, либо вручную через `includes:` в `phpstan.neon`:
 
 ```neon
 includes:
@@ -75,7 +75,7 @@ includes:
 | `phpunit.xml.dist` | PHPUnit |
 | `phpmd.xml` | PHPMD |
 | `phpstan.neon.dist` | PHPStan |
-| `psalm.xml` | Psalm |
+| `psalm.xml` | `Psalm` |
 | `Makefile` | Команды проверки (`make check`) |
 
 ---
@@ -91,11 +91,11 @@ composer require --dev prikotov/coding-standard
 - **Сниффы** — PHP CodeSniffer-правила, работают сразу из `vendor/`
 - **Deptrac-правила** — пользовательские правила для deptrac
 - **PHPStan-правила** — пользовательские правила для phpstan
-- **Конфигурации** — `depfile.yaml` для Deptrac, `phpcs.xml.dist` для PHPCS, `phpstan.neon.dist` для PHPStan
+- **Конфигурации** — `depfile.yaml` для Deptrac, `phpcs.xml.dist` для `PHPCS`, `phpstan.neon.dist` для PHPStan
 - **Шаблоны исключений** — типовые классы и интерфейсы, копируются с подстановкой namespace проекта
 - **Конвенции** — документация, копируется командой `coding-standard-init`
 
-### Подключение PHPCS
+### Подключение `PHPCS`
 
 ```xml
 <config name="installed_paths" value="vendor/prikotov/coding-standard"/>
@@ -134,6 +134,6 @@ php vendor/bin/coding-standard-init --project-name=Task
 
 ---
 
-## License
+## Лицензия
 
-[MIT](LICENSE)
+[Лицензия `MIT`](LICENSE)
