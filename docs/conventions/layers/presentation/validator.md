@@ -8,57 +8,52 @@ description: Правила создания валидаторов презен
 
 ## Определение
 
-**Presentation Validator** — custom pair из metadata-класса `*Constraint` и исполняющего класса
-`*ConstraintValidator`, который инкапсулирует reusable или cross-field validation для `RequestDto`, `QueryDto`,
-`FormModel` и других transport model слоя Presentation.
+**Presentation Validator** — пользовательская пара (pair) из класса метаданных `*Constraint` и исполняющего класса `*ConstraintValidator`, который инкапсулирует переиспользуемую или межполевую валидацию (cross-field validation) для `RequestDto`, `QueryDto`, `FormModel` и других транспортных моделей слоя Presentation.
 
 ## Общие правила
 
-- Naming pattern обязателен: один semantic stem и суффиксы `Constraint` / `ConstraintValidator`.
-- `Constraint` хранит только message, options, target (`PROPERTY_CONSTRAINT` / `CLASS_CONSTRAINT`) и другую metadata.
-- `ConstraintValidator` содержит только validation logic и работу с `ExecutionContext`.
-- Property-level правила используем для одного поля; class-level — для cross-field validation.
-- Если правило живёт более чем в одном DTO/FormModel, требует отдельного имени, class-level contract или читаемого reuse,
-  оно должно жить во внешнем validator pair, а не в `Callback`/`validate*()`.
-- Validation layer не должен выполнять I/O и не должен реализовывать business rules.
+- Шаблон именования (naming pattern) обязателен: один смысловой корень (semantic stem) и суффиксы `Constraint` / `ConstraintValidator`.
+- `Constraint` хранит только сообщение (message), параметры (options), область применения (target: `PROPERTY_CONSTRAINT` / `CLASS_CONSTRAINT`) и другие метаданные.
+- `ConstraintValidator` содержит только логику валидации и работу с `ExecutionContext`.
+- Правила уровня свойства (property-level) используем для одного поля; уровня класса (class-level) — для межполевой валидации.
+- Если правило живёт более чем в одном DTO/`FormModel`, требует отдельного имени, контракта уровня класса или читаемого переиспользования, оно должно жить во внешней паре валидаторов (validator pair), а не в `Callback`/`validate*()`.
+- Слой валидации не должен выполнять I/O и не должен реализовывать бизнес-правила.
 
 ## Зависимости
 
 ### Разрешено
 
 - `Symfony\Component\Validator\Constraint`, `ConstraintValidator`, `ExecutionContextInterface`.
-- Валидируемые presentation DTO/FormModel из того же app/module.
-- Чистые PHP helpers и deterministic parsing, не выходящие во внешнюю среду.
+- Валидируемые DTO/`FormModel` презентации из того же приложения/модуля.
+- Чистые PHP-хелперы и детерминированный разбор, не выходящие во внешнюю среду.
 
 ### Запрещено
 
-- QueryBus, CommandBus, handlers, repositories, ORM, HTTP clients, filesystem, queues.
-- Business-решения и доменные инварианты, которые должны жить в Application/Domain.
-- Зависимости на Infrastructure/Integration implementations.
+- `QueryBus`, `CommandBus`, обработчики, репозитории, ORM, HTTP-клиенты, файловая система, очереди.
+- Бизнес-решения и доменные инварианты, которые должны жить в Application/Domain.
+- Зависимости от реализаций Infrastructure/Integration.
 
 ## Расположение
 
-- Module-local validator:
+- Локальный валидатор модуля (module-local):
 
 ```
 apps/<app>/src/Module/<ModuleName>/Validation/Constraint/<Name>Constraint.php
 apps/<app>/src/Module/<ModuleName>/Validation/Constraint/<Name>ConstraintValidator.php
 ```
 
-- Cross-cutting validator:
+- Сквозной валидатор (cross-cutting):
 
 ```
 apps/<app>/src/Component/Validation/Constraint/<Name>Constraint.php
 apps/<app>/src/Component/Validation/Constraint/<Name>ConstraintValidator.php
 ```
 
-## Service Wiring
+## Подключение сервисов (Service Wiring)
 
-- Если каталог validator classes уже покрыт module/app `services.yaml` с `autowire: true` и `autoconfigure: true`,
-  отдельный тег не нужен.
-- Если path исключён из service discovery, validator нужно зарегистрировать явно и добавить тег
-  `validator.constraint_validator`.
-- При переносе validation logic сначала проверяем фактический DI boundary приложения, а не предполагаем автоподхват.
+- Если каталог классов-валидаторов уже покрыт `services.yaml` приложения/модуля с `autowire: true` и `autoconfigure: true`, отдельный тег не нужен.
+- Если путь исключён из обнаружения сервисов (service discovery), валидатор нужно зарегистрировать явно и добавить тег `validator.constraint_validator`.
+- При переносе логики валидации сначала проверяем фактическую границу DI приложения, а не предполагаем автоподхват.
 
 ## Пример
 
@@ -104,12 +99,12 @@ final class PasswordsMatchConstraintValidator extends ConstraintValidator
 }
 ```
 
-Такой pair выносит reusable cross-field validation из DTO/FormModel во внешний presentation validator.
+Такая пара выносит переиспользуемую межполевую валидацию из DTO/`FormModel` во внешний валидатор презентации.
 
 ## Чек-лист код-ревью
 
-- [ ] Naming следует паттерну `*Constraint` / `*ConstraintValidator`.
-- [ ] `Constraint` хранит только metadata/options, без runtime logic.
-- [ ] `ConstraintValidator` не делает I/O и не тянет business dependencies.
-- [ ] Class-level validation вынесена из DTO/FormModel во внешний validator pair.
-- [ ] Service wiring подтверждён для конкретного app/module.
+- [ ] Именование следует паттерну `*Constraint` / `*ConstraintValidator`.
+- [ ] `Constraint` хранит только метаданные/параметры, без логики времени выполнения.
+- [ ] `ConstraintValidator` не делает I/O и не тянет бизнес-зависимости.
+- [ ] Валидация уровня класса вынесена из DTO/`FormModel` во внешнюю пару валидаторов.
+- [ ] Подключение сервисов подтверждено для конкретного приложения/модуля.

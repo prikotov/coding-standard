@@ -16,9 +16,9 @@ return [
         'max_ratio' => 0.02,
         // Разрешённые термины (имена собственные и аббревиатуры).
         'allowlist' => [
-            'Symfony', 'Doctrine', 'PHPUnit', 'PHPStan', 'Deptrac', 'Composer',
+            'Symfony', 'Doctrine', 'PHPUnit', 'PHPStan', 'PHPMD', 'Deptrac', 'Composer',
             'Git', 'GitHub', 'Docker', 'MOEX', 'Twig', 'Panther',
-            'PHP', 'SQL', 'JSON', 'YAML', 'HTML', 'CSS', 'HTTP', 'HTTPS',
+            'PHP', 'SQL', 'JSON', 'YAML', 'XML', 'PSR', 'HTML', 'CSS', 'HTTP', 'HTTPS',
             'DB', 'DBAL', 'ORM', 'API', 'CRUD', 'DDD', 'SOLID', 'CI', 'CD',
             'URL', 'URI', 'ID', 'UUID', 'VO', 'DAO', 'REST', 'RPC', 'SDK',
             'CLI', 'UI', 'UX', 'IO', 'OS', 'PR', 'DTO',
