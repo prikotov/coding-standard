@@ -9,8 +9,8 @@ epic:
 author: Тимлид (Алекс) [task-orchestrator, потребитель пакета]
 assignee: Dev (Pi)
 branch: task/feat-validate-language-dictionary
-pr:
-status: in_progress
+pr: "#78"
+status: review
 ---
 
 # TASK-feat-validate-language-dictionary: Словарь стандартных переводов (dictionary) для validate-language
