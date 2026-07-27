@@ -128,4 +128,79 @@ final class AnglicismAnalyzerTest extends TestCase
 
         self::assertSame(0, $result->anglicismWords);
     }
+
+    public function testDictionarySuggestsTranslationForAnglicismWord(): void
+    {
+        $analyzer = new AnglicismAnalyzer([], ['hook' => 'хук']);
+
+        $result = $analyzer->analyze('Регистрируем hook на событие.');
+
+        self::assertSame(1, $result->anglicismWords);
+        self::assertContains('hook', $result->sampleWords);
+        self::assertSame(['hook' => 'хук'], $result->suggestions);
+    }
+
+    public function testDictionaryDoesNotSuggestAbsentWord(): void
+    {
+        // Слова из dictionary нет в тексте — подсказки быть не должно.
+        $analyzer = new AnglicismAnalyzer([], ['hook' => 'хук']);
+
+        $result = $analyzer->analyze('Чистый русский текст без англицизмов.');
+
+        self::assertSame([], $result->suggestions);
+    }
+
+    public function testDictionaryDoesNotSuggestAllowlistedWord(): void
+    {
+        // Слово в allowlist — не англицизм, подсказки нет (контракт термина достаточен).
+        $analyzer = new AnglicismAnalyzer(['hook'], ['hook' => 'хук']);
+
+        $result = $analyzer->analyze('Регистрируем hook на событие.');
+
+        self::assertSame(0, $result->anglicismWords);
+        self::assertSame([], $result->suggestions);
+    }
+
+    public function testWithoutDictionaryHasNoSuggestions(): void
+    {
+        // Обратная совместимость: без dictionary подсказок нет.
+        $analyzer = new AnglicismAnalyzer();
+
+        $result = $analyzer->analyze('Регистрируем hook на событие.');
+
+        self::assertSame(1, $result->anglicismWords);
+        self::assertSame([], $result->suggestions);
+    }
+
+    public function testDictionarySuggestsMultiWordPhrase(): void
+    {
+        $analyzer = new AnglicismAnalyzer([], ['god object' => 'божественный объект']);
+
+        $result = $analyzer->analyze('Это типичный god object в кодовой базе.');
+
+        self::assertSame(['god object' => 'божественный объект'], $result->suggestions);
+    }
+
+    public function testDictionaryMatchingIsCaseInsensitive(): void
+    {
+        // Ключ dictionary и слово в тексте в разном регистре — совпадает.
+        $analyzer = new AnglicismAnalyzer([], ['Hook' => 'хук']);
+
+        $result = $analyzer->analyze('Регистрируем HOOK на событие.');
+
+        self::assertSame(['hook' => 'хук'], $result->suggestions);
+    }
+
+    public function testDictionaryIgnoresPhraseWhenAllWordsAllowlisted(): void
+    {
+        // Все слова фразы — allowlist-термины: англицизма нет, подсказка не шумит.
+        $analyzer = new AnglicismAnalyzer(
+            ['service', 'layer'],
+            ['service layer' => 'слой служб'],
+        );
+
+        $result = $analyzer->analyze('service layer приложения');
+
+        self::assertSame([], $result->suggestions);
+    }
 }

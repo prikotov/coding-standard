@@ -43,5 +43,17 @@ return [
             'use', 'case', 'and', 'of', 'web', 'extension', 'task',
             'middleware', 'metadata', 'querybus', 'bus', 'DI',
         ],
+        // Стандартные переводы типовых англицизмов — validate-language подсказывает
+        // перевод рядом со словом. На ratio не влияет; дополняйте под проект.
+        'dictionary' => [
+            'hook' => 'хук',
+            'execution' => 'выполнение',
+            'path' => 'путь',
+            'resume' => 'возобновление',
+            'god object' => 'божественный объект',
+            'parallel' => 'параллельный',
+            'design' => 'проектирование',
+            'action' => 'действие',
+        ],
     ],
 ];

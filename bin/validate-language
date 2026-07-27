@@ -41,11 +41,12 @@ declare(strict_types=1);
  *   --json              Машиночитаемый вывод (для будущей CI-интеграции).
  *
  * Конфиг читается из `.coding-standard.php` (ключ `language`), возвращая:
- *   paths     => string[]   — файлы/директории для сканирования.
- *   exclude   => string[]   — фрагменты путей для исключения.
- *   max_ratio => float      — максимально допустимая доля латинских слов вне allowlist.
- *   allowlist => string[]   — дополнительные разрешённые термины.
- *
+ *   paths      => string[]            — файлы/директории для сканирования.
+ *   exclude    => string[]            — фрагменты путей для исключения.
+ *   max_ratio  => float               — максимально допустимая доля латинских слов вне allowlist.
+ *   allowlist  => string[]            — дополнительные разрешённые термины.
+ *   dictionary => array<string,string> — карта «англ. слово/фраза → русский перевод»
+ *                     для подсказок перевода (опционально; на ratio не влияет).
  * Exit codes:
  *   0 — нет превышений (или режим warning)
  *   1 — найдены превышения в режиме --strict
@@ -122,6 +123,7 @@ $allowlist = array_values(array_unique(array_merge(
     $config['allowlist'] ?? [],
     $argAllow,
 )));
+$dictionary = $config['dictionary'] ?? [];
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -172,7 +174,7 @@ function collectTextFiles(array $paths, array $skipDirs, array $excludePatterns)
 $files = collectTextFiles($paths, $skipDirs, $excludePatterns);
 
 $extractor = new MarkdownTextExtractor();
-$analyzer = new AnglicismAnalyzer($allowlist);
+$analyzer = new AnglicismAnalyzer($allowlist, $dictionary);
 $detector = new DocumentLanguageDetector();
 
 $results = [];
@@ -213,6 +215,7 @@ foreach ($files as $filePath) {
         'ratio' => $analysis->ratio,
         'over' => $overThreshold,
         'sample' => $analysis->sampleWords,
+        'suggestions' => $analysis->suggestions,
     ];
 }
 
@@ -248,6 +251,13 @@ foreach ($results as $r) {
     if ($r['sample'] !== []) {
         $wordsList = implode(', ', array_slice($r['sample'], 0, 10));
         echo "      Words: {$wordsList}\n";
+    }
+    if ($r['suggestions'] !== []) {
+        $hints = [];
+        foreach ($r['suggestions'] as $english => $russian) {
+            $hints[] = "{$english} → «{$russian}»";
+        }
+        echo "      Hints: " . implode(', ', $hints) . "\n";
     }
 }
 if ($shown === 0) {

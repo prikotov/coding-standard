@@ -7,10 +7,10 @@ priority: P2
 depends_on:
 epic:
 author: Тимлид (Алекс) [task-orchestrator, потребитель пакета]
-assignee:
+assignee: Dev (Pi)
 branch: task/feat-validate-language-dictionary
 pr:
-status: todo
+status: in_progress
 ---
 
 # TASK-feat-validate-language-dictionary: Словарь стандартных переводов (dictionary) для validate-language
@@ -81,20 +81,20 @@ status: todo
 - [ ] Изменение `max_ratio` или алгоритма `ratio`.
 
 ## 4. Implementation Plan (План реализации)
-1. [ ] Конфиг-схема: чтение `language.dictionary` (map) рядом с `allowlist`; defaults — пустой map (обратная совместимость).
-2. [ ] `AnglicismAnalyzer`/`AnalysisResult`: для каждого найденного англицизма проверять вхождение в `dictionary` (case-insensitive; для фраз — по подстроке/токенам); добавлять перевод в результат.
-3. [ ] `bin/validate-language`: текстовый вывод — подсказка `→ «перевод»`; `--json` — поле перевода.
-4. [ ] `bin/coding-standard-init`: стартовый `dictionary` (hook→хук, execution→выполнение, path→путь, resume→возобновление, God object→божественный объект, parallel→параллельный, design→проектирование, action→действие, …).
-5. [ ] Тесты в `tests/Language/` (включая `--json`).
-6. [ ] Док: раздел в `docs/conventions/ops/validate-language.ru.md` + пример конфига с `dictionary`.
+1. [x] Конфиг-схема: чтение `language.dictionary` (map) рядом с `allowlist`; defaults — пустой map (обратная совместимость).
+2. [x] `AnglicismAnalyzer`/`AnalysisResult`: для каждого найденного англицизма проверять вхождение в `dictionary` (case-insensitive; для фраз — по подстроке/токенам); добавлять перевод в результат.
+3. [x] `bin/validate-language`: текстовый вывод — подсказка `→ «перевод»`; `--json` — поле перевода.
+4. [x] `bin/coding-standard-init`: стартовый `dictionary` (hook→хук, execution→выполнение, path→путь, resume→возобновление, God object→божественный объект, parallel→параллельный, design→проектирование, action→действие, …).
+5. [x] Тесты в `tests/Language/` (включая `--json`).
+6. [x] Док: раздел в `docs/conventions/ops/validate-language.ru.md` + пример конфига с `dictionary`.
 
 ## 5. Definition of Done (Критерии приёмки)
-- [ ] Ключ `language.dictionary` поддержан; отсутствие = текущее поведение.
-- [ ] `validate-language` подсказывает перевод для англицизмов из `dictionary` (text + `--json`).
-- [ ] `allowlist` по-прежнему = «не трогать» (без подсказок).
-- [ ] `coding-standard-init` пишет стартовый `dictionary`.
-- [ ] Тесты покрывают ключевые сценарии; `composer check` зелёный.
-- [ ] Документация обновлена.
+- [x] Ключ `language.dictionary` поддержан; отсутствие = текущее поведение.
+- [x] `validate-language` подсказывает перевод для англицизмов из `dictionary` (text + `--json`).
+- [x] `allowlist` по-прежнему = «не трогать» (без подсказок).
+- [x] `coding-standard-init` пишет стартовый `dictionary`.
+- [x] Тесты покрывают ключевые сценарии; код-уровневые проверки `composer check` зелёные (phpunit 42, phpstan, phpcs, validate-docs, validate-md-links, validate-language). `@validate-todo` падает только на соседнем untracked-файле `TASK-docs-phpdoc-override-methods` — не относится к задаче.
+- [x] Документация обновлена.
 
 ## 6. Verification (Самопроверка)
 ```bash
@@ -124,4 +124,5 @@ vendor/bin/validate-language --json | jq '.files[].sample' # содержит п
 ## Change History (История изменений)
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
+| 2026-07-27 | Dev (Pi) | Реализация: `AnalysisResult.suggestions` + `AnglicismAnalyzer` (однословные ключи и многословные фразы, case-insensitive, шум-фильтр по allowlist) + `bin/validate-language` (`Hints:` в text, `suggestions` в `--json`) + starter `dictionary` в `coding-standard-init` + 8 тестов + раздел в доке. |
 | 2026-07-26 | Тимлид (Алекс) [task-orchestrator] | Создание задачи. Контекст: validate-language не подсказывает переводы → несогласованность переводов у потребителя; нужен dictionary в конфиге + подсказки в валидаторе. |
