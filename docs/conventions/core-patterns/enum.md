@@ -13,43 +13,43 @@ description: Правила использования нативных PHP-пе
 
 ## Общие правила
 
-* Разрешены в любом слое (Domain, Application, Infrastructure, Integration, Presentation).
-* `ApplicationEnum` — перечисления уровня Application, используемые в публичных контрактах (DTO/UseCase), чтобы не "подтягивать" доменные enum в Presentation/Integration. Для соответствия доменной модели используйте явные мапперы между `Domain\Enum` и `Application\Enum`.
-* ❗ **Enum не содержит бизнес-логики**, зависимостей, магических методов и дополнительных констант.
+* Разрешены в любом слое (`Domain`, `Application`, `Infrastructure`, `Integration`, `Presentation`).
+* `ApplicationEnum` — перечисления уровня `Application`, используемые в публичных контрактах (DTO/UseCase), чтобы не "подтягивать" доменные перечисления в `Presentation`/`Integration`. Для соответствия доменной модели используйте явные мапперы между `Domain\Enum` и `Application\Enum`.
+* ❗ **Перечисление не содержит бизнес-логики**, зависимостей, магических методов и дополнительных констант.
 * Используются [`backed enum`](https://www.php.net/manual/en/language.enumerations.backed.php) (int|string) при
   необходимости хранить/отображать читаемое значение.
 * Названия самих `enum` — в `PascalCase` с постфиксом `Enum`.
 * Названия `case` — в `camelCase`.
-* Если enum универсален и не связан с конкретным модулем (например: `LanguageEnum`, `GenderEnum`), его размещают в
+* Если перечисление универсально и не связано с конкретным модулем (например: `LanguageEnum`, `GenderEnum`), его размещают в
   `ProjectName\Common\Enum`.
 
 ## Расположение
 
-* Domain
+* `Domain`
   - `{ProjectName}\Common\Module\{ModuleName}\Domain\Enum\{Name}Enum`
-* Application
-  - `{ProjectName}\Common\Module\{ModuleName}\Application\Enum\{Name}Enum` — для общих enum'ов уровня Application
-  - `{ProjectName}\Common\Module\{ModuleName}\Application\UseCase\{Name}\{Name}Enum` — для enum'ов, связанных строго с одним UseCase.
-* Infrastructure
+* `Application`
+  - `{ProjectName}\Common\Module\{ModuleName}\Application\Enum\{Name}Enum` — для общих перечислений уровня `Application`
+  - `{ProjectName}\Common\Module\{ModuleName}\Application\UseCase\{Name}\{Name}Enum` — для перечислений, связанных строго с одним UseCase.
+* `Infrastructure`
   - `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Enum\{Name}Enum`
   - `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{SomeComponent}\Enum\{Name}Enum`
-* Integration
+* `Integration`
   - `{ProjectName}\Common\Module\{ModuleName}\Integration\Enum\{Name}Enum`
-* Presentation
+* `Presentation`
   - `{ProjectName}\Web\Module\{ModuleName}\Enum\{Name}Enum`
 * `Common`
   - `{ProjectName}\Common\Enum\{Name}Enum`
 
 ## Как используем
 
-* ❗ Enum доступен только в своём модуле.
-* Если требуется значение из чужого модуля → создаём собственный enum (копию) и маппим через интеграционный сервис.
+* ❗ Перечисление доступно только в своём модуле.
+* Если требуется значение из чужого модуля → создаём собственное перечисление (копию) и маппим через интеграционный сервис.
 * Используем напрямую в сравнении или `match`, без вызова `->value`, когда это возможно.
-* При попытке создать enum из невалидного значения выбрасывается `ValueError`, оборачиваем его в `ValidationException`.
+* При попытке создать перечисление из невалидного значения выбрасывается `ValueError`, оборачиваем его в `ValidationException`.
 
 ## Примеры
 
-Пример создания Enum:
+Пример создания перечисления:
 
 ```php
 <?php
@@ -67,7 +67,7 @@ enum ChatMessageRoleEnum: int
 }
 ```
 
-Пример использования Enum в `match`:
+Пример использования перечисления в `match`:
 
 ```php
 <?php
@@ -117,9 +117,9 @@ try {
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] Enum использует `enum` (не `const`-хаки).
+- [ ] Перечисление реализовано через `enum` (не `const`-хаки).
 - [ ] У каждого варианта осмысленное имя.
-- [ ] Enum не содержит бизнес-логики, выходящей за рамки значений.
-- [ ] Тип enum (int/string/без типа) выбран обоснованно.
+- [ ] Перечисление не содержит бизнес-логики, выходящей за рамки значений.
+- [ ] Тип `enum` (int/string/без типа) выбран обоснованно.
 - [ ] При необходимости реализован `from()` с валидацией.
 ```
