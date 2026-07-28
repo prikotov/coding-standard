@@ -17,15 +17,15 @@ description: Правила создания грант-сервисов для 
 - Класс объявляется `final readonly` и хранит только зависимости через конструктор.
 - Методы именуются с префиксом `can*` и возвращают `bool` без побочных эффектов.
 - Каждый метод вызывает `AuthorizationCheckerInterface::isGranted()` с `ActionEnum` и субъектом (subject).
-- Грант не решает доступ сам: итоговое решение остаётся в [Voter](voter.md) и [Rule](rule.md).
+- Грант не решает доступ сам: итоговое решение остаётся в [`Voter`](voter.md) и [`Rule`](rule.md).
 - UI-флаги допустимы только для отображения кнопок и ссылок, не для защиты точки входа (endpoint).
 - Внутри не используем `TokenInterface` напрямую.
-- Не выполняем запросы к базе, не обращаемся к Domain/Application, не модифицируем состояние.
+- Не выполняем запросы к базе, не обращаемся к `Domain`/`Application`, не модифицируем состояние.
 
 ## Зависимости
 
-- Разрешено: `AuthorizationCheckerInterface`, `*ActionEnum`, простые типы (`Uuid`), DTO Presentation, UI-флаги.
-- Запрещено: репозитории, `QueryBus`/`CommandBus`, сервисы Domain/Application/Infrastructure, обращения к глобальному состоянию.
+- Разрешено: `AuthorizationCheckerInterface`, `*ActionEnum`, простые типы (`Uuid`), DTO `Presentation`, UI-флаги.
+- Запрещено: репозитории, `QueryBus`/`CommandBus`, сервисы `Domain`/`Application`/`Infrastructure`, обращения к глобальному состоянию.
 
 ## Расположение
 
@@ -34,14 +34,14 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Grant.php
 ```
 
 - Имя файла совпадает с контекстом (`Security/User/Grant.php`, `Security/Project/Grant.php`).
-- Хранится в каталоге `Security/<SubjectName>` рядом с перечислением прав, `ActionEnum`, Rule и Voter.
+- Хранится в каталоге `Security/<SubjectName>` рядом с перечислением прав, `ActionEnum`, `Rule` и `Voter`.
 
 ## Как используем
 
 1. Создаём грант для сущности и регистрируем его как сервис в модуле.
 2. Внедряем грант в контроллеры, Twig-шаблоны и компоненты UI через DI.
 3. Вызываем методы `can*`, чтобы скрыть/показать действия (кнопки, ссылки, формы).
-4. Точку входа (endpoint) защищаем через `isGranted()`/Voter, а не через грант.
+4. Точку входа (endpoint) защищаем через `isGranted()`/`Voter`, а не через грант.
 
 ## Пример
 
@@ -92,6 +92,6 @@ final readonly class Grant
 - [ ] Все публичные методы начинаются с `can*` и возвращают `bool`.
 - [ ] Внутри используются значения `*ActionEnum`, а не строки.
 - [ ] Грант только готовит субъект и вызывает `AuthorizationCheckerInterface::isGranted()`.
-- [ ] Нет зависимостей на Domain/Application/Infrastructure-сервисы.
-- [ ] Нет логики доступа, дублирующей Rule.
+- [ ] Нет зависимостей на `Domain`/`Application`/`Infrastructure`-сервисы.
+- [ ] Нет логики доступа, дублирующей `Rule`.
 - [ ] Шаблоны и контроллеры обращаются к гранту вместо прямых вызовов `is_granted()`.

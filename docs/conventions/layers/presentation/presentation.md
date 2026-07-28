@@ -10,16 +10,16 @@ description: Детальное описание слоя представлен
 
 ## Общие правила
 
-- Контроллеры, консольные команды и HTTP-эндпоинты обращаются **только** к UseCase/Handler из Application слоя.
-- Публичные контракты Presentation формируют входные данные в `Request` DTO/Command/Query и принимают `Response` DTO.
+- Контроллеры, консольные команды и HTTP-эндпоинты обращаются **только** к UseCase/Handler из `Application` слоя.
+- Публичные контракты `Presentation` формируют входные данные в `Request` DTO/Command/Query и принимают `Response` DTO.
 - Для transport DTO и пользовательских валидаторов (custom validators) используем профильные документы:
   [`Request DTO`](request-dto.md),
   [`Query DTO`](query-dto.md),
   [`Response DTO`](response-dto.md),
-  [Validator](validator.md).
-- **Запрещено** использовать типы из Domain напрямую (Entity, VO, Repository, Specification).
-- **Запрещено** обращаться к классам из Infrastructure/Integration слоёв.
-- Исключения маппятся в ответы/сообщения через обработчики уровня Presentation (listeners/subscribers/exception mappers).
+  [`Validator`](validator.md).
+- **Запрещено** использовать типы из `Domain` напрямую (`Entity`, VO, `Repository`, `Specification`).
+- **Запрещено** обращаться к классам из `Infrastructure`/`Integration` слоёв.
+- Исключения маппятся в ответы/сообщения через обработчики уровня `Presentation` (listeners/subscribers/exception mappers).
 - Валидация ввода остаётся декларативной (declarative) в DTO/`FormModel` или делегируется во внешнюю пару валидаторов (validator pair); `Callback` и `validate*()` внутри транспортной модели (transport model) не используем.
 - Web-контроллеры возвращают HTML (Twig), API-контроллеры — JSON.
 - Console-команды используют `SymfonyStyle` для вывода и корректные коды завершения.
@@ -30,24 +30,24 @@ description: Детальное описание слоя представлен
 
 | Слой | Что можно использовать |
 |------|------------------------|
-| Application | Command, Query, DTO, Handler (через `__invoke`) |
+| `Application` | Command, Query, DTO, Handler (через `__invoke`) |
 | `Common` | Исключения, хелперы, общие компоненты |
-| Symfony | `HttpFoundation`, `Form`, `Validator`, `Security`, `Console` |
-| Twig | Шаблоны, функции, фильтры |
+| `Symfony` | `HttpFoundation`, `Form`, `Validator`, `Security`, `Console` |
+| `Twig` | Шаблоны, функции, фильтры |
 
 ### Запрещённые зависимости
 
 | Слой | Что запрещено |
 |------|---------------|
-| Domain | Entity, `ValueObject`, Repository, Specification, Service |
-| Infrastructure | Repository-реализация, `Model`, `Cache`, `External API` |
-| Integration | Listener, Middleware, Integration Service |
+| `Domain` | `Entity`, `ValueObject`, `Repository`, `Specification`, `Service` |
+| `Infrastructure` | `Repository`-реализация, `Model`, `Cache`, `External API` |
+| `Integration` | `Listener`, `Middleware`, `Integration Service` |
 
 Подробнее о взаимодействии слоёв: [`layers.md`](../layers.md)
 
 ## Расположение
 
-Presentation слой реализован через четыре приложения:
+`Presentation` слой реализован через четыре приложения:
 
 ```
 apps/
@@ -137,8 +137,8 @@ apps/
 
 | Приложение | URL-префикс | Аутентификация | Формат ответа |
 |------------|-------------|----------------|---------------|
-| Web | `/` | `Session`/`Cookie` | HTML (Twig) |
-| API | `/api/` | `JWT` | JSON |
+| `Web` | `/` | `Session`/`Cookie` | HTML (Twig) |
+| `API` | `/api/` | `JWT` | JSON |
 | `Blog` | `/blog/` | Нет | HTML (Twig) |
 | `Console` | CLI | Нет | `Text` |
 
@@ -149,10 +149,10 @@ apps/
 - [Консольная команда (Console Command)](console-command.md)
 - [Формы (Forms)](forms.md)
 - [`Request DTO`](request-dto.md)
-- [Query DTO](query-dto.md)
+- [`Query DTO`](query-dto.md)
 - [`Response DTO`](response-dto.md)
 - [Маршруты (Route)](route.md)
-- [Validator](validator.md)
+- [`Validator`](validator.md)
 - [Ограничение частоты запросов (Rate Limiter)](rate-limiter.md)
 - [Twig-компонент (Twig Component)](twig-component.md)
 - [Twig-расширение (Twig Extension)](twig-extension.md)
@@ -169,5 +169,5 @@ apps/
 - [ ] Presentation-слой обращается только к Application-слою.
 - [ ] В контроллере нет бизнес-логики — только вызов use case.
 - [ ] Входные данные валидируются через `Request` DTO.
-- [ ] Авторизация реализована через Voter/Rule/грант.
+- [ ] Авторизация реализована через `Voter`/`Rule`/грант.
 - [ ] Twig-компоненты не содержат бизнес-логики.

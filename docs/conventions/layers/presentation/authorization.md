@@ -9,7 +9,7 @@ description: Правила проверки прав презентационн
 ## Определение
 
 **Проверка прав презентационного слоя (Presentation Authorization)** — способ ограничить доступ к публичным
-интерфейсам приложения через перечисление прав (Permission Enum), перечисление действий (Action Enum), Rule, Voter и грант-сервис (Grant). Используем встроенную модель
+интерфейсам приложения через перечисление прав (Permission Enum), перечисление действий (Action Enum), `Rule`, `Voter` и грант-сервис (Grant). Используем встроенную модель
 безопасности Symfony, см. [документацию по безопасности и авторизации](https://symfony.com/doc/current/security.html).
 
 ## Архитектура авторизации
@@ -30,7 +30,7 @@ Controller / Template / UI
 | `PermissionEnum` | Роли `ROLE_*` для модуля | [перечисление прав](permission-enum.md) |
 | `ActionEnum` | Атрибуты действий для `isGranted()` | [перечисление действий](action-enum.md) |
 | `Rule` | Итоговая логика доступа | [правило доступа](rule.md) |
-| `Voter` | Symfony-адаптер, делегирующий в Rule | [голосующий объект](voter.md) |
+| `Voter` | Symfony-адаптер, делегирующий в `Rule` | [голосующий объект](voter.md) |
 | `Grant` | Фасад пользовательского интерфейса (UI) над `AuthorizationChecker` | [грант-сервис](grant.md) |
 
 ## Общие правила
@@ -38,14 +38,14 @@ Controller / Template / UI
 - Каждый модуль определяет собственный `PermissionEnum` с именами ролей `ROLE_*`.
 - `ActionEnum` описывает действия: `view`, `edit`, `delete`.
 - `Rule` содержит итоговую логику доступа.
-- `Voter` принимает решение о доступе средствами безопасности Symfony и делегирует в Rule.
+- `Voter` принимает решение о доступе средствами безопасности Symfony и делегирует в `Rule`.
 - `Grant` только вызывает `AuthorizationCheckerInterface::isGranted()` для UI.
-- Контроллеры и шаблоны не вызывают Rule напрямую.
-- Domain/Infrastructure не используем внутри Rule/Voter/гранта.
+- Контроллеры и шаблоны не вызывают `Rule` напрямую.
+- `Domain`/`Infrastructure` не используем внутри `Rule`/`Voter`/гранта.
 
 ## Матрица соответствия действий и прав
 
-`ActionEnum` и `PermissionEnum` — независимые enum'ы. Связь между ними реализует [Rule](rule.md):
+`ActionEnum` и `PermissionEnum` — независимые enum'ы. Связь между ними реализует [`Rule`](rule.md):
 
 ```
 ActionEnum          Rule                 PermissionEnum
@@ -59,10 +59,10 @@ delete       ───►  canDelete()  ───►    deleteOwn / deleteAll
 
 ## Зависимости
 
-- **Rule:** `TokenInterface`, `RoleHierarchyInterface`, DTO Presentation, публичный `QueryBus` для фактов доступа.
-- **Voter:** Rule, `TokenInterface`, `ActionEnum`, субъект (subject) Presentation.
-- **Грант:** `AuthorizationCheckerInterface`, `ActionEnum`, субъект Presentation.
-- **Запрещено:** сервисы Domain, ORM-репозитории, `EntityManager`, глобальные синглтоны.
+- **`Rule`:** `TokenInterface`, `RoleHierarchyInterface`, DTO `Presentation`, публичный `QueryBus` для фактов доступа.
+- **`Voter`:** `Rule`, `TokenInterface`, `ActionEnum`, субъект (subject) `Presentation`.
+- **Грант:** `AuthorizationCheckerInterface`, `ActionEnum`, субъект `Presentation`.
+- **Запрещено:** сервисы `Domain`, ORM-репозитории, `EntityManager`, глобальные синглтоны.
 
 ## Расположение
 
@@ -78,17 +78,17 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/
 ## Как используем
 
 1. Определяем [перечисление прав](permission-enum.md) и добавляем значения в `security.yaml`.
-2. Определяем [перечисление действий](action-enum.md) с атрибутами действий (view, edit, delete...).
-3. Реализуем [Rule](rule.md) для проверки прав.
-4. Создаём [Voter](voter.md), который делегирует проверку в Rule.
+2. Определяем [перечисление действий](action-enum.md) с атрибутами действий (`view`, `edit`, `delete`...).
+3. Реализуем [`Rule`](rule.md) для проверки прав.
+4. Создаём [`Voter`](voter.md), который делегирует проверку в `Rule`.
 5. При необходимости создаём [грант-сервис](grant.md) для UI-проверок.
 6. Точку входа (endpoint) защищаем через `$this->isGranted(ActionEnum::view->value, $subject)`.
 
 ## Чек-лист для проведения ревью кода
 
 - [ ] Перечисление прав лежит в каталоге `Security` и содержит только значения `ROLE_*`.
-- [ ] Перечисление действий содержит атрибуты действий (view, edit, delete...).
-- [ ] Rule содержит итоговую логику доступа.
-- [ ] Voter делегирует проверку в Rule и зарегистрирован как сервис.
+- [ ] Перечисление действий содержит атрибуты действий (`view`, `edit`, `delete`...).
+- [ ] `Rule` содержит итоговую логику доступа.
+- [ ] `Voter` делегирует проверку в `Rule` и зарегистрирован как сервис.
 - [ ] Значения перечисления прав добавлены в `security.yaml`.
-- [ ] Грант объявлен `final readonly`, не дублирует Rule и не содержит бизнес-логики.
+- [ ] Грант объявлен `final readonly`, не дублирует `Rule` и не содержит бизнес-логики.

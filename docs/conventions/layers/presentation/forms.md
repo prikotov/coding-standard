@@ -19,12 +19,12 @@ description: Правила создания форм презентационн
 - Переводы (`label`, `help`, `placeholder`) задаём через `translation_domain` либо ключи в YAML.
 - В контроллере проверяем `isSubmitted()` до `isValid()`, работаем с типизированной моделью.
 - В `FormModel` допускаем декларативные метаданные полей (declarative field metadata), но межполевую (cross-field) и переиспользуемую валидацию (reusable validation) выносим в пользовательскую пару валидаторов (custom validator pair); `#[Assert\Callback]` и методы `validate*()` в `FormModel` не используем.
-- Для пользовательских валидаторов (custom validators) форм применяем правила из [Validator](validator.md).
+- Для пользовательских валидаторов (custom validators) форм применяем правила из [`Validator`](validator.md).
 
 ## Зависимости
 
-- Разрешено: сервисы Presentation (списки значений, мапперы), перечисления слоя, DTO Application в качестве данных.
-- Запрещено: репозитории, сервисы Domain/Infrastructure, глобальные синглтоны.
+- Разрешено: сервисы `Presentation` (списки значений, мапперы), перечисления слоя, DTO `Application` в качестве данных.
+- Запрещено: репозитории, сервисы `Domain`/`Infrastructure`, глобальные синглтоны.
 
 ## Расположение
 
@@ -183,7 +183,7 @@ final class FilterFormType extends AbstractType
 ### Когда использовать
 
 - Список значений зависит от прав текущего пользователя или других runtime-условий.
-- Список получается через Application Query (а не статический enum).
+- Список получается через `Application` Query (а не статический enum).
 
 ### Пример
 
@@ -243,7 +243,7 @@ final class CreateFormType extends AbstractType
 ## Чек-лист для проведения ревью кода
 
 - [ ] `FormModel` и `FormType` лежат в каталоге `Form` и объявлены `final`.
-- [ ] Поля формы типизированы, отсутствуют прямые зависимости от Domain/Infrastructure.
+- [ ] Поля формы типизированы, отсутствуют прямые зависимости от `Domain`/`Infrastructure`.
 - [ ] Формы фильтров используют метод `GET` и сериализуют состояние в `query string`.
 - [ ] Контроллер получает типизированную модель и проверяет `isSubmitted()`/`isValid()`.
 - [ ] Twig-шаблон подключает тему и выключает `render_rest`, если поля рендерятся вручную.

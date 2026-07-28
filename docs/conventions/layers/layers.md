@@ -46,74 +46,74 @@ flowchart TB
 
 | Слой | Назначение | Зависимости |
 |------|------------|-------------|
-| **Domain** | Бизнес-логика, [Entity](domain/entity.md), [VO](../core-patterns/value-object.md), интерфейсы [Repository](domain/repository.md) | Нет |
-| **Application** | сценарии использования (Use Cases), оркестрация, [DTO](../core-patterns/dto.md) | Domain |
-| **Infrastructure** | Реализация репозиториев, кэш, персистентность, внешние API/SDK | Domain (контракты и типы) |
-| **Integration** | События, middleware, межмодульное взаимодействие | Application, Domain (контракты и типы) |
-| **Presentation** | Web, API, консоль, блог — точки входа | Application |
+| **`Domain`** | Бизнес-логика, [Entity](domain/entity.md), [VO](../core-patterns/value-object.md), интерфейсы [Repository](domain/repository.md) | Нет |
+| **`Application`** | сценарии использования (Use Cases), оркестрация, [DTO](../core-patterns/dto.md) | `Domain` |
+| **`Infrastructure`** | Реализация репозиториев, кэш, персистентность, внешние API/SDK | `Domain` (контракты и типы) |
+| **`Integration`** | События, middleware, межмодульное взаимодействие | `Application`, `Domain` (контракты и типы) |
+| **`Presentation`** | Web, API, консоль, блог — точки входа | `Application` |
 
 ## Правила взаимодействия
 
-### Domain → (никто)
+### `Domain` → (никто)
 
-Domain слой не зависит ни от кого:
-- Нет зависимостей на Application, Infrastructure, Integration, Presentation
+`Domain` слой не зависит ни от кого:
+- Нет зависимостей на `Application`, `Infrastructure`, `Integration`, `Presentation`
 - Может использовать только стандартные типы PHP и свои интерфейсы
 
-### Application → Domain
+### `Application` → `Domain`
 
-Application зависит только от Domain:
+`Application` зависит только от `Domain`:
 - Вызывает методы [Entity](domain/entity.md) и [VO](../core-patterns/value-object.md)
-- Использует интерфейсы [Repository](domain/repository.md) из Domain
-- Использует [Specification](domain/specification.md) и [Service](../core-patterns/service.md) из Domain
+- Использует интерфейсы [Repository](domain/repository.md) из `Domain`
+- Использует [Specification](domain/specification.md) и [Service](../core-patterns/service.md) из `Domain`
 - Важно: [Application DTO](../core-patterns/dto.md) не должны зависеть от `Domain` и остаются только в рамках `Application`.
 
-### Infrastructure → Domain
+### `Infrastructure` → `Domain`
 
-Infrastructure реализует интерфейсы Domain:
+`Infrastructure` реализует интерфейсы `Domain`:
 - Реализует доменный `RepositoryInterface` ([Repository](domain/repository.md))
 - Может использовать доменные типы ([VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md)) в сигнатурах и маппинге
 - Подключается через DI-контейнер
-- Не используется напрямую из Application
+- Не используется напрямую из `Application`
 
-### Integration → Application
+### `Integration` → `Application`
 
-Integration вызывает Application чужого модуля:
+`Integration` вызывает `Application` чужого модуля:
 - Обрабатывает внешние события и инициирует соответствующие сценарии использования (Use Cases).
 - Реализует интеграции через интерфейсы доменных [Service](../core-patterns/service.md).
 - Может использовать доменные типы в сигнатурах контрактов ([VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md)).
-- Не зависит от слоя Infrastructure.
-- Адаптирует внешний контекст перед входом в Application.
-- Не содержит HTTP/SDK-клиенты внешних API — такие клиенты размещаются в Infrastructure.
+- Не зависит от слоя `Infrastructure`.
+- Адаптирует внешний контекст перед входом в `Application`.
+- Не содержит HTTP/SDK-клиенты внешних API — такие клиенты размещаются в `Infrastructure`.
 
-### Presentation → Application
+### `Presentation` → `Application`
 
-Presentation зависит только от Application:
+`Presentation` зависит только от `Application`:
 - Контроллеры вызывают Command/Query через Handler
-- Не обращается к Domain, Infrastructure, Integration напрямую
+- Не обращается к `Domain`, `Infrastructure`, `Integration` напрямую
 - Валидация на уровне формы/DTO
 
 ## Матрица зависимостей
 
-| Откуда ↓ / Куда → | Domain | Application | Infrastructure | Integration | Presentation |
+| Откуда ↓ / Куда → | `Domain` | `Application` | `Infrastructure` | `Integration` | `Presentation` |
 |-------------------|--------|-------------|----------------|-------------|--------------|
-| **Domain** | — | ❌ | ❌ | ❌ | ❌ |
-| **Application** | ✅ | — | ❌ | ❌ | ❌ |
-| **Infrastructure** | ✅ | ❌ | — | ❌ | ❌ |
-| **Integration** | ✅* | ✅ | ❌ | — | ❌ |
-| **Presentation** | ❌ | ✅ | ❌ | ❌ | — |
+| **`Domain`** | — | ❌ | ❌ | ❌ | ❌ |
+| **`Application`** | ✅ | — | ❌ | ❌ | ❌ |
+| **`Infrastructure`** | ✅ | ❌ | — | ❌ | ❌ |
+| **`Integration`** | ✅* | ✅ | ❌ | — | ❌ |
+| **`Presentation`** | ❌ | ✅ | ❌ | ❌ | — |
 
-\* Только контракты и типы Domain (интерфейсы доменных [Service](../core-patterns/service.md), [VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md) в сигнатурах), без зависимости на доменные реализации.
+\* Только контракты и типы `Domain` (интерфейсы доменных [Service](../core-patterns/service.md), [VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md) в сигнатурах), без зависимости на доменные реализации.
 
 ## Расположение
 
 Полный namespace включает префикс `{ProjectName}\` — корневой namespace проекта (например, `TaskOrchestrator\`).
 
-- Domain: `{ProjectName}\Common\Module\{Module}\Domain\`
-- Application: `{ProjectName}\Common\Module\{Module}\Application\`
-- Infrastructure: `{ProjectName}\Common\Module\{Module}\Infrastructure\`
-- Integration: `{ProjectName}\Common\Module\{Module}\Integration\`
-- Presentation: `{ProjectName}\{App}\Module\{Module}\` (Web, Api, Console и др.)
+- `Domain`: `{ProjectName}\Common\Module\{Module}\Domain\`
+- `Application`: `{ProjectName}\Common\Module\{Module}\Application\`
+- `Infrastructure`: `{ProjectName}\Common\Module\{Module}\Infrastructure\`
+- `Integration`: `{ProjectName}\Common\Module\{Module}\Integration\`
+- `Presentation`: `{ProjectName}\{App}\Module\{Module}\` (Web, Api, Console и др.)
 
 Где:
 - `{ProjectName}` — корневой namespace проекта (например, `TaskOrchestrator\`). Может быть пустым, если PSR-4 маппит `Common\` напрямую в `src/`.
@@ -124,9 +124,9 @@ Presentation зависит только от Application:
 ## Чек-лист для проведения ревью кода
 
 - [ ] Зависимости между слоями соответствуют матрице.
-- [ ] Domain не зависит от других слоёв.
-- [ ] Application зависит только от Domain.
-- [ ] Infrastructure реализует контракты Domain.
-- [ ] Integration обращается к Domain (только контракты) и Application.
-- [ ] Presentation обращается только к Application.
+- [ ] `Domain` не зависит от других слоёв.
+- [ ] `Application` зависит только от `Domain`.
+- [ ] `Infrastructure` реализует контракты `Domain`.
+- [ ] `Integration` обращается к `Domain` (только контракты) и `Application`.
+- [ ] `Presentation` обращается только к `Application`.
 - [ ] Namespace следует паттерну `{ProjectName}\{AppGroup}\Module\...`.

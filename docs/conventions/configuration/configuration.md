@@ -26,7 +26,7 @@ description: Принципы конфигурирования в Symfony: па�
 Конфигурация Symfony загружается в следующем порядке (поздние значения перезаписывают ранние):
 
 1. `config/packages/*.yaml` — базовая конфигурация пакетов
-2. `config/packages/<env>/*.yaml` — окружение-специфичные настройки (dev, test, prod)
+2. `config/packages/<env>/*.yaml` — окружение-специфичные настройки (`dev`, `test`, `prod`)
 3. `apps/*/config/packages/*.yaml` — настройки конкретного приложения
 4. `apps/*/config/packages/<env>/*.yaml` — окружение-специфичные настройки приложения
 
@@ -244,7 +244,7 @@ services:
   ProjectName\Common\Module\Billing\Domain\Repository\PaymentRepositoryInterface: '@ProjectName\Common\Module\Billing\Infrastructure\Repository\PaymentRepository'
 ```
 
-Пример конфигурации сервисов Presentation-модуля (`apps/web/src/Module/Source/Resource/config/services.yaml`):
+Пример конфигурации сервисов `Presentation`-модуля (`apps/web/src/Module/Source/Resource/config/services.yaml`):
 
 ```yaml
 parameters:

@@ -10,7 +10,7 @@ description: Правила создания map-классов для сопо�
 
 ## Общие правила
 
-- Разрешены на уровне любого слоя (Domain, Application, Infrastructure, Integration, Presentation).
+- Разрешены на уровне любого слоя (`Domain`, `Application`, `Infrastructure`, `Integration`, `Presentation`).
 - Должен содержать только один публичный метод `getAssociationByValue()`, принимающий значение и возвращающее представление.
 - Должен содержать один приватный метод, возвращающий ассоциативный массив, где ключ — скалярное значение, а значение — представление.
 - Имя приватного метода должно отражать, что именно он возвращает (например, `statusTexts()`, `externalStatuses()`).
@@ -28,7 +28,7 @@ description: Правила создания map-классов для сопо�
 
 ## Расположение
 
-### Domain, Application, Infrastructure, Integration
+### `Domain`, `Application`, `Infrastructure`, `Integration`
 
 ```php
 {ProjectName}\Common\Module\{ModuleName}\{Layer}\Map\{Name}Map
@@ -43,7 +43,7 @@ description: Правила создания map-классов для сопо�
 - `ProjectName\Common\Module\User\Domain\Map\UserStatusTextMap`
 - `ProjectName\Common\Module\Project\Application\Map\ProjectPriorityTextMap`
 
-### Presentation
+### `Presentation`
 
 ```php
 {ProjectName}\Module\{ModuleName}\Map\{Name}Map
@@ -74,7 +74,7 @@ description: Правила создания map-классов для сопо�
 
 ## Пример
 
-`Map`-класс для текстового представления статусов проекта (Presentation):
+`Map`-класс для текстового представления статусов проекта (`Presentation`):
 
 ```php
 <?php
@@ -116,7 +116,7 @@ final class ProjectStatusTextMap
 }
 ```
 
-`Map`-класс для сопоставления enum'ов разных систем (Domain):
+`Map`-класс для сопоставления enum'ов разных систем (`Domain`):
 
 ```php
 <?php

@@ -22,14 +22,14 @@ description: Правила проектирования и использова
     * *выбрасываем реализацию, ловим интерфейс* — в `catch` указываем интерфейсы (`DomainExceptionInterface`,
       `ValidationExceptionInterface` и т.д.).
     * в `@throws` phpDoc также указываем интерфейсы.
-* Не перехватываем базовые PHP-исключения (\Throwable, \RuntimeException, \InvalidArgumentException).
+* Не перехватываем базовые PHP-исключения (`\Throwable`, `\RuntimeException`, `\InvalidArgumentException`).
 
 ## Категории
 
 ### Ошибки по вине клиента (Client Errors)
 
-* Преобразуются в **HTTP-коды `4xx`** на слое Presentation.
-* Используются в слоях: Application, Domain.
+* Преобразуются в **HTTP-коды `4xx`** на слое `Presentation`.
+* Используются в слоях: `Application`, `Domain`.
 
 #### `ValidationException`
 
@@ -109,7 +109,7 @@ description: Правила проектирования и использова
     * внешние исключения перехватываются и заменяются на свои;
     * наружу выбрасываются только исключения слоя или общие (`ProjectName\Common\Exception`).
 * В `catch` блоках используем интерфейсы.
-* На Presentation-слое исключения маппятся в HTTP-ошибки (4xx/5xx).
+* На `Presentation`-слое исключения маппятся в HTTP-ошибки (4xx/5xx).
 
 ## Пример
 
@@ -145,8 +145,8 @@ try {
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] Исключение относится к правильной категории (Domain/Application/Infrastructure/Presentation).
+- [ ] Исключение относится к правильной категории (`Domain`/`Application`/`Infrastructure`/`Presentation`).
 - [ ] Имя исключения заканчивается на `Exception`.
 - [ ] Исключение не используется для управления потоком выполнения.
 - [ ] Сообщение исключения информативно и не содержит секретов.
-- [ ] В Presentation-слое исключения преобразуются в HTTP-ответы.
+- [ ] В `Presentation`-слое исключения преобразуются в HTTP-ответы.

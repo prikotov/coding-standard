@@ -12,8 +12,8 @@ description: Шаги по подключению модуля к общему �
 
 - Каждый модуль реализует `ModuleInterface` и регистрируется в `config/modules.php`.
 - Параметры модуля именуются `module.<module_name>.<context>`.
-- Несервисные типы (Entity, Enum, VO, DTO, Event) исключаются из автоконфигурации.
-- Репозитории внедряются через интерфейсы из Domain.
+- Несервисные типы (`Entity`, `Enum`, `VO`, `DTO`, `Event`) исключаются из автоконфигурации.
+- Репозитории внедряются через интерфейсы из `Domain`.
 - Секреты — через `%env()%`, не хардкод.
 
 ## Расположение
@@ -67,7 +67,7 @@ final class BillingModule implements ModuleInterface, DoctrineInterface
 
 - Используйте параметры вида `module.<module_name>.<context>`, чтобы избежать конфликтов имён. Подробности: [Параметры сервисов](https://symfony.com/doc/current/service_container.html#service-parameters).
 - Для импорта каталога с сервисами применяйте `resource: '%module.<module_name>.module_dir%/'` с исключениями (`exclude`) для всех несервисных структурных типов. Обязательный минимум: `Resource`, `Domain/Entity`, файлы `*Dto.php`, `*Event.php`, `*Exception.php`, `*Enum.php`, `*Vo.php`, `*Command.php`, `*Query.php`, `<ModuleName>Module.php`. Используйте исключения по суффиксу (suffix-based), чтобы покрыть не только общие каталоги (`Application/Dto`, `Domain/ValueObject`), но и контекстные расположения рядом с use case, domain service, component или адаптером (adapter). Если в модуле есть отдельные каталоги с другими типами полезной нагрузки (payload)/value, исключайте и их тоже, чтобы контейнер не регистрировал их как сервисы. Подробности: [Импорт файлов конфигурации](https://symfony.com/doc/current/service_container/imports.html).
-- Значения из переменных окружения подключайте через `%env()%`. Старайтесь документировать обязательные переменные в `.env.dist` или AGENTS.md соответствующего модуля. Подробности: [Переменные окружения](https://symfony.com/doc/current/configuration.html#environment-variables).
+- Значения из переменных окружения подключайте через `%env()%`. Старайтесь документировать обязательные переменные в `.env.dist` или `AGENTS.md` соответствующего модуля. Подробности: [Переменные окружения](https://symfony.com/doc/current/configuration.html#environment-variables).
 
 Пример конфигурации сервисов модуля `Common` (`src/Module/Billing/Resource/config/services.yaml`):
 
@@ -153,9 +153,9 @@ Web-клиент (`apps/web`) использует тот же модульны�
 
 Следуя этим правилам, переводы и компоненты остаются изолированными внутри модуля, а общие каталоги приложения не зарастают модульным кодом.
 
-### Пример конфигурации Presentation-модуля
+### Пример конфигурации `Presentation`-модуля
 
-Для модулей слоя Presentation используйте префикс конкретного приложения (app-specific) параметров: `<app_name>.module.<module_name>.<context>`.
+Для модулей слоя `Presentation` используйте префикс конкретного приложения (app-specific) параметров: `<app_name>.module.<module_name>.<context>`.
 
 Пример `apps/web/src/Module/Source/Resource/config/services.yaml`:
 

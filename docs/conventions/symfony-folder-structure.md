@@ -10,7 +10,7 @@ description: Организация директорий проекта на о�
 
 ## Общие правила
 
-- Проект использует модульную архитектуру с четырьмя слоями (Domain, Application, Infrastructure, Integration).
+- Проект использует модульную архитектуру с четырьмя слоями (`Domain`, `Application`, `Infrastructure`, `Integration`).
 - Каждое приложение находится в `apps/<app_name>/` и наследуется от общего [`ProjectName\Common\Kernel`](examples/Kernel.php).
 - Все модули размещаются в `src/Module/{ModuleName}/`.
 - Конфигурация разделена на общую (`config/`) и приложения (`apps/<app_name>/config/`).
@@ -109,10 +109,10 @@ src/Module/{ModuleName}/
 
 ### Правила модулей
 
-- **Domain**: только бизнес-логика, без зависимостей от других слоёв и внешних библиотек.
-- **Application**: координация бизнес-логики, без инфраструктурных деталей.
-- **Infrastructure**: реализации репозиториев, БД, кэш, файловая система, логирование, внешние API/SDK.
-- **Integration**: события, middleware, межмодульное взаимодействие.
+- **`Domain`**: только бизнес-логика, без зависимостей от других слоёв и внешних библиотек.
+- **`Application`**: координация бизнес-логики, без инфраструктурных деталей.
+- **`Infrastructure`**: реализации репозиториев, БД, кэш, файловая система, логирование, внешние API/SDK.
+- **`Integration`**: события, middleware, межмодульное взаимодействие.
 
 ## Организация приложений
 
@@ -274,7 +274,7 @@ devops/
 
 ## Как используем
 
-- **Создание нового модуля**: создайте директорию `src/Module/{ModuleName}/` с четырьмя слоями (Domain, Application, Infrastructure, Integration).
+- **Создание нового модуля**: создайте директорию `src/Module/{ModuleName}/` с четырьмя слоями (`Domain`, `Application`, `Infrastructure`, `Integration`).
 - **Создание нового приложения**: создайте директорию `apps/<app_name>/` с ядром (Kernel), наследуемым от `ProjectName\Common\Kernel`.
 - **Добавление модуля в приложение**: зарегистрируйте модуль в `apps/<app_name>/config/modules.php`.
 - **Создание миграции**: создайте файл `VersionYYYYMMDDHHMMSS.php` в `migrations/`.
@@ -366,7 +366,7 @@ return [
 ## Чек-лист для проведения ревью кода
 
 - [ ] Модуль находится в `src/Module/{ModuleName}/`.
-- [ ] Модуль содержит четыре слоя: Domain, Application, Infrastructure, Integration.
+- [ ] Модуль содержит четыре слоя: `Domain`, `Application`, `Infrastructure`, `Integration`.
 - [ ] Приложение находится в `apps/<app_name>/`.
 - [ ] Ядро приложения наследуется от `ProjectName\Common\Kernel`.
 - [ ] Модули зарегистрированы в `apps/<app_name>/config/modules.php`.

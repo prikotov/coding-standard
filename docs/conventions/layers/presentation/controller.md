@@ -16,14 +16,14 @@ description: Правила создания контроллеров презе
 
 - Контроллер объявляем `final`, помечаем `#[AsController]` и храним в `apps/<app>/src/Module/<Module>/Controller`.
 - Единственная публичная точка входа — `__invoke()`.
-- Внедряем только публичные интерфейсы Application-слоя (CommandBus, QueryBus, DTO-мапперы) и сервисы Presentation.
-- Все данные из запроса валидируем до вызова Application (DTO, формы, атрибуты `#[MapQueryString]`).
+- Внедряем только публичные интерфейсы Application-слоя (`CommandBus`, `QueryBus`, DTO-мапперы) и сервисы `Presentation`.
+- Все данные из запроса валидируем до вызова `Application` (DTO, формы, атрибуты `#[MapQueryString]`).
 - Flash-сообщения отправляем через `$this->addFlash()` с переводами, редирект выполняем сразу после успешного действия.
-- Ограничение частоты запросов (rate limiting) для web-контроллера выполняем явно в presentation-коде до вызова Application (см. [«Ограничение частоты запросов»](rate-limiter.md)).
+- Ограничение частоты запросов (rate limiting) для web-контроллера выполняем явно в presentation-коде до вызова `Application` (см. [«Ограничение частоты запросов»](rate-limiter.md)).
 
 ## Зависимости
 
-- Разрешено: `CommandBusComponentInterface`, `QueryBusComponentInterface`, роуты модуля, переводчик, мапперы пагинации и сортировки, формы, value object слоя Presentation.
+- Разрешено: `CommandBusComponentInterface`, `QueryBusComponentInterface`, роуты модуля, переводчик, мапперы пагинации и сортировки, формы, value object слоя `Presentation`.
 - Запрещено: зависимости из `Domain/*`, `Infrastructure/*`, `Integration/*`, прямой доступ к репозиториям и ORM.
 
 ## Расположение
@@ -41,7 +41,7 @@ apps/<app>/src/Module/<ModuleName>/Controller/<Context>/{Request|Response}/{Name
 ## Как используем
 
 1. Принимаем необходимые аргументы (`Request`, DTO из `#[MapQueryString]`, `#[CurrentUser]`).
-2. Выполняем проверку прав (см. [«Проверка прав в Presentation»](authorization.md)).
+2. Выполняем проверку прав (см. [«Проверка прав в `Presentation`»](authorization.md)).
 3. Создаём и обрабатываем форму/DTO для входных данных.
 4. Вызываем UseCase Application-слоя через `CommandBus`/`QueryBus`.
 5. Формируем ответ: рендер шаблона, JSON или редирект с flash-сообщениями.
@@ -195,8 +195,8 @@ if ($formModel->uploadFile instanceof UploadedFile) {
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] Контроллер хранится в каталоге Presentation и объявлен `final`.
-- [ ] Права проверяются через `Permission Enum` / атрибуты, а не вручную.
+- [ ] Контроллер хранится в каталоге `Presentation` и объявлен `final`.
+- [ ] Права проверяются через `PermissionEnum` / атрибуты, а не вручную.
 - [ ] Внедрены только Presentation- и Application-зависимости.
 - [ ] Валидация входных данных выполняется до вызова UseCase.
 - [ ] Возврат идёт через рендер/редирект, исключения обрабатывает `ExceptionSubscriber`.

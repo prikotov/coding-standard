@@ -16,7 +16,7 @@ description: Правила создания доменных контракто
 - Интерфейс репозитория именуется `{EntityName}RepositoryInterface`.
 - **Рекомендуемые методы** — для типовых операций используются следующие имена и сигнатуры (набор выбирается по потребности: не каждой сущности нужны все операции — например, read-only сущности не требуют `save`/`delete`):
   - `save(Entity $entity): void` — добавление/обновление сущности.
-  - `getById(?int $id = null, ?Uuid $uuid = null): Entity` — загрузка по идентификатору или UUID, при отсутствии выбрасывает [`NotFoundExceptionInterface`](../../core-patterns/exception.md) (**не nullable**).
+  - `getById(?int $id = null, ?Uuid $uuid = null): Entity` — загрузка по идентификатору или `UUID`, при отсутствии выбрасывает [`NotFoundExceptionInterface`](../../core-patterns/exception.md) (**не nullable**).
   - `getOneByCriteria(Criteria): ?Entity` — возвращает сущность или `null`.
   - `getByCriteria(Criteria): list<*Model|*Vo>` — коллекция доменных объектов (возможно пустая, не null).
   - `getCountByCriteria(Criteria): int` — подсчитать количество сущностей по критерию.
@@ -26,7 +26,7 @@ description: Правила создания доменных контракто
 - При мягком удалении (soft-delete) используем бизнес-методы сущности (`markAsDeleted()`, `deactivate()` и др.).
 - Для поддержки `CQRS` интерфейсы на чтение и запись рекомендуется разделять на `{EntityName}ReadRepositoryInterface` и `{EntityName}WriteRepositoryInterface`.
 - Репозиторий не управляет `Unit of Work` (`flush`, `commit`). Контроль транзакции всегда на уровне `CommandHandler`/UseCase, чтобы обеспечить атомарность бизнес-операции.
-- Транзакционная граница (`flush()`) устанавливается в [`CommandHandler`](../application/command-handler.md) через `PersistenceManagerInterface::flush()`; в методах репозитория вызывается только `persist()` (регистрация сущности в Unit of Work).
+- Транзакционная граница (`flush()`) устанавливается в [`CommandHandler`](../application/command-handler.md) через `PersistenceManagerInterface::flush()`; в методах репозитория вызывается только `persist()` (регистрация сущности в `Unit of Work`).
 - Репозиторий маппит исключения ORM/SDK в доменные: `NotFoundExceptionInterface` для отсутствия сущности, [`InfrastructureExceptionInterface`](../../core-patterns/exception.md) для ошибок работы хранилища.
 - Реализации интерфейса размещаются в слое [Infrastructure](../infrastructure.md). Интерфейс репозитория — часть домена, реализация — часть инфраструктуры.
 - Правила построения инфраструктурных репозиториев и `CriteriaMapper` описаны в [разделе Infrastructure](../infrastructure/repository.md); при добавлении реализации следуем этому шаблону.

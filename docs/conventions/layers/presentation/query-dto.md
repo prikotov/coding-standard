@@ -8,7 +8,7 @@ description: Правила создания Query DTO презентацион�
 
 ## Определение
 
-**Presentation Query DTO** — транспортная модель параметров строки запроса, которую контроллер получает через `MapQueryString` или аналогичный связыватель (binder) до вызова слоя Application.
+**Presentation Query DTO** — транспортная модель параметров строки запроса, которую контроллер получает через `MapQueryString` или аналогичный связыватель (binder) до вызова слоя `Application`.
 
 ## Общие правила
 
@@ -30,7 +30,7 @@ description: Правила создания Query DTO презентацион�
 ### Запрещено
 
 - Сервисы, репозитории, `QueryBus`/`CommandBus`, файловая система, сеть и любой I/O во время исполнения.
-- Domain Entity/VO и реализации слоя Infrastructure.
+- `Domain` `Entity`/`VO` и реализации слоя `Infrastructure`.
 
 ## Расположение
 

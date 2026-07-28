@@ -8,7 +8,7 @@ description: Правила создания Request DTO презентацио�
 
 ## Определение
 
-**DTO запроса** (Presentation Request DTO) — транспортная модель входной полезной нагрузки (payload), которую контроллер получает из `MapRequestPayload`, тела JSON, multipart-полезной нагрузки или аналогичной HTTP-привязки (binding) до вызова слоя Application.
+**DTO запроса** (Presentation Request DTO) — транспортная модель входной полезной нагрузки (payload), которую контроллер получает из `MapRequestPayload`, тела JSON, multipart-полезной нагрузки или аналогичной HTTP-привязки (binding) до вызова слоя `Application`.
 
 ## Общие правила
 
@@ -33,8 +33,8 @@ description: Правила создания Request DTO презентацио�
 ### Запрещено
 
 - Сервисы, репозитории, `QueryBus`/`CommandBus`, HTTP-клиенты, файловая система, интеграции с очередями.
-- Entity, Value Object и другие типы Domain.
-- Реализации Infrastructure/Integration.
+- `Entity`, `Value Object` и другие типы `Domain`.
+- Реализации `Infrastructure`/`Integration`.
 
 ## Расположение
 

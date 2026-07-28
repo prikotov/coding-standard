@@ -28,7 +28,7 @@ Middleware нужен, когда проекту требуется перехв
 - **Разрешено:**
   - контракты фреймворка и типы, специфичные транспорту (`Envelope`, `Stamp`, интерфейсы middleware);
   - DTO/Command/Event своего модуля для точечного ветвления;
-  - общие компоненты приложения, не относящиеся к Infrastructure слоям, если middleware действительно кросс-секционный.
+  - общие компоненты приложения, не относящиеся к `Infrastructure` слоям, если middleware действительно кросс-секционный.
 - **Запрещено:**
   - бизнес-логика;
   - прямой доступ к БД, HTTP-клиентам, очередям, файловой системе;
@@ -41,7 +41,7 @@ Middleware нужен, когда проекту требуется перехв
 - Используйте **Middleware**, если класс живёт внутри жизненного цикла внешнего фреймворка и работает через его контракт
   (`MiddlewareInterface`, pipeline API, consumer hooks).
 - Используйте **Infrastructure Component**, если нужен переносимый адаптер к внешнему API/SDK/ресурсу с собственным контрактом
-  `*ComponentInterface`; используйте его внутри Infrastructure-сервиса.
+  `*ComponentInterface`; используйте его внутри `Infrastructure`-сервиса.
 
 `Symfony Messenger` как технология является внешним техническим миром, но не каждый адаптер вокруг него становится
 `Component`. Если класс завязан на конкретный конвейер сообщений и знает о внутренних типах сообщений/команд модуля, это
@@ -68,7 +68,7 @@ Common\Infrastructure\Component\{Technology}\Middleware\{Name}Middleware
 1. Размещаем модульный middleware в `Integration\Middleware\{Technology}`.
 2. Внутри middleware оставляем только техническую адаптацию и передачу управления дальше.
 3. Если middleware становится кросс-модульным и не зависит от application-классов конкретного модуля, переносим его в
-   общую Infrastructure; модульный Integration-код после переноса не зависит от него напрямую.
+   общую `Infrastructure`; модульный `Integration`-код после переноса не зависит от него напрямую.
 
 ## Пример
 
@@ -114,5 +114,5 @@ final readonly class WebhookDeliveryAttemptMiddleware implements MiddlewareInter
 - [ ] В классе нет бизнес-логики и оркестрации.
 - [ ] Имя оканчивается на `Middleware`.
 - [ ] Namespace следует схеме `Integration\Middleware\{Technology}`.
-- [ ] Нет зависимостей от Infrastructure.
+- [ ] Нет зависимостей от `Infrastructure`.
 - [ ] Если реализация кросс-модульная, рассмотрен перенос в `Common\Infrastructure\Component\{Technology}\Middleware`.
