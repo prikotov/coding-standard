@@ -194,7 +194,7 @@ declare(strict_types=1);
 - [Коммиты (Conventional Commits)](vendor/prikotov/git-workflow/docs/git-workflow/commits.md)
 - [PR](vendor/prikotov/git-workflow/docs/git-workflow/pull-request.md)
 - [Code Review](vendor/prikotov/git-workflow/docs/git-workflow/code-review.md)
-- [Релизы и `CHANGELOG`](vendor/prikotov/git-workflow/docs/git-workflow/release.md)
+- [Релизы и CHANGELOG](vendor/prikotov/git-workflow/docs/git-workflow/release.md)
 
 ---
 
@@ -203,6 +203,6 @@ declare(strict_types=1);
 - **Конвенции**: [индекс конвенций](docs/conventions/index.md)
 - **Deptrac**: [`config/deptrac/depfile.yaml`](config/deptrac/depfile.yaml)
 - **Git-процесс**: [`vendor/prikotov/git-workflow/docs/git-workflow/index.md`](vendor/prikotov/git-workflow/docs/git-workflow/index.md)
-- **`README`**: [README.md](README.md)
+- **README**: [README.md](README.md)
 - **Набор правил `PHPCS`**: [`ruleset.xml`](ruleset.xml)
 - **Задачи (todo-md)**: [`todo/AGENTS.md`](todo/AGENTS.md)
