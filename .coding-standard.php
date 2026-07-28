@@ -22,6 +22,8 @@ return [
             'DB', 'DBAL', 'ORM', 'API', 'CRUD', 'DDD', 'SOLID', 'CI', 'CD',
             'URL', 'URI', 'ID', 'UUID', 'VO', 'DAO', 'REST', 'RPC', 'SDK',
             'CLI', 'UI', 'UX', 'IO', 'OS', 'PR', 'DTO',
+            // Соглашения именования — общеупотребимые термины (не код-идентификаторы).
+            'PascalCase', 'camelCase', 'kebab-case',
             // Слои и паттерны DDD как термины.
             'Application', 'Domain', 'Infrastructure', 'Integration', 'Presentation',
             'Module', 'Layer', 'Service', 'Event', 'Handler', 'Repository',

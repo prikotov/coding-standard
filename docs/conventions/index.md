@@ -9,6 +9,7 @@ description: Индекс всех конвенций проекта
 ## Принципы и Стандарты
 - [Ценности](principles/values.md)
 - [Стиль кода (Code Style)](principles/code-style.md)
+- [Оформление документации (Documentation Style)](principles/doc-style.md)
 ## Базовые паттерны (Core Patterns)
 - [Компонент (Component)](core-patterns/component.md)
 - [Список (List)](core-patterns/list.md)
