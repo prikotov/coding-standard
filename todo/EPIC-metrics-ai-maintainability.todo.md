@@ -27,6 +27,7 @@ pr:
 - Определить границы модулей пакета в конфиге Deptrac с JSON-выводом зависимостей — TASK-metrics-module-boundaries-deptrac.
 - Собрать агрегатор: JSON анализатора + Deptrac + git churn → единый var/metrics/report.json — TASK-metrics-aggregator.
 - Построить статический HTML-дашборд (bubble chart, scatter, treemap, матрица зависимостей) — TASK-metrics-html-dashboard.
+- Собрать метрику размера кодовой базы (scc), статистику тестов и покрытие — TASK-metrics-codebase-size.
 - Связать цепочку в composer metrics и задокументировать запуск и чтение отчёта — TASK-metrics-composer-integration.
 
 ### Ожидаемый результат (Expected Result)
@@ -43,7 +44,7 @@ pr:
 
 ### Goal (Цель по SMART)
 
-Собрать в пакете `prikotov/coding-standard` инструментальную цепочку метрик качества: одна команда `composer metrics` генерирует `var/metrics/report.json` (class-level: LOC/LLOC, количество методов и свойств, LCOM, Ca/Ce, CC, churn, принадлежность модулю; module-level: размер, внутренняя/внешняя связанность, циклы, размер публичного интерфейса, churn) и статический HTML-дашборд (bubble chart модулей, scatter классов, treemap, матрица зависимостей). Модуль определяется как предметный компонент пакета по модели метрик, а не как технический слой. Критерий: отчёт покрывает модель из docs/conventions/ops/quality-metrics.md, генерируется одной командой, `composer check` остаётся зелёным.
+Собрать в пакете `prikotov/coding-standard` инструментальную цепочку метрик качества: одна команда `composer metrics` генерирует `var/metrics/report.json` (class-level: LOC/LLOC, количество методов и свойств, LCOM, Ca/Ce, CC, churn, принадлежность модулю; module-level: размер, внутренняя/внешняя связанность, циклы, размер публичного интерфейса, churn; project-level: размер кодовой базы (scc), статистика тестов и покрытие) и статический HTML-дашборд (bubble chart модулей, scatter классов, treemap, матрица зависимостей). Модуль определяется как предметный компонент пакета по модели метрик, а не как технический слой. Критерий: отчёт покрывает модель из docs/conventions/ops/quality-metrics.md, генерируется одной командой, `composer check` остаётся зелёным.
 
 ## 2. Context and Scope (Контекст и Границы)
 
@@ -69,6 +70,7 @@ pr:
 
 - [ ] HTML-дашборд: bubble chart, scatter, treemap, матрица зависимостей (TASK-metrics-html-dashboard).
 - [ ] Git churn как метрика класса и модуля (в TASK-metrics-aggregator).
+- [ ] Метрика размера кодовой базы (scc), статистика тестов и покрытие (TASK-metrics-codebase-size).
 
 ### 🟢 Could Have (Опционально)
 
@@ -89,6 +91,7 @@ flowchart LR
     A[Анализатор классов: PhpMetrics / PDepend / PhpCodeArcheology] -->|JSON| D
     B[Deptrac: границы модулей пакета] -->|JSON| D
     C[git log: churn] --> D
+    S[scc: размер кодовой базы, статистика тестов, покрытие clover.xml] -->|JSON/XML| D
     D[Агрегатор bin/metrics-aggregate.php] -->|report.json| E[HTML-дашборд]
     D -->|report.json| F[ИИ-агенты: оценка поддерживаемости]
 ```
@@ -104,6 +107,7 @@ flowchart LR
 - [ ] [TASK-metrics-model-convention](TASK-metrics-model-convention.todo.md) — модель метрик в docs/conventions/
 - [ ] [TASK-metrics-module-boundaries-deptrac](TASK-metrics-module-boundaries-deptrac.todo.md) — границы модулей пакета в Deptrac
 - [ ] [TASK-metrics-aggregator](TASK-metrics-aggregator.todo.md) — агрегатор и report.json
+- [ ] [TASK-metrics-codebase-size](TASK-metrics-codebase-size.todo.md) — размер кодовой базы (scc), статистика тестов, покрытие
 - [ ] [TASK-metrics-html-dashboard](TASK-metrics-html-dashboard.todo.md) — статический HTML-дашборд
 - [ ] [TASK-metrics-composer-integration](TASK-metrics-composer-integration.todo.md) — composer metrics и документация
 
@@ -127,6 +131,7 @@ flowchart LR
 - Поддержка PHP 8.4 (атрибуты, readonly-свойства) у PhpMetrics/PDepend может быть неполной — проверяется в TASK-metrics-tools-evaluation.
 - Модуль ≠ namespace для этого пакета: маппинг «класс → модуль» делается по структуре src/, а не по namespace-шаблону consumer-проектов.
 - Churn требует истории git репозитория; на короткой истории значения малоинформативны.
+- scc — внешний Go-бинарник (не composer-зависимость), покрытие требует расширения pcov: шаги пайплайна должны быть опциональными при их отсутствии (TASK-metrics-codebase-size).
 - Новые dev-зависимости — только публичные пакеты Packagist (в CI нет доступа к VCS-репозиториям).
 
 ## 9. Sources (Источники)
@@ -150,3 +155,4 @@ flowchart LR
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-08-02 | pi (Pi Coding Agent) | Создание эпика по итогам обсуждения с ChatGPT о метриках качества проекта для ИИ-агентов. |
+| 2026-08-02 | pi (Pi Coding Agent) | Добавлена задача TASK-metrics-codebase-size (размер кодовой базы через scc, статистика тестов, покрытие) по итогам обсуждения с пользователем; обновлены план, MoSCoW, схема пайплайна и риски. |
