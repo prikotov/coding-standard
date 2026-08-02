@@ -4,7 +4,7 @@ created: 2026-08-02
 value: V2
 complexity: C1
 priority: P2
-depends_on: TASK-metrics-aggregator, TASK-metrics-html-dashboard
+depends_on: TASK-metrics-aggregator, TASK-metrics-html-dashboard, TASK-metrics-codebase-size
 epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee:
@@ -19,13 +19,13 @@ status: todo
 
 ### Проблема простыми словами (Problem)
 
-- Цепочка метрик запускается вручную несколькими командами (анализатор, deptrac, агрегатор, дашборд).
+- Цепочка метрик запускается вручную несколькими командами (анализатор, deptrac, агрегатор, размер/тесты, дашборд).
 - Агенты и разработчики не знают, как запустить сбор и где лежит отчёт.
 - var/metrics/ не исключён из git — сгенерированные отчёты рискуют попасть в историю.
 
 ### Варианты или путь решения (Solution Sketch)
 
-- composer script `metrics`: последовательный запуск (анализатор → deptrac → агрегатор → дашборд) через composer-скрипты.
+- composer script `metrics`: последовательный запуск (анализатор → deptrac → агрегатор → размер/тесты/покрытие → дашборд) через composer-скрипты.
 - var/metrics/ в .gitignore.
 - README: раздел «Метрики качества» (команда, артефакты, как читать).
 - AGENTS.md: инструкция для агентов — как получить report.json и интерпретировать по конвенции TASK-metrics-model-convention.
@@ -58,7 +58,7 @@ status: todo
 
 ### 🔴 Must Have (Обязательно)
 
-- [ ] composer script `metrics`: последовательный запуск всех шагов пайплайна (инструмент TASK-metrics-tools-evaluation, deptrac TASK-metrics-module-boundaries-deptrac, агрегатор TASK-metrics-aggregator, дашборд TASK-metrics-html-dashboard); ненулевой код завершения при ошибке шага.
+- [ ] composer script `metrics`: последовательный запуск всех шагов пайплайна (инструмент TASK-metrics-tools-evaluation, deptrac TASK-metrics-module-boundaries-deptrac, агрегатор TASK-metrics-aggregator, размер/тесты TASK-metrics-codebase-size, дашборд TASK-metrics-html-dashboard); ненулевой код завершения при ошибке шага.
 - [ ] var/metrics/ добавлен в .gitignore.
 - [ ] README: раздел «Метрики качества» — команда, артефакты (report.json, index.html), порядок запуска.
 - [ ] AGENTS.md: инструкция для агентов — как получить отчёт и интерпретировать (ссылка на конвенцию TASK-metrics-model-convention).
@@ -97,14 +97,14 @@ composer check
 
 - Dev-зависимости анализатора увеличивают вес установки — допустимо (только публичные Packagist-пакеты; в CI нет доступа к VCS-репозиториям).
 - CI: `composer check` не должен зависеть от инструментов метрик и git-истории (metrics не входит в check).
-- Пайплайн зависит от результатов TASK-metrics-tools-evaluation, TASK-metrics-module-boundaries-deptrac, TASK-metrics-aggregator, TASK-metrics-html-dashboard.
+- Пайплайн зависит от результатов TASK-metrics-tools-evaluation, TASK-metrics-module-boundaries-deptrac, TASK-metrics-aggregator, TASK-metrics-codebase-size, TASK-metrics-html-dashboard.
 
 ## 8. Sources (Источники)
 
 - `composer.json` — scripts
 - `README.md`
 - `AGENTS.md`
-- TASK-metrics-aggregator, TASK-metrics-html-dashboard
+- TASK-metrics-aggregator, TASK-metrics-html-dashboard, TASK-metrics-codebase-size
 
 ## 9. Comments (Комментарии)
 
