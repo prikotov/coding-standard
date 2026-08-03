@@ -11,8 +11,8 @@ description: Правила реализации сценариев исполь
 
 **Состоят из:**
 
-- [обработчик команды](command-handler.md) — изменяют состояние (данные) приложения;
-- [обработчик запроса](query-handler.md) — возвращают данные.
+- [Command Handler](command-handler.md) — изменяют состояние (данные) приложения;
+- [Query Handler](query-handler.md) — возвращают данные.
 
 UseCase-ы являются частью слоя [Application](../application.md) и могут располагаться только там.
 
