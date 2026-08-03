@@ -74,7 +74,7 @@ Use Case (сценарий использования) — реализует к
 - Хендлер должен завершиться успешно или выбросить исключение
 - Не может прокидывать исключения внешних зависимостей напрямую — оборачивать их в `{ProjectName}\Common\Exception\{ExceptionName}`
 - Выполняет только одну логическую транзакцию
-- Запрещено вызывать другие Use Case внутри `CommandHandler`
+- Запрещено вызывать другие Use Case внутри Command Handler
 
 Подробнее: [о команде и её обработчике](application/command-handler.md)
 
@@ -90,7 +90,7 @@ Use Case (сценарий использования) — реализует к
 **Правила реализации:**
 
 - Query Handler не должен изменять состояние приложения
-- Запрещено вызывать другие Use Case внутри `QueryHandler`
+- Запрещено вызывать другие Use Case внутри Query Handler
 - Название запроса должно начинаться с глагола (например: `GetCustomerQuery`)
 - Класс обработчика должен иметь постфикс `QueryHandler`
 
@@ -248,7 +248,7 @@ final readonly class CreateCommand implements CommandInterface
 }
 ```
 
-**`CommandHandler`:**
+**Command Handler:**
 
 ```php
 <?php
@@ -372,7 +372,7 @@ final readonly class FindQuery implements QueryInterface
 }
 ```
 
-**`QueryHandler`:**
+**Query Handler:**
 
 ```php
 <?php
