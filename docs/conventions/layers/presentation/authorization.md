@@ -41,7 +41,7 @@ Controller / Template / UI
 - `Voter` принимает решение о доступе средствами безопасности Symfony и делегирует в `Rule`.
 - `Grant` только вызывает `AuthorizationCheckerInterface::isGranted()` для UI.
 - Контроллеры и шаблоны не вызывают `Rule` напрямую.
-- `Domain`/`Infrastructure` не используем внутри `Rule`/`Voter`/гранта.
+- Domain/Infrastructure не используем внутри `Rule`/`Voter`/гранта.
 
 ## Матрица соответствия действий и прав
 
@@ -59,10 +59,10 @@ delete       ───►  canDelete()  ───►    deleteOwn / deleteAll
 
 ## Зависимости
 
-- **`Rule`:** `TokenInterface`, `RoleHierarchyInterface`, DTO `Presentation`, публичный `QueryBus` для фактов доступа.
-- **`Voter`:** `Rule`, `TokenInterface`, `ActionEnum`, субъект (subject) `Presentation`.
-- **Грант:** `AuthorizationCheckerInterface`, `ActionEnum`, субъект `Presentation`.
-- **Запрещено:** сервисы `Domain`, ORM-репозитории, `EntityManager`, глобальные синглтоны.
+- **`Rule`:** `TokenInterface`, `RoleHierarchyInterface`, DTO Presentation, публичный `QueryBus` для фактов доступа.
+- **`Voter`:** `Rule`, `TokenInterface`, `ActionEnum`, субъект (subject) Presentation.
+- **Грант:** `AuthorizationCheckerInterface`, `ActionEnum`, субъект Presentation.
+- **Запрещено:** сервисы Domain, ORM-репозитории, `EntityManager`, глобальные синглтоны.
 
 ## Расположение
 

@@ -73,7 +73,7 @@ public function __invoke(OrchestrateChainCommand $command): OrchestrateChainResu
 ## Чек-лист для проведения ревью кода
 
 - [ ] UseCase расположен в Application-слое.
-- [ ] Бизнес-логика делегирована в `Domain`.
+- [ ] Бизнес-логика делегирована в Domain.
 - [ ] Нет зависимости от фреймворка.
 - [ ] Нет вызовов других UseCase.
 - [ ] Принимает и возвращает DTO/скаляры.

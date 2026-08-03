@@ -23,7 +23,7 @@ description: Правила ограничения частоты запросо
 ## Зависимости
 
 - Разрешено: `RateLimiterFactoryInterface`, `Request`, `Response`/`JsonResponse`, presentation-фабрика ответов (response factory).
-- Запрещено: внедрять ограничитель (limiter) в `Domain`/`Application`, вызывать ограничитель после UseCase, использовать инфраструктурные реализации напрямую.
+- Запрещено: внедрять ограничитель (limiter) в Domain/Application, вызывать ограничитель после UseCase, использовать инфраструктурные реализации напрямую.
 
 ## Расположение
 

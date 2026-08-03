@@ -10,7 +10,7 @@ description: Правила создания и использования сп�
 
 ## Общие правила
 
-- Разрешены на уровне любого слоя (`Domain`, `Application`, `Infrastructure`, `Integration`, `Presentation`).
+- Разрешены на уровне любого слоя (Domain, Application, Infrastructure, Integration, Presentation).
 - Должен содержать только один публичный метод `all()`. Больше никаких методов в классе быть не должно.
 - Возвращает `list<scalar|BackedEnum>` без ключей. Ассоциативные массивы запрещены.
 - `all()` не принимает аргументов. Для контекста создай отдельный `List` под контекст.
@@ -22,9 +22,9 @@ description: Правила создания и использования сп�
 
 ## Расположение
 
-Список (List) должен храниться в конкретном модуле конкретного приложения. Также допустимо использовать их в контексте конкретного хэндлера, если это необходимо для какой-либо валидации, или в `Domain` для бизнес-проверки.
+Список (List) должен храниться в конкретном модуле конкретного приложения. Также допустимо использовать их в контексте конкретного хэндлера, если это необходимо для какой-либо валидации, или в Domain для бизнес-проверки.
 
-### `Domain`, `Application`, `Infrastructure`, `Integration`
+### Domain, Application, Infrastructure, Integration
 
 ```php
 {ProjectName}\Common\Module\{ModuleName}\{Layer}\List\{GroupName?}\{Name}List
@@ -32,7 +32,7 @@ description: Правила создания и использования сп�
 
 Где:
 - `{ProjectName}` — корневой namespace проекта
-- `{Layer}` — `Domain`, `Application`, `Infrastructure`, `Integration`
+- `{Layer}` — Domain, Application, Infrastructure, Integration
 - `{GroupName?}` — опциональная группа для группировки списков
 - `{Name}List` — имя списка
 
@@ -41,7 +41,7 @@ description: Правила создания и использования сп�
 - `ProjectName\Common\Module\Project\Domain\List\ProjectUserSharedRolesList`
 - `ProjectName\Common\Module\Billing\Infrastructure\List\CurrencyList`
 
-### Списки для конкретного сценария использования (`Application`)
+### Списки для конкретного сценария использования (Application)
 
 Для списков, используемых только в конкретном сценарии использования:
 
@@ -52,7 +52,7 @@ description: Правила создания и использования сп�
 Пример:
 - `ProjectName\Common\Module\Project\Application\UseCase\Command\ShareProject\AvailableRolesList`
 
-### `Presentation`
+### Presentation
 
 ```php
 {ProjectName}\Module\{ModuleName}\List\{GroupName?}\{Name}List
@@ -83,7 +83,7 @@ description: Правила создания и использования сп�
 
 ## Пример
 
-`List`-класс для ролей пользователей проекта (`Domain`):
+`List`-класс для ролей пользователей проекта (Domain):
 
 ```php
 <?php
@@ -110,7 +110,7 @@ final class ProjectUserRolesList
 }
 ```
 
-`List`-класс для фильтрации проектов по статусу (`Presentation`):
+`List`-класс для фильтрации проектов по статусу (Presentation):
 
 ```php
 <?php

@@ -115,8 +115,8 @@ final readonly class InitCommandHandler
 
 ## Чек-лист для ревью
 
-- [ ] Интерфейс лежит в `Domain` и зависит только от доменных типов.
-- [ ] Реализация лежит в `Infrastructure`.
+- [ ] Интерфейс лежит в Domain и зависит только от доменных типов.
+- [ ] Реализация лежит в Infrastructure.
 - [ ] Для типовых операций используются **только** рекомендованные имена методов (`getById`/`getByCriteria`/`getCountByCriteria`/`exists`/`getOneByCriteria`/`save`/`delete`).
 - [ ] `getByCriteria()` возвращает коллекцию доменных объектов (`list<*Model|*Vo>`, возможна пустая, не null); `getOneByCriteria()` — `?Entity`.
 - [ ] Исключения ORM маппятся в доменные интерфейсы исключений.

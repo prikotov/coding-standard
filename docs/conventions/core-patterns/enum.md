@@ -13,8 +13,8 @@ description: Правила использования нативных PHP-пе
 
 ## Общие правила
 
-* Разрешены в любом слое (`Domain`, `Application`, `Infrastructure`, `Integration`, `Presentation`).
-* `ApplicationEnum` — перечисления уровня `Application`, используемые в публичных контрактах (DTO/UseCase), чтобы не "подтягивать" доменные перечисления в `Presentation`/`Integration`. Для соответствия доменной модели используйте явные мапперы между `Domain\Enum` и `Application\Enum`.
+* Разрешены в любом слое (Domain, Application, Infrastructure, Integration, Presentation).
+* `ApplicationEnum` — перечисления уровня Application, используемые в публичных контрактах (DTO/UseCase), чтобы не "подтягивать" доменные перечисления в Presentation/Integration. Для соответствия доменной модели используйте явные мапперы между `Domain\Enum` и `Application\Enum`.
 * ❗ **Перечисление не содержит бизнес-логики**, зависимостей, магических методов и дополнительных констант.
 * Используются [`backed enum`](https://www.php.net/manual/en/language.enumerations.backed.php) (int|string) при
   необходимости хранить/отображать читаемое значение.
@@ -25,17 +25,17 @@ description: Правила использования нативных PHP-пе
 
 ## Расположение
 
-* `Domain`
+* Domain
   - `{ProjectName}\Common\Module\{ModuleName}\Domain\Enum\{Name}Enum`
-* `Application`
-  - `{ProjectName}\Common\Module\{ModuleName}\Application\Enum\{Name}Enum` — для общих перечислений уровня `Application`
+* Application
+  - `{ProjectName}\Common\Module\{ModuleName}\Application\Enum\{Name}Enum` — для общих перечислений уровня Application
   - `{ProjectName}\Common\Module\{ModuleName}\Application\UseCase\{Name}\{Name}Enum` — для перечислений, связанных строго с одним UseCase.
-* `Infrastructure`
+* Infrastructure
   - `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Enum\{Name}Enum`
   - `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{SomeComponent}\Enum\{Name}Enum`
-* `Integration`
+* Integration
   - `{ProjectName}\Common\Module\{ModuleName}\Integration\Enum\{Name}Enum`
-* `Presentation`
+* Presentation
   - `{ProjectName}\Web\Module\{ModuleName}\Enum\{Name}Enum`
 * `Common`
   - `{ProjectName}\Common\Enum\{Name}Enum`

@@ -46,7 +46,7 @@ description: Правила создания и использования об�
 ### Граница слоёв для Application DTO
 
 `Application DTO` (`{ProjectName}\Common\Module\{ModuleName}\Application\...*Dto`) являются транспортными объектами на границе слоёв.
-Поэтому их зависимости ограничены слоем `Application`.
+Поэтому их зависимости ограничены слоем Application.
 
 - Разрешено:
   - Другие `Application DTO` и `Application Enum`.

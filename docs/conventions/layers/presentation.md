@@ -6,14 +6,14 @@ description: Слой представления: приём/отдача дан
 
 # Слой Представления (Presentation)
 
-Слой `Presentation` отвечает за приём/отдачу данных через публичные интерфейсы (Web, API, Console) и строго взаимодействует только со слоем `Application`.
+Слой Presentation отвечает за приём/отдачу данных через публичные интерфейсы (Web, API, Console) и строго взаимодействует только со слоем Application.
 
 ## Общие правила
 
-- Контроллеры, команды консоли и HTTP-эндпоинты обращаются только к UseCase/`Handler` из `Application`.
-- Публичные контракты `Presentation` формируют входные данные в DTO запроса, `Command`/`Query` и принимают DTO ответа.
-- В `Presentation` запрещено использовать типы из `Domain` напрямую (`Entity`, `VO`, `Repository`, `Specification`), а также классы из `Infrastructure`/`Integration`.
-- Исключения маппятся в ответы/сообщения через обработчики уровня `Presentation` (listeners/subscribers/exception mappers).
+- Контроллеры, команды консоли и HTTP-эндпоинты обращаются только к UseCase/`Handler` из Application.
+- Публичные контракты Presentation формируют входные данные в DTO запроса, `Command`/`Query` и принимают DTO ответа.
+- В Presentation запрещено использовать типы из Domain напрямую (`Entity`, `VO`, `Repository`, `Specification`), а также классы из Infrastructure/Integration.
+- Исключения маппятся в ответы/сообщения через обработчики уровня Presentation (listeners/subscribers/exception mappers).
 - Для transport DTO и пользовательских валидаторов используем профильные правила:
   [DTO запроса](presentation/request-dto.md),
   [Query DTO](presentation/query-dto.md),
@@ -35,7 +35,7 @@ apps/{web|api|console}/src/...
 
 ## Чек-лист
 
-- [ ] Контроллер зависит только от `Application`-слоя.
+- [ ] Контроллер зависит только от Application-слоя.
 - [ ] Нет импортов из `Domain/*`, `Infrastructure/*`, `Integration/*`.
 - [ ] Вход/выход — только DTO запроса/ответа.
 
@@ -43,7 +43,7 @@ apps/{web|api|console}/src/...
 
 - `Controller`: `apps/<app>/src/Module/<ModuleName>/Controller`. [Контроллер](presentation/controller.md)
 - `ListController`: специализированные контроллеры списков. [Контроллер списка](presentation/list-controller.md)
-- `ConsoleCommand`: консольные команды `Presentation`. [Консольная команда](presentation/console-command.md)
+- `ConsoleCommand`: консольные команды Presentation. [Консольная команда](presentation/console-command.md)
 - `Route`: генераторы URL и имён маршрутов. [Маршруты](presentation/route.md)
 - `TwigExtension`: презентационные функции/фильтры для Twig-шаблонов. [Twig Extension](presentation/twig-extension.md)
 - `TwigComponent`: переиспользуемые UI-компоненты Symfony UX. [Twig Component](presentation/twig-component.md)
@@ -52,7 +52,7 @@ apps/{web|api|console}/src/...
 - `Validator`: пользовательская пара `Constraint` / `ConstraintValidator` для межполевой и переиспользуемой валидации. [Validator](presentation/validator.md)
 - `Authorization`: `PermissionEnum`, `ActionEnum`, `Rule`, `Voter`, `Grant`. [Авторизация](presentation/authorization.md), [перечисление прав](presentation/permission-enum.md), [Правило](presentation/rule.md), [Voter](presentation/voter.md), [грант](presentation/grant.md)
 
-## Уведомления (Notification) в `Presentation`
+## Уведомления (Notification) в Presentation
 
 Сущности и точки входа, которые используются для Web-уведомлений и live-обновлений:
 

@@ -244,7 +244,7 @@ services:
   ProjectName\Common\Module\Billing\Domain\Repository\PaymentRepositoryInterface: '@ProjectName\Common\Module\Billing\Infrastructure\Repository\PaymentRepository'
 ```
 
-Пример конфигурации сервисов `Presentation`-модуля (`apps/web/src/Module/Source/Resource/config/services.yaml`):
+Пример конфигурации сервисов Presentation-модуля (`apps/web/src/Module/Source/Resource/config/services.yaml`):
 
 ```yaml
 parameters:

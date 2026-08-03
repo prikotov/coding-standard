@@ -22,8 +22,8 @@ description: Правила создания голосующих объекто
 
 ## Зависимости
 
-- Разрешено: `Rule`, перечисление прав, `TokenInterface`, DTO/Value Object `Presentation`.
-- Запрещено: прямой доступ к контейнеру, сервисам `Domain`/`Infrastructure`.
+- Разрешено: `Rule`, перечисление прав, `TokenInterface`, DTO/Value Object Presentation.
+- Запрещено: прямой доступ к контейнеру, сервисам Domain/Infrastructure.
 
 ## Расположение
 

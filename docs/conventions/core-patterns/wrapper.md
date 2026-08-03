@@ -37,19 +37,19 @@ description: Правила создания врапперов для инка�
 
 ## Расположение
 
-**`Presentation` слой (Web)** — для представления данных в UI:
+**Presentation слой (Web)** — для представления данных в UI:
 
 ```
 {ProjectName}\Web\Module\{ModuleName}\Wrapper\{Name}Wrapper
 ```
 
-**`Infrastructure` слой** — для работы с инфраструктурными данными:
+**Infrastructure слой** — для работы с инфраструктурными данными:
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{Component}\{Name}Wrapper
 ```
 
-**`Application` слой** — для представления данных в use case:
+**Application слой** — для представления данных в use case:
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Application\Wrapper\{Name}Wrapper
@@ -79,7 +79,7 @@ description: Правила создания врапперов для инка�
 
 ## Пример
 
-### Пример 1: Враппер для представления проекта (`Presentation` слой)
+### Пример 1: Враппер для представления проекта (Presentation слой)
 
 ```php
 <?php
@@ -141,7 +141,7 @@ final readonly class ProjectDisplayWrapper
 }
 ```
 
-### Пример 2: Использование враппера в форме (`Presentation` слой)
+### Пример 2: Использование враппера в форме (Presentation слой)
 
 ```php
 <?php
@@ -195,7 +195,7 @@ final readonly class ProjectSelectFormType extends AbstractType
 }
 ```
 
-### Пример 3: Враппер для инфраструктурных данных (`Infrastructure` слой)
+### Пример 3: Враппер для инфраструктурных данных (Infrastructure слой)
 
 ```php
 <?php

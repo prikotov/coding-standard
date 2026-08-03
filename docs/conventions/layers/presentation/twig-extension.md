@@ -27,7 +27,7 @@ description: Правила создания Twig-расширений
 
 ## Зависимости
 
-- Разрешено: `TranslatorInterface`, сервисы маршрутов (route) и хелперов (helper) уровня `Presentation`, утилиты форматирования уровня `Presentation`.
+- Разрешено: `TranslatorInterface`, сервисы маршрутов (route) и хелперов (helper) уровня Presentation, утилиты форматирования уровня Presentation.
 - Запрещено: зависимости из `Domain/*`, `Infrastructure/*`, `Integration/*`.
 
 ## Расположение
@@ -102,6 +102,6 @@ final class FileSizeExtension extends AbstractExtension
 
 - [ ] Extension расположен в `Component/Twig/Extension` и зарегистрирован как `twig.extension`.
 - [ ] Шаблон не содержит сложной вычислительной логики, только рендерит подготовленные данные.
-- [ ] Нет импортов и зависимостей из `Domain`/`Infrastructure`/`Integration`.
+- [ ] Нет импортов и зависимостей из Domain/Infrastructure/Integration.
 - [ ] Есть unit-тест на extension и integration-тест на HTML-контракт страницы.
 - [ ] Для выбранного сценария есть единый контракт данных и fallback-значения (если применимо).

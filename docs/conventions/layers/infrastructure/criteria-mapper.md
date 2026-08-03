@@ -49,10 +49,10 @@ description: Правила создания мапперов критериев
 **Разрешено**:
 - `LimitOffsetSortCriteriaMapper` через DI
 - Доменные сущности, [критерии (Criteria)](../domain/criteria.md), VO, Enum
-- Другие мапперы `Infrastructure` слоя
+- Другие мапперы Infrastructure слоя
 
 **Запрещено**:
-- Сервисы `Application`/`Presentation` слоёв
+- Сервисы Application/Presentation слоёв
 - Внешние API и HTTP-клиенты
 - Прямое обращение к БД (только через `QueryBuilder`)
 

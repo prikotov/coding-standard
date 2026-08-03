@@ -36,13 +36,13 @@ description: Правила создания и использования хе�
 
 Хелпер размещается в слое, где используется его логика. Примеры:
 
-**`Domain` слой** — утилитные методы для доменных сущностей и VO:
+**Domain слой** — утилитные методы для доменных сущностей и VO:
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Domain\Helper\{Name}Helper
 ```
 
-**`Application` слой** — утилитные методы для use case и DTO:
+**Application слой** — утилитные методы для use case и DTO:
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Application\Helper\{Name}Helper
@@ -50,7 +50,7 @@ description: Правила создания и использования хе�
 {ProjectName}\Common\Module\{ModuleName}\Application\UseCase\Command\{UseCase}\Helper\{Name}Helper
 ```
 
-**`Infrastructure` слой** — утилитные методы для инфраструктурных операций:
+**Infrastructure слой** — утилитные методы для инфраструктурных операций:
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Service\{GroupName}\Helper\{Name}Helper

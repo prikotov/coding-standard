@@ -20,12 +20,12 @@ description: Правила создания грант-сервисов для 
 - Грант не решает доступ сам: итоговое решение остаётся в [`Voter`](voter.md) и [`Rule`](rule.md).
 - UI-флаги допустимы только для отображения кнопок и ссылок, не для защиты точки входа (endpoint).
 - Внутри не используем `TokenInterface` напрямую.
-- Не выполняем запросы к базе, не обращаемся к `Domain`/`Application`, не модифицируем состояние.
+- Не выполняем запросы к базе, не обращаемся к Domain/Application, не модифицируем состояние.
 
 ## Зависимости
 
-- Разрешено: `AuthorizationCheckerInterface`, `*ActionEnum`, простые типы (`Uuid`), DTO `Presentation`, UI-флаги.
-- Запрещено: репозитории, `QueryBus`/`CommandBus`, сервисы `Domain`/`Application`/`Infrastructure`, обращения к глобальному состоянию.
+- Разрешено: `AuthorizationCheckerInterface`, `*ActionEnum`, простые типы (`Uuid`), DTO Presentation, UI-флаги.
+- Запрещено: репозитории, `QueryBus`/`CommandBus`, сервисы Domain/Application/Infrastructure, обращения к глобальному состоянию.
 
 ## Расположение
 
@@ -92,6 +92,6 @@ final readonly class Grant
 - [ ] Все публичные методы начинаются с `can*` и возвращают `bool`.
 - [ ] Внутри используются значения `*ActionEnum`, а не строки.
 - [ ] Грант только готовит субъект и вызывает `AuthorizationCheckerInterface::isGranted()`.
-- [ ] Нет зависимостей на `Domain`/`Application`/`Infrastructure`-сервисы.
+- [ ] Нет зависимостей на Domain/Application/Infrastructure-сервисы.
 - [ ] Нет логики доступа, дублирующей `Rule`.
 - [ ] Шаблоны и контроллеры обращаются к гранту вместо прямых вызовов `is_granted()`.

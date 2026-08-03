@@ -16,13 +16,13 @@ description: Правила реализации репозиториев
 
 1. Каждый репозиторий наследует `ServiceEntityRepository` и реализует доменный интерфейс `{EntityName}RepositoryInterface`.
 2. Репозиторий не содержит условных запросов напрямую; все фильтры строятся через [`CriteriaMapper`](criteria-mapper.md).
-3. Репозиторий оперирует только доменными сущностями и критериями; никаких зависимостей из `Application`/`Presentation`.
+3. Репозиторий оперирует только доменными сущностями и критериями; никаких зависимостей из Application/Presentation.
 4. Исключения Doctrine маппятся в [`NotFoundException`](../../core-patterns/exception.md) или [`InfrastructureException`](../../core-patterns/exception.md).
 
 ## Зависимости
 
 - Разрешено: `ManagerRegistry`, [`CriteriaMapper`](criteria-mapper.md), доменные сущности и критерии, сервисы Doctrine.
-- Запрещено: сервисы `Application`/`Presentation`, внешние API.
+- Запрещено: сервисы Application/Presentation, внешние API.
 
 ## Расположение
 
@@ -32,7 +32,7 @@ description: Правила реализации репозиториев
 
 ## Как используем
 
-- В `Application` слое используем только доменный интерфейс; инфраструктурная реализация не просачивается наружу.
+- В Application слое используем только доменный интерфейс; инфраструктурная реализация не просачивается наружу.
 
 ## Пример
 
@@ -147,7 +147,7 @@ final class ProjectRepository extends ServiceEntityRepository implements Project
 - [ ] Репозиторий реализует доменный интерфейс (контракт).
 - [ ] Маппинг критериев изолирован (`CriteriaMapper` или аналогичный).
 - [ ] Нет утечек Doctrine `QueryBuilder` за пределы репозитория.
-- [ ] Транзакции управляются на уровне `Application`-слоя, а не в репозитории.
+- [ ] Транзакции управляются на уровне Application-слоя, а не в репозитории.
 
 ## Внутрипроцессная реализация (in-memory) для тестов
 

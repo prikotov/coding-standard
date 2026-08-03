@@ -17,14 +17,14 @@ Phoenix-компонентах.
 
 - Контроллер списка обслуживает только `GET`-запросы и объявляется `final`.
 - Query-параметры преобразуем в DTO через `#[MapQueryString]` и валидируем компонентом `Validator`.
-- Фильтры строим на `FormType` из слоя `Presentation`; состояние фильтра сериализуем в `query string`.
+- Фильтры строим на `FormType` из слоя Presentation; состояние фильтра сериализуем в `query string`.
 - Сортировка и пагинация выполняются через `PaginationRequestToApplicationDtoMapper` и `SortRequestToApplicationDtoMapper`.
 - В шаблоне используем частичные представления `_search`, `_filter`, `_table` и Phoenix-компоненты.
 
 ## Зависимости
 
 - Разрешено: `PaginationRequestDto`, `SortRequestDto`, соответствующие мапперы, `FilterForm`, `Route`, `QueryBus`.
-- Запрещено: прямой доступ к репозиториям, SQL, сервисы `Domain`/`Infrastructure`.
+- Запрещено: прямой доступ к репозиториям, SQL, сервисы Domain/Infrastructure.
 
 ## Расположение
 
@@ -37,7 +37,7 @@ apps/<app>/src/Module/<ModuleName>/Resource/templates/<context>/
 ## Как используем
 
 1. `ListController` принимает `PaginationRequestDto`, `SortRequestDto`, `Request` и `#[CurrentUser]`.
-2. Мапперы переводят DTO `Presentation` в `Application` DTO, применяем разрешённые поля сортировки.
+2. Мапперы переводят DTO Presentation в Application DTO, применяем разрешённые поля сортировки.
 3. Форма фильтра создаётся, обрабатывает запрос, модель формирует query параметры.
 4. `QueryBus` выполняет запрос UseCase Application-слоя и возвращает DTO со списком.
 5. Шаблон рендерит частичные представления и Phoenix-компоненты, сохраняя сортировку/фильтры.
@@ -202,9 +202,9 @@ FastFilter-списки передаются в шаблон и рендерят
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] Контроллер обслуживает только `GET`, объявлен `final` и лежит в каталоге `Presentation`.
+- [ ] Контроллер обслуживает только `GET`, объявлен `final` и лежит в каталоге Presentation.
 - [ ] Используются `PaginationRequestDto`/`SortRequestDto` и их мапперы с белым списком (whitelisting) полей.
-- [ ] Форма фильтра объявлена в слое `Presentation` и сериализует состояние в `query string`.
+- [ ] Форма фильтра объявлена в слое Presentation и сериализует состояние в `query string`.
 - [ ] `QueryBus`/UseCase получают строго необходимые параметры.
 - [ ] Шаблон списка использует Phoenix-компоненты и частичные блоки `_search`, `_filter`, `_table`.
 - [ ] FastFilter-компоненты объявлены `final readonly` и не содержат бизнес-логики.
