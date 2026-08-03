@@ -27,8 +27,8 @@ description: Правила создания и использования сл�
 ## Зависимости
 
 - **Разрешено:** [сценарий использования (Use Case)](../application/use-case.md)
-  ([обработчик команд (CommandHandler)](../application/command-handler.md)/
-  [обработчик запросов (QueryHandler)](../application/query-handler.md)) **своего** модуля, сервисы интеграций,
+  ([обработчик команд (Command Handler)](../application/command-handler.md)/
+  [обработчик запросов (Query Handler)](../application/query-handler.md)) **своего** модуля, сервисы интеграций,
   мапперы/фабрики.
 - **Запрещено:**
     - Прямой доступ к БД/HTTP/очередям.
