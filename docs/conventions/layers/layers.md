@@ -47,7 +47,7 @@ flowchart TB
 | Слой | Назначение | Зависимости |
 |------|------------|-------------|
 | **Domain** | Бизнес-логика, [Entity](domain/entity.md), [VO](../core-patterns/value-object.md), интерфейсы [Repository](domain/repository.md) | Нет |
-| **Application** | сценарии использования (Use Cases), оркестрация, [DTO](../core-patterns/dto.md) | Domain |
+| **Application** | Use Case, оркестрация, [DTO](../core-patterns/dto.md) | Domain |
 | **Infrastructure** | Реализация репозиториев, кэш, персистентность, внешние API/SDK | Domain (контракты и типы) |
 | **Integration** | События, middleware, межмодульное взаимодействие | Application, Domain (контракты и типы) |
 | **Presentation** | Web, API, консоль, блог — точки входа | Application |
@@ -79,7 +79,7 @@ Infrastructure реализует интерфейсы Domain:
 ### Integration → Application
 
 Integration вызывает Application чужого модуля:
-- Обрабатывает внешние события и инициирует соответствующие сценарии использования (Use Cases).
+- Обрабатывает внешние события и инициирует соответствующие Use Case.
 - Реализует интеграции через интерфейсы доменных [Service](../core-patterns/service.md).
 - Может использовать доменные типы в сигнатурах контрактов ([VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md), [DTO](../core-patterns/dto.md)).
 - Не зависит от слоя Infrastructure.
