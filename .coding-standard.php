@@ -31,7 +31,7 @@ return [
             'Module', 'Layer', 'Service', 'Event', 'Handler', 'Repository',
             'Entity', 'Component', 'Factory', 'Builder', 'Gateway', 'Calculator',
             'Specification', 'Subscriber', 'Listener', 'Controller', 'Validator',
-            'Voter', 'Rule', 'Value', 'Object', 'Enum', 'Migration', 'Fixture',
+            'Voter', 'Rule', 'Grant', 'Value', 'Object', 'Enum', 'Migration', 'Fixture',
             'Command', 'Query', 'UseCase', 'Transport', 'Mapper', 'Helper', 'CriteriaMapper',
             // Тестирование и runtime-термины.
             'in-memory',

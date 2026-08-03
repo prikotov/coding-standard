@@ -69,7 +69,7 @@ description: Индекс всех конвенций проекта
     - [Консольная команда (Console Command)](layers/presentation/console-command.md)
     - [Контроллер (Controller)](layers/presentation/controller.md)
     - [Формы (Forms)](layers/presentation/forms.md)
-    - [Грант (Grant)](layers/presentation/grant.md)
+    - [Grant](layers/presentation/grant.md)
     - [Контроллер списка (List Controller)](layers/presentation/list-controller.md)
     - [Перечисление разрешений (Permission Enum)](layers/presentation/permission-enum.md)
     - [Маршруты (Route)](layers/presentation/route.md)

@@ -9,7 +9,7 @@ description: Правила проверки прав презентационн
 ## Определение
 
 **Проверка прав презентационного слоя (Presentation Authorization)** — способ ограничить доступ к публичным
-интерфейсам приложения через перечисление прав (Permission Enum), перечисление действий (Action Enum), `Rule`, `Voter` и грант-сервис (Grant). Используем встроенную модель
+интерфейсам приложения через перечисление прав (Permission Enum), перечисление действий (Action Enum), `Rule`, `Voter` и Grant. Используем встроенную модель
 безопасности Symfony, см. [документацию по безопасности и авторизации](https://symfony.com/doc/current/security.html).
 
 ## Архитектура авторизации
@@ -31,7 +31,7 @@ Controller / Template / UI
 | `ActionEnum` | Атрибуты действий для `isGranted()` | [перечисление действий](action-enum.md) |
 | `Rule` | Итоговая логика доступа | [правило доступа](rule.md) |
 | `Voter` | Symfony-адаптер, делегирующий в `Rule` | [голосующий объект](voter.md) |
-| `Grant` | Фасад пользовательского интерфейса (UI) над `AuthorizationChecker` | [грант-сервис](grant.md) |
+| Grant | Фасад пользовательского интерфейса (UI) над `AuthorizationChecker` | [Grant](grant.md) |
 
 ## Общие правила
 
@@ -39,9 +39,9 @@ Controller / Template / UI
 - `ActionEnum` описывает действия: `view`, `edit`, `delete`.
 - `Rule` содержит итоговую логику доступа.
 - `Voter` принимает решение о доступе средствами безопасности Symfony и делегирует в `Rule`.
-- `Grant` только вызывает `AuthorizationCheckerInterface::isGranted()` для UI.
+- Grant только вызывает `AuthorizationCheckerInterface::isGranted()` для UI.
 - Контроллеры и шаблоны не вызывают `Rule` напрямую.
-- Domain/Infrastructure не используем внутри `Rule`/`Voter`/гранта.
+- Domain/Infrastructure не используем внутри `Rule`/`Voter`/Grant.
 
 ## Матрица соответствия действий и прав
 
@@ -61,7 +61,7 @@ delete       ───►  canDelete()  ───►    deleteOwn / deleteAll
 
 - **`Rule`:** `TokenInterface`, `RoleHierarchyInterface`, DTO Presentation, публичный `QueryBus` для фактов доступа.
 - **`Voter`:** `Rule`, `TokenInterface`, `ActionEnum`, субъект (subject) Presentation.
-- **Грант:** `AuthorizationCheckerInterface`, `ActionEnum`, субъект Presentation.
+- **Grant:** `AuthorizationCheckerInterface`, `ActionEnum`, субъект Presentation.
 - **Запрещено:** сервисы Domain, ORM-репозитории, `EntityManager`, глобальные синглтоны.
 
 ## Расположение
@@ -81,7 +81,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/
 2. Определяем [перечисление действий](action-enum.md) с атрибутами действий (`view`, `edit`, `delete`...).
 3. Реализуем [`Rule`](rule.md) для проверки прав.
 4. Создаём [`Voter`](voter.md), который делегирует проверку в `Rule`.
-5. При необходимости создаём [грант-сервис](grant.md) для UI-проверок.
+5. При необходимости создаём [Grant](grant.md) для UI-проверок.
 6. Точку входа (endpoint) защищаем через `$this->isGranted(ActionEnum::view->value, $subject)`.
 
 ## Чек-лист для проведения ревью кода
@@ -91,4 +91,4 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/
 - [ ] `Rule` содержит итоговую логику доступа.
 - [ ] `Voter` делегирует проверку в `Rule` и зарегистрирован как сервис.
 - [ ] Значения перечисления прав добавлены в `security.yaml`.
-- [ ] Грант объявлен `final readonly`, не дублирует `Rule` и не содержит бизнес-логики.
+- [ ] Grant объявлен `final readonly`, не дублирует `Rule` и не содержит бизнес-логики.

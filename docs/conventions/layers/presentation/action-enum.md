@@ -8,7 +8,7 @@ description: Правила создания перечислений дейст
 
 ## Определение
 
-**Перечисление действий (Action Enum)** — enum в презентационном слое, определяющий список действий (view, edit, delete...) для проверки прав через `isGranted()`. Используется в Voter и гранте (Grant) вместо строковых значений.
+**Перечисление действий (Action Enum)** — enum в презентационном слое, определяющий список действий (view, edit, delete...) для проверки прав через `isGranted()`. Используется в Voter и Grant вместо строковых значений.
 
 ## Общие правила
 
@@ -31,7 +31,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/ActionEnum.php
 1. Определяем список действий для сущности.
 2. В [Voter](voter.md) проверяем `ActionEnum::tryFrom($attribute)` в методе `supports()`.
 3. В методе `voteOnAttribute()` используем `match` для маршрутизации проверки в [Rule](rule.md).
-4. В [гранте](grant.md) вызываем `isGranted(ActionEnum::edit->value, $subject)`.
+4. В [Grant](grant.md) вызываем `isGranted(ActionEnum::edit->value, $subject)`.
 
 ## Пример
 
@@ -79,7 +79,7 @@ protected function voteOnAttribute(string $attribute, mixed $subject, TokenInter
 }
 ```
 
-### Использование в [гранте](grant.md)
+### Использование в [Grant](grant.md)
 
 ```php
 public function canEdit(Uuid $projectUuid): bool
@@ -104,4 +104,4 @@ if (!$this->isGranted(ActionEnum::edit->value, ['projectUuid' => $projectUuid]))
 - [ ] Класс назван `ActionEnum`, лежит в `apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/`.
 - [ ] Значения case в формате `{module}.{subject}.{action}`.
 - [ ] Voter использует `ActionEnum::tryFrom()` в `supports()`.
-- [ ] Грант использует `ActionEnum::*->value` при вызове `isGranted()`.
+- [ ] Grant использует `ActionEnum::*->value` при вызове `isGranted()`.
