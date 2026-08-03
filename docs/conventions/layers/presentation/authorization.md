@@ -10,7 +10,7 @@ description: Правила проверки прав презентационн
 
 **Проверка прав презентационного слоя (Presentation Authorization)** — способ ограничить доступ к публичным
 интерфейсам приложения через перечисление прав (Permission Enum), перечисление действий (Action Enum), `Rule`, `Voter` и Grant. Используем встроенную модель
-безопасности Symfony, см. [документацию по безопасности и авторизации](https://symfony.com/doc/current/security.html).
+Symfony Security, см. [документацию по безопасности и авторизации](https://symfony.com/doc/current/security.html).
 
 ## Архитектура авторизации
 
@@ -38,7 +38,7 @@ Controller / Template / UI
 - Каждый модуль определяет собственный `PermissionEnum` с именами ролей `ROLE_*`.
 - `ActionEnum` описывает действия: `view`, `edit`, `delete`.
 - `Rule` содержит итоговую логику доступа.
-- `Voter` принимает решение о доступе средствами безопасности Symfony и делегирует в `Rule`.
+- `Voter` принимает решение о доступе средствами Symfony Security и делегирует в `Rule`.
 - Grant только вызывает `AuthorizationCheckerInterface::isGranted()` для UI.
 - Контроллеры и шаблоны не вызывают `Rule` напрямую.
 - Domain/Infrastructure не используем внутри `Rule`/`Voter`/Grant.

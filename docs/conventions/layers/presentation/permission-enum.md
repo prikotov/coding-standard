@@ -9,7 +9,7 @@ description: Правила создания перечислений прав
 ## Определение
 
 **Перечисление прав (Permission Enum)** — перечисление (`enum`), которое описывает доступные разрешения слоя
-Presentation и используется в системе безопасности Symfony. Основано на
+Presentation и используется в Symfony Security. Основано на
 [встроенной модели ролей Symfony](https://symfony.com/doc/current/security.html#roles).
 
 ## Общие правила
