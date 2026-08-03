@@ -12,9 +12,9 @@ description: Правила создания мапперов критериев
 
 ## Структура
 
-`CriteriaMapper` состоит из двух уровней:
+CriteriaMapper состоит из двух уровней:
 
-### 1. `CriteriaMapper` (диспетчер)
+### 1. CriteriaMapper (диспетчер)
 
 Реализует маппинг `Criteria → QueryBuilder` через делегирование конкретному Mapper. Резолвит стратегию маппинга по фактическому типу критерия (`$criteria::class`).
 
@@ -28,7 +28,7 @@ description: Правила создания мапперов критериев
 
 ## Общие правила
 
-### Для диспетчера `CriteriaMapper`
+### Для диспетчера CriteriaMapper
 
 - Класс `final readonly`
 - Метод `map(Repository $repository, CriteriaInterface $criteria): QueryBuilder`
@@ -69,7 +69,7 @@ description: Правила создания мапперов критериев
 
 ### Диспетчер
 
-- Имя класса: `CriteriaMapper`
+- Имя класса: CriteriaMapper
 - Файл: `CriteriaMapper.php` (в папке `Criteria/`, без подпапки `Mapper/`)
 - Отличие от конкретных: расположение в `/Criteria/`, а не `/Criteria/Mapper/`
 
@@ -90,7 +90,7 @@ description: Правила создания мапперов критериев
 | `{Entity}ActiveCriteria` | `{Entity}ActiveCriteriaMapper` |
 | `{Entity}By{Property}Criteria` | `{Entity}By{Property}CriteriaMapper` |
 
-## Пример: диспетчер `CriteriaMapper`
+## Пример: диспетчер CriteriaMapper
 
 ```php
 <?php
@@ -125,7 +125,7 @@ final readonly class CriteriaMapper
 }
 ```
 
-## Пример: простой `CriteriaMapper`
+## Пример: простой CriteriaMapper
 
 Для критериев с 1-3 простыми фильтрами декомпозиция не требуется:
 
@@ -173,7 +173,7 @@ final readonly class ModelFindCriteriaMapper
 }
 ```
 
-## Декомпозиция для сложного `CriteriaMapper`
+## Декомпозиция для сложного CriteriaMapper
 
 Декомпозиция на `apply*()` методы обязательна при наличии любого из признаков:
 
@@ -222,7 +222,7 @@ public function map(Repository $repository, Criteria $criteria): QueryBuilder
 - Параметры: `QueryBuilder $qb, Criteria $criteria`
 - `QueryBuilder` мутируется, возвращаемого значения нет
 
-## Пример: сложный `CriteriaMapper` с декомпозицией
+## Пример: сложный CriteriaMapper с декомпозицией
 
 ```php
 <?php
@@ -291,7 +291,7 @@ final readonly class PaymentFindCriteriaMapper
 
 ## Чек-лист для ревью кода
 
-- [ ] Диспетчер `CriteriaMapper` регистрирует все конкретные Mapper
+- [ ] Диспетчер CriteriaMapper регистрирует все конкретные Mapper
 - [ ] Неизвестный критерий выбрасывает `ConfigurationException`
 - [ ] Имя Mapper соответствует критерию: `{CriteriaName}Criteria` → `{CriteriaName}CriteriaMapper`
 - [ ] Класс помечен как `final readonly`

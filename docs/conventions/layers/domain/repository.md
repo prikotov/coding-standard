@@ -29,7 +29,7 @@ description: Правила создания доменных контракто
 - Транзакционная граница (`flush()`) устанавливается в [Command Handler](../application/command-handler.md) через `PersistenceManagerInterface::flush()`; в методах репозитория вызывается только `persist()` (регистрация сущности в `Unit of Work`).
 - Репозиторий маппит исключения ORM/SDK в доменные: `NotFoundExceptionInterface` для отсутствия сущности, [`InfrastructureExceptionInterface`](../../core-patterns/exception.md) для ошибок работы хранилища.
 - Реализации интерфейса размещаются в слое [Infrastructure](../infrastructure.md). Интерфейс репозитория — часть домена, реализация — часть инфраструктуры.
-- Правила построения инфраструктурных репозиториев и `CriteriaMapper` описаны в [разделе Infrastructure](../infrastructure/repository.md); при добавлении реализации следуем этому шаблону.
+- Правила построения инфраструктурных репозиториев и CriteriaMapper описаны в [разделе Infrastructure](../infrastructure/repository.md); при добавлении реализации следуем этому шаблону.
 - Интерфейсы репозиториев зависят только от доменных типов (Entity/VO/Criteria); инфраструктурные классы (Doctrine, PDO и т.п.) в домен не протекают.
 
 Критерии (Criteria) инкапсулируют фильтры/сортировки/пагинацию для выборок. Репозитории принимают интерфейсы критериев вместо именованных методов. См. [`Criteria`](../domain/criteria.md).

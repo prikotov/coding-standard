@@ -32,7 +32,7 @@ return [
             'Entity', 'Component', 'Factory', 'Builder', 'Gateway', 'Calculator',
             'Specification', 'Subscriber', 'Listener', 'Controller', 'Validator',
             'Voter', 'Rule', 'Value', 'Object', 'Enum', 'Migration', 'Fixture',
-            'Command', 'Query', 'UseCase', 'Transport', 'Mapper', 'Helper',
+            'Command', 'Query', 'UseCase', 'Transport', 'Mapper', 'Helper', 'CriteriaMapper',
             // Терминология Markdown и инструментов.
             'Markdown', 'CodeSniffer', 'matter', 'front', 'fenced', 'inline',
             'code', 'block', 'blocks', 'link', 'links', 'reference', 'slug',
