@@ -25,7 +25,7 @@ description: Правила создания валидаторов презен
 
 - `Symfony\Component\Validator\Constraint`, `ConstraintValidator`, `ExecutionContextInterface`.
 - Валидируемые DTO/`FormModel` презентации из того же приложения/модуля.
-- Чистые PHP-хелперы и детерминированный разбор, не выходящие во внешнюю среду.
+- Чистые PHP-Helper и детерминированный разбор, не выходящие во внешнюю среду.
 
 ### Запрещено
 

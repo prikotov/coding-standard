@@ -43,7 +43,7 @@ namespace {ProjectName}\Common\Module\{ModuleName}\Domain\Repository\{EntityName
 
 - `{SearchName}` — сценарий или способ поиска без имени сущности и суффикса `Criteria`, например `Find`, `Active`, `ByStatus`.
 
-- Маппер в слое [Infrastructure](../infrastructure.md):
+- Mapper в слое [Infrastructure](../infrastructure.md):
 
 ```php
 namespace {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{EntityName}\Criteria\Mapper\{EntityName}{SearchName}CriteriaMapper
@@ -52,7 +52,7 @@ namespace {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{En
 ## Как используем
 
 - Репозиторий принимает интерфейс критерия, а не реализацию.
-- Маппер в инфраструктурном слое преобразует критерий в конкретный запрос (Doctrine QueryBuilder, SQL, Elastic и т.д.).
+- Mapper в инфраструктурном слое преобразует критерий в конкретный запрос (Doctrine QueryBuilder, SQL, Elastic и т.д.).
 - ❗ Критерий **не используется напрямую** в бизнес-логике (Domain, Application). Используется только как аргумент
   публичных методов репозитория.
 - Маппинг критериев в конкретные запросы — обязанность слоя Infrastructure.
@@ -187,4 +187,4 @@ final class PaymentFindCriteria implements PaymentCriteriaInterface, SortableCri
 - [ ] Пагинация/сортировка реализованы через унифицированные интерфейсы/трейты.
 - [ ] Для сортировки применяются `enum SortField` и `enum SortDirection`.
 - [ ] Для `limit` и `offset` применяются стандартные трейты (`CriteriaWithLimitTrait`, `CriteriaWithOffsetTrait`).
-- [ ] В инфраструктуре есть маппер, который преобразует критерий в запрос.
+- [ ] В инфраструктуре есть Mapper, который преобразует критерий в запрос.

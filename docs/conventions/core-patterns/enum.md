@@ -14,7 +14,7 @@ description: Правила использования нативных PHP-пе
 ## Общие правила
 
 * Разрешены в любом слое (Domain, Application, Infrastructure, Integration, Presentation).
-* `ApplicationEnum` — Enum уровня Application, используемый в публичных контрактах (DTO/UseCase), чтобы не "подтягивать" доменные Enum в Presentation/Integration. Для соответствия доменной модели используйте явные мапперы между `Domain\Enum` и `Application\Enum`.
+* `ApplicationEnum` — Enum уровня Application, используемый в публичных контрактах (DTO/UseCase), чтобы не "подтягивать" доменные Enum в Presentation/Integration. Для соответствия доменной модели используйте явные Mapper между `Domain\Enum` и `Application\Enum`.
 * ❗ **Enum не содержит бизнес-логики**, зависимостей, магических методов и дополнительных констант.
 * Используются [`backed enum`](https://www.php.net/manual/en/language.enumerations.backed.php) (int|string) при
   необходимости хранить/отображать читаемое значение.

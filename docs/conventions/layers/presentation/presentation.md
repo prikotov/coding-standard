@@ -31,7 +31,7 @@ description: Детальное описание слоя представлен
 | Слой | Что можно использовать |
 |------|------------------------|
 | Application | Command, Query, DTO, Handler (через `__invoke`) |
-| `Common` | Исключения, хелперы, общие компоненты |
+| `Common` | Исключения, Helper, общие компоненты |
 | `Symfony` | `HttpFoundation`, `Form`, `Validator`, `Security`, `Console` |
 | `Twig` | Шаблоны, функции, фильтры |
 

@@ -20,7 +20,7 @@ description: Правила написания E2E-тестов с Symfony Panth
 
 - Web E2E: `apps/web/tests/E2E/`
 - API E2E: `apps/api/tests/E2E/`
-- Хелперы и трейты: `apps/*/tests/Support/`
+- Helper и трейты: `apps/*/tests/Support/`
 
 ## Оглавление
 
@@ -35,7 +35,7 @@ description: Правила написания E2E-тестов с Symfony Panth
 4. [Разработка тестов](#разработка-тестов)
     - [Структура файлов](#структура-файлов)
     - [Базовый класс и Клиент](#базовый-класс)
-    - [Хелперы (Auth)](#хелперы-и-трейты)
+    - [Helper (Auth)](#helper-и-трейты)
 5. [Работа с Panther (API)](#работа-с-panther-api)
     - [Ожидания (Waiting)](#ожидания-waiting)
     - [Выполнение `JavaScript`](#выполнение-javascript)
@@ -239,7 +239,7 @@ final class TurboNavigationTest extends PantherWebTestCase
 }
 ```
 
-### Хелперы и трейты
+### Helper и трейты
 
 Трейт `UserLoginTrait` упрощает авторизацию пользователя в E2E тестах:
 
@@ -407,7 +407,7 @@ public function testStimulusControllerInteraction(): void
 - [ ] E2E-тест расположен в `apps/*/tests/E2E/`.
 - [ ] Тест использует Panther для Web-сценариев или `ApiTestCase` для API.
 - [ ] Тест независим от других тестов и воспроизводим.
-- [ ] Используются хелперы из `tests/Support/`, а не дублируется код.
+- [ ] Используются Helper из `tests/Support/`, а не дублируется код.
 - [ ] Ожидания (waiting) используются вместо `sleep()`.
 - [ ] Тест покрывает реальный пользовательский сценарий.
 

@@ -4,11 +4,11 @@ type: rule
 description: Правила создания мапперов критериев для Doctrine QueryBuilder
 ---
 
-# Маппер критериев (CriteriaMapper)
+# Mapper критериев (CriteriaMapper)
 
-**Маппер критериев (CriteriaMapper)** — инфраструктурный класс, изолирующий логику фильтрации от [Репозитория](repository.md). Преобразует доменный [критерий (Criteria)](../domain/criteria.md) в Doctrine `QueryBuilder`.
+**Mapper критериев (CriteriaMapper)** — инфраструктурный класс, изолирующий логику фильтрации от [Репозитория](repository.md). Преобразует доменный [критерий (Criteria)](../domain/criteria.md) в Doctrine `QueryBuilder`.
 
-> См. также: [Критерий (Criteria)](../domain/criteria.md), [Репозиторий (Repository)](repository.md), [Маппер (Mapper)](../../core-patterns/mapper.md)
+> См. также: [Критерий (Criteria)](../domain/criteria.md), [Репозиторий (Repository)](repository.md), [Mapper](../../core-patterns/mapper.md)
 
 ## Структура
 
@@ -16,7 +16,7 @@ description: Правила создания мапперов критериев
 
 ### 1. `CriteriaMapper` (диспетчер)
 
-Реализует маппинг `Criteria → QueryBuilder` через делегирование конкретному мапперу. Резолвит стратегию маппинга по фактическому типу критерия (`$criteria::class`).
+Реализует маппинг `Criteria → QueryBuilder` через делегирование конкретному Mapper. Резолвит стратегию маппинга по фактическому типу критерия (`$criteria::class`).
 
 **Расположение:** `Infrastructure/Repository/{Entity}/Criteria/CriteriaMapper.php`
 
@@ -49,7 +49,7 @@ description: Правила создания мапперов критериев
 **Разрешено**:
 - `LimitOffsetSortCriteriaMapper` через DI
 - Доменные сущности, [критерии (Criteria)](../domain/criteria.md), VO, Enum
-- Другие мапперы Infrastructure слоя
+- Другие Mapper Infrastructure слоя
 
 **Запрещено**:
 - Сервисы Application/Presentation слоёв
@@ -63,7 +63,7 @@ description: Правила создания мапперов критериев
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{CriteriaName}CriteriaMapper.php
 ```
 
-> Диспетчер лежит в `Criteria/`, конкретные мапперы — в `Criteria/Mapper/`.
+> Диспетчер лежит в `Criteria/`, конкретные Mapper — в `Criteria/Mapper/`.
 
 ## Именование
 
@@ -73,7 +73,7 @@ description: Правила создания мапперов критериев
 - Файл: `CriteriaMapper.php` (в папке `Criteria/`, без подпапки `Mapper/`)
 - Отличие от конкретных: расположение в `/Criteria/`, а не `/Criteria/Mapper/`
 
-### Конкретный маппер
+### Конкретный Mapper
 
 - Имя класса: `{CriteriaName}CriteriaMapper`
 - `{CriteriaName}` — имя доменного критерия без суффикса `Criteria`
@@ -82,9 +82,9 @@ description: Правила создания мапперов критериев
   - `PaymentGatewayStatusCriteria` → `PaymentGatewayStatusCriteriaMapper`
   - `UserActiveCriteria` → `UserActiveCriteriaMapper`
 
-### Соответствие критерий ↔ маппер
+### Соответствие критерий ↔ Mapper
 
-| Доменный критерий | Маппер |
+| Доменный критерий | Mapper |
 |-------------------|--------|
 | `{Entity}FindCriteria` | `{Entity}FindCriteriaMapper` |
 | `{Entity}ActiveCriteria` | `{Entity}ActiveCriteriaMapper` |
@@ -291,9 +291,9 @@ final readonly class PaymentFindCriteriaMapper
 
 ## Чек-лист для ревью кода
 
-- [ ] Диспетчер `CriteriaMapper` регистрирует все конкретные мапперы
+- [ ] Диспетчер `CriteriaMapper` регистрирует все конкретные Mapper
 - [ ] Неизвестный критерий выбрасывает `ConfigurationException`
-- [ ] Имя маппера соответствует критерию: `{CriteriaName}Criteria` → `{CriteriaName}CriteriaMapper`
+- [ ] Имя Mapper соответствует критерию: `{CriteriaName}Criteria` → `{CriteriaName}CriteriaMapper`
 - [ ] Класс помечен как `final readonly`
 - [ ] Метод `map()` не превышает 40 строк (для сложных — применена декомпозиция на `apply*()`)
 - [ ] Все параметры `QueryBuilder` типизированы (`ParameterType::*`, `UuidType::NAME`, `ArrayParameterType::*`)

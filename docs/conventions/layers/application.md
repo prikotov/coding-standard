@@ -114,9 +114,9 @@ Use Case (сценарий использования) — реализует к
 
 Подробнее: [DTO](../core-patterns/dto.md)
 
-### Мапперы
+### Mapper
 
-**Маппер** — класс, выполняющий преобразование данных между слоями. В Application слое мапперы используются для:
+**Mapper** — класс, выполняющий преобразование данных между слоями. В Application слое Mapper используются для:
 
 - Преобразования доменных моделей в DTO (для ответов)
 - Преобразования DTO в доменные VO или примитивы (для запросов)
@@ -440,7 +440,7 @@ final readonly class FindQueryHandler
 }
 ```
 
-### Пример DTO с маппером
+### Пример DTO с Mapper
 
 **DTO:**
 
@@ -471,7 +471,7 @@ final readonly class ProjectDto
 }
 ```
 
-**Маппер:**
+**Mapper:**
 
 ```php
 <?php
@@ -551,6 +551,6 @@ src/Module/{ModuleName}/Application/
 - [ ] Взаимодействие с Domain слоем только через публичные интерфейсы
 - [ ] Нет прямых зависимостей на Infrastructure; используются только интерфейсы.
 - [ ] Исключения внешних зависимостей оборачиваются в `{ProjectName}\Common\Exception\{ExceptionName}`
-- [ ] Мапперы расположены в `Application\Mapper\*`
-- [ ] Enum-ы Application слоя не смешиваются с Domain Enum-ами (есть мапперы)
+- [ ] Mapper расположены в `Application\Mapper\*`
+- [ ] Enum-ы Application слоя не смешиваются с Domain Enum-ами (есть Mapper)
 - [ ] Транзакция управляется в Command Handler через `persist/flush`
