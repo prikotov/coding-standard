@@ -9,7 +9,7 @@ description: Правила создания грант-сервисов для 
 ## Определение
 
 **Grant** — фасад презентационного слоя для удобного вызова
- [`AuthorizationChecker`](https://symfony.com/doc/current/security.html#checking-user-roles) из контроллеров,
+ [Symfony AuthorizationChecker](https://symfony.com/doc/current/security.html#checking-user-roles) из контроллеров,
 шаблонов и компонентов пользовательского интерфейса (UI).
 
 ## Общие правила
