@@ -4,9 +4,9 @@ type: rule
 description: Правила создания мапперов критериев для Doctrine QueryBuilder
 ---
 
-# Mapper критериев (CriteriaMapper)
+# CriteriaMapper
 
-**Mapper критериев (CriteriaMapper)** — инфраструктурный класс, изолирующий логику фильтрации от [Репозитория](repository.md). Преобразует доменный [критерий (Criteria)](../domain/criteria.md) в Doctrine `QueryBuilder`.
+**CriteriaMapper** — инфраструктурный класс, изолирующий логику фильтрации от [Репозитория](repository.md). Преобразует доменный [критерий (Criteria)](../domain/criteria.md) в Doctrine `QueryBuilder`.
 
 > См. также: [Критерий (Criteria)](../domain/criteria.md), [Репозиторий (Repository)](repository.md), [Mapper](../../core-patterns/mapper.md)
 
