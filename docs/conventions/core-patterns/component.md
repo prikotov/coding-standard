@@ -91,7 +91,7 @@ when@dev:
 ## Расположение
 
 - **Infrastructure**  
-  `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}` — Компоненты внешних API/SDK и локальных технических ресурсов (ФС, кэш, процесс)
+  `{ProjectName}\Common\Module\{ModuleName}\Infrastructure\Component\{ComponentName}` — Компоненты внешних API/SDK и локальных технических ресурсов (файловая система, кэш, процесс)
 
 - **Integration**  
   `Integration\Component` не используем. Для внешнего API/SDK/ресурса создавайте `Infrastructure\Component`, для
