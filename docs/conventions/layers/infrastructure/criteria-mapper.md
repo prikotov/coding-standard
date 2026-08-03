@@ -299,4 +299,4 @@ final readonly class PaymentFindCriteriaMapper
 - [ ] Все параметры `QueryBuilder` типизированы (`ParameterType::*`, `UuidType::NAME`, `ArrayParameterType::*`)
 - [ ] Для пагинации и сортировки используется `LimitOffsetSortCriteriaMapper`
 - [ ] Нет дублирующихся `JOIN` между `apply*()` методами
-- [ ] Модульные тесты покрывают нетривиальную логику фильтрации
+- [ ] Unit-тесты покрывают нетривиальную логику фильтрации

@@ -278,7 +278,7 @@ devops/
 - **Создание нового приложения**: создайте директорию `apps/<app_name>/` с ядром (Kernel), наследуемым от `ProjectName\Common\Kernel`.
 - **Добавление модуля в приложение**: зарегистрируйте модуль в `apps/<app_name>/config/modules.php`.
 - **Создание миграции**: создайте файл `VersionYYYYMMDDHHMMSS.php` в `migrations/`.
-- **Написание тестов**: размещайте модульные тесты в `tests/Unit/`, интеграционные тесты в `tests/Integration/`.
+- **Написание тестов**: размещайте unit-тесты в `tests/Unit/`, integration-тесты в `tests/Integration/`.
 
 ## Пример
 
@@ -373,7 +373,7 @@ return [
 - [ ] PSR-4 маппинг в `composer.json` корректно связывает namespace с директориями.
 - [ ] Namespace классов следует паттерну `{ProjectName}\{AppGroup}\Module\{ModuleName}\...`.
 - [ ] Конфигурация разделена на общую (`config/`) и приложения (`apps/<app_name>/config/`).
-- [ ] Модульные тесты находятся в `tests/Unit/`.
+- [ ] Unit-тесты находятся в `tests/Unit/`.
 - [ ] Integration-тесты находятся в `tests/Integration/`.
 - [ ] Миграции находятся в `migrations/` и следуют формату `VersionYYYYMMDDHHMMSS.php`.
 - [ ] Документация соответствует правилам из `docs/conventions/doc-writing-rules.md`.
