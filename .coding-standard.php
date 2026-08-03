@@ -33,6 +33,8 @@ return [
             'Specification', 'Subscriber', 'Listener', 'Controller', 'Validator',
             'Voter', 'Rule', 'Value', 'Object', 'Enum', 'Migration', 'Fixture',
             'Command', 'Query', 'UseCase', 'Transport', 'Mapper', 'Helper', 'CriteriaMapper',
+            // Тестирование и runtime-термины.
+            'in-memory',
             // Терминология Markdown и инструментов.
             'Markdown', 'CodeSniffer', 'matter', 'front', 'fenced', 'inline',
             'code', 'block', 'blocks', 'link', 'links', 'reference', 'slug',
