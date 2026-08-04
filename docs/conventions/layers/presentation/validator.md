@@ -24,7 +24,7 @@ description: Правила создания валидаторов презен
 ### Разрешено
 
 - `Symfony\Component\Validator\Constraint`, `ConstraintValidator`, `ExecutionContextInterface`.
-- Валидируемые DTO/`FormModel` презентации из того же приложения/модуля.
+- Валидируемые Presentation DTO/`FormModel` из того же приложения/модуля.
 - Чистые PHP-Helper и детерминированный разбор, не выходящие во внешнюю среду.
 
 ### Запрещено
@@ -99,7 +99,7 @@ final class PasswordsMatchConstraintValidator extends ConstraintValidator
 }
 ```
 
-Такая пара выносит переиспользуемую межполевую валидацию из DTO/`FormModel` во внешний валидатор презентации.
+Такая пара выносит переиспользуемую межполевую валидацию из DTO/`FormModel` во внешний Presentation Validator.
 
 ## Чек-лист код-ревью
 
