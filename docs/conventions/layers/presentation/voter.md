@@ -9,20 +9,20 @@ description: Правила создания голосующих объекто
 ## Определение
 
 **Голосующий объект (Voter)** — класс, реализующий интерфейс авторизации Symfony и принимающий решение о
-доступе на основании Permission Enum и `Rule`. Подробности — в официальной документации
+доступе на основании Permission Enum и Rule. Подробности — в официальной документации
 [Security Voters](https://symfony.com/doc/current/security/voters.html).
 
 ## Общие правила
 
 - Класс наследуется от `Symfony\Component\Security\Core\Authorization\Voter\Voter`.
 - Используем PHPDoc `@template-extends` с `attribute`/`subject` для статики.
-- Внедряем `Rule` через конструктор, никакой логики напрямую в `Voter`.
+- Внедряем Rule через конструктор, никакой логики напрямую в Voter.
 - Метод `supports()` проверяет и `attribute`, и валидность `subject`.
-- Метод `voteOnAttribute()` преобразует `attribute` в enum действия и делегирует `Rule`.
+- Метод `voteOnAttribute()` преобразует `attribute` в enum действия и делегирует Rule.
 
 ## Зависимости
 
-- Разрешено: `Rule`, Permission Enum, `TokenInterface`, DTO/Value Object Presentation.
+- Разрешено: Rule, Permission Enum, `TokenInterface`, DTO/Value Object Presentation.
 - Запрещено: прямой доступ к контейнеру, сервисам Domain/Infrastructure.
 
 ## Расположение
@@ -33,10 +33,10 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Voter.php
 
 ## Как используем
 
-1. Регистрируем `Voter` как сервис (автоконфигурация делает это автоматически).
+1. Регистрируем Voter как сервис (автоконфигурация делает это автоматически).
 2. Контроллеры вызывают `$this->isGranted(ActionEnum::case->value, $subject)`.
-3. `Voter` преобразует строковый `attribute` в `ActionEnum` и делегирует проверку `Rule`.
-4. `subject` должен быть простой структурой (`array`, `Uuid`, DTO), понятной `Voter`.
+3. Voter преобразует строковый `attribute` в Action Enum и делегирует проверку Rule.
+4. `subject` должен быть простой структурой (`array`, `Uuid`, DTO), понятной Voter.
 
 ## Пример
 
@@ -130,8 +130,8 @@ final class ProjectVoter extends Voter
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] `Voter` лежит в каталоге `Security` и объявлен `final`.
+- [ ] Voter лежит в каталоге `Security` и объявлен `final`.
 - [ ] Метод `supports()` валидирует и `attribute`, и `subject`.
-- [ ] В `voteOnAttribute()` нет сложной логики — все делегируется `Rule`.
-- [ ] Используем `ActionEnum`/`PermissionEnum` вместо строк.
+- [ ] В `voteOnAttribute()` нет сложной логики — все делегируется Rule.
+- [ ] Используем Action Enum/Permission Enum вместо строк.
 - [ ] `subject` описан и типизирован (через phpdoc) так, чтобы избежать ошибок времени выполнения.
