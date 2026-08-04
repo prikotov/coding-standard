@@ -10,9 +10,9 @@ description: Слой представления: приём/отдача дан
 
 ## Общие правила
 
-- Контроллеры, команды консоли и HTTP-эндпоинты обращаются только к UseCase/`Handler` из Application.
-- Публичные контракты Presentation формируют входные данные в Request DTO, `Command`/`Query` и принимают Response DTO.
-- В Presentation запрещено использовать типы из Domain напрямую (`Entity`, `VO`, `Repository`, `Specification`), а также классы из Infrastructure/Integration.
+- Контроллеры, команды консоли и HTTP-эндпоинты обращаются только к UseCase/Handler из Application.
+- Публичные контракты Presentation формируют входные данные в Request DTO, Command/Query и принимают Response DTO.
+- В Presentation запрещено использовать типы из Domain напрямую (Entity, VO, Repository, Specification), а также классы из Infrastructure/Integration.
 - Исключения маппятся в ответы/сообщения через обработчики уровня Presentation (listeners/subscribers/exception mappers).
 - Для transport DTO и пользовательских валидаторов используем профильные правила:
   [Request DTO](presentation/request-dto.md),
@@ -29,9 +29,9 @@ apps/{web|api|console}/src/...
 
 ## Как используем
 
-- Разбираем вход (query/body/route), валидируем в DTO/форме, создаём `Command`/`Query`.
-- Вызываем соответствующий `Handler` (через `__invoke`) и возвращаем представление/JSON.
-- Не обращаемся к репозиториям, ORM-моделям, доменным сущностям или `VO` напрямую.
+- Разбираем вход (query/body/route), валидируем в DTO/форме, создаём Command/Query.
+- Вызываем соответствующий Handler (через `__invoke`) и возвращаем представление/JSON.
+- Не обращаемся к репозиториям, ORM-моделям, доменным сущностям или VO напрямую.
 
 ## Чек-лист
 
@@ -50,7 +50,7 @@ apps/{web|api|console}/src/...
 - `Forms`: `FormType` и `FormModel` для валидации входа. [Формы](presentation/forms.md)
 - Request DTO / Query DTO / Response DTO: transport-контракты HTTP-привязки и ответа. [Request DTO](presentation/request-dto.md), [Query DTO](presentation/query-dto.md), [Response DTO](presentation/response-dto.md)
 - `Validator`: пользовательская пара `Constraint` / `ConstraintValidator` для проверки связанных полей и переиспользуемой валидации. [Validator](presentation/validator.md)
-- `Authorization`: `PermissionEnum`, `ActionEnum`, `Rule`, `Voter`, Grant. [Авторизация](presentation/authorization.md), [Permission Enum](presentation/permission-enum.md), [Правило](presentation/rule.md), [Voter](presentation/voter.md), [Grant](presentation/grant.md)
+- `Authorization`: Permission Enum, Action Enum, Rule, Voter, Grant. [Авторизация](presentation/authorization.md), [Permission Enum](presentation/permission-enum.md), [Правило](presentation/rule.md), [Voter](presentation/voter.md), [Grant](presentation/grant.md)
 
 ## Уведомления (Notification) в Presentation
 
