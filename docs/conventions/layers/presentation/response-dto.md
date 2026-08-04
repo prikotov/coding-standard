@@ -40,8 +40,6 @@ description: Правила создания Response DTO презентацио
 apps/<app>/src/Module/<ModuleName>/Controller/<Context>/Response/<Name>ResponseDto.php
 ```
 
-Для действительно сквозного (cross-cutting) контракта ответа допускается `apps/<app>/src/Component/<Context>/`.
-
 ## Пример
 
 ```php
