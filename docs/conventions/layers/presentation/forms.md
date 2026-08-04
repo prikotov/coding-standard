@@ -13,7 +13,7 @@ description: Правила создания форм презентационн
 
 ## Общие правила
 
-- Разделяем данные (FormModel), описание полей (`FormType`) и представление (Twig-шаблон).
+- Разделяем данные (FormModel), описание полей (FormType) и представление (Twig-шаблон).
 - Формы объявляем `final` и строго типизируем поля, используем PHPDoc `@template-extends AbstractType<…>`.
 - Для фильтров включаем метод `GET` и отключаем `CSRF`; для действий (`create`, `edit`) используем `POST`.
 - Переводы (`label`, `help`, `placeholder`) задаём через `translation_domain` либо ключи в YAML.
@@ -178,7 +178,7 @@ final class FilterFormType extends AbstractType
 
 ## Получение списков через QueryBus
 
-Для заполнения select-полей (проекты, пользователи, тарифы) `FormType` может внедрять `QueryBusComponentInterface`.
+Для заполнения select-полей (проекты, пользователи, тарифы) FormType может внедрять `QueryBusComponentInterface`.
 
 ### Когда использовать
 
@@ -242,9 +242,9 @@ final class CreateFormType extends AbstractType
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] FormModel и `FormType` лежат в каталоге `Form` и объявлены `final`.
+- [ ] FormModel и FormType лежат в каталоге `Form` и объявлены `final`.
 - [ ] Поля формы типизированы, отсутствуют прямые зависимости от Domain/Infrastructure.
 - [ ] Формы фильтров используют метод `GET` и сериализуют состояние в `query string`.
 - [ ] Контроллер получает типизированную модель и проверяет `isSubmitted()`/`isValid()`.
 - [ ] Twig-шаблон подключает тему и выключает `render_rest`, если поля рендерятся вручную.
-- [ ] `QueryBus` в `FormType` используется только для динамических списков, не для бизнес-логики.
+- [ ] `QueryBus` в FormType используется только для динамических списков, не для бизнес-логики.

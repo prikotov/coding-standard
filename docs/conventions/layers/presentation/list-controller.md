@@ -17,7 +17,7 @@ Phoenix-компонентах.
 
 - Контроллер списка обслуживает только `GET`-запросы и объявляется `final`.
 - Query-параметры преобразуем в DTO через `#[MapQueryString]` и валидируем компонентом `Validator`.
-- Фильтры строим на `FormType` из слоя Presentation; состояние фильтра сериализуем в `query string`.
+- Фильтры строим на FormType из слоя Presentation; состояние фильтра сериализуем в `query string`.
 - Сортировка и пагинация выполняются через `PaginationRequestToApplicationDtoMapper` и `SortRequestToApplicationDtoMapper`.
 - В шаблоне используем частичные представления `_search`, `_filter`, `_table` и Phoenix-компоненты.
 

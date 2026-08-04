@@ -47,7 +47,7 @@ apps/{web|api|console}/src/...
 - `Route`: генераторы URL и имён маршрутов. [Маршруты](presentation/route.md)
 - `TwigExtension`: презентационные функции/фильтры для Twig-шаблонов. [Twig Extension](presentation/twig-extension.md)
 - `TwigComponent`: переиспользуемые UI-компоненты Symfony UX. [Twig Component](presentation/twig-component.md)
-- `Forms`: `FormType` и FormModel для валидации входа. [Формы](presentation/forms.md)
+- `Forms`: FormType и FormModel для валидации входа. [Формы](presentation/forms.md)
 - Request DTO / Query DTO / Response DTO: transport-контракты HTTP-привязки и ответа. [Request DTO](presentation/request-dto.md), [Query DTO](presentation/query-dto.md), [Response DTO](presentation/response-dto.md)
 - `Validator`: пользовательская пара `Constraint` / `ConstraintValidator` для проверки связанных полей и переиспользуемой валидации. [Validator](presentation/validator.md)
 - `Authorization`: Permission Enum, Action Enum, Rule, Voter, Grant. [Авторизация](presentation/authorization.md), [Permission Enum](presentation/permission-enum.md), [Правило](presentation/rule.md), [Voter](presentation/voter.md), [Grant](presentation/grant.md)
