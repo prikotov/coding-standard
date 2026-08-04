@@ -187,6 +187,6 @@ services:
 - [ ] Модуль реализует `ModuleInterface` (и `DoctrineInterface`, если есть сущности).
 - [ ] Модуль зарегистрирован в `config/modules.php`.
 - [ ] Параметры именуются `module.<module_name>.<context>` для модулей `Common` или `<app_name>.module.<module_name>.<context>` для модулей приложения.
-- [ ] Entity, Enum, VO, DTO, Event, Exception и полезная нагрузка Command/Query исключены из автоконфигурации.
+- [ ] Entity, Enum, VO, DTO, Event, Exception и полезная нагрузка команд/запросов исключены из автоконфигурации.
 - [ ] Репозитории внедряются через доменные интерфейсы.
 - [ ] Обязательные переменные окружения документированы в `.env.dist`.
