@@ -12,7 +12,7 @@ description: Шаги по подключению модуля к общему �
 
 - Каждый модуль реализует `ModuleInterface` и регистрируется в `config/modules.php`.
 - Параметры модуля именуются `module.<module_name>.<context>`.
-- Несервисные типы (`Entity`, `Enum`, `VO`, `DTO`, `Event`) исключаются из автоконфигурации.
+- Несервисные типы (Entity, Enum, VO, DTO, Event) исключаются из автоконфигурации.
 - Репозитории внедряются через интерфейсы из Domain.
 - Секреты — через `%env()%`, не хардкод.
 
@@ -66,7 +66,7 @@ final class BillingModule implements ModuleInterface, DoctrineInterface
 Каждый модуль должен иметь `Resource/config/services.yaml`. В нём объявляются параметры и сервисы модуля. Подробности: [Контейнер сервисов Symfony](https://symfony.com/doc/current/service_container.html).
 
 - Используйте параметры вида `module.<module_name>.<context>`, чтобы избежать конфликтов имён. Подробности: [Параметры сервисов](https://symfony.com/doc/current/service_container.html#service-parameters).
-- Для импорта каталога с сервисами применяйте `resource: '%module.<module_name>.module_dir%/'` с исключениями (`exclude`) для всех несервисных структурных типов. Обязательный минимум: `Resource`, `Domain/Entity`, файлы `*Dto.php`, `*Event.php`, `*Exception.php`, `*Enum.php`, `*Vo.php`, `*Command.php`, `*Query.php`, `<ModuleName>Module.php`. Используйте исключения по суффиксу (suffix-based), чтобы покрыть не только общие каталоги (`Application/Dto`, `Domain/ValueObject`), но и контекстные расположения рядом с use case, domain service, component или адаптером (adapter). Если в модуле есть отдельные каталоги с другими типами полезной нагрузки (payload)/value, исключайте и их тоже, чтобы контейнер не регистрировал их как сервисы. Подробности: [Импорт файлов конфигурации](https://symfony.com/doc/current/service_container/imports.html).
+- Для импорта каталога с сервисами применяйте `resource: '%module.<module_name>.module_dir%/'` с исключениями (`exclude`) для всех несервисных структурных типов. Обязательный минимум: `Resource`, `Domain/Entity`, файлы `*Dto.php`, `*Event.php`, `*Exception.php`, `*Enum.php`, `*Vo.php`, `*Command.php`, `*Query.php`, `<ModuleName>Module.php`. Используйте исключения по суффиксу, чтобы покрыть не только общие каталоги (`Application/Dto`, `Domain/ValueObject`), но и контекстные расположения рядом с use case, domain service, component или адаптером. Если в модуле есть отдельные каталоги с другими типами полезной нагрузки или value object, исключайте и их тоже, чтобы контейнер не регистрировал их как сервисы. Подробности: [Импорт файлов конфигурации](https://symfony.com/doc/current/service_container/imports.html).
 - Значения из переменных окружения подключайте через `%env()%`. Старайтесь документировать обязательные переменные в `.env.dist` или `AGENTS.md` соответствующего модуля. Подробности: [Переменные окружения](https://symfony.com/doc/current/configuration.html#environment-variables).
 
 Пример конфигурации сервисов модуля `Common` (`src/Module/Billing/Resource/config/services.yaml`):
@@ -95,7 +95,7 @@ services:
       - '%module.billing.module_dir%/BillingModule.php'
 ```
 
-Такой конфиг подключает все классы модуля и одновременно исключает из автоконфигурации несервисные типы: сущности, enum, value object, DTO, события (event payload), исключения (exception), полезную нагрузку команд/запросов (command/query payload) и служебные файлы модуля. Благодаря этому контейнер содержит только реальные сервисы, а Doctrine продолжает сама управлять жизненным циклом сущностей. Если проект использует устаревший каталог (legacy) `Resources`, добавьте его в `exclude` рядом с `Resource`. Классы, которые настраиваются вручную как декораторы, `factory-service` или псевдонимы (aliases), исключайте точечно. Подробности: [Автовнедрение зависимостей](https://symfony.com/doc/current/service_container/autowiring.html).
+Такой конфиг подключает все классы модуля и одновременно исключает из автоконфигурации несервисные типы: сущности, enum, value object, DTO, события, исключения, полезную нагрузку команд/запросов и служебные файлы модуля. Благодаря этому контейнер содержит только реальные сервисы, а Doctrine продолжает сама управлять жизненным циклом сущностей. Если проект использует устаревший каталог `Resources`, добавьте его в `exclude` рядом с `Resource`. Классы, которые настраиваются вручную как декораторы, `factory-service` или псевдонимы, исключайте точечно. Подробности: [Автовнедрение зависимостей](https://symfony.com/doc/current/service_container/autowiring.html).
 
 ## Конфигурация работы с Doctrine-сущностями
 
@@ -105,7 +105,7 @@ services:
 
 1. **Реализуйте `DoctrineInterface`.** В `<ModuleName>Module` опишите методы:
     - `getEntityNamespace()` — корневое пространство имён сущностей (обычно `__NAMESPACE__ . '\Domain\Entity'`).
-    - `getMappingPath()` — путь к каталогу, где лежат классы-сущности. Трейт (Trait) `ModuleKernelTrait` автоматически зарегистрирует этот каталог в `DoctrineOrmMappingsPass`, если директория существует.
+    - `getMappingPath()` — путь к каталогу, где лежат классы-сущности. Трейт `ModuleKernelTrait` автоматически зарегистрирует этот каталог в `DoctrineOrmMappingsPass`, если директория существует.
 
     ```php
     #[Override]
@@ -125,7 +125,7 @@ services:
 
 3. **Настройте сервисы Doctrine.**
     - Не регистрируйте сущности как сервисы в `services.yaml`. Исключения в разделе `exclude` защищают от автоконфигурации, чтобы Doctrine создавала сущности сама.
-    - Не регистрируйте как сервисы и другие несервисные структурные типы модуля: `Enum`, `ValueObject`, `DTO`, `Event`, `Exception`, `Command`, `Query` и аналогичные классы полезной нагрузки (payload)/value. Если такие каталоги выделены отдельно, добавляйте их в `exclude`.
+    - Не регистрируйте как сервисы и другие несервисные структурные типы модуля: Enum, VO, DTO, Event, Exception, Command, Query и аналогичные классы полезной нагрузки или value object. Если такие каталоги выделены отдельно, добавляйте их в `exclude`.
     - Репозитории внедряйте через интерфейсы (`Domain\Repository`) и реализации в `Infrastructure\Repository`. Сами реализации автоматически загружаются благодаря `resource` в `services.yaml`.
     - Если модулю нужен отдельный `EntityManager`, добавьте конфигурацию в `Resource/config/doctrine.yaml` (по умолчанию проект использует общий `manager`, поэтому файл необязателен).
 
@@ -155,7 +155,7 @@ Web-клиент (`apps/web`) использует тот же модульны�
 
 ### Пример конфигурации Presentation-модуля
 
-Для модулей слоя Presentation используйте префикс конкретного приложения (app-specific) параметров: `<app_name>.module.<module_name>.<context>`.
+Для модулей слоя Presentation используйте префикс конкретного приложения параметров: `<app_name>.module.<module_name>.<context>`.
 
 Пример `apps/web/src/Module/Source/Resource/config/services.yaml`:
 
@@ -180,13 +180,13 @@ services:
       - '%web.module.source.module_dir%/SourceModule.php'
 ```
 
-Если модулю нужны псевдонимы (aliases), именованные ограничители частоты (rate limiter) или подмены только для тестов (test-only), добавляйте их отдельными сервисными объявлениями после общего импорта.
+Если модулю нужны псевдонимы, именованные ограничители частоты или подмены только для тестов, добавляйте их отдельными сервисными объявлениями после общего импорта.
 
 ## Чек-лист для проведения ревью кода
 
 - [ ] Модуль реализует `ModuleInterface` (и `DoctrineInterface`, если есть сущности).
 - [ ] Модуль зарегистрирован в `config/modules.php`.
-- [ ] Параметры именуются `module.<module_name>.<context>` для модулей `Common` или `<app_name>.module.<module_name>.<context>` для модулей приложения (app).
-- [ ] `Entity`, `Enum`, `VO`, `DTO`, `Event`, `Exception` и полезная нагрузка `Command`/`Query` (payload) исключены из автоконфигурации.
+- [ ] Параметры именуются `module.<module_name>.<context>` для модулей `Common` или `<app_name>.module.<module_name>.<context>` для модулей приложения.
+- [ ] Entity, Enum, VO, DTO, Event, Exception и полезная нагрузка Command/Query исключены из автоконфигурации.
 - [ ] Репозитории внедряются через доменные интерфейсы.
 - [ ] Обязательные переменные окружения документированы в `.env.dist`.
