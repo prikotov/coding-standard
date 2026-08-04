@@ -35,18 +35,11 @@ description: Правила создания валидаторов презен
 
 ## Расположение
 
-- Локальный валидатор модуля (module-local):
+- Локальный валидатор модуля:
 
 ```
 apps/<app>/src/Module/<ModuleName>/Validation/Constraint/<Name>Constraint.php
 apps/<app>/src/Module/<ModuleName>/Validation/Constraint/<Name>ConstraintValidator.php
-```
-
-- Сквозной валидатор (cross-cutting):
-
-```
-apps/<app>/src/Component/Validation/Constraint/<Name>Constraint.php
-apps/<app>/src/Component/Validation/Constraint/<Name>ConstraintValidator.php
 ```
 
 ## Подключение сервисов (Service Wiring)
