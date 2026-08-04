@@ -18,7 +18,7 @@ description: Правила создания Request DTO презентацио�
   атрибуты `Symfony Validator`, атрибуты `OpenAPI`, метаданные сериализатора (serializer) и пользовательское `Constraint` presentation.
 - Конструктор не содержит нормализации, преобразований, `if`/`match`, исключений и побочных эффектов.
 - Внутри Request DTO не используем `#[Assert\Callback]`, `validate*()` и другие императивные хуки валидации (imperative validation hooks).
-- Межполевые (cross-field), переиспользуемые и отдельно именуемые правила выносим во внешнюю пару валидаторов (validator pair) (`*Constraint` / `*ConstraintValidator`).
+- Правила для связанных полей, переиспользуемые и отдельно именуемые, выносим во внешнюю пару валидаторов (validator pair) (`*Constraint` / `*ConstraintValidator`).
 - Бизнес-правила, авторизация и обращения к сервисам/репозиториям/HTTP/очередям в Request DTO запрещены.
 
 ## Зависимости

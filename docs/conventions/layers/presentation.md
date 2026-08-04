@@ -49,7 +49,7 @@ apps/{web|api|console}/src/...
 - `TwigComponent`: переиспользуемые UI-компоненты Symfony UX. [Twig Component](presentation/twig-component.md)
 - `Forms`: `FormType` и `FormModel` для валидации входа. [Формы](presentation/forms.md)
 - DTO запроса / Query DTO / DTO ответа: transport-контракты HTTP-привязки и ответа. [DTO запроса](presentation/request-dto.md), [Query DTO](presentation/query-dto.md), [DTO ответа](presentation/response-dto.md)
-- `Validator`: пользовательская пара `Constraint` / `ConstraintValidator` для межполевой и переиспользуемой валидации. [Validator](presentation/validator.md)
+- `Validator`: пользовательская пара `Constraint` / `ConstraintValidator` для проверки связанных полей и переиспользуемой валидации. [Validator](presentation/validator.md)
 - `Authorization`: `PermissionEnum`, `ActionEnum`, `Rule`, `Voter`, Grant. [Авторизация](presentation/authorization.md), [Permission Enum](presentation/permission-enum.md), [Правило](presentation/rule.md), [Voter](presentation/voter.md), [Grant](presentation/grant.md)
 
 ## Уведомления (Notification) в Presentation

@@ -18,7 +18,7 @@ description: Правила создания форм презентационн
 - Для фильтров включаем метод `GET` и отключаем `CSRF`; для действий (`create`, `edit`) используем `POST`.
 - Переводы (`label`, `help`, `placeholder`) задаём через `translation_domain` либо ключи в YAML.
 - В контроллере проверяем `isSubmitted()` до `isValid()`, работаем с типизированной моделью.
-- В `FormModel` допускаем декларативные метаданные полей (declarative field metadata), но межполевую (cross-field) и переиспользуемую валидацию (reusable validation) выносим в пользовательскую пару валидаторов (custom validator pair); `#[Assert\Callback]` и методы `validate*()` в `FormModel` не используем.
+- В `FormModel` допускаем декларативные метаданные полей (declarative field metadata), но проверку связанных полей и переиспользуемую валидацию (reusable validation) выносим в пользовательскую пару валидаторов (custom validator pair); `#[Assert\Callback]` и методы `validate*()` в `FormModel` не используем.
 - Для пользовательских валидаторов (custom validators) форм применяем правила из [`Validator`](validator.md).
 
 ## Зависимости

@@ -8,14 +8,14 @@ description: Правила создания валидаторов презен
 
 ## Определение
 
-**Presentation Validator** — пользовательская пара (pair) из класса метаданных `*Constraint` и исполняющего класса `*ConstraintValidator`, который инкапсулирует переиспользуемую или межполевую валидацию (cross-field validation) для Request DTO, Query DTO, `FormModel` и других транспортных моделей слоя Presentation.
+**Presentation Validator** — пользовательская пара (pair) из класса метаданных `*Constraint` и исполняющего класса `*ConstraintValidator`, который инкапсулирует переиспользуемую валидацию или проверку связанных полей для Request DTO, Query DTO, `FormModel` и других транспортных моделей слоя Presentation.
 
 ## Общие правила
 
 - Шаблон именования (naming pattern) обязателен: один смысловой корень (semantic stem) и суффиксы `Constraint` / `ConstraintValidator`.
 - `Constraint` хранит только сообщение (message), параметры (options), область применения (target: `PROPERTY_CONSTRAINT` / `CLASS_CONSTRAINT`) и другие метаданные.
 - `ConstraintValidator` содержит только логику валидации и работу с `ExecutionContext`.
-- Правила уровня свойства (property-level) используем для одного поля; уровня класса (class-level) — для межполевой валидации.
+- Правила уровня свойства (property-level) используем для одного поля; уровня класса (class-level) — для валидации связанных полей.
 - Если правило живёт более чем в одном DTO/`FormModel`, требует отдельного имени, контракта уровня класса или читаемого переиспользования, оно должно жить во внешней паре валидаторов (validator pair), а не в `Callback`/`validate*()`.
 - Слой валидации не должен выполнять I/O и не должен реализовывать бизнес-правила.
 
@@ -92,7 +92,7 @@ final class PasswordsMatchConstraintValidator extends ConstraintValidator
 }
 ```
 
-Такая пара выносит переиспользуемую межполевую валидацию из DTO/`FormModel` во внешний Presentation Validator.
+Такая пара выносит переиспользуемую валидацию связанных полей из DTO/`FormModel` во внешний Presentation Validator.
 
 ## Чек-лист код-ревью
 
