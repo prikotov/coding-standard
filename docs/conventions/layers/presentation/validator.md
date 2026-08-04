@@ -8,7 +8,7 @@ description: Правила создания валидаторов презен
 
 ## Определение
 
-**Presentation Validator** — пользовательская пара (pair) из класса метаданных `*Constraint` и исполняющего класса `*ConstraintValidator`, который инкапсулирует переиспользуемую или межполевую валидацию (cross-field validation) для `RequestDto`, `QueryDto`, `FormModel` и других транспортных моделей слоя Presentation.
+**Presentation Validator** — пользовательская пара (pair) из класса метаданных `*Constraint` и исполняющего класса `*ConstraintValidator`, который инкапсулирует переиспользуемую или межполевую валидацию (cross-field validation) для Request DTO, Query DTO, `FormModel` и других транспортных моделей слоя Presentation.
 
 ## Общие правила
 

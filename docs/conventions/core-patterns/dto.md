@@ -27,7 +27,7 @@ description: Правила создания и использования об�
   [Request DTO](../layers/presentation/request-dto.md),
   [Query DTO](../layers/presentation/query-dto.md),
   [Response DTO](../layers/presentation/response-dto.md).
-- Именование: суффикс `Dto`. Контекст — в имени/namespace (`RequestDto`, `ResponseDto`, `ResultDto`, `...Dto`).
+- Именование: суффикс `Dto`. Контекст — в имени/namespace (Request DTO, Response DTO, `ResultDto`, `...Dto`).
 - Если доменной операции нужен DTO, размещаем его рядом с классом или группой, которые его используют.
 
 ## Зависимости
