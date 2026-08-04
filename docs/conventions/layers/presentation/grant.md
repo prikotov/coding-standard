@@ -16,8 +16,8 @@ description: Правила создания грант-сервисов для 
 
 - Класс объявляется `final readonly` и хранит только зависимости через конструктор.
 - Методы именуются с префиксом `can*` и возвращают `bool` без побочных эффектов.
-- Каждый метод вызывает `AuthorizationCheckerInterface::isGranted()` с `ActionEnum` и `subject`.
-- Grant не решает доступ сам: итоговое решение остаётся в [`Voter`](voter.md) и [`Rule`](rule.md).
+- Каждый метод вызывает `AuthorizationCheckerInterface::isGranted()` с Action Enum и `subject`.
+- Grant не решает доступ сам: итоговое решение остаётся в [Voter](voter.md) и [Rule](rule.md).
 - UI-флаги допустимы только для отображения кнопок и ссылок, не для защиты точки входа (endpoint).
 - Внутри не используем `TokenInterface` напрямую.
 - Не выполняем запросы к базе, не обращаемся к Domain/Application, не модифицируем состояние.
@@ -34,14 +34,14 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Grant.php
 ```
 
 - Имя файла совпадает с контекстом (`Security/User/Grant.php`, `Security/Project/Grant.php`).
-- Хранится в каталоге `Security/<SubjectName>` рядом с Permission Enum, `ActionEnum`, `Rule` и `Voter`.
+- Хранится в каталоге `Security/<SubjectName>` рядом с Permission Enum, Action Enum, Rule и Voter.
 
 ## Как используем
 
 1. Создаём Grant для сущности и регистрируем его как сервис в модуле.
 2. Внедряем Grant в контроллеры, Twig-шаблоны и компоненты UI через DI.
 3. Вызываем методы `can*`, чтобы скрыть/показать действия (кнопки, ссылки, формы).
-4. Точку входа (endpoint) защищаем через `isGranted()`/`Voter`, а не через Grant.
+4. Точку входа (endpoint) защищаем через `isGranted()`/Voter, а не через Grant.
 
 ## Пример
 
@@ -93,5 +93,5 @@ final readonly class Grant
 - [ ] Внутри используются значения `*ActionEnum`, а не строки.
 - [ ] Grant только готовит `subject` и вызывает `AuthorizationCheckerInterface::isGranted()`.
 - [ ] Нет зависимостей на Domain/Application/Infrastructure-сервисы.
-- [ ] Нет логики доступа, дублирующей `Rule`.
+- [ ] Нет логики доступа, дублирующей Rule.
 - [ ] Шаблоны и контроллеры обращаются к Grant вместо прямых вызовов `is_granted()`.

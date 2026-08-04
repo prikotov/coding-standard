@@ -27,25 +27,25 @@ Controller / Template / UI
 
 | Компонент | Назначение | Документация |
 |-----------|------------|--------------|
-| `PermissionEnum` | Роли `ROLE_*` для модуля | [Permission Enum](permission-enum.md) |
-| `ActionEnum` | Атрибуты действий для `isGranted()` | [Action Enum](action-enum.md) |
-| `Rule` | Итоговая логика доступа | [правило доступа](rule.md) |
-| `Voter` | Symfony-адаптер, делегирующий в `Rule` | [голосующий объект](voter.md) |
+| Permission Enum | Роли `ROLE_*` для модуля | [Permission Enum](permission-enum.md) |
+| Action Enum | Атрибуты действий для `isGranted()` | [Action Enum](action-enum.md) |
+| Rule | Итоговая логика доступа | [правило доступа](rule.md) |
+| Voter | Symfony-адаптер, делегирующий в Rule | [голосующий объект](voter.md) |
 | Grant | Фасад пользовательского интерфейса (UI) над `AuthorizationChecker` | [Grant](grant.md) |
 
 ## Общие правила
 
-- Каждый модуль определяет собственный `PermissionEnum` с именами ролей `ROLE_*`.
-- `ActionEnum` описывает действия: `view`, `edit`, `delete`.
-- `Rule` содержит итоговую логику доступа.
-- `Voter` принимает решение о доступе средствами Symfony Security и делегирует в `Rule`.
+- Каждый модуль определяет собственный Permission Enum с именами ролей `ROLE_*`.
+- Action Enum описывает действия: `view`, `edit`, `delete`.
+- Rule содержит итоговую логику доступа.
+- Voter принимает решение о доступе средствами Symfony Security и делегирует в Rule.
 - Grant только вызывает `AuthorizationCheckerInterface::isGranted()` для UI.
-- Контроллеры и шаблоны не вызывают `Rule` напрямую.
-- Domain/Infrastructure не используем внутри `Rule`/`Voter`/Grant.
+- Контроллеры и шаблоны не вызывают Rule напрямую.
+- Domain/Infrastructure не используем внутри Rule/Voter/Grant.
 
 ## Матрица соответствия действий и прав
 
-`ActionEnum` и `PermissionEnum` — независимые enum'ы. Связь между ними реализует [`Rule`](rule.md):
+Action Enum и Permission Enum — независимые enum'ы. Связь между ними реализует [Rule](rule.md):
 
 ```
 ActionEnum          Rule                 PermissionEnum
@@ -55,13 +55,13 @@ edit         ───►  canEdit()    ───►    editOwn / editAll
 delete       ───►  canDelete()  ───►    deleteOwn / deleteAll
 ```
 
-`PermissionEnum` добавляется в `security.yaml` и назначается ролям пользователей.
+Permission Enum добавляется в `security.yaml` и назначается ролям пользователей.
 
 ## Зависимости
 
-- **`Rule`:** `TokenInterface`, `RoleHierarchyInterface`, DTO Presentation, публичный `QueryBus` для фактов доступа.
-- **`Voter`:** `Rule`, `TokenInterface`, `ActionEnum`, `subject` Presentation.
-- **Grant:** `AuthorizationCheckerInterface`, `ActionEnum`, `subject` Presentation.
+- **Rule:** `TokenInterface`, `RoleHierarchyInterface`, DTO Presentation, публичный `QueryBus` для фактов доступа.
+- **Voter:** Rule, `TokenInterface`, Action Enum, `subject` Presentation.
+- **Grant:** `AuthorizationCheckerInterface`, Action Enum, `subject` Presentation.
 - **Запрещено:** сервисы Domain, ORM-репозитории, `EntityManager`, глобальные синглтоны.
 
 ## Расположение
@@ -79,8 +79,8 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/
 
 1. Определяем [Permission Enum](permission-enum.md) и добавляем значения в `security.yaml`.
 2. Определяем [Action Enum](action-enum.md) с атрибутами действий (`view`, `edit`, `delete`...).
-3. Реализуем [`Rule`](rule.md) для проверки прав.
-4. Создаём [`Voter`](voter.md), который делегирует проверку в `Rule`.
+3. Реализуем [Rule](rule.md) для проверки прав.
+4. Создаём [Voter](voter.md), который делегирует проверку в Rule.
 5. При необходимости создаём [Grant](grant.md) для UI-проверок.
 6. Точку входа (endpoint) защищаем через `$this->isGranted(ActionEnum::view->value, $subject)`.
 
@@ -88,7 +88,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/
 
 - [ ] Перечисление прав лежит в каталоге `Security` и содержит только значения `ROLE_*`.
 - [ ] Перечисление действий содержит атрибуты действий (`view`, `edit`, `delete`...).
-- [ ] `Rule` содержит итоговую логику доступа.
-- [ ] `Voter` делегирует проверку в `Rule` и зарегистрирован как сервис.
+- [ ] Rule содержит итоговую логику доступа.
+- [ ] Voter делегирует проверку в Rule и зарегистрирован как сервис.
 - [ ] Значения Permission Enum добавлены в `security.yaml`.
-- [ ] Grant объявлен `final readonly`, не дублирует `Rule` и не содержит бизнес-логики.
+- [ ] Grant объявлен `final readonly`, не дублирует Rule и не содержит бизнес-логики.
