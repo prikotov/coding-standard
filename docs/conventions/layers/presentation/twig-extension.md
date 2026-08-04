@@ -27,7 +27,7 @@ description: Правила создания Twig-расширений
 
 ## Зависимости
 
-- Разрешено: `TranslatorInterface`, сервисы маршрутов (route) и Helper (helper) уровня Presentation, утилиты форматирования уровня Presentation.
+- Разрешено: `TranslatorInterface`, Route и Helper уровня Presentation, утилиты форматирования уровня Presentation.
 - Запрещено: зависимости из `Domain/*`, `Infrastructure/*`, `Integration/*`.
 
 ## Расположение
