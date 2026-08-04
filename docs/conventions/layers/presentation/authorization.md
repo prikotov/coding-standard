@@ -9,7 +9,7 @@ description: Правила проверки прав презентационн
 ## Определение
 
 **Проверка прав презентационного слоя (Presentation Authorization)** — способ ограничить доступ к публичным
-интерфейсам приложения через перечисление прав (Permission Enum), перечисление действий (Action Enum), `Rule`, `Voter` и Grant. Используем встроенную модель
+интерфейсам приложения через Permission Enum, Action Enum, Rule, Voter и Grant. Используем встроенную модель
 Symfony Security, см. [документацию по безопасности и авторизации](https://symfony.com/doc/current/security.html).
 
 ## Архитектура авторизации
