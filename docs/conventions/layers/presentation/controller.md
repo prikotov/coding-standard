@@ -121,14 +121,14 @@ final class CreateController extends AbstractController
 
 ### Паттерн загрузки
 
-1. `FormModel` содержит поле `?UploadedFile $uploadFile`.
+1. FormModel содержит поле `?UploadedFile $uploadFile`.
 2. `FormType` использует `FileType` с валидацией MIME-типа и размера.
 3. Контроллер сохраняет файл в `var/uploads/` с уникальным именем.
 4. Путь к файлу передаётся в Command для дальнейшей обработки.
 
 ### Пример
 
-**`FormModel`:**
+**FormModel:**
 
 ```php
 final class CreateFormModel

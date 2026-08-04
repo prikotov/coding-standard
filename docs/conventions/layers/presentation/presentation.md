@@ -20,7 +20,7 @@ description: Детальное описание слоя представлен
 - **Запрещено** использовать типы из Domain напрямую (`Entity`, VO, `Repository`, `Specification`).
 - **Запрещено** обращаться к классам из Infrastructure/Integration слоёв.
 - Исключения маппятся в ответы/сообщения через обработчики уровня Presentation (listeners/subscribers/exception mappers).
-- Валидация ввода остаётся декларативной (declarative) в DTO/`FormModel` или делегируется во внешнюю пару валидаторов (validator pair); `Callback` и `validate*()` внутри транспортной модели (transport model) не используем.
+- Валидация ввода остаётся декларативной (declarative) в DTO/FormModel или делегируется во внешнюю пару валидаторов (validator pair); `Callback` и `validate*()` внутри транспортной модели (transport model) не используем.
 - Web-контроллеры возвращают HTML (Twig), API-контроллеры — JSON.
 - Console-команды используют `SymfonyStyle` для вывода и корректные коды завершения.
 

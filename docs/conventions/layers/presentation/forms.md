@@ -13,12 +13,12 @@ description: Правила создания форм презентационн
 
 ## Общие правила
 
-- Разделяем данные (`FormModel`), описание полей (`FormType`) и представление (Twig-шаблон).
+- Разделяем данные (FormModel), описание полей (`FormType`) и представление (Twig-шаблон).
 - Формы объявляем `final` и строго типизируем поля, используем PHPDoc `@template-extends AbstractType<…>`.
 - Для фильтров включаем метод `GET` и отключаем `CSRF`; для действий (`create`, `edit`) используем `POST`.
 - Переводы (`label`, `help`, `placeholder`) задаём через `translation_domain` либо ключи в YAML.
 - В контроллере проверяем `isSubmitted()` до `isValid()`, работаем с типизированной моделью.
-- В `FormModel` допускаем декларативные метаданные полей (declarative field metadata), но проверку связанных полей и переиспользуемую валидацию (reusable validation) выносим в пользовательскую пару валидаторов (custom validator pair); `#[Assert\Callback]` и методы `validate*()` в `FormModel` не используем.
+- В FormModel допускаем декларативные метаданные полей (declarative field metadata), но проверку связанных полей и переиспользуемую валидацию (reusable validation) выносим в пользовательскую пару валидаторов (custom validator pair); `#[Assert\Callback]` и методы `validate*()` в FormModel не используем.
 - Для пользовательских валидаторов (custom validators) форм применяем правила из [`Validator`](validator.md).
 
 ## Зависимости
@@ -36,7 +36,7 @@ apps/<app>/src/Module/<ModuleName>/Resource/templates/<context>/_*.html.twig
 
 ## Как используем
 
-1. Создаём `FormModel` с начальными данными (для фильтров — пустой объект).
+1. Создаём FormModel с начальными данными (для фильтров — пустой объект).
 2. Контроллер вызывает `createForm(FormType::class, $model)` и обрабатывает запрос.
 3. После успешной валидации берём данные из модели и передаём в UseCase Application-слоя.
 4. Шаблон отображает форму через `form_start`/`form_widget`, опционально подключая Phoenix-компоненты.
@@ -242,7 +242,7 @@ final class CreateFormType extends AbstractType
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] `FormModel` и `FormType` лежат в каталоге `Form` и объявлены `final`.
+- [ ] FormModel и `FormType` лежат в каталоге `Form` и объявлены `final`.
 - [ ] Поля формы типизированы, отсутствуют прямые зависимости от Domain/Infrastructure.
 - [ ] Формы фильтров используют метод `GET` и сериализуют состояние в `query string`.
 - [ ] Контроллер получает типизированную модель и проверяет `isSubmitted()`/`isValid()`.
