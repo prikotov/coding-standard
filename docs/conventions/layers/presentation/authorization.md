@@ -27,8 +27,8 @@ Controller / Template / UI
 
 | Компонент | Назначение | Документация |
 |-----------|------------|--------------|
-| `PermissionEnum` | Роли `ROLE_*` для модуля | [перечисление прав](permission-enum.md) |
-| `ActionEnum` | Атрибуты действий для `isGranted()` | [перечисление действий](action-enum.md) |
+| `PermissionEnum` | Роли `ROLE_*` для модуля | [Permission Enum](permission-enum.md) |
+| `ActionEnum` | Атрибуты действий для `isGranted()` | [Action Enum](action-enum.md) |
 | `Rule` | Итоговая логика доступа | [правило доступа](rule.md) |
 | `Voter` | Symfony-адаптер, делегирующий в `Rule` | [голосующий объект](voter.md) |
 | Grant | Фасад пользовательского интерфейса (UI) над `AuthorizationChecker` | [Grant](grant.md) |
@@ -77,8 +77,8 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/
 
 ## Как используем
 
-1. Определяем [перечисление прав](permission-enum.md) и добавляем значения в `security.yaml`.
-2. Определяем [перечисление действий](action-enum.md) с атрибутами действий (`view`, `edit`, `delete`...).
+1. Определяем [Permission Enum](permission-enum.md) и добавляем значения в `security.yaml`.
+2. Определяем [Action Enum](action-enum.md) с атрибутами действий (`view`, `edit`, `delete`...).
 3. Реализуем [`Rule`](rule.md) для проверки прав.
 4. Создаём [`Voter`](voter.md), который делегирует проверку в `Rule`.
 5. При необходимости создаём [Grant](grant.md) для UI-проверок.
@@ -90,5 +90,5 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/
 - [ ] Перечисление действий содержит атрибуты действий (`view`, `edit`, `delete`...).
 - [ ] `Rule` содержит итоговую логику доступа.
 - [ ] `Voter` делегирует проверку в `Rule` и зарегистрирован как сервис.
-- [ ] Значения перечисления прав добавлены в `security.yaml`.
+- [ ] Значения Permission Enum добавлены в `security.yaml`.
 - [ ] Grant объявлен `final readonly`, не дублирует `Rule` и не содержит бизнес-логики.

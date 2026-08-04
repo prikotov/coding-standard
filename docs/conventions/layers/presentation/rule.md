@@ -17,7 +17,7 @@ description: Правила создания правил доступа
 - Класс объявляем `final readonly`.
 - Внедряем только сервисы, необходимые для проверки доступа.
 - Методы именуем `can<Action>` (`canCreate`, `canViewOwn`) и принимают `TokenInterface` + предмет проверки.
-- Внутри `Rule` используем перечисление прав и проверки владения/участия.
+- Внутри `Rule` используем Permission Enum и проверки владения/участия.
 - `Rule` вызывается из `Voter`, не из контроллеров, шаблонов или Grant.
 - `Rule` возвращает `bool` и не бросает исключения при отказе.
 
@@ -36,7 +36,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Rule.php
 
 1. Внедряем `Rule` в [`Voter`](voter.md).
 2. `Voter` передаёт в `Rule` `TokenInterface`, `ActionEnum` и `subject`.
-3. `Rule` проверяет перечисление прав и дополнительные условия доступа.
+3. `Rule` проверяет Permission Enum и дополнительные условия доступа.
 4. `Rule` может обращаться к Application через `QueryBus` для фактов доступа.
 5. Grant и шаблоны обращаются к `AuthorizationCheckerInterface`, а не к `Rule`.
 
@@ -218,7 +218,7 @@ final readonly class ProjectRule
 
 - [ ] `Rule` объявлен `final readonly` и находится в каталоге `Security`.
 - [ ] Все публичные методы начинаются с `can*` и возвращают `bool`.
-- [ ] Используется перечисление прав, а не строки.
+- [ ] Используется Permission Enum, а не строки.
 - [ ] Дополнительные проверки выполняются через Application (`QueryBus`) или Presentation сервисы.
 - [ ] `Rule` вызывается из `Voter`, не из контроллеров, шаблонов или Grant.
 - [ ] `Rule` не использует классы Domain/Infrastructure и не бросает исключения при отказе.

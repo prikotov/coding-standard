@@ -34,7 +34,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Grant.php
 ```
 
 - Имя файла совпадает с контекстом (`Security/User/Grant.php`, `Security/Project/Grant.php`).
-- Хранится в каталоге `Security/<SubjectName>` рядом с перечислением прав, `ActionEnum`, `Rule` и `Voter`.
+- Хранится в каталоге `Security/<SubjectName>` рядом с Permission Enum, `ActionEnum`, `Rule` и `Voter`.
 
 ## Как используем
 

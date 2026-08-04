@@ -14,11 +14,11 @@ Presentation и используется в Symfony Security. Основано �
 
 ## Общие правила
 
-- Каждое перечисление прав хранит только строковые значения с префиксом `ROLE_` или `module.action`.
+- Каждое Permission Enum хранит только строковые значения с префиксом `ROLE_` или `module.action`.
 - Имена кейсов пишем в `lowerCamelCase`, отражая действие (`createOwn`, `viewAll`).
 - Enum объявляем `final` по умолчанию (в PHP 8.3 enum уже нельзя расширять).
 - Enum лежит в каталоге `Security` рядом с Rule и Voter конкретного модуля.
-- Значения перечисления прав регистрируем в `apps/web/config/packages/security.yaml` через `!php/enum`.
+- Значения Permission Enum регистрируем в `apps/web/config/packages/security.yaml` через `!php/enum`.
 
 ## Зависимости
 
@@ -67,4 +67,4 @@ enum ProjectPermissionEnum: string
 - [ ] Значения соответствуют принятой схеме (`module.context.actionScope`).
 - [ ] Enum не содержит логики, только список разрешений.
 - [ ] Все значения задекларированы в `security.yaml` через `role_hierarchy`.
-- [ ] Контроллеры/Rule/Voter используют перечисление прав вместо «магических» строк.
+- [ ] Контроллеры/Rule/Voter используют Permission Enum вместо «магических» строк.
