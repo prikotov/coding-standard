@@ -32,7 +32,7 @@ description: Правила создания Request DTO презентацио�
 
 ### Запрещено
 
-- Сервисы, репозитории, `QueryBus`/`CommandBus`, HTTP-клиенты, файловая система, интеграции с очередями.
+- Сервисы, репозитории, QueryBus/CommandBus, HTTP-клиенты, файловая система, интеграции с очередями.
 - `Entity`, `Value Object` и другие типы Domain.
 - Реализации Infrastructure/Integration.
 

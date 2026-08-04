@@ -25,7 +25,7 @@ description: Правила создания грант-сервисов для 
 ## Зависимости
 
 - Разрешено: `AuthorizationCheckerInterface`, `*ActionEnum`, простые типы (`Uuid`), DTO Presentation, UI-флаги.
-- Запрещено: репозитории, `QueryBus`/`CommandBus`, сервисы Domain/Application/Infrastructure, обращения к глобальному состоянию.
+- Запрещено: репозитории, QueryBus/CommandBus, сервисы Domain/Application/Infrastructure, обращения к глобальному состоянию.
 
 ## Расположение
 

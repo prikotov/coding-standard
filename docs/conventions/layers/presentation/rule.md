@@ -23,7 +23,7 @@ Rule связывает Action Enum, Permission Enum и проверки вла�
 
 ## Зависимости
 
-- Разрешено: `TokenInterface`, `RoleHierarchyInterface`, публичные Application-компоненты (`QueryBus`), DTO Presentation.
+- Разрешено: `TokenInterface`, `RoleHierarchyInterface`, публичные Application-компоненты (QueryBus), DTO Presentation.
 - Запрещено: контроллеры, Twig, Grant, репозитории Domain, `EntityManager`, внешние сервисы без адаптеров.
 
 ## Расположение
@@ -37,7 +37,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Rule.php
 1. Внедряем Rule в [Voter](voter.md).
 2. Voter передаёт в Rule `TokenInterface`, Action Enum и `subject`.
 3. Rule проверяет Permission Enum и дополнительные условия доступа.
-4. Rule может обращаться к Application через `QueryBus` для фактов доступа.
+4. Rule может обращаться к Application через QueryBus для фактов доступа.
 5. Grant и шаблоны обращаются к `AuthorizationCheckerInterface`, а не к Rule.
 
 ## Пример
@@ -219,6 +219,6 @@ final readonly class ProjectRule
 - [ ] Rule объявлен `final readonly` и находится в каталоге `Security`.
 - [ ] Все публичные методы начинаются с `can*` и возвращают `bool`.
 - [ ] Используется Permission Enum, а не строки.
-- [ ] Дополнительные проверки выполняются через Application (`QueryBus`) или Presentation сервисы.
+- [ ] Дополнительные проверки выполняются через Application (QueryBus) или Presentation сервисы.
 - [ ] Rule вызывается из Voter, не из контроллеров, шаблонов или Grant.
 - [ ] Rule не использует классы Domain/Infrastructure и не бросает исключения при отказе.

@@ -59,7 +59,7 @@ Permission Enum добавляется в `security.yaml` и назначает�
 
 ## Зависимости
 
-- **Rule:** `TokenInterface`, `RoleHierarchyInterface`, DTO Presentation, публичный `QueryBus` для фактов доступа.
+- **Rule:** `TokenInterface`, `RoleHierarchyInterface`, DTO Presentation, публичный QueryBus для фактов доступа.
 - **Voter:** Rule, `TokenInterface`, Action Enum, `subject` Presentation.
 - **Grant:** `AuthorizationCheckerInterface`, Action Enum, `subject` Presentation.
 - **Запрещено:** сервисы Domain, ORM-репозитории, `EntityManager`, глобальные синглтоны.

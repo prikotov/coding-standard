@@ -32,7 +32,7 @@ return [
             'Entity', 'Component', 'Factory', 'Builder', 'Gateway', 'Calculator',
             'Specification', 'Subscriber', 'Listener', 'Controller', 'Validator',
             'Voter', 'Rule', 'Grant', 'Route', 'Value', 'Object', 'Enum', 'Migration', 'Fixture',
-            'Command', 'Query', 'UseCase', 'Transport', 'Mapper', 'Helper', 'CriteriaMapper', 'Permission', 'Action', 'Request', 'Response', 'FormModel', 'FormType',
+            'Command', 'Query', 'UseCase', 'Transport', 'Mapper', 'Helper', 'CriteriaMapper', 'Permission', 'Action', 'Request', 'Response', 'FormModel', 'FormType', 'CommandBus', 'QueryBus',
             // Тестирование и runtime-термины.
             'in-memory',
             // Терминология Markdown и инструментов.

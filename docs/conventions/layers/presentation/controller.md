@@ -16,7 +16,7 @@ description: Правила создания контроллеров презе
 
 - Контроллер объявляем `final`, помечаем `#[AsController]` и храним в `apps/<app>/src/Module/<Module>/Controller`.
 - Единственная публичная точка входа — `__invoke()`.
-- Внедряем только публичные интерфейсы Application-слоя (`CommandBus`, `QueryBus`) и сервисы Presentation.
+- Внедряем только публичные интерфейсы Application-слоя (CommandBus, QueryBus) и сервисы Presentation.
 - Все данные из запроса валидируем до вызова Application (DTO, формы, атрибуты `#[MapQueryString]`).
 - Flash-сообщения отправляем через `$this->addFlash()` с переводами, редирект выполняем сразу после успешного действия.
 - Ограничение частоты запросов (rate limiting) для web-контроллера выполняем явно в presentation-коде до вызова Application (см. [«Ограничение частоты запросов»](rate-limiter.md)).
@@ -43,7 +43,7 @@ apps/<app>/src/Module/<ModuleName>/Controller/<Context>/{Request|Response}/{Name
 1. Принимаем необходимые аргументы (`Request`, DTO из `#[MapQueryString]`, `#[CurrentUser]`).
 2. Выполняем проверку прав (см. [«Проверка прав в Presentation»](authorization.md)).
 3. Создаём и обрабатываем форму/DTO для входных данных.
-4. Вызываем UseCase Application-слоя через `CommandBus`/`QueryBus`.
+4. Вызываем UseCase Application-слоя через CommandBus/QueryBus.
 5. Формируем ответ: рендер шаблона, JSON или редирект с flash-сообщениями.
 6. Исключения отдаем на обработку `ProjectName\Web\EventSubscriber\ExceptionSubscriber`.
 
