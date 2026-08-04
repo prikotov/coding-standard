@@ -89,7 +89,7 @@ when@prod:
                 pool: doctrine.result_cache_pool
 ```
 
-## Конфигурация окружений (dev, test, prod)
+## Конфигурация окружений (`dev`, `test`, `prod`)
 
 **Окружение (Environment)** — набор конфигурационных настроек для конкретной среды выполнения (разработка, тестирование, продакшн). Подробности: [Окружения Symfony](https://symfony.com/doc/current/configuration/environments.html).
 
