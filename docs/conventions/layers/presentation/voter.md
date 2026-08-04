@@ -10,7 +10,7 @@ description: Правила создания голосующих объекто
 
 **Голосующий объект (Voter)** — класс, реализующий интерфейс авторизации Symfony и принимающий решение о
 доступе на основании Permission Enum и `Rule`. Подробности — в официальной документации
-[голосующих объектах](https://symfony.com/doc/current/security/voters.html).
+[Security Voters](https://symfony.com/doc/current/security/voters.html).
 
 ## Общие правила
 
