@@ -9,7 +9,7 @@ description: Правила создания правил доступа
 ## Определение
 
 **Правило доступа (Access Rule)** — сервис слоя Presentation, который содержит итоговую логику проверки доступа.
-`Rule` связывает `ActionEnum`, `PermissionEnum` и проверки владения/участия. См.
+Rule связывает Action Enum, Permission Enum и проверки владения/участия. См.
 [документацию Symfony по авторизации](https://symfony.com/doc/current/security.html#authorization).
 
 ## Общие правила
@@ -17,9 +17,9 @@ description: Правила создания правил доступа
 - Класс объявляем `final readonly`.
 - Внедряем только сервисы, необходимые для проверки доступа.
 - Методы именуем `can<Action>` (`canCreate`, `canViewOwn`) и принимают `TokenInterface` + предмет проверки.
-- Внутри `Rule` используем Permission Enum и проверки владения/участия.
-- `Rule` вызывается из `Voter`, не из контроллеров, шаблонов или Grant.
-- `Rule` возвращает `bool` и не бросает исключения при отказе.
+- Внутри Rule используем Permission Enum и проверки владения/участия.
+- Rule вызывается из Voter, не из контроллеров, шаблонов или Grant.
+- Rule возвращает `bool` и не бросает исключения при отказе.
 
 ## Зависимости
 
@@ -34,11 +34,11 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Rule.php
 
 ## Как используем
 
-1. Внедряем `Rule` в [`Voter`](voter.md).
-2. `Voter` передаёт в `Rule` `TokenInterface`, `ActionEnum` и `subject`.
-3. `Rule` проверяет Permission Enum и дополнительные условия доступа.
-4. `Rule` может обращаться к Application через `QueryBus` для фактов доступа.
-5. Grant и шаблоны обращаются к `AuthorizationCheckerInterface`, а не к `Rule`.
+1. Внедряем Rule в [Voter](voter.md).
+2. Voter передаёт в Rule `TokenInterface`, Action Enum и `subject`.
+3. Rule проверяет Permission Enum и дополнительные условия доступа.
+4. Rule может обращаться к Application через `QueryBus` для фактов доступа.
+5. Grant и шаблоны обращаются к `AuthorizationCheckerInterface`, а не к Rule.
 
 ## Пример
 
@@ -216,9 +216,9 @@ final readonly class ProjectRule
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] `Rule` объявлен `final readonly` и находится в каталоге `Security`.
+- [ ] Rule объявлен `final readonly` и находится в каталоге `Security`.
 - [ ] Все публичные методы начинаются с `can*` и возвращают `bool`.
 - [ ] Используется Permission Enum, а не строки.
 - [ ] Дополнительные проверки выполняются через Application (`QueryBus`) или Presentation сервисы.
-- [ ] `Rule` вызывается из `Voter`, не из контроллеров, шаблонов или Grant.
-- [ ] `Rule` не использует классы Domain/Infrastructure и не бросает исключения при отказе.
+- [ ] Rule вызывается из Voter, не из контроллеров, шаблонов или Grant.
+- [ ] Rule не использует классы Domain/Infrastructure и не бросает исключения при отказе.
