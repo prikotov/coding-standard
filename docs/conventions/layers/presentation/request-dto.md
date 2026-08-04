@@ -44,8 +44,6 @@ description: Правила создания Request DTO презентацио�
 apps/<app>/src/Module/<ModuleName>/Controller/<Context>/Request/<Name>RequestDto.php
 ```
 
-Разделяемые DTO живут в `Common\Application\Dto\` — см. [Общие DTO](../../core-patterns/dto.md#общие-dto).
-
 ## Пример
 
 ```php
