@@ -35,7 +35,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Rule.php
 ## Как используем
 
 1. Внедряем `Rule` в [`Voter`](voter.md).
-2. `Voter` передаёт в `Rule` `TokenInterface`, `ActionEnum` и субъект (subject).
+2. `Voter` передаёт в `Rule` `TokenInterface`, `ActionEnum` и `subject`.
 3. `Rule` проверяет перечисление прав и дополнительные условия доступа.
 4. `Rule` может обращаться к Application через `QueryBus` для фактов доступа.
 5. Grant и шаблоны обращаются к `AuthorizationCheckerInterface`, а не к `Rule`.

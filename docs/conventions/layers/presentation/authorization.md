@@ -60,8 +60,8 @@ delete       ───►  canDelete()  ───►    deleteOwn / deleteAll
 ## Зависимости
 
 - **`Rule`:** `TokenInterface`, `RoleHierarchyInterface`, DTO Presentation, публичный `QueryBus` для фактов доступа.
-- **`Voter`:** `Rule`, `TokenInterface`, `ActionEnum`, субъект (subject) Presentation.
-- **Grant:** `AuthorizationCheckerInterface`, `ActionEnum`, субъект Presentation.
+- **`Voter`:** `Rule`, `TokenInterface`, `ActionEnum`, `subject` Presentation.
+- **Grant:** `AuthorizationCheckerInterface`, `ActionEnum`, `subject` Presentation.
 - **Запрещено:** сервисы Domain, ORM-репозитории, `EntityManager`, глобальные синглтоны.
 
 ## Расположение

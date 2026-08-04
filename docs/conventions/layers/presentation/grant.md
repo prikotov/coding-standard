@@ -16,7 +16,7 @@ description: Правила создания грант-сервисов для 
 
 - Класс объявляется `final readonly` и хранит только зависимости через конструктор.
 - Методы именуются с префиксом `can*` и возвращают `bool` без побочных эффектов.
-- Каждый метод вызывает `AuthorizationCheckerInterface::isGranted()` с `ActionEnum` и субъектом (subject).
+- Каждый метод вызывает `AuthorizationCheckerInterface::isGranted()` с `ActionEnum` и `subject`.
 - Grant не решает доступ сам: итоговое решение остаётся в [`Voter`](voter.md) и [`Rule`](rule.md).
 - UI-флаги допустимы только для отображения кнопок и ссылок, не для защиты точки входа (endpoint).
 - Внутри не используем `TokenInterface` напрямую.
@@ -91,7 +91,7 @@ final readonly class Grant
 - [ ] Grant лежит в каталоге `Security` соответствующего модуля и объявлен `final readonly`.
 - [ ] Все публичные методы начинаются с `can*` и возвращают `bool`.
 - [ ] Внутри используются значения `*ActionEnum`, а не строки.
-- [ ] Grant только готовит субъект и вызывает `AuthorizationCheckerInterface::isGranted()`.
+- [ ] Grant только готовит `subject` и вызывает `AuthorizationCheckerInterface::isGranted()`.
 - [ ] Нет зависимостей на Domain/Application/Infrastructure-сервисы.
 - [ ] Нет логики доступа, дублирующей `Rule`.
 - [ ] Шаблоны и контроллеры обращаются к Grant вместо прямых вызовов `is_granted()`.

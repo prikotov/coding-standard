@@ -15,10 +15,10 @@ description: Правила создания голосующих объекто
 ## Общие правила
 
 - Класс наследуется от `Symfony\Component\Security\Core\Authorization\Voter\Voter`.
-- Используем PHPDoc `@template-extends` с атрибутом/субъектом для статики.
+- Используем PHPDoc `@template-extends` с `attribute`/`subject` для статики.
 - Внедряем `Rule` через конструктор, никакой логики напрямую в `Voter`.
-- Метод `supports()` проверяет и атрибут, и валидность субъекта (subject).
-- Метод `voteOnAttribute()` преобразует атрибут в enum действия и делегирует `Rule`.
+- Метод `supports()` проверяет и `attribute`, и валидность `subject`.
+- Метод `voteOnAttribute()` преобразует `attribute` в enum действия и делегирует `Rule`.
 
 ## Зависимости
 
@@ -35,8 +35,8 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Voter.php
 
 1. Регистрируем `Voter` как сервис (автоконфигурация делает это автоматически).
 2. Контроллеры вызывают `$this->isGranted(ActionEnum::case->value, $subject)`.
-3. `Voter` преобразует строковый атрибут в `ActionEnum` и делегирует проверку `Rule`.
-4. Субъект должен быть простой структурой (`array`, `Uuid`, DTO), понятной `Voter`.
+3. `Voter` преобразует строковый `attribute` в `ActionEnum` и делегирует проверку `Rule`.
+4. `subject` должен быть простой структурой (`array`, `Uuid`, DTO), понятной `Voter`.
 
 ## Пример
 
@@ -131,7 +131,7 @@ final class ProjectVoter extends Voter
 ## Чек-лист для проведения ревью кода
 
 - [ ] `Voter` лежит в каталоге `Security` и объявлен `final`.
-- [ ] Метод `supports()` валидирует и атрибут, и субъект.
+- [ ] Метод `supports()` валидирует и `attribute`, и `subject`.
 - [ ] В `voteOnAttribute()` нет сложной логики — все делегируется `Rule`.
 - [ ] Используем `ActionEnum`/`PermissionEnum` вместо строк.
-- [ ] Субъект описан и типизирован (через phpdoc) так, чтобы избежать ошибок времени выполнения.
+- [ ] `subject` описан и типизирован (через phpdoc) так, чтобы избежать ошибок времени выполнения.
