@@ -152,9 +152,9 @@ return $this->render('@web.user/user/list.html.twig', [
 
 ## Переиспользование шаблонов
 
-### Включение (`include`)
+### Подключение (`include`)
 
-Для включения частичных шаблонов используем `include` с параметром `only`:
+Для подключения частичных шаблонов используем `include` с параметром `only`:
 
 ```twig
 {% include '@web.user/user/_table.html.twig' with {
