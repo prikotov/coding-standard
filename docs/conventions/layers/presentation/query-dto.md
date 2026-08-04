@@ -40,11 +40,7 @@ description: Правила создания Query DTO презентацион�
 apps/<app>/src/Module/<ModuleName>/Controller/<Context>/Request/<Name>QueryDto.php
 ```
 
-- Сквозной query DTO (cross-cutting):
-
-```
-apps/<app>/src/Component/<Context>/<Name>QueryDto.php
-```
+Разделяемые query-DTO (`PaginationDto`, `SortDto`) живут в `Common\Application\Dto\` — см. [Общие DTO](../../core-patterns/dto.md#общие-dto).
 
 ## Пример
 
