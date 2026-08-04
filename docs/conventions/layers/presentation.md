@@ -11,13 +11,13 @@ description: Слой представления: приём/отдача дан
 ## Общие правила
 
 - Контроллеры, команды консоли и HTTP-эндпоинты обращаются только к UseCase/`Handler` из Application.
-- Публичные контракты Presentation формируют входные данные в DTO запроса, `Command`/`Query` и принимают DTO ответа.
+- Публичные контракты Presentation формируют входные данные в Request DTO, `Command`/`Query` и принимают Response DTO.
 - В Presentation запрещено использовать типы из Domain напрямую (`Entity`, `VO`, `Repository`, `Specification`), а также классы из Infrastructure/Integration.
 - Исключения маппятся в ответы/сообщения через обработчики уровня Presentation (listeners/subscribers/exception mappers).
 - Для transport DTO и пользовательских валидаторов используем профильные правила:
-  [DTO запроса](presentation/request-dto.md),
+  [Request DTO](presentation/request-dto.md),
   [Query DTO](presentation/query-dto.md),
-  [DTO ответа](presentation/response-dto.md),
+  [Response DTO](presentation/response-dto.md),
   [Validator](presentation/validator.md).
 - Любая валидация уровня presentation остаётся декларативной в DTO/`FormModel` либо выносится во внешнюю пару валидаторов (validator pair); императивные `Callback`/`validate*()` в транспортной модели запрещены.
 
@@ -37,7 +37,7 @@ apps/{web|api|console}/src/...
 
 - [ ] Контроллер зависит только от Application-слоя.
 - [ ] Нет импортов из `Domain/*`, `Infrastructure/*`, `Integration/*`.
-- [ ] Вход/выход — только DTO запроса/ответа.
+- [ ] Вход/выход — только Request DTO/Response DTO.
 
 ## Сущности проекта
 
@@ -48,7 +48,7 @@ apps/{web|api|console}/src/...
 - `TwigExtension`: презентационные функции/фильтры для Twig-шаблонов. [Twig Extension](presentation/twig-extension.md)
 - `TwigComponent`: переиспользуемые UI-компоненты Symfony UX. [Twig Component](presentation/twig-component.md)
 - `Forms`: `FormType` и `FormModel` для валидации входа. [Формы](presentation/forms.md)
-- DTO запроса / Query DTO / DTO ответа: transport-контракты HTTP-привязки и ответа. [DTO запроса](presentation/request-dto.md), [Query DTO](presentation/query-dto.md), [DTO ответа](presentation/response-dto.md)
+- Request DTO / Query DTO / Response DTO: transport-контракты HTTP-привязки и ответа. [Request DTO](presentation/request-dto.md), [Query DTO](presentation/query-dto.md), [Response DTO](presentation/response-dto.md)
 - `Validator`: пользовательская пара `Constraint` / `ConstraintValidator` для проверки связанных полей и переиспользуемой валидации. [Validator](presentation/validator.md)
 - `Authorization`: `PermissionEnum`, `ActionEnum`, `Rule`, `Voter`, Grant. [Авторизация](presentation/authorization.md), [Permission Enum](presentation/permission-enum.md), [Правило](presentation/rule.md), [Voter](presentation/voter.md), [Grant](presentation/grant.md)
 
@@ -73,9 +73,9 @@ apps/{web|api|console}/src/...
 - [Правило доступа](presentation/rule.md)
 - [Голосующий объект](presentation/voter.md)
 - [Формы](presentation/forms.md)
-- [DTO запроса](presentation/request-dto.md)
+- [Request DTO](presentation/request-dto.md)
 - [Query DTO](presentation/query-dto.md)
-- [DTO ответа](presentation/response-dto.md)
+- [Response DTO](presentation/response-dto.md)
 - [Validator](presentation/validator.md)
 - [Контроллер списка](presentation/list-controller.md)
 - [Маршруты](presentation/route.md)
