@@ -4,11 +4,11 @@ type: rule
 description: Правила создания Request DTO презентационного слоя
 ---
 
-# DTO запроса презентационного слоя (Presentation Request DTO)
+# Request DTO презентационного слоя (Presentation Request DTO)
 
 ## Определение
 
-**DTO запроса** (Presentation Request DTO) — транспортная модель входной полезной нагрузки (payload), которую контроллер получает из `MapRequestPayload`, тела JSON, multipart-полезной нагрузки или аналогичной HTTP-привязки (binding) до вызова слоя Application.
+**Presentation Request DTO** — транспортная модель входной полезной нагрузки (payload), которую контроллер получает из `MapRequestPayload`, тела JSON, multipart-полезной нагрузки или аналогичной HTTP-привязки (binding) до вызова слоя Application.
 
 ## Общие правила
 
@@ -38,13 +38,13 @@ description: Правила создания Request DTO презентацио�
 
 ## Расположение
 
-- Локальный DTO запроса (controller-local):
+- Локальный Request DTO (controller-local):
 
 ```
 apps/<app>/src/Module/<ModuleName>/Controller/<Context>/Request/<Name>RequestDto.php
 ```
 
-- Сквозной DTO запроса (cross-cutting):
+- Сквозной Request DTO (cross-cutting):
 
 ```
 apps/<app>/src/Component/<Context>/<Name>RequestDto.php

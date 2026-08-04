@@ -4,11 +4,11 @@ type: rule
 description: Правила создания Response DTO презентационного слоя
 ---
 
-# DTO ответа презентационного слоя (Presentation Response DTO)
+# Response DTO презентационного слоя (Presentation Response DTO)
 
 ## Определение
 
-**DTO ответа** (Presentation Response DTO) — транспортная модель публичного ответа слоя Presentation, которую контроллер сериализует
+**Presentation Response DTO** — транспортная модель публичного ответа слоя Presentation, которую контроллер сериализует
 в JSON, HTML-контекст или другой внешний контракт после вызова слоя Application.
 
 ## Общие правила
@@ -19,14 +19,14 @@ description: Правила создания Response DTO презентацио
   атрибуты `OpenAPI`, метаданные сериализатора, PHPDoc для коллекций.
 - `ResponseDto` не должен содержать `Assert`, пользовательских валидаторов, `Callback`, `validate*()` и логики в конструкторе.
 - Нормализация ответа выполняется в Mapper/контроллере (mapper/controller) до создания DTO, а не внутри DTO.
-- Публичный контракт ответа не тянет Domain `Entity`/`VO`; используем скаляры, перечисления, `Uuid`, даты и вложенные DTO ответа.
+- Публичный контракт ответа не тянет Domain `Entity`/`VO`; используем скаляры, перечисления, `Uuid`, даты и вложенные Response DTO.
 
 ## Зависимости
 
 ### Разрешено
 
 - Скаляры, типизированные массивы, `BackedEnum`, `DateTimeImmutable`, `UuidInterface/Uuid`.
-- Вложенные DTO ответа.
+- Вложенные Response DTO.
 - `OpenAPI` и метаданные сериализатора.
 
 ### Запрещено
