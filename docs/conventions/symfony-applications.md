@@ -11,7 +11,7 @@ description: Правила организации изолированных Sy
 ## Общие правила
 
 - Каждое приложение находится в директории `apps/<app_name>/`.
-- Все приложения наследуются от общего [`ProjectName\Common\Kernel`](examples/Kernel.php). В namespace: `ProjectName\Common\Kernel`.
+- Все приложения наследуются от общего [`ProjectName\Common\Kernel`](examples/Kernel.php).
 - Каждое приложение имеет собственный идентификатор (`id`), который используется для разделения кэша и логов.
 - Конфигурация приложения находится в `apps/<app_name>/config/`.
 - Модули приложения регистрируются в `apps/<app_name>/config/modules.php`.
@@ -33,8 +33,8 @@ apps/<app_name>/
 │   ├── Controller/          # Контроллеры
 │   ├── EventSubscriber/     # Подписчики событий
 │   ├── Module/              # Модули приложения
-│   └── Security/           # Безопасность
-├── templates/               # Шаблоны (для web/blog)
+│   └── Security/            # Безопасность
+├── templates/               # Шаблоны (при необходимости)
 ├── tests/                   # Тесты приложения
 └── translations/            # Переводы приложения
 ```
@@ -47,59 +47,15 @@ apps/<app_name>/
 
 ## Назначение приложений
 
-### Web (`apps/web`)
+Приложения разделяются по назначению — каждое со своим набором модулей, конфигурацией и тестами. Состав модулей зависит от назначения и фиксируется в `apps/<app_name>/config/modules.php`.
 
-**Web-приложение** — основной пользовательский интерфейс проекта с поддержкой аутентификации, авторизации и UI-компонентов.
+Примеры типов приложений:
 
-- **Назначение**: веб-интерфейс для пользователей, включая панель управления (dashboard), управление проектами, чатами и т.д.
-- **Особенности**:
-  - Полная поддержка Symfony Security: аутентификация через `OAuth2`, `email`, `ESIA`.
-  - Twig-шаблоны и Twig-компоненты.
-  - `AssetMapper` и контроллеры `Stimulus`.
-  - `Mercure` для обновлений в реальном времени (real-time).
-  - Модули с UI-компонентами (Phoenix, формы, виджеты).
-- **Модули**: `AppOption`, `Attribution`, `Billing`, `Chat`, `Dashboard`, `Landing`, `Llm`, `Project`, `Rag`, `Search`, `Source`, `Secret`, `User`, `Tag`, `Notification`.
-- **Типы тестов**: функциональные (Functional, страницы), интеграционные (Integration, подписчики событий), модульные (Unit, компоненты).
+- **Web** (`apps/web`) — пользовательский интерфейс: Twig, формы, аутентификация, UI-компоненты.
+- **API** (`apps/api`) — REST/JSON API для внешних клиентов.
+- **Консоль** (`apps/console`) — CLI-команды, фоновые задачи, обработка очередей.
 
-### API (`apps/api`)
-
-**API-приложение** — `RESTful` API для интеграции с внешними системами и мобильными клиентами.
-
-- **Назначение**: программный интерфейс для работы с данными проекта.
-- **Особенности**:
-  - `RESTful`-эндпоинты.
-  - JSON-формат запросов и ответов.
-  - Поддержка `CORS` через `NelmioCorsBundle`.
-  - Документация `OpenAPI` через `NelmioApiDocBundle`.
-  - Версионирование API через пространство имён (`Api\v1\`).
-- **Модули**: `Chat`, `Project` (API v1).
-- **Типы тестов**: интеграционные (Integration, API-эндпоинты).
-
-### Консоль (`apps/console`)
-
-**Консольное приложение** (`apps/console`) — CLI-интерфейс для выполнения фоновых задач, регулярных заданий (cron) и административных операций.
-
-- **Назначение**: консольные команды, обработка очередей, миграции, технические скрипты.
-- **Особенности**:
-  - Консольные команды Symfony.
-  - Интеграция с `Messenger` Symfony для обработки очередей.
-  - Доступ к утилитам (pdfinfo, MinerU/Docling и др.) в контейнере `worker-cli`.
-  - Отсутствие веб-интерфейса и HTTP-маршрутов.
-- **Модули**: `Chat`, `Llm`, `Project`, `Rag`, `Source`, `SpeechToText`, `User`, `Billing`, `Notification`, `Fix`.
-- **Типы тестов**: интеграционные (Integration, консольные команды).
-
-### Блог (`apps/blog`)
-
-**Приложение блога** (`apps/blog`) — публичный блог с контентом и статическими страницами.
-
-- **Назначение**: публикация статей, новостей и документации.
-- **Особенности**:
-  - Статический контент в `apps/blog/content/`.
-  - Twig-шаблоны для рендеринга страниц.
-  - Мультиязычность через переводы.
-  - Минимальный набор модулей (только Blog).
-- **Модули**: `Blog`.
-- **Типы тестов**: функциональные (Functional, страницы блога).
+Конкретный набор приложений и модулей определяется проектом.
 
 ## Общее ядро (Kernel)
 
@@ -118,7 +74,7 @@ apps/<app_name>/
 
 declare(strict_types=1);
 
-namespace ProjectName\Blog;
+namespace ProjectName\<AppName>;
 
 use ProjectName\Common\Kernel as CommonKernel;
 
@@ -193,55 +149,6 @@ dashboard:
 - **Переопределение конфигурации**: создайте файл конфигурации в `apps/<app_name>/config/` для переопределения общих настроек.
 - **Разделение тестов**: размещайте тесты в `apps/<app_name>/tests/` для изоляции тестов разных приложений.
 - **Разделение кэша и логов**: используйте идентификатор приложения для автоматического разделения директорий.
-
-## Пример
-
-Пример конфигурации модулей для web-приложения (`apps/web/config/modules.php`):
-
-```php
-<?php
-
-declare(strict_types=1);
-
-return [
-    ProjectName\Web\Module\AppOption\AppOptionModule::class => ['all' => true],
-    ProjectName\Web\Module\Attribution\AttributionModule::class => ['all' => true],
-    ProjectName\Web\Module\Billing\BillingModule::class => ['all' => true],
-    ProjectName\Web\Module\Chat\ChatModule::class => ['all' => true],
-    ProjectName\Web\Module\Dashboard\DashboardModule::class => ['all' => true],
-    ProjectName\Web\Module\Landing\LandingModule::class => ['all' => true],
-    ProjectName\Web\Module\Llm\LlmModule::class => ['all' => true],
-    ProjectName\Web\Module\Project\ProjectModule::class => ['all' => true],
-    ProjectName\Web\Module\Rag\RagModule::class => ['all' => true],
-    ProjectName\Web\Module\Search\SearchModule::class => ['all' => true],
-    ProjectName\Web\Module\Source\SourceModule::class => ['all' => true],
-    ProjectName\Web\Module\Secret\SecretModule::class => ['all' => true],
-    ProjectName\Web\Module\User\UserModule::class => ['all' => true],
-    ProjectName\Web\Module\Tag\TagModule::class => ['all' => true],
-    ProjectName\Web\Module\Notification\NotificationModule::class => ['all' => true],
-];
-```
-
-Пример конфигурации модулей для консольного приложения (`apps/console/config/modules.php`):
-
-```php
-<?php
-
-declare(strict_types=1);
-
-return [
-    ProjectName\Console\Module\Chat\ChatModule::class => ['all' => true],
-    ProjectName\Console\Module\Llm\LlmModule::class => ['all' => true],
-    ProjectName\Console\Module\Project\ProjectModule::class => ['all' => true],
-    ProjectName\Console\Module\Rag\RagModule::class => ['all' => true],
-    ProjectName\Console\Module\Source\SourceModule::class => ['all' => true],
-    ProjectName\Console\Module\SpeechToText\SpeechToTextModule::class => ['all' => true],
-    ProjectName\Console\Module\User\UserModule::class => ['all' => true],
-    ProjectName\Console\Module\Billing\BillingModule::class => ['all' => true],
-    ProjectName\Console\Module\Notification\NotificationModule::class => ['all' => true],
-    ProjectName\Console\Module\Fix\FixModule::class => ['all' => true],
-];
-```
 
 ## Чек-лист для проведения ревью кода
 
