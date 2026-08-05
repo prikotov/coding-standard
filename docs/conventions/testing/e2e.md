@@ -78,7 +78,7 @@ E2E тесты проверяют полное поведение приложе
 | `make tests-e2e-web` | Запустить E2E тесты только для web-приложения (selenium) |
 | `make tests-e2e-api` | Запустить E2E тесты только для api-приложения (WebTestCase) |
 | `make tests-e2e-filter TEST_FILTER=...` | Запустить по фильтру (имя теста или паттерн) через `test-runner` + `selenium` |
-| `make tests-e2e-smoke` | Запустить E2E дымовые тесты для быстрой проверки e2e-окружения (группа `smoke`) |
+| `make tests-e2e-smoke` | Запустить E2E smoke-тесты для быстрой проверки e2e-окружения (группа `smoke`) |
 | `make tests-e2e-source-pipeline` | Запустить E2E тесты конвейера (Source pipeline) (группа `e2e-source-pipeline`) |
 | `make tests-e2e-source-status-live-updates` | Запустить полный набор `live-updates` (`matrix` + `outage`) с общим `bootstrap` |
 | `make tests-e2e-source-status-live-updates-smoke` | Запустить smoke-контракт `live-updates` (mode `limited`, один filter-сценарий) |
@@ -100,7 +100,7 @@ make tests-e2e
 # Запуск только web-тестов
 make tests-e2e-web
 
-# Запуск smoke тестов (быстрая проверка e2e окружения)
+# Запуск smoke-тестов (быстрая проверка e2e окружения)
 make tests-e2e-smoke
 
 # Запуск invite funnel happy-path сценариев
@@ -355,12 +355,12 @@ public function testStimulusControllerInteraction(): void
 
 ## Сценарии `Smoke` и `Pipeline`
 
-Дымовые E2E-тесты (smoke) используются как быстрый пред-проверочный шаг перед тяжёлыми конвейерными сценариями (pipeline).
+E2E smoke-тесты используются как быстрый пред-проверочный шаг перед тяжёлыми конвейерными сценариями (pipeline).
 
 ### Особенности запуска
 - `make tests-e2e-source-pipeline`
 - `make tests-e2e-landing-invite-flow`
-- Для дымовых веб-тестов используется профиль `e2e` с `test-runner` + `selenium`.
+- Для smoke-тестов используется профиль `e2e` с `test-runner` + `selenium`.
 - `PantherWebTestCase` по умолчанию использует `external_base_uri=http://nginx`.
 
 ### Обязательные переменные окружения (ENV) (см. `.env.e2e`)
