@@ -30,7 +30,7 @@ return [
             'CLI', 'UI', 'UX', 'IO', 'OS', 'PR', 'DI',
             'DB', 'DBAL', 'ORM', 'API', 'CRUD', 'DTO',
             'DDD', 'SOLID',
-            'README', 'CHANGELOG',
+            'README', 'CHANGELOG', 'in-memory',
             // 5. Термины конвенций — слои, паттерны, классовые типы.
             'Application', 'Domain', 'Infrastructure', 'Integration', 'Presentation',
             'Module', 'Layer', 'Service', 'Event', 'Handler', 'Repository',
@@ -42,19 +42,17 @@ return [
             'FormModel', 'FormType', 'CommandBus', 'QueryBus',
             // 6. Соглашения именования.
             'PascalCase', 'camelCase', 'kebab-case',
-            // 7. Тестирование и runtime.
-            'in-memory',
-            // 8. Терминология Markdown, ревью и инструментов.
+            // 7. Терминология Markdown, ревью и инструментов.
             'matter', 'front', 'fenced', 'inline',
             'code', 'block', 'blocks', 'link', 'links', 'reference', 'slug',
             'anchor', 'heading', 'snippet', 'merge', 'release', 'review',
             'warning', 'sniff', 'namespace', 'phpdoc',
-            // 9. Английские заголовки шаблона todo-md.
+            // 8. Английские заголовки шаблона todo-md.
             'Concept', 'Goal', 'Story', 'Context', 'Scope', 'Requirements',
             'Must', 'Have', 'Should', 'Plan', 'Verification', 'Risks',
             'Sources', 'Comments', 'Brief', 'Problem', 'Solution', 'Expected',
             'Result', 'Definition', 'Done', 'History', 'MoSCoW', 'SMART',
-            // 10. Служебные английские слова и DDD-термины в тексте конвенций.
+            // 9. Служебные английские слова и DDD-термины в тексте конвенций.
             'use', 'case', 'and', 'of', 'web', 'extension', 'task',
             'middleware', 'metadata', 'querybus', 'bus',
         ],
