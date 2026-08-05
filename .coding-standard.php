@@ -16,38 +16,47 @@ return [
         'max_ratio' => 0.02,
         // Разрешённые термины (имена собственные и аббревиатуры).
         'allowlist' => [
-            'Symfony', 'Doctrine', 'PHPUnit', 'PHPStan', 'PHPMD', 'Deptrac', 'Composer',
-            'Git', 'GitHub', 'Docker', 'MOEX', 'Twig', 'Panther',
+            // 1. Внешние утилиты (инструменты разработки и анализа).
+            'PHPUnit', 'PHPStan', 'PHPMD', 'Deptrac', 'Composer', 'CodeSniffer',
+            // 2. Технологии, сервисы, библиотеки.
+            'Symfony', 'Doctrine', 'Twig', 'Panther',
+            'Git', 'GitHub', 'Docker', 'MOEX',
+            'CI', 'CD',
+            // 3. Языки, стандарты, форматы.
             'PHP', 'SQL', 'JSON', 'YAML', 'XML', 'PSR', 'HTML', 'CSS', 'HTTP', 'HTTPS',
-            'DB', 'DBAL', 'ORM', 'API', 'CRUD', 'DDD', 'SOLID', 'CI', 'CD',
+            'Markdown',
+            // 4. Общеупотребимые термины и аббревиатуры.
             'URL', 'URI', 'ID', 'UUID', 'VO', 'DAO', 'REST', 'RPC', 'SDK',
-            'CLI', 'UI', 'UX', 'IO', 'OS', 'PR', 'DTO',
-            // Общеупотребимые имена артефактов проекта (универсальные, без перевода).
+            'CLI', 'UI', 'UX', 'IO', 'OS', 'PR', 'DI',
+            'DB', 'DBAL', 'ORM', 'API', 'CRUD', 'DTO',
+            'DDD', 'SOLID',
             'README', 'CHANGELOG',
-            // Соглашения именования — общеупотребимые термины (не код-идентификаторы).
-            'PascalCase', 'camelCase', 'kebab-case',
-            // Слои и паттерны DDD как термины.
+            // 5. Термины конвенций — слои, паттерны, классовые типы.
             'Application', 'Domain', 'Infrastructure', 'Integration', 'Presentation',
             'Module', 'Layer', 'Service', 'Event', 'Handler', 'Repository',
             'Entity', 'Component', 'Factory', 'Builder', 'Gateway', 'Calculator',
             'Specification', 'Subscriber', 'Listener', 'Controller', 'Validator',
             'Voter', 'Rule', 'Grant', 'Route', 'Value', 'Object', 'Enum', 'Migration', 'Fixture',
-            'Command', 'Query', 'UseCase', 'Transport', 'Mapper', 'Helper', 'CriteriaMapper', 'Permission', 'Action', 'Request', 'Response', 'FormModel', 'FormType', 'CommandBus', 'QueryBus',
-            // Тестирование и runtime-термины.
+            'Command', 'Query', 'UseCase', 'Transport', 'Mapper', 'Helper', 'CriteriaMapper',
+            'Permission', 'Action', 'Request', 'Response',
+            'FormModel', 'FormType', 'CommandBus', 'QueryBus',
+            // 6. Соглашения именования.
+            'PascalCase', 'camelCase', 'kebab-case',
+            // 7. Тестирование и runtime.
             'in-memory',
-            // Терминология Markdown и инструментов.
-            'Markdown', 'CodeSniffer', 'matter', 'front', 'fenced', 'inline',
+            // 8. Терминология Markdown, ревью и инструментов.
+            'matter', 'front', 'fenced', 'inline',
             'code', 'block', 'blocks', 'link', 'links', 'reference', 'slug',
             'anchor', 'heading', 'snippet', 'merge', 'release', 'review',
             'warning', 'sniff', 'namespace', 'phpdoc',
-            // Английские секции шаблона todo-md (шаблонные заголовки).
+            // 9. Английские заголовки шаблона todo-md.
             'Concept', 'Goal', 'Story', 'Context', 'Scope', 'Requirements',
             'Must', 'Have', 'Should', 'Plan', 'Verification', 'Risks',
             'Sources', 'Comments', 'Brief', 'Problem', 'Solution', 'Expected',
             'Result', 'Definition', 'Done', 'History', 'MoSCoW', 'SMART',
-            // Шаблонные союзы и DDD-термины в тексте конвенций.
+            // 10. Служебные английские слова и DDD-термины в тексте конвенций.
             'use', 'case', 'and', 'of', 'web', 'extension', 'task',
-            'middleware', 'metadata', 'querybus', 'bus', 'DI',
+            'middleware', 'metadata', 'querybus', 'bus',
         ],
         // Стандартные переводы ЖАРГОНА/проектно-специфичных терминов с неоднозначным
         // переводом (НЕ обычных слов с очевидным переводом). validate-language подсказывает
