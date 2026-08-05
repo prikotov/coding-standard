@@ -13,8 +13,8 @@ description: Правила создания перечислений дейст
 ## Общие правила
 
 - Имя класса всегда `ActionEnum`.
-- Каждый case — действие над сущностью (view, edit, delete, create, close...).
-- Значение case — строка в формате `{module}.{subject}.{action}`.
+- Каждый `case` — действие над сущностью (view, edit, delete, create, close...).
+- Значение `case` — строка в формате `{module}.{subject}.{action}`.
 
 ## Зависимости
 
@@ -102,6 +102,6 @@ if (!$this->isGranted(ActionEnum::edit->value, ['projectUuid' => $projectUuid]))
 ## Чек-лист для проведения ревью кода
 
 - [ ] Класс назван `ActionEnum`, лежит в `apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/`.
-- [ ] Значения case в формате `{module}.{subject}.{action}`.
+- [ ] Значения `case` в формате `{module}.{subject}.{action}`.
 - [ ] Voter использует `ActionEnum::tryFrom()` в `supports()`.
 - [ ] Grant использует `ActionEnum::*->value` при вызове `isGranted()`.

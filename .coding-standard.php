@@ -37,7 +37,7 @@ return [
             'Entity', 'Component', 'Factory', 'Builder', 'Gateway', 'Calculator',
             'Specification', 'Subscriber', 'Listener', 'Controller', 'Validator',
             'Voter', 'Rule', 'Grant', 'Route', 'Value', 'Object', 'Enum', 'Migration', 'Fixture',
-            'Command', 'Query', 'UseCase', 'Transport', 'Mapper', 'Helper', 'CriteriaMapper',
+            'Command', 'Query', 'UseCase', 'use case', 'Transport', 'Mapper', 'Helper', 'CriteriaMapper',
             'Permission', 'Action', 'Request', 'Response',
             'FormModel', 'FormType', 'CommandBus', 'QueryBus',
             'Unit of Work',
@@ -53,8 +53,7 @@ return [
             'Must', 'Have', 'Should', 'Plan', 'Verification', 'Risks',
             'Sources', 'Comments', 'Brief', 'Problem', 'Solution', 'Expected',
             'Result', 'Definition', 'Done', 'History', 'MoSCoW', 'SMART',
-            // 9. Служебные английские слова и DDD-термины в тексте конвенций.
-            'use', 'case', 'web', 'extension', 'task',
+            'web', 'extension', 'task',
             'middleware', 'metadata', 'querybus', 'bus',
         ],
         // Стандартные переводы ЖАРГОНА/проектно-специфичных терминов с неоднозначным
