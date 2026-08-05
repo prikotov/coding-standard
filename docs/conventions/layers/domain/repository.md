@@ -25,8 +25,8 @@ description: Правила создания доменных контракто
 - Если в домене предусмотрен только **мягкое удаление** (soft-delete), метод `delete()` в репозитории не объявляется.
 - При мягком удалении (soft-delete) используем бизнес-методы сущности (`markAsDeleted()`, `deactivate()` и др.).
 - Для поддержки `CQRS` интерфейсы на чтение и запись рекомендуется разделять на `{EntityName}ReadRepositoryInterface` и `{EntityName}WriteRepositoryInterface`.
-- Репозиторий не управляет `Unit of Work` (`flush`, `commit`). Контроль транзакции всегда на уровне Command Handler/UseCase, чтобы обеспечить атомарность бизнес-операции.
-- Транзакционная граница (`flush()`) устанавливается в [Command Handler](../application/command-handler.md) через `PersistenceManagerInterface::flush()`; в методах репозитория вызывается только `persist()` (регистрация сущности в `Unit of Work`).
+- Репозиторий не управляет Unit of Work (`flush`, `commit`). Контроль транзакции всегда на уровне Command Handler/UseCase, чтобы обеспечить атомарность бизнес-операции.
+- Транзакционная граница (`flush()`) устанавливается в [Command Handler](../application/command-handler.md) через `PersistenceManagerInterface::flush()`; в методах репозитория вызывается только `persist()` (регистрация сущности в Unit of Work).
 - Репозиторий маппит исключения ORM/SDK в доменные: `NotFoundExceptionInterface` для отсутствия сущности, [`InfrastructureExceptionInterface`](../../core-patterns/exception.md) для ошибок работы хранилища.
 - Реализации интерфейса размещаются в слое [Infrastructure](../infrastructure.md). Интерфейс репозитория — часть домена, реализация — часть инфраструктуры.
 - Правила построения инфраструктурных репозиториев и CriteriaMapper описаны в [разделе Infrastructure](../infrastructure/repository.md); при добавлении реализации следуем этому шаблону.

@@ -40,6 +40,7 @@ return [
             'Command', 'Query', 'UseCase', 'Transport', 'Mapper', 'Helper', 'CriteriaMapper',
             'Permission', 'Action', 'Request', 'Response',
             'FormModel', 'FormType', 'CommandBus', 'QueryBus',
+            'Unit of Work',
             // 6. Соглашения именования.
             'PascalCase', 'camelCase', 'kebab-case',
             // 7. Терминология Markdown, ревью и инструментов.
