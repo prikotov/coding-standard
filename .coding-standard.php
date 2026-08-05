@@ -53,8 +53,9 @@ return [
             'Must', 'Have', 'Should', 'Plan', 'Verification', 'Risks',
             'Sources', 'Comments', 'Brief', 'Problem', 'Solution', 'Expected',
             'Result', 'Definition', 'Done', 'History', 'MoSCoW', 'SMART',
+            // 9. Служебные английские слова и DDD-термины в тексте конвенций.
             'web', 'extension', 'task',
-            'middleware', 'metadata', 'querybus', 'bus',
+            'middleware', 'metadata',
         ],
         // Стандартные переводы ЖАРГОНА/проектно-специфичных терминов с неоднозначным
         // переводом (НЕ обычных слов с очевидным переводом). validate-language подсказывает
