@@ -24,13 +24,15 @@ return [
             'CI', 'CD',
             // 3. Языки, стандарты, форматы.
             'PHP', 'SQL', 'JSON', 'YAML', 'XML', 'PSR', 'HTML', 'CSS', 'HTTP', 'HTTPS',
-            'Markdown',
+            'Markdown', 'namespace', 'phpdoc',
             // 4. Общеупотребимые термины и аббревиатуры.
             'URL', 'URI', 'ID', 'UUID', 'VO', 'DAO', 'REST', 'RPC', 'SDK',
             'CLI', 'UI', 'UX', 'IO', 'OS', 'PR', 'DI',
             'DB', 'DBAL', 'ORM', 'API', 'CRUD', 'DTO',
             'DDD', 'SOLID',
             'README', 'CHANGELOG', 'in-memory', 'web', 'task', 'metadata',
+            'code', 'block', 'blocks', 'inline', 'fenced', 'links', 'slug',
+            'merge', 'release', 'warning', 'front matter',
             // 5. Термины конвенций — слои, паттерны, классовые типы.
             'Application', 'Domain', 'Infrastructure', 'Integration', 'Presentation',
             'Module', 'Layer', 'Service', 'Event', 'Handler', 'Repository',
@@ -43,12 +45,7 @@ return [
             'Unit of Work',
             // 6. Соглашения именования.
             'PascalCase', 'camelCase', 'kebab-case',
-            // 7. Терминология Markdown, ревью и инструментов.
-            'matter', 'front', 'fenced', 'inline',
-            'code', 'block', 'blocks', 'link', 'links', 'reference', 'slug',
-            'anchor', 'heading', 'snippet', 'merge', 'release', 'review',
-            'warning', 'sniff', 'namespace', 'phpdoc',
-            // 8. Английские заголовки и термины шаблона todo-md.
+            // 7. Английские заголовки и термины шаблона todo-md.
             'Concept and Goal', 'Context and Scope', 'Implementation Plan',
             'Definition of Done', 'Definition of Ready', 'Risks and Dependencies',
             'Change History', 'Solution Design', 'Release Notes and Deployment',
