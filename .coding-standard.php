@@ -48,11 +48,14 @@ return [
             'code', 'block', 'blocks', 'link', 'links', 'reference', 'slug',
             'anchor', 'heading', 'snippet', 'merge', 'release', 'review',
             'warning', 'sniff', 'namespace', 'phpdoc',
-            // 8. Английские заголовки шаблона todo-md.
-            'Concept', 'Goal', 'Story', 'Context', 'Scope', 'Requirements',
-            'Must', 'Have', 'Should', 'Plan', 'Verification', 'Risks',
-            'Sources', 'Comments', 'Brief', 'Problem', 'Solution', 'Expected',
-            'Result', 'Definition', 'Done', 'History', 'MoSCoW', 'SMART',
+            // 8. Английские заголовки и термины шаблона todo-md.
+            'Concept and Goal', 'Context and Scope', 'Implementation Plan',
+            'Definition of Done', 'Definition of Ready', 'Risks and Dependencies',
+            'Change History', 'Solution Design', 'Release Notes and Deployment',
+            'Must Have', 'Should Have', 'Could Have', "Won't Have",
+            'User Story', 'Job Story',
+            'Requirements', 'Verification', 'Sources', 'Comments',
+            'Goal', 'Story', 'MoSCoW', 'SMART', 'INVEST',
         ],
         // Стандартные переводы ЖАРГОНА/проектно-специфичных терминов с неоднозначным
         // переводом (НЕ обычных слов с очевидным переводом). validate-language подсказывает
