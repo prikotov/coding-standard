@@ -31,7 +31,7 @@ return [
             'DB', 'DBAL', 'ORM', 'API', 'CRUD', 'DTO',
             'DDD', 'SOLID',
             'README', 'CHANGELOG', 'in-memory', 'web', 'task', 'metadata',
-            'code', 'block', 'blocks', 'inline', 'fenced', 'links', 'slug', 'namespace',
+            'slug', 'namespace',
             'merge', 'release', 'warning', 'front matter', 'Code Conventions', 'Code Style',
             // 5. Термины конвенций — слои, паттерны, классовые типы.
             'Application', 'Domain', 'Infrastructure', 'Integration', 'Presentation',
