@@ -20,7 +20,7 @@ return [
             'PHPUnit', 'PHPStan', 'PHPMD', 'Deptrac', 'Composer', 'CodeSniffer',
             // 2. Технологии, сервисы, библиотеки.
             'Symfony', 'Doctrine', 'Twig', 'Panther',
-            'Git', 'GitHub', 'Docker', 'MOEX',
+            'Git', 'GitHub', 'Docker',
             'CI', 'CD',
             // 3. Языки, стандарты, форматы.
             'PHP', 'SQL', 'JSON', 'YAML', 'XML', 'PSR', 'HTML', 'CSS', 'HTTP', 'HTTPS',
