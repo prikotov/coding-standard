@@ -18,10 +18,10 @@ description: Правила создания и использования се�
 - Методы сервиса должны быть **чётко именованы** и отражать выполняемое действие.
 - Допустимо наличие **нескольких методов** в одном сервисе, если они логически связаны.
 - Название сервиса — глагол + предмет + `Service` (например, `ChangeStatusService`).
-- Внедрение через DI (constructor injection). Подробности: [Symfony Service Container](https://symfony.com/doc/current/service_container.html).
-- Для всех сервисов, внедряемых по интерфейсу, обязательно задаём явный alias
+- Внедрение через DI (constructor injection). Подробности: [контейнер сервисов Symfony](https://symfony.com/doc/current/service_container.html).
+- Для всех сервисов, внедряемых по интерфейсу, обязательно задаём явный `alias`
   `Interface -> Implementation` в `services.yaml`, независимо от настроек
-  autowire. Подробности: [Working with Interfaces](https://symfony.com/doc/current/service_container/interfaces.html).
+  `autowire`. Подробности: [работа с интерфейсами](https://symfony.com/doc/current/service_container/interfaces.html).
 
 ## Зависимости
 
@@ -53,7 +53,7 @@ description: Правила создания и использования се�
 
 ## Расположение
 
-- Интерфейс и реализация в `Domain`:
+- Интерфейс и реализация в Domain:
 
 ```php
 {ProjectName}\Common\Module\{ModuleName}\Domain\Service\{GroupName?}\{ServiceName}ServiceInterface
@@ -74,14 +74,14 @@ description: Правила создания и использования се�
 
 ## Общие правила
 
-- Интерфейс размещается в `Domain`, реализация — в `Infrastructure`.
+- Интерфейс размещается в Domain, реализация — в Infrastructure.
 - Работает с DTO, VO, Enum, `UuidInterface`, примитивами.
 - Зависит только от компонентов или инфраструктурных интерфейсов.
 - Для исходящих HTTP/SDK-интеграций использует [Component](component.md).
 - ❗ **Не имеет доступа к доменным реализациям**. Допустимы только интерфейсы Domain и доменные типы интерфейса.
-- Даже при включённом `autowire` в `services.yaml` всегда добавляй явный alias
+- Даже при включённом `autowire` в `services.yaml` всегда добавляй явный `alias`
   `Interface -> Implementation`, чтобы контейнер однозначно резолвил сервис и
-  не зависел от эвристики "нашёлся единственный класс". Подробности: [Working with Interfaces](https://symfony.com/doc/current/service_container/interfaces.html).
+  не зависел от эвристики "нашёлся единственный класс". Подробности: [работа с интерфейсами](https://symfony.com/doc/current/service_container/interfaces.html).
 
 ## Расположение
 
@@ -110,21 +110,21 @@ description: Правила создания и использования се�
 
 ## Общие правила
 
-- Интерфейс и реализация в `Application`.
+- Интерфейс и реализация в Application.
 - Работает с DTO, VO, Enum, доменными сущностями.
-- На границах сценария использует `DTO`; перед передачей в `Domain` преобразует данные в доменные типы (`VO`/`Entity`/`Enum`) и обратно при необходимости.
+- На границах сценария использует `DTO`; перед передачей в Domain преобразует данные в доменные типы (`VO`/`Entity`/`Enum`) и обратно при необходимости.
 - Может зависеть от:
     - сервисов своего модуля (Domain и Application);
     - репозиториев (через интерфейсы из Domain);
     - внешних и межмодульных зависимостей только через интерфейсы из Domain;
-    - общих компонентов (PersistenceManagerInterface, EventBusInterface).
+    - общих компонентов (`PersistenceManagerInterface`, `EventBusInterface`).
 - ❗ **Запрещено** содержать бизнес-логику — только оркестрация.
 - ❗ **Запрещено** зависеть от Infrastructure или Integration слоёв напрямую.
-- Используется только внутри слоя Application или вызывается из Use Cases.
+- Используется только внутри слоя Application или вызывается из Use Case.
 
 ## Расположение
 
-- Интерфейс и реализация в `Application`:
+- Интерфейс и реализация в Application:
 
 ```php
 {ProjectName}\Common\Module\{ModuleName}\Application\Service\{GroupName?}\{ServiceName}ServiceInterface
@@ -146,7 +146,7 @@ description: Правила создания и использования се�
 
 ## Общие правила
 
-- Интерфейс в `Domain`, реализация в `Integration`.
+- Интерфейс в Domain, реализация в Integration.
 - Возвращает и принимает: DTO, VO, Enum, примитивы, `UuidInterface`.
 - ❗ Не зависит от **реализаций** домена. Допускается только внедрение интерфейсов, определённых в доменном слое.
 - ❗ Не выполняет исходящие HTTP/SDK-вызовы; это ответственность Infrastructure.
@@ -177,8 +177,8 @@ description: Правила создания и использования се�
 
 | Элемент   | Правило                            | Пример                            |
 |-----------|------------------------------------|-----------------------------------|
-| Класс     | `{Action}{Target}Service`          | ChangeStatusService               |
-| Интерфейс | `{Action}{Target}ServiceInterface` | ChangeStatusServiceInterface      |
+| Класс     | `{Action}{Target}Service`          | `ChangeStatusService`             |
+| Интерфейс | `{Action}{Target}ServiceInterface` | `ChangeStatusServiceInterface`    |
 | Метод     | Глагол в названии                  | `change()`, `send()`, `getById()` |
 
 - `Action` — глагол, обозначающий операцию (Send, Change, Create).

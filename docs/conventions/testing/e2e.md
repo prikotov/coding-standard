@@ -4,9 +4,9 @@ type: rule
 description: Правила написания E2E-тестов с Symfony Panther
 ---
 
-# E2E Tests
+# E2E-тесты
 
-End-to-End (E2E) тестирование в проекте выполняется с помощью **Symfony Panther** — библиотеки для тестирования JavaScript-интерактивных сценариев в реальном браузере.
+Сквозное тестирование (end-to-end, E2E) в проекте выполняется с помощью **Symfony Panther** — библиотеки для тестирования `JavaScript`-интерактивных сценариев в реальном браузере.
 
 ## Общие правила
 
@@ -20,49 +20,49 @@ End-to-End (E2E) тестирование в проекте выполняетс
 
 - Web E2E: `apps/web/tests/E2E/`
 - API E2E: `apps/api/tests/E2E/`
-- Хелперы и трейты: `apps/*/tests/Support/`
+- Helper и трейты: `apps/*/tests/Support/`
 
 ## Оглавление
 
 1. [Обзор](#обзор)
 2. [Запуск и Инфраструктура](#запуск-и-инфраструктура)
-    - [Команды Makefile](#команды-makefile)
+    - [Команды `Makefile`](#команды-makefile)
     - [Требования](#требования-и-зависимости)
 3. [Диагностика и Отладка](#диагностика-и-отладка)
     - [Логи и артефакты](#логи-и-артефакты-файловая-система)
     - [Просмотр логов (CLI)](#просмотр-логов-cli)
-    - [Проверка писем через Mailpit API](#проверка-писем-через-mailpit-api)
+    - [Проверка писем через `Mailpit` API](#проверка-писем-через-mailpit-api)
 4. [Разработка тестов](#разработка-тестов)
     - [Структура файлов](#структура-файлов)
     - [Базовый класс и Клиент](#базовый-класс)
-    - [Хелперы (Auth)](#хелперы-и-трейты)
+    - [Helper (Auth)](#helper-и-трейты)
 5. [Работа с Panther (API)](#работа-с-panther-api)
     - [Ожидания (Waiting)](#ожидания-waiting)
-    - [Выполнение JavaScript](#выполнение-javascript)
+    - [Выполнение `JavaScript`](#выполнение-javascript)
 6. [Примеры](#примеры-тестов)
-7. [Сценарии Smoke и Pipeline](#сценарии-smoke-и-pipeline)
-8. [Best Practices](#лучшие-практики)
+    - [Сценарии `Smoke` и `Pipeline`](#сценарии-smoke-и-pipeline)
+    - [Лучшие практики](#лучшие-практики)
 
 ---
 
 ## Обзор
 
 E2E тесты проверяют полное поведение приложения с точки зрения пользователя:
-- JavaScript-интерактивность (Turbo, Stimulus, AJAX)
+- `JavaScript`-интерактивность (`Turbo`, `Stimulus`, AJAX)
 - Навигация и маршрутизацию
 - Формы и валидацию
 - Модальные окна и диалоги
-- Drag & Drop, загрузку файлов
-- WebSocket и SSE соединения
+- Перетаскивание (drag & drop) и загрузку файлов
+- Соединения `WebSocket` и `SSE`
 
 ### Технологии
 
 | Технология | Назначение |
 |-----------|-----------|
 | **Symfony Panther** | Запуск тестов в реальном браузере (Chrome/Firefox) |
-| **Turbo** | Навигация без перезагрузки страницы |
-| **Stimulus** | JavaScript контроллеры |
-| **Bootstrap 5 Phoenix** | UI-компоненты и модальные окна |
+| `Turbo` | Навигация без перезагрузки страницы |
+| `Stimulus` | `JavaScript`-контроллеры |
+| `Bootstrap 5 Phoenix` | UI-компоненты и модальные окна |
 
 ---
 
@@ -70,7 +70,7 @@ E2E тесты проверяют полное поведение приложе
 
 Все команды для запуска E2E тестов определяются в проекте (обычно в `devops/make/e2e.mk` или аналогичном файле).
 
-### Команды Makefile
+### Команды `Makefile`
 
 | Команда | Описание |
 |---------|-----------|
@@ -78,18 +78,18 @@ E2E тесты проверяют полное поведение приложе
 | `make tests-e2e-web` | Запустить E2E тесты только для web-приложения (selenium) |
 | `make tests-e2e-api` | Запустить E2E тесты только для api-приложения (WebTestCase) |
 | `make tests-e2e-filter TEST_FILTER=...` | Запустить по фильтру (имя теста или паттерн) через `test-runner` + `selenium` |
-| `make tests-e2e-smoke` | Запустить E2E smoke тесты для быстрой проверки e2e окружения (группа `smoke`) |
-| `make tests-e2e-source-pipeline` | Запустить E2E тесты Source pipeline (группа `e2e-source-pipeline`) |
-| `make tests-e2e-source-status-live-updates` | Запустить полный E2E live-updates suite (`matrix` + `outage`) с shared bootstrap |
-| `make tests-e2e-source-status-live-updates-smoke` | Запустить smoke-контракт live-updates (mode `limited`, один filter-сценарий) |
-| `make tests-e2e-source-status-live-updates-matrix` | Прогнать live-updates matrix `off/limited/on` для `SOURCE_STATUS_LIVE_DEGRADATION_UI` |
-| `make tests-e2e-source-status-live-updates-outage` | Проверить non-blocking pipeline при недоступном `MERCURE_WORKER_PUBLISH_URL` |
-| `make tests-e2e-landing-invite-flow` | Запустить E2E тесты landing invite funnel (группа `e2e-landing-invite-flow`) |
-| `make tests-e2e-rabbitmq` | Запустить E2E тесты RabbitMQ (группа `rabbitmq`) |
+| `make tests-e2e-smoke` | Запустить E2E smoke-тесты для быстрой проверки e2e-окружения (группа `smoke`) |
+| `make tests-e2e-source-pipeline` | Запустить E2E тесты конвейера (Source pipeline) (группа `e2e-source-pipeline`) |
+| `make tests-e2e-source-status-live-updates` | Запустить полный набор `live-updates` (`matrix` + `outage`) с общим `bootstrap` |
+| `make tests-e2e-source-status-live-updates-smoke` | Запустить smoke-контракт `live-updates` (mode `limited`, один filter-сценарий) |
+| `make tests-e2e-source-status-live-updates-matrix` | Прогнать матрицу `live-updates` (`off/limited/on`) для `SOURCE_STATUS_LIVE_DEGRADATION_UI` |
+| `make tests-e2e-source-status-live-updates-outage` | Проверить неблокирующий конвейер при недоступном `MERCURE_WORKER_PUBLISH_URL` |
+| `make tests-e2e-landing-invite-flow` | Запустить E2E тесты воронки приглашений (landing invite funnel) (группа `e2e-landing-invite-flow`) |
+| `make tests-e2e-rabbitmq` | Запустить E2E тесты `RabbitMQ` (группа `rabbitmq`) |
 | `make e2e-up` | Поднять сервисы профиля `e2e` (DB, RabbitMQ, Selenium, etc.) |
 | `make e2e-down` | Остановить и удалить сервисы профиля `e2e` |
 | `make e2e-clean-host` | Очистить временные файлы (логи, скриншоты, storage) на хосте |
-| `make e2e-project-name` | Показать фактический compose project name для `e2e` |
+| `make e2e-project-name` | Показать фактическое имя compose-проекта для `e2e` |
 
 ### Примеры использования
 
@@ -100,7 +100,7 @@ make tests-e2e
 # Запуск только web-тестов
 make tests-e2e-web
 
-# Запуск smoke тестов (быстрая проверка e2e окружения)
+# Запуск smoke-тестов (быстрая проверка e2e окружения)
 make tests-e2e-smoke
 
 # Запуск invite funnel happy-path сценариев
@@ -115,10 +115,10 @@ make tests-e2e-filter TEST_FILTER=TurboNavigationTest
 
 ### Требования и Зависимости
 
-Для запуска E2E тестов используется отдельный профиль docker-compose (`e2e`).
+Для запуска E2E тестов используется отдельный профиль `docker-compose` (`e2e`).
 - Команды `make` автоматически поднимают нужные сервисы (`selenium`, `test-runner`, `worker-cli`).
 - Фикстуры накатываются автоматически перед запуском тестов.
-- `make tests-e2e` запускает web-suite через `test-runner` + `selenium`, а затем api-suite через `php-test`.
+- `make tests-e2e` запускает `web-suite` через `test-runner` + `selenium`, а затем `api-suite` через `php-test`.
 
 ---
 
@@ -132,13 +132,13 @@ make tests-e2e-filter TEST_FILTER=TurboNavigationTest
 
 | Путь на хосте | Описание | Контейнер |
 |---------------|----------|-----------|
-| `var/containers/e2e/php-fpm/log/` | Логи backend приложения (dev.log, error.log) | `php-fpm` |
+| `var/containers/e2e/php-fpm/log/` | Логи бэкенда приложения (dev.log, error.log) | `php-fpm` |
 | `var/containers/e2e/worker-cli/log/` | Логи асинхронных воркеров | `worker-cli` |
 | `var/containers/e2e/test-runner/log/` | Логи выполнения тестов | `test-runner` |
 | `var/e2e-screenshots/` | Скриншоты и HTML страниц при падении тестов | `test-runner` / `selenium` |
 | `var/containers/e2e/shared/storage/` | Загруженные файлы и сгенерированные документы | `php-fpm`, `worker-cli` |
 
-> **Примечание:** Логи **Nginx** не сохраняются в файлы на хосте. Текущий префикс проекта можно узнать через `make e2e-project-name`, после чего посмотреть лог командой `podman logs <e2e-project-name>-nginx-1`.
+> **Примечание:** Логи `Nginx` не сохраняются в файлы на хосте. Текущий префикс проекта можно узнать через `make e2e-project-name`, после чего посмотреть лог командой `podman logs <e2e-project-name>-nginx-1`.
 >
 > **Важно:** Команда `make e2e-clean-host` очищает эти директории. Если вам нужно сохранить артефакты для дебага, не запускайте clean-команды сразу после падения.
 
@@ -174,12 +174,12 @@ podman logs ${E2E_PROJECT_NAME}-database-1
 podman logs ${E2E_PROJECT_NAME}-rabbitmq-1
 ```
 
-### Проверка писем через Mailpit API
+### Проверка писем через `Mailpit` API
 
-Для проверки отправленных писем в E2E окружении используется Mailpit API внутри compose-сети:
+Для проверки отправленных писем в E2E окружении используется `Mailpit` API внутри compose-сети:
 
-- Внутри сети контейнеров API Mailpit доступно по `http://mailer:8025`
-- Host port наружу не публикуется, чтобы sandbox-запуски не конфликтовали между собой
+- Внутри сети контейнеров API `Mailpit` доступно по `http://mailer:8025`
+- Порт хоста наружу не публикуется, чтобы sandbox-запуски не конфликтовали между собой
 - Для отладки используйте `curl` из контейнеров `test-runner` или `php-fpm`
 
 Пример проверки из `test-runner`:
@@ -239,7 +239,7 @@ final class TurboNavigationTest extends PantherWebTestCase
 }
 ```
 
-### Хелперы и трейты
+### Helper и трейты
 
 Трейт `UserLoginTrait` упрощает авторизацию пользователя в E2E тестах:
 
@@ -267,14 +267,14 @@ final class MyE2ETest extends PantherWebTestCase
 
 ### Ожидания (Waiting)
 
-Это **самая важная часть** E2E тестов. Panther предоставляет мощные методы ожидания для JavaScript-сценариев. Никогда не используйте `sleep()`, используйте `waitFor*`.
+Это **самая важная часть** E2E тестов. Panther предоставляет мощные методы ожидания для `JavaScript`-сценариев. Никогда не используйте `sleep()`, используйте `waitFor*`.
 
 | Метод | Описание |
 |-------|----------|
-| `waitFor($callback)` | Ожидание, пока callback не вернёт true |
+| `waitFor($callback)` | Ожидание, пока функция (callback) не вернёт `true` |
 | `waitForElementToContain($selector, $text)` | Ожидание, пока элемент не будет содержать текст |
 | `waitForVisibility($selector)` | Ожидание видимости элемента |
-| `waitForStaleness($selector)` | Ожидание исчезновения элемента из DOM |
+| `waitForStaleness($selector)` | Ожидание исчезновения элемента из `DOM` |
 | `waitForElementToContain($selector, $text)` | Ожидание появления текста в элементе |
 
 ```php
@@ -290,7 +290,7 @@ $client->waitForElementToContain('h1', 'Dashboard');
 $client->waitForVisibility('.dashboard-content');
 ```
 
-### Выполнение JavaScript
+### Выполнение `JavaScript`
 
 ```php
 // Выполнение JavaScript и возврат результата
@@ -309,7 +309,7 @@ $client->executeScript('localStorage.setItem("testKey", "testValue");');
 
 Файл `apps/web/tests/E2E/JavaScript/TurboNavigationTest.php` в проекте может содержать исчерпывающие примеры:
 
-#### Пример теста Turbo навигации
+#### Пример теста `Turbo` навигации
 
 ```php
 public function testTurboNavigation(): void
@@ -334,7 +334,7 @@ public function testTurboNavigation(): void
 }
 ```
 
-#### Пример теста с Stimulus контроллером
+#### Пример теста с `Stimulus`-контроллером
 
 ```php
 public function testStimulusControllerInteraction(): void
@@ -353,17 +353,17 @@ public function testStimulusControllerInteraction(): void
 
 ---
 
-## Сценарии Smoke и Pipeline
+## Сценарии `Smoke` и `Pipeline`
 
-Smoke E2E используются как быстрый пред-проверочный шаг перед тяжёлыми pipeline сценариями.
+E2E smoke-тесты используются как быстрый пред-проверочный шаг перед тяжёлыми конвейерными сценариями (pipeline).
 
 ### Особенности запуска
 - `make tests-e2e-source-pipeline`
 - `make tests-e2e-landing-invite-flow`
-- Для web smoke используется профиль `e2e` с `test-runner` + `selenium`.
+- Для smoke-тестов используется профиль `e2e` с `test-runner` + `selenium`.
 - `PantherWebTestCase` по умолчанию использует `external_base_uri=http://nginx`.
 
-### Обязательные ENV переменные (см. `.env.e2e`)
+### Обязательные переменные окружения (ENV) (см. `.env.e2e`)
 Эти переменные критичны для работы в изолированном окружении:
 - `PANTHER_APP_ENV=test`
 - `PANTHER_BROWSER=selenium`
@@ -375,13 +375,13 @@ Smoke E2E используются как быстрый пред-проверо
 
 ## Лучшие практики
 
-1. **Anti-Flaky стратегии:**
+1. **Стратегии против хрупких тестов (anti-flaky):**
    - **Стабильные селекторы:** Предпочитайте `id`, `name`, `role` или специальные `data-test` атрибуты. Избегайте хрупких CSS путей.
-   - **Явные ожидания:** Для Turbo/JS всегда используйте `waitFor(...)` вместо фиксированных `sleep()`.
+   - **Явные ожидания:** Для `Turbo`/`JS` всегда используйте `waitFor(...)` вместо фиксированных `sleep()`.
    - **Маркеры завершения:** Ожидайте появления конкретного элемента (например, `#success-message`), который гарантирует завершение асинхронной операции.
 
 2. **Изоляция:**
-   - **External URI:** Используйте `external_base_uri => 'http://nginx'` для корректной работы JS (Turbo/Stimulus).
+   - **Внешний URI (external):** Используйте `external_base_uri => 'http://nginx'` для корректной работы `JS` (Turbo/Stimulus).
    - **Фикстуры:** Каждый тест должен полагаться на предсказуемое состояние БД (используйте `test-db-fixtures-e2e`).
 
 3. **Отладка:**
@@ -398,16 +398,16 @@ Smoke E2E используются как быстрый пред-проверо
 
 ## Ссылки
 
-- [Symfony Panther Documentation](https://symfony.com/doc/current/testing/panther.html)
-- [Turbo Handbook](https://turbo.hotwired.dev/handbook/drive)
-- [Stimulus Handbook](https://stimulus.hotwired.dev/)
+- [Документация Symfony Panther](https://symfony.com/doc/current/testing/panther.html)
+- [Руководство по `Turbo`](https://turbo.hotwired.dev/handbook/drive)
+- [Руководство по `Stimulus`](https://stimulus.hotwired.dev/)
 
 ## Чек-лист для проведения ревью кода
 
 - [ ] E2E-тест расположен в `apps/*/tests/E2E/`.
 - [ ] Тест использует Panther для Web-сценариев или `ApiTestCase` для API.
 - [ ] Тест независим от других тестов и воспроизводим.
-- [ ] Используются хелперы из `tests/Support/`, а не дублируется код.
+- [ ] Используются Helper из `tests/Support/`, а не дублируется код.
 - [ ] Ожидания (waiting) используются вместо `sleep()`.
 - [ ] Тест покрывает реальный пользовательский сценарий.
 

@@ -9,12 +9,12 @@ description: Правила создания перечислений прав
 ## Определение
 
 **Перечисление прав (Permission Enum)** — перечисление (`enum`), которое описывает доступные разрешения слоя
-Presentation и используется в системе безопасности Symfony. Основано на встроенной модели ролей
-[Symfony Security](https://symfony.com/doc/current/security.html#roles).
+Presentation и используется в Symfony Security. Основано на
+[встроенной модели ролей Symfony](https://symfony.com/doc/current/security.html#roles).
 
 ## Общие правила
 
-- Каждый Permission Enum хранит только строковые значения с префиксом `ROLE_` или `module.action`.
+- Каждое Permission Enum хранит только строковые значения с префиксом `ROLE_` или `module.action`.
 - Имена кейсов пишем в `lowerCamelCase`, отражая действие (`createOwn`, `viewAll`).
 - Enum объявляем `final` по умолчанию (в PHP 8.3 enum уже нельзя расширять).
 - Enum лежит в каталоге `Security` рядом с Rule и Voter конкретного модуля.
@@ -63,7 +63,7 @@ enum ProjectPermissionEnum: string
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] Enum лежит в каталоге Security рядом с Rule/Voter.
+- [ ] Enum лежит в каталоге `Security` рядом с Rule/Voter.
 - [ ] Значения соответствуют принятой схеме (`module.context.actionScope`).
 - [ ] Enum не содержит логики, только список разрешений.
 - [ ] Все значения задекларированы в `security.yaml` через `role_hierarchy`.

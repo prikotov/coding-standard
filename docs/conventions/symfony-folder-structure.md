@@ -6,7 +6,7 @@ description: Организация директорий проекта на о�
 
 # Структура папок на Symfony (Symfony Folder Structure)
 
-**Структура папок на Symfony (Symfony Folder Structure)** — организация директорий проекта TasK, основанная на модульной архитектуре DDD и множественных приложениях Symfony.
+**Структура папок на Symfony (Symfony Folder Structure)** — организация директорий проекта, основанная на модульной архитектуре DDD и множественных приложениях Symfony.
 
 ## Общие правила
 
@@ -14,14 +14,14 @@ description: Организация директорий проекта на о�
 - Каждое приложение находится в `apps/<app_name>/` и наследуется от общего [`ProjectName\Common\Kernel`](examples/Kernel.php).
 - Все модули размещаются в `src/Module/{ModuleName}/`.
 - Конфигурация разделена на общую (`config/`) и приложения (`apps/<app_name>/config/`).
-- Тесты разделены по типам: Unit (`tests/Unit/`), Integration (`tests/Integration/`), E2E (`apps/*/tests/`).
+- Тесты разделены по типам: модульные (Unit) в `tests/Unit/`, интеграционные (Integration) в `tests/Integration/`, сквозные (E2E) в `apps/*/tests/`.
 
 ### Namespace и PSR-4
 
 Namespace следует паттерну `{ProjectName}\{AppGroup}\Module\{ModuleName}\{Layer}\...`, где:
 
-- `{ProjectName}` — корневой namespace проекта (например, `TaskOrchestrator\`). Может быть пустым, если PSR-4 маппит `Common\` напрямую.
-- `{AppGroup}` — группа: `Common` для разделяемого кода, или имя приложения (`Web`, `Api`, `Console`, `Blog`) для кода конкретного приложения.
+- `{ProjectName}` — корневой namespace проекта. Может быть пустым, если PSR-4 маппит `Common\` напрямую.
+- `{AppGroup}` — группа: `Common` для разделяемого кода, или имя приложения (`Web`, `Api`, `Console`) для кода конкретного приложения.
 
 PSR-4 маппинг в `composer.json`:
 
@@ -43,8 +43,7 @@ PSR-4 маппинг в `composer.json`:
 ├── apps/                     # Приложения Symfony
 │   ├── web/                  # Web-приложение (пользовательский интерфейс)
 │   ├── api/                  # API-приложение (RESTful API)
-│   ├── console/              # Console-приложение (CLI и worker)
-│   └── blog/                 # Blog-приложение (публичный блог)
+│   └── console/              # Console-приложение (CLI и worker)
 ├── src/                      # Исходный код
 │   ├── Kernel.php            # Общий Kernel для всех приложений
 │   ├── Exception/            # Общие исключения проекта
@@ -61,7 +60,7 @@ PSR-4 маппинг в `composer.json`:
 │   ├── Unit/                 # Unit-тесты (Domain, Application)
 │   └── Integration/          # Integration-тесты (Infrastructure, Integration)
 ├── templates/                # Общие шаблоны Twig
-├── translations/            # Переводы
+├── translations/             # Переводы
 ├── bin/                      # Исполняемые скрипты
 ├── public/                   # Публичные файлы (entry points)
 ├── docs/                     # Документация
@@ -116,7 +115,7 @@ src/Module/{ModuleName}/
 
 ## Организация приложений
 
-Каждое приложение находится в `apps/<app_name>/` и имеет собственную структуру.
+Каждое приложение находится в `apps/<app_name>/` и имеет собственную структуру. Назначение приложений описано в [Symfony Applications](symfony-applications.md).
 
 ```
 apps/<app_name>/
@@ -132,19 +131,12 @@ apps/<app_name>/
 │   ├── EventSubscriber/      # Подписчики событий
 │   ├── Module/               # Модули приложения
 │   └── Security/             # Безопасность
-├── templates/                # Шаблоны (для web/blog)
+├── templates/                # Шаблоны (при необходимости)
 ├── tests/                    # Тесты приложения
 │   ├── Functional/           # Functional-тесты
 │   └── Integration/          # Integration-тесты
 └── translations/             # Переводы приложения
 ```
-
-### Приложения проекта
-
-- **Web** (`apps/web`): основной пользовательский интерфейс с аутентификацией, авторизацией и UI-компонентами.
-- **API** (`apps/api`): RESTful API для внешних интеграций и мобильных клиентов.
-- **Console** (`apps/console`): CLI-интерфейс для фоновых задач, cron-заданий и административных операций.
-- **Blog** (`apps/blog`): публичный блог с контентом и статическими страницами.
 
 ## Конфигурационные файлы
 
@@ -218,8 +210,8 @@ templates/
 
 ```
 translations/
-├── messages.en.yaml         # Английские переводы
-├── messages.ru.yaml         # Русские переводы
+├── messages.en.yaml          # Английские переводы
+├── messages.ru.yaml          # Русские переводы
 └── ...
 ```
 
@@ -235,11 +227,11 @@ bin/
 
 ### `public/`
 
-Публичные файлы и entry points.
+Публичные файлы и точки входа (entry points).
 
 ```
 public/
-├── index.php                # Entry point для web-приложения
+├── index.php                 # Entry point для web-приложения
 └── assets/                   # Статические ресурсы
 ```
 
@@ -250,20 +242,17 @@ public/
 ```
 docs/
 ├── conventions/              # Конвенции проекта
-├── git-workflow/             # Git workflow
-├── todo/                     # Задачи
-└── ...
+└── ...                       # Прочая документация
 ```
 
 ### `devops/`
 
-DevOps скрипты и конфигурации.
+Скрипты и конфигурации DevOps.
 
 ```
 devops/
 ├── docker/                   # Docker конфиги
-├── supervisor/               # Supervisor конфиги
-└── ...
+└── ...                       # Прочие DevOps-конфиги
 ```
 
 ## Расположение
@@ -275,100 +264,17 @@ devops/
 ## Как используем
 
 - **Создание нового модуля**: создайте директорию `src/Module/{ModuleName}/` с четырьмя слоями (Domain, Application, Infrastructure, Integration).
-- **Создание нового приложения**: создайте директорию `apps/<app_name>/` с Kernel, наследуемым от `ProjectName\Common\Kernel`.
+- **Создание нового приложения**: создайте директорию `apps/<app_name>/` с ядром (Kernel), наследуемым от `ProjectName\Common\Kernel`.
 - **Добавление модуля в приложение**: зарегистрируйте модуль в `apps/<app_name>/config/modules.php`.
 - **Создание миграции**: создайте файл `VersionYYYYMMDDHHMMSS.php` в `migrations/`.
 - **Написание тестов**: размещайте unit-тесты в `tests/Unit/`, integration-тесты в `tests/Integration/`.
-
-## Пример
-
-Пример структуры модуля `Chat`:
-
-```
-src/Module/Chat/
-├── Domain/
-│   ├── Entity/
-│   │   ├── ChatModel.php
-│   │   └── ChatMessageModel.php
-│   ├── ValueObject/
-│   │   └── MessageVo.php
-│   ├── Enum/
-│   │   ├── ChatStatusEnum.php
-│   │   └── ChatMessageRoleEnum.php
-│   ├── Repository/
-│   │   ├── Chat/
-│   │   │   ├── Criteria/
-│   │   │   │   └── ChatFindCriteria.php
-│   │   │   ├── ChatCriteriaInterface.php
-│   │   │   └── ChatRepositoryInterface.php
-│   │   └── ChatMessage/
-│   │       ├── Criteria/
-│   │       │   └── ChatMessageFindCriteria.php
-│   │       ├── ChatMessageCriteriaInterface.php
-│   │       └── ChatMessageRepositoryInterface.php
-│   └── Service/
-│       └── LlmManager/
-│           └── LlmManagerServiceInterface.php
-├── Application/
-│   ├── UseCase/
-│   │   ├── Command/
-│   │   │   └── Chat/
-│   │   │       └── Create/
-│   │   │           ├── CreateCommand.php
-│   │   │           └── CreateCommandHandler.php
-│   │   └── Query/
-│   │       └── Chat/
-│   │           └── Find/
-│   │               ├── FindQuery.php
-│   │               └── FindQueryHandler.php
-│   └── Dto/
-│       └── ChatDto.php
-├── Infrastructure/
-│   ├── Model/
-│   │   ├── ChatModel.php
-│   │   └── ChatMessageModel.php
-│   ├── Repository/
-│   │   ├── Chat/
-│   │   │   └── ChatRepository.php
-│   │   └── ChatMessage/
-│   │       └── ChatMessageRepository.php
-│   └── Service/
-│       └── ChatRender/
-│           └── ChatRendererAsHtml.php
-├── Integration/
-│   ├── Listener/
-│   │   └── ProjectOptions/
-│   │       └── UpdatedEventListener.php
-│   └── Service/
-│       └── LlmManager/
-│           └── LlmManagerService.php
-├── Resource/
-│   └── config/
-│       └── services.yaml
-└── ChatModule.php
-```
-
-Пример конфигурации модулей для web-приложения (`apps/web/config/modules.php`):
-
-```php
-<?php
-
-declare(strict_types=1);
-
-return [
-    ProjectName\Web\Module\AppOption\AppOptionModule::class => ['all' => true],
-    ProjectName\Web\Module\Chat\ChatModule::class => ['all' => true],
-    ProjectName\Web\Module\Project\ProjectModule::class => ['all' => true],
-    ProjectName\Web\Module\User\UserModule::class => ['all' => true],
-];
-```
 
 ## Чек-лист для проведения ревью кода
 
 - [ ] Модуль находится в `src/Module/{ModuleName}/`.
 - [ ] Модуль содержит четыре слоя: Domain, Application, Infrastructure, Integration.
 - [ ] Приложение находится в `apps/<app_name>/`.
-- [ ] Kernel приложения наследуется от `ProjectName\Common\Kernel`.
+- [ ] Ядро приложения наследуется от `ProjectName\Common\Kernel`.
 - [ ] Модули зарегистрированы в `apps/<app_name>/config/modules.php`.
 - [ ] PSR-4 маппинг в `composer.json` корректно связывает namespace с директориями.
 - [ ] Namespace классов следует паттерну `{ProjectName}\{AppGroup}\Module\{ModuleName}\...`.

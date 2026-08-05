@@ -7,10 +7,10 @@ description: Правила создания и использования сл�
 # Слушатель (Listener)
 
 **Слушатель (Listener)** — элемент слоя интеграций, подписанный через конфигурацию на
-[событие приложения](../application/event.md) или событие Symfony EventDispatcher
+[событие приложения](../application/event.md) или событие Symfony `EventDispatcher`
 и запускающий реакцию в границах **своего** модуля. Слушатель не зависит от источника события.
 Если обработка зависит от инициатора, используйте **Шину команд (Command Bus)**. Механизм регистрации
-выбирается по тому, где фактически публикуется событие: в **Шине событий (Event Bus)** или в Symfony EventDispatcher.
+выбирается по тому, где фактически публикуется событие: в **Шине событий (Event Bus)** или в Symfony `EventDispatcher`.
 
 ## Общие правила
 
@@ -27,9 +27,9 @@ description: Правила создания и использования сл�
 ## Зависимости
 
 - **Разрешено:** [сценарий использования (Use Case)](../application/use-case.md)
-  ([обработчик команд (CommandHandler)](../application/command-handler.md)/
-  [обработчик запросов (QueryHandler)](../application/query-handler.md)) **своего** модуля, сервисы интеграций,
-  мапперы/фабрики.
+  ([обработчик команд (Command Handler)](../application/command-handler.md)/
+  [обработчик запросов (Query Handler)](../application/query-handler.md)) **своего** модуля, сервисы интеграций,
+  Mapper/фабрики.
 - **Запрещено:**
     - Прямой доступ к БД/HTTP/очередям.
     - Обращения к классам других модулей напрямую (только через сервисы интеграций).
@@ -51,13 +51,13 @@ description: Правила создания и использования сл�
 
 1. Подписываем слушатель на событие через корректный механизм доставки:
    - `#[AsMessageHandler]` — для событий приложения/домена (application/domain events), доставляемых через Symfony
-     Messenger/Event Bus;
-   - `#[AsEventListener]` — для событий, публикуемых через Symfony EventDispatcher.
-2. Внутри `__invoke()` — минимум кода: фильтрация, маппинг и делегация. Не размещайте бизнес-логику в слушателе.
+     `Messenger`/Event Bus;
+   - `#[AsEventListener]` — для событий, публикуемых через Symfony `EventDispatcher`.
+2. Внутри `__invoke()` — минимум кода: фильтрация, маппинг и делегирование. Не размещайте бизнес-логику в слушателе.
 3. Межмодульные (cross-module) потребности закрываются через сценарий использования (Use Case) и сервисный слой
    интеграций.
 
-## Пример для Symfony Messenger/Event Bus
+## Пример для Symfony `Messenger`/Event Bus
 
 ```php
 <?php
@@ -101,7 +101,7 @@ final readonly class TrackOnReceivedListener
 }
 ```
 
-## Пример для Symfony EventDispatcher
+## Пример для Symfony `EventDispatcher`
 
 ```php
 <?php
@@ -142,5 +142,5 @@ final readonly class LogOnWorkerMessageFailedListener
 - [ ] Только `__invoke()`; минимум кода, бизнес-логика не реализована внутри слушателя.
 - [ ] Один слушатель подписан только на одно событие.
 - [ ] Нет прямых кросс-модульных вызовов.
-- [ ] Корректная регистрация: `#[AsMessageHandler]` для событий/сообщений, доставляемых через Messenger/Event Bus,
-  `#[AsEventListener]` для событий Symfony EventDispatcher.
+- [ ] Корректная регистрация: `#[AsMessageHandler]` для событий/сообщений, доставляемых через `Messenger`/Event Bus,
+  `#[AsEventListener]` для событий Symfony `EventDispatcher`.

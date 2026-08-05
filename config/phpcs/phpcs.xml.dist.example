@@ -21,6 +21,15 @@
     </rule>
 
     <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
+    <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">
+        <exclude-pattern>*/config/*</exclude-pattern>
+        <exclude-pattern>*/migrations/*</exclude-pattern>
+        <properties>
+            <property name="allowFullyQualifiedGlobalClasses" value="true"/>
+            <property name="allowFullyQualifiedExceptions" value="true"/>
+            <property name="allowFullyQualifiedNameForCollidingClasses" value="true"/>
+        </properties>
+    </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
         <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes.IncorrectStrictTypesFormat"/>
         <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes.IncorrectWhitespaceBeforeDeclare"/>
@@ -46,6 +55,13 @@
         <properties>
             <property name="maxLinesCount" value="1"/>
             <property name="minLinesCount" value="1"/>
+        </properties>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces">
+        <properties>
+            <property name="linesCountAfterOpeningBrace" value="0"/>
+            <property name="linesCountBeforeClosingBrace" value="0"/>
         </properties>
     </rule>
 

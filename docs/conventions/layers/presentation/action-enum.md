@@ -13,8 +13,8 @@ description: Правила создания перечислений дейст
 ## Общие правила
 
 - Имя класса всегда `ActionEnum`.
-- Каждый case — действие над сущностью (view, edit, delete, create, close...).
-- Значение case — строка в формате `{module}.{subject}.{action}`.
+- Каждый `case` — действие над сущностью (view, edit, delete, create, close...).
+- Значение `case` — строка в формате `{module}.{subject}.{action}`.
 
 ## Зависимости
 
@@ -30,7 +30,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/ActionEnum.php
 
 1. Определяем список действий для сущности.
 2. В [Voter](voter.md) проверяем `ActionEnum::tryFrom($attribute)` в методе `supports()`.
-3. В методе `voteOnAttribute()` используем match для маршрутизации проверки в [Rule](rule.md).
+3. В методе `voteOnAttribute()` используем `match` для маршрутизации проверки в [Rule](rule.md).
 4. В [Grant](grant.md) вызываем `isGranted(ActionEnum::edit->value, $subject)`.
 
 ## Пример
@@ -102,6 +102,6 @@ if (!$this->isGranted(ActionEnum::edit->value, ['projectUuid' => $projectUuid]))
 ## Чек-лист для проведения ревью кода
 
 - [ ] Класс назван `ActionEnum`, лежит в `apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/`.
-- [ ] Значения case в формате `{module}.{subject}.{action}`.
+- [ ] Значения `case` в формате `{module}.{subject}.{action}`.
 - [ ] Voter использует `ActionEnum::tryFrom()` в `supports()`.
 - [ ] Grant использует `ActionEnum::*->value` при вызове `isGranted()`.

@@ -4,11 +4,11 @@ type: rule
 description: Правила создания мапперов критериев для Doctrine QueryBuilder
 ---
 
-# CriteriaMapper (Маппер критериев)
+# CriteriaMapper
 
-**CriteriaMapper** — инфраструктурный класс, изолирующий логику фильтрации от [Репозитория](repository.md). Преобразует доменный [Criteria](../domain/criteria.md) в Doctrine `QueryBuilder`.
+**CriteriaMapper** — инфраструктурный класс, изолирующий логику фильтрации от [Репозитория](repository.md). Преобразует доменный [критерий (Criteria)](../domain/criteria.md) в Doctrine `QueryBuilder`.
 
-> См. также: [Критерий (Criteria)](../domain/criteria.md), [Репозиторий (Repository)](repository.md), [Маппер (Mapper)](../../core-patterns/mapper.md)
+> См. также: [Критерий (Criteria)](../domain/criteria.md), [Репозиторий (Repository)](repository.md), [Mapper](../../core-patterns/mapper.md)
 
 ## Структура
 
@@ -16,11 +16,11 @@ CriteriaMapper состоит из двух уровней:
 
 ### 1. CriteriaMapper (диспетчер)
 
-Реализует маппинг `Criteria → QueryBuilder` через делегирование конкретному мапперу. Резолвит стратегию маппинга по runtime-типу критерия (`$criteria::class`).
+Реализует маппинг `Criteria → QueryBuilder` через делегирование конкретному Mapper. Резолвит стратегию маппинга по фактическому типу критерия (`$criteria::class`).
 
 **Расположение:** `Infrastructure/Repository/{Entity}/Criteria/CriteriaMapper.php`
 
-### 2. Конкретный {CriteriaName}CriteriaMapper
+### 2. Конкретный `{CriteriaName}CriteriaMapper`
 
 Реализует стратегию маппинга для конкретного типа критерия.
 
@@ -32,11 +32,11 @@ CriteriaMapper состоит из двух уровней:
 
 - Класс `final readonly`
 - Метод `map(Repository $repository, CriteriaInterface $criteria): QueryBuilder`
-- Резолвит стратегию по runtime-типу критерия
+- Резолвит стратегию по фактическому типу критерия
 - Неизвестный тип критерия → `ConfigurationException`
 - Делегирует маппинг конкретному `*CriteriaMapper`
 
-### Для конкретного {CriteriaName}CriteriaMapper
+### Для конкретного `{CriteriaName}CriteriaMapper`
 
 - Класс `final readonly`
 - Метод `map(Repository $repository, ConcreteCriteria $criteria): QueryBuilder` — реализует стратегию маппинга
@@ -48,13 +48,13 @@ CriteriaMapper состоит из двух уровней:
 
 **Разрешено**:
 - `LimitOffsetSortCriteriaMapper` через DI
-- Доменные сущности, [Criteria](../domain/criteria.md), VO, Enum
-- Другие мапперы Infrastructure слоя
+- Доменные сущности, [критерии (Criteria)](../domain/criteria.md), VO, Enum
+- Другие Mapper Infrastructure слоя
 
 **Запрещено**:
 - Сервисы Application/Presentation слоёв
 - Внешние API и HTTP-клиенты
-- Прямое обращение к БД (только через QueryBuilder)
+- Прямое обращение к БД (только через `QueryBuilder`)
 
 ## Расположение
 
@@ -63,17 +63,17 @@ CriteriaMapper состоит из двух уровней:
 {ProjectName}\Common\Module\{ModuleName}\Infrastructure\Repository\{Entity}\Criteria\Mapper\{CriteriaName}CriteriaMapper.php
 ```
 
-> Диспетчер лежит в `Criteria/`, конкретные мапперы — в `Criteria/Mapper/`.
+> Диспетчер лежит в `Criteria/`, конкретные Mapper — в `Criteria/Mapper/`.
 
 ## Именование
 
 ### Диспетчер
 
-- Имя класса: `CriteriaMapper`
+- Имя класса: CriteriaMapper
 - Файл: `CriteriaMapper.php` (в папке `Criteria/`, без подпапки `Mapper/`)
 - Отличие от конкретных: расположение в `/Criteria/`, а не `/Criteria/Mapper/`
 
-### Конкретный маппер
+### Конкретный Mapper
 
 - Имя класса: `{CriteriaName}CriteriaMapper`
 - `{CriteriaName}` — имя доменного критерия без суффикса `Criteria`
@@ -82,9 +82,9 @@ CriteriaMapper состоит из двух уровней:
   - `PaymentGatewayStatusCriteria` → `PaymentGatewayStatusCriteriaMapper`
   - `UserActiveCriteria` → `UserActiveCriteriaMapper`
 
-### Соответствие критерий ↔ маппер
+### Соответствие критерий ↔ Mapper
 
-| Доменный критерий | Маппер |
+| Доменный критерий | Mapper |
 |-------------------|--------|
 | `{Entity}FindCriteria` | `{Entity}FindCriteriaMapper` |
 | `{Entity}ActiveCriteria` | `{Entity}ActiveCriteriaMapper` |
@@ -173,16 +173,16 @@ final readonly class ModelFindCriteriaMapper
 }
 ```
 
-## Декомпозиция для сложных CriteriaMapper
+## Декомпозиция для сложного CriteriaMapper
 
 Декомпозиция на `apply*()` методы обязательна при наличии любого из признаков:
 
 - Метод `map()` содержит более 40 строк кода
 - Более 5 независимых условий фильтрации
-- Смешиваются разные типы фильтров: scope, search, attributes, date ranges, relations
-- Появляются дублирующиеся JOIN-паттерны
+- Смешиваются разные типы фильтров: область видимости, поиск, атрибуты, диапазоны дат, связи
+- Появляются дублирующиеся шаблоны `JOIN`
 
-> **Жёсткое ограничение:** PHPMD `ExcessiveMethodLength` не позволит создать метод длиннее 80 строк (см. пример [phpmd.xml](../../examples/phpmd.xml)). Декомпозиция на 40 строках — best practice для предотвращения предупреждений анализатора.
+> **Жёсткое ограничение:** PHPMD `ExcessiveMethodLength` не позволит создать метод длиннее 80 строк (см. пример [phpmd.xml](../../examples/phpmd.xml)). Декомпозиция на 40 строках — рекомендуемая практика для предотвращения предупреждений анализатора.
 
 ### Структура декомпозированного `map()`
 
@@ -208,19 +208,19 @@ public function map(Repository $repository, Criteria $criteria): QueryBuilder
 
 | Группа | Имя метода | Пример содержимого |
 |--------|------------|-------------------|
-| Область видимости | `applyUserScopeFilters()` | userUuid, teamAdminUuid, teamUuid |
-| Поиск | `applySearchFilters()` | search, email, username (LIKE/ILIKE) |
-| Атрибуты | `applyAttributeFilters()` | status, currency, type, provider |
-| Даты | `applyDateRangeFilters()` | from, to (insTs, updatedAt) |
-| Связи | `applyRelationFilters()` | projectUuid, chatUuid (JOIN) |
+| Область видимости | `applyUserScopeFilters()` | `userUuid`, `teamAdminUuid`, `teamUuid` |
+| Поиск | `applySearchFilters()` | `search`, `email`, `username` (LIKE/ILIKE) |
+| Атрибуты | `applyAttributeFilters()` | `status`, `currency`, `type`, `provider` |
+| Даты | `applyDateRangeFilters()` | `from`, `to` (`insTs`, `updatedAt`) |
+| Связи | `applyRelationFilters()` | `projectUuid`, `chatUuid` (JOIN) |
 
 ### Правила для `apply*()` методов
 
 - Метод всегда `private` и `void`
-- В начале — guard clause для раннего выхода
+- В начале — проверка-страж (guard clause) для раннего выхода
 - Один метод — одна логическая группа фильтров
 - Параметры: `QueryBuilder $qb, Criteria $criteria`
-- QueryBuilder мутируется, возвращаемого значения нет
+- `QueryBuilder` мутируется, возвращаемого значения нет
 
 ## Пример: сложный CriteriaMapper с декомпозицией
 
@@ -291,12 +291,12 @@ final readonly class PaymentFindCriteriaMapper
 
 ## Чек-лист для ревью кода
 
-- [ ] Диспетчер `CriteriaMapper` регистрирует все конкретные мапперы
+- [ ] Диспетчер CriteriaMapper регистрирует все конкретные Mapper
 - [ ] Неизвестный критерий выбрасывает `ConfigurationException`
-- [ ] Имя маппера соответствует критерию: `{CriteriaName}Criteria` → `{CriteriaName}CriteriaMapper`
+- [ ] Имя Mapper соответствует критерию: `{CriteriaName}Criteria` → `{CriteriaName}CriteriaMapper`
 - [ ] Класс помечен как `final readonly`
 - [ ] Метод `map()` не превышает 40 строк (для сложных — применена декомпозиция на `apply*()`)
-- [ ] Все параметры QueryBuilder типизированы (`ParameterType::*`, `UuidType::NAME`, `ArrayParameterType::*`)
+- [ ] Все параметры `QueryBuilder` типизированы (`ParameterType::*`, `UuidType::NAME`, `ArrayParameterType::*`)
 - [ ] Для пагинации и сортировки используется `LimitOffsetSortCriteriaMapper`
-- [ ] Нет дублирующихся JOIN между `apply*()` методами
+- [ ] Нет дублирующихся `JOIN` между `apply*()` методами
 - [ ] Unit-тесты покрывают нетривиальную логику фильтрации

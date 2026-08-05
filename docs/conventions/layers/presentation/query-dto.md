@@ -8,44 +8,36 @@ description: Правила создания Query DTO презентацион�
 
 ## Определение
 
-**Presentation Query DTO** — transport-модель параметров query string, которую controller получает через
-`MapQueryString` или аналогичный binder до вызова Application-слоя.
+**Presentation Query DTO** — транспортная модель параметров строки запроса, которую контроллер получает через `MapQueryString` или аналогичный связыватель (binder) до вызова слоя Application.
 
 ## Общие правила
 
-- `QueryDto` объявляем как `final readonly class`.
-- DTO остаётся `data-only`: допускаются только свойства конструктора и declarative metadata.
-- Property-level `Assert` metadata разрешена, если она описывает transport contract query-параметров.
-- Для query binding допустимо сохранять сырые входные значения (`string|mixed|null`), если это нужно для корректной
-  transport-validation до последующего маппинга. Например, pagination или sort параметры могут приходить как строки.
-- В `QueryDto` запрещены `Callback`, `validate*()`, constructor logic, normalization и выброс исключений.
-- Cross-field query validation выносим во внешний class-level constraint.
+- Query DTO объявляем как `final readonly class`.
+- DTO остаётся `data-only`: допускаются только свойства конструктора и декларативные метаданные (declarative metadata).
+- Метаданные уровня свойства (property-level) через `Assert` разрешены, если они описывают транспортный контракт query-параметров.
+- Для привязки строки запроса (query binding) допустимо сохранять сырые входные значения (`string|mixed|null`), если это нужно для корректной транспортной валидации до последующего маппинга. Например, параметры пагинации или сортировки могут приходить как строки.
+- В Query DTO запрещены `Callback`, `validate*()`, логика в конструкторе, нормализация и выброс исключений.
+- Валидацию связанных полей query-параметров выносим во внешнее ограничение уровня класса (class-level constraint).
 
 ## Зависимости
 
 ### Разрешено
 
 - Скаляры, `BackedEnum`, `UuidInterface/Uuid`, `DateTimeImmutable`.
-- OpenAPI и `Symfony Validator` metadata.
-- Custom presentation constraints для query-level contract.
+- `OpenAPI` и метаданные `Symfony Validator`.
+- Пользовательские ограничения presentation для контракта уровня query.
 
 ### Запрещено
 
-- Сервисы, репозитории, QueryBus/CommandBus, filesystem, network и любое runtime I/O.
-- Domain Entity/VO и infrastructure implementations.
+- Сервисы, репозитории, QueryBus/CommandBus, файловая система, сеть и любой I/O во время исполнения.
+- Domain `Entity`/`VO` и реализации слоя Infrastructure.
 
 ## Расположение
 
-- Controller-local query DTO:
+- Локальный query DTO (controller-local):
 
 ```
 apps/<app>/src/Module/<ModuleName>/Controller/<Context>/Request/<Name>QueryDto.php
-```
-
-- Cross-cutting query DTO:
-
-```
-apps/<app>/src/Component/<Context>/<Name>QueryDto.php
 ```
 
 ## Пример
@@ -69,12 +61,12 @@ final readonly class ListProjectQueryDto
 }
 ```
 
-`QueryDto` может хранить сырой query input до последующего маппинга, но не содержит логики нормализации.
-Если `from` и `to` образуют один transport-level contract, cross-field проверку выносим во внешний constraint.
+Query DTO может хранить сырой query-ввод до последующего маппинга, но не содержит логики нормализации.
+Если `from` и `to` образуют один контракт транспортного уровня (transport-level contract), проверку связанных полей выносим во внешнее ограничение.
 
 ## Чек-лист код-ревью
 
-- [ ] DTO сохраняет transport contract query string без business logic.
-- [ ] Metadata описывает только format/nullability/range и другие transport-level rules.
-- [ ] Reusable или class-level query validation вынесена в custom constraint.
-- [ ] Нет `Callback`, `validate*()`, constructor logic и скрытой нормализации.
+- [ ] DTO сохраняет транспортный контракт строки запроса без бизнес-логики.
+- [ ] Метаданные описывают только формат, допустимость `null` и диапазон, а также другие правила транспортного уровня.
+- [ ] Переиспользуемая или уровня класса валидация query вынесена в пользовательское ограничение.
+- [ ] Нет `Callback`, `validate*()`, логики в конструкторе и скрытой нормализации.

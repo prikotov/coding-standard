@@ -20,6 +20,8 @@ final class AnglicismAnalyzer
 {
     /** @var array<string, true> */
     private array $allowlistSet;
+    /** @var array<string, true> Многословные фразы allowlist (lowercase). */
+    private array $allowlistPhrases;
 
     /** @var array<string, string> Однословные ключи dictionary (lowercase) → перевод. */
     private array $dictionaryWords;
@@ -35,10 +37,17 @@ final class AnglicismAnalyzer
     public function __construct(array $allowlist = [], array $dictionary = [])
     {
         $this->allowlistSet = [];
+        $this->allowlistPhrases = [];
         foreach ($allowlist as $term) {
             $trimmed = trim($term);
-            if ($trimmed !== '') {
-                $this->allowlistSet[mb_strtolower($trimmed)] = true;
+            if ($trimmed === '') {
+                continue;
+            }
+            $key = mb_strtolower($trimmed);
+            if (preg_match('/\s/u', $trimmed) === 1) {
+                $this->allowlistPhrases[$key] = true;
+            } else {
+                $this->allowlistSet[$key] = true;
             }
         }
 
@@ -61,6 +70,9 @@ final class AnglicismAnalyzer
 
     public function analyze(string $text): AnalysisResult
     {
+        if ($this->allowlistPhrases !== []) {
+            $text = $this->maskAllowedPhrases($text);
+        }
         $words = $this->extractWords($text);
         $total = count($words);
 
@@ -182,5 +194,22 @@ final class AnglicismAnalyzer
     private function isAllowed(string $word): bool
     {
         return isset($this->allowlistSet[mb_strtolower($word)]);
+    }
+
+    /**
+     * Удаляет из текста allowlist-фразы (case-insensitive), чтобы их слова
+     * не учитывались как англицизмы. Пробелы между словами фразы разворачиваются
+     * в \s+ — ловит переносы и отступы.
+     */
+    private function maskAllowedPhrases(string $text): string
+    {
+        foreach (array_keys($this->allowlistPhrases) as $phrase) {
+            $parts = preg_split('/\s+/u', $phrase) ?: [''];
+            $quoted = array_map(static fn (string $p): string => preg_quote($p, '/'), $parts);
+            $pattern = '/(?<![a-zA-Z0-9])' . implode('\s+', $quoted) . '(?![a-zA-Z0-9])/ui';
+            $text = preg_replace($pattern, ' ', $text) ?? $text;
+        }
+
+        return $text;
     }
 }

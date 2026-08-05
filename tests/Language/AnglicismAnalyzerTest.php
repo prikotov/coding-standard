@@ -203,4 +203,24 @@ final class AnglicismAnalyzerTest extends TestCase
 
         self::assertSame([], $result->suggestions);
     }
+
+    public function testAllowlistedPhraseSuppressesWords(): void
+    {
+        // Многословная фраза в allowlist — все её слова исключаются из подсчёта.
+        $analyzer = new AnglicismAnalyzer(['Unit of Work']);
+
+        $result = $analyzer->analyze('Репозиторий не управляет Unit of Work.');
+
+        self::assertSame(0, $result->anglicismWords);
+    }
+
+    public function testAllowlistedPhraseIsCaseInsensitive(): void
+    {
+        // Фраза в тексте в другом регистре — совпадает.
+        $analyzer = new AnglicismAnalyzer(['Unit of Work']);
+
+        $result = $analyzer->analyze('Контроль через UNIT OF WORK.');
+
+        self::assertSame(0, $result->anglicismWords);
+    }
 }

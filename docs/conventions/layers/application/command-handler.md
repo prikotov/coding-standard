@@ -4,7 +4,7 @@ type: rule
 description: Правила создания и использования обработчиков команд
 ---
 
-# Command и CommandHandler
+# Команда и обработчик команды (Command и Command Handler)
 
 **Команда (Command)** — разновидность [Use Case](use-case.md), описывающая намерение изменить состояние приложения (
 модуля).
@@ -18,8 +18,8 @@ description: Правила создания и использования об�
 - Command — DTO, реализующее `CommandInterface<ReturnType>`.
 - Command Handler должен завершиться успешно или выбросить исключение.
 - Выполняет только одну логическую транзакцию.
-- Запрещено вызывать другие UseCase внутри CommandHandler.
-- События dispatch'ся после `flush()`, когда данные уже в БД.
+- Запрещено вызывать другие UseCase внутри Command Handler.
+- События диспетчеризуются после `flush()`, когда данные уже в БД.
 - Исключения внешних зависимостей оборачиваются в `{ProjectName}\Common\Exception\{ExceptionName}`.
 
 ## Расположение
@@ -45,10 +45,10 @@ description: Правила создания и использования об�
       `{ProjectName}\Common\Exception\{ExceptionName}`.
     - возвращает `void` или идентификатор созданной сущности (например, `int`, `Uuid`). DTO допустим только если нужно
       вернуть несколько связанных идентификаторов (например, пару `int id` + `uuid` через `ProjectName\Common\Application\Dto\IdDto`).
-    - **события должны dispatch'ся ПОСЛЕ `flush()`**, когда данные уже записаны в БД.
-      Подробнее: [Events & Transactions — взаимодействие событий и транзакций БД](../../architecture/events/transactions.md).
+    - **события должны диспетчеризоваться ПОСЛЕ `flush()`**, когда данные уже записаны в БД.
+      Подробнее: [События и транзакции — взаимодействие событий и транзакций БД](../../architecture/events/transactions.md).
 - Command Handler должен **выполнять только одну логическую транзакцию**.
-- **Запрещено** вызывать другие UseCase внутри CommandHandler, включая вызов через `__invoke()` другого `*Handler` и запуск через `CommandBus`/`QueryBus`.
+- **Запрещено** вызывать другие UseCase внутри Command Handler, включая вызов через `__invoke()` другого `*Handler` и запуск через CommandBus/QueryBus.
 
 ## Пример команды
 
@@ -230,14 +230,14 @@ final class CreateController extends AbstractController
 }
 ```
 
-> 💡 В продакшн-коде рекомендуется использовать CommandBus для доставки команд, особенно при использовании Symfony
-> Messenger и очередей. Прямой вызов CommandHandler допустим для unit-тестов или простых MVP-прототипов.
+> 💡 В продакшн-коде рекомендуется использовать CommandBus для доставки команд, особенно при
+> использовании «Symfony Messenger» и очередей. Прямой вызов Command Handler допустим для unit-тестов или простых MVP-прототипов.
 
 ## Чек-лист для проведения ревью кода
 
 - [ ] Command — `final readonly class`, реализующий `CommandInterface`.
 - [ ] Command Handler выполняет одну логическую транзакцию.
-- [ ] События dispatch'ся после `flush()`.
+- [ ] События диспетчеризуются после `flush()`.
 - [ ] Исключения внешних зависимостей обёрнуты.
 - [ ] Нет вызовов других UseCase/Handler внутри.
 - [ ] Возвращается `void`, идентификатор или `IdDto`.

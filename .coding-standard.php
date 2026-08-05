@@ -16,32 +16,43 @@ return [
         'max_ratio' => 0.02,
         // Разрешённые термины (имена собственные и аббревиатуры).
         'allowlist' => [
-            'Symfony', 'Doctrine', 'PHPUnit', 'PHPStan', 'Deptrac', 'Composer',
-            'Git', 'GitHub', 'Docker', 'MOEX', 'Twig', 'Panther',
-            'PHP', 'SQL', 'JSON', 'YAML', 'HTML', 'CSS', 'HTTP', 'HTTPS',
-            'DB', 'DBAL', 'ORM', 'API', 'CRUD', 'DDD', 'SOLID', 'CI', 'CD',
+            // 1. Внешние утилиты (инструменты разработки и анализа).
+            'PHPUnit', 'PHPStan', 'PHPMD', 'Deptrac', 'Composer', 'CodeSniffer',
+            // 2. Технологии, сервисы, библиотеки.
+            'Symfony', 'Doctrine', 'Twig', 'Panther',
+            'Git', 'GitHub', 'Docker',
+            'CI', 'CD',
+            // 3. Языки, стандарты, форматы.
+            'PHP', 'SQL', 'JSON', 'YAML', 'XML', 'PSR', 'HTML', 'CSS', 'HTTP', 'HTTPS',
+            'Markdown', 'PHPDoc',
+            // 4. Общеупотребимые термины и аббревиатуры.
             'URL', 'URI', 'ID', 'UUID', 'VO', 'DAO', 'REST', 'RPC', 'SDK',
-            'CLI', 'UI', 'UX', 'IO', 'OS', 'PR', 'DTO',
-            // Слои и паттерны DDD как термины.
+            'CLI', 'UI', 'UX', 'IO', 'OS', 'PR', 'DI',
+            'DB', 'DBAL', 'ORM', 'API', 'CRUD', 'DTO',
+            'DDD', 'SOLID',
+            'README', 'CHANGELOG', 'in-memory', 'web', 'task', 'metadata',
+            'slug', 'namespace',
+            'merge', 'release', 'warning', 'front matter', 'Code Conventions', 'Code Style',
+            // 5. Термины конвенций — слои, паттерны, классовые типы.
             'Application', 'Domain', 'Infrastructure', 'Integration', 'Presentation',
             'Module', 'Layer', 'Service', 'Event', 'Handler', 'Repository',
             'Entity', 'Component', 'Factory', 'Builder', 'Gateway', 'Calculator',
-            'Specification', 'Subscriber', 'Listener', 'Controller', 'Validator',
-            'Voter', 'Rule', 'Value', 'Object', 'Enum', 'Migration', 'Fixture',
-            'Command', 'Query', 'UseCase', 'Transport',
-            // Терминология Markdown и инструментов.
-            'Markdown', 'CodeSniffer', 'matter', 'front', 'fenced', 'inline',
-            'code', 'block', 'blocks', 'link', 'links', 'reference', 'slug',
-            'anchor', 'heading', 'snippet', 'merge', 'release', 'review',
-            'warning', 'sniff', 'namespace', 'phpdoc',
-            // Английские секции шаблона todo-md (шаблонные заголовки).
-            'Concept', 'Goal', 'Story', 'Context', 'Scope', 'Requirements',
-            'Must', 'Have', 'Should', 'Plan', 'Verification', 'Risks',
-            'Sources', 'Comments', 'Brief', 'Problem', 'Solution', 'Expected',
-            'Result', 'Definition', 'Done', 'History', 'MoSCoW', 'SMART',
-            // Шаблонные союзы и DDD-термины в тексте конвенций.
-            'use', 'case', 'and', 'of', 'web', 'extension', 'task',
-            'middleware', 'metadata', 'querybus', 'bus', 'DI',
+            'Specification', 'Subscriber', 'Listener', 'Controller', 'Validator', 'Extension', 'Middleware',
+            'Voter', 'Rule', 'Grant', 'Route', 'Value', 'Object', 'Enum', 'Migration', 'Fixture',
+            'Command', 'Query', 'UseCase', 'use case', 'Transport', 'Mapper', 'Helper', 'CriteriaMapper',
+            'Permission', 'Action', 'Request', 'Response',
+            'FormModel', 'FormType', 'CommandBus', 'QueryBus',
+            'Unit of Work',
+            // 6. Соглашения именования.
+            'PascalCase', 'camelCase', 'kebab-case',
+            // 7. Английские заголовки и термины шаблона todo-md.
+            'Concept and Goal', 'Context and Scope', 'Implementation Plan',
+            'Definition of Done', 'Definition of Ready', 'Risks and Dependencies',
+            'Change History', 'Solution Design', 'Release Notes and Deployment',
+            'Must Have', 'Should Have', 'Could Have', "Won't Have",
+            'User Story', 'Job Story',
+            'Requirements', 'Verification', 'Sources', 'Comments',
+            'Goal', 'Story', 'MoSCoW', 'SMART', 'INVEST',
         ],
         // Стандартные переводы ЖАРГОНА/проектно-специфичных терминов с неоднозначным
         // переводом (НЕ обычных слов с очевидным переводом). validate-language подсказывает

@@ -9,8 +9,8 @@ description: Правила создания правил доступа
 ## Определение
 
 **Правило доступа (Access Rule)** — сервис слоя Presentation, который содержит итоговую логику проверки доступа.
-Rule связывает Action, Permission и проверки владения/участия. См.
-[Symfony Security Authorization](https://symfony.com/doc/current/security.html#authorization).
+Rule связывает Action Enum, Permission Enum и проверки владения/участия. См.
+[документацию Symfony по авторизации](https://symfony.com/doc/current/security.html#authorization).
 
 ## Общие правила
 
@@ -23,8 +23,8 @@ Rule связывает Action, Permission и проверки владения/
 
 ## Зависимости
 
-- Разрешено: `TokenInterface`, `RoleHierarchyInterface`, публичные Application-компоненты (`QueryBus`), DTO Presentation.
-- Запрещено: контроллеры, Twig, Grant, репозитории Domain, Entity Manager, внешние сервисы без адаптеров.
+- Разрешено: `TokenInterface`, `RoleHierarchyInterface`, публичные Application-компоненты (QueryBus), DTO Presentation.
+- Запрещено: контроллеры, Twig, Grant, репозитории Domain, `EntityManager`, внешние сервисы без адаптеров.
 
 ## Расположение
 
@@ -35,7 +35,7 @@ apps/<app>/src/Module/<ModuleName>/Security/<SubjectName>/Rule.php
 ## Как используем
 
 1. Внедряем Rule в [Voter](voter.md).
-2. Voter передаёт в Rule `TokenInterface`, `ActionEnum` и subject.
+2. Voter передаёт в Rule `TokenInterface`, Action Enum и `subject`.
 3. Rule проверяет Permission Enum и дополнительные условия доступа.
 4. Rule может обращаться к Application через QueryBus для фактов доступа.
 5. Grant и шаблоны обращаются к `AuthorizationCheckerInterface`, а не к Rule.
@@ -216,7 +216,7 @@ final readonly class ProjectRule
 
 ## Чек-лист для проведения ревью кода
 
-- [ ] Rule объявлен `final readonly` и находится в каталоге Security.
+- [ ] Rule объявлен `final readonly` и находится в каталоге `Security`.
 - [ ] Все публичные методы начинаются с `can*` и возвращают `bool`.
 - [ ] Используется Permission Enum, а не строки.
 - [ ] Дополнительные проверки выполняются через Application (QueryBus) или Presentation сервисы.

@@ -8,48 +8,40 @@ description: Правила создания Request DTO презентацио�
 
 ## Определение
 
-**Presentation Request DTO** — transport-модель входного payload, которую controller получает из `MapRequestPayload`,
-JSON body, multipart payload или аналогичного HTTP binding до вызова Application-слоя.
+**Presentation Request DTO** — транспортная модель входной полезной нагрузки (payload), которую контроллер получает из `MapRequestPayload`, тела JSON, multipart-полезной нагрузки или аналогичной HTTP-привязки (binding) до вызова слоя Application.
 
 ## Общие правила
 
-- `RequestDto` объявляем как `final readonly class`.
-- DTO хранит только transport-данные и declarative metadata, без императивной логики.
-- Разрешена property-level metadata, которая описывает transport contract:
-  `Symfony Validator` attributes, OpenAPI attributes, serializer metadata и custom presentation `Constraint`.
+- Request DTO объявляем как `final readonly class`.
+- Request DTO хранит только транспортные данные и декларативные метаданные (declarative metadata), без императивной логики.
+- Разрешены метаданные уровня свойства (property-level), описывающие транспортный контракт:
+  атрибуты `Symfony Validator`, атрибуты `OpenAPI`, метаданные сериализатора (serializer) и пользовательское `Constraint` presentation.
 - Конструктор не содержит нормализации, преобразований, `if`/`match`, исключений и побочных эффектов.
-- Внутри `RequestDto` не используем `#[Assert\Callback]`, `validate*()` и другие imperative validation hooks.
-- Cross-field, reusable и отдельно именуемые правила выносим во внешний validator pair
-  (`*Constraint` / `*ConstraintValidator`).
-- Business rules, авторизация и обращения к сервисам/репозиториям/HTTP/очередям в `RequestDto` запрещены.
+- Внутри Request DTO не используем `#[Assert\Callback]`, `validate*()` и другие императивные хуки валидации (imperative validation hooks).
+- Правила для связанных полей, переиспользуемые и отдельно именуемые, выносим во внешнюю пару валидаторов (validator pair) (`*Constraint` / `*ConstraintValidator`).
+- Бизнес-правила, авторизация и обращения к сервисам/репозиториям/HTTP/очередям в Request DTO запрещены.
 
 ## Зависимости
 
 ### Разрешено
 
 - Скаляры, массивы с PHPDoc-типизацией, `BackedEnum`, `DateTimeImmutable`, `UuidInterface/Uuid`.
-- Вложенные transport DTO, если это часть публичного request contract.
-- `Symfony Validator`, OpenAPI и serializer metadata.
-- Custom presentation constraints из того же app/module.
+- Вложенные transport DTO, если это часть публичного контракта запроса.
+- `Symfony Validator`, `OpenAPI` и метаданные сериализатора.
+- Пользовательские ограничения presentation из того же приложения/модуля.
 
 ### Запрещено
 
-- Сервисы, репозитории, QueryBus/CommandBus, HTTP clients, filesystem, queue integrations.
-- Entity, Value Object и другие типы Domain.
-- Infrastructure/Integration implementations.
+- Сервисы, репозитории, QueryBus/CommandBus, HTTP-клиенты, файловая система, интеграции с очередями.
+- `Entity`, `Value Object` и другие типы Domain.
+- Реализации Infrastructure/Integration.
 
 ## Расположение
 
-- Controller-local request DTO:
+- Локальный Request DTO (controller-local):
 
 ```
 apps/<app>/src/Module/<ModuleName>/Controller/<Context>/Request/<Name>RequestDto.php
-```
-
-- Cross-cutting request DTO:
-
-```
-apps/<app>/src/Component/<Context>/<Name>RequestDto.php
 ```
 
 ## Пример
@@ -73,13 +65,13 @@ final readonly class RegisterUserRequestDto
 }
 ```
 
-`RequestDto` остаётся transport-only: поля и metadata. Если `password` и `confirmPassword` должны совпадать,
-это правило выносим во внешний class-level constraint, а не реализуем внутри DTO.
+Request DTO остаётся чисто транспортной (transport-only): поля и метаданные. Если `password` и `confirmPassword` должны совпадать,
+это правило выносим во внешнее ограничение уровня класса (class-level constraint), а не реализуем внутри DTO.
 
 ## Чек-лист код-ревью
 
 - [ ] DTO объявлен как `final readonly class`.
-- [ ] Внутри только transport data и declarative metadata.
-- [ ] Нет `Callback`, `validate*()`, constructor logic и нормализации.
-- [ ] Cross-field rule вынесен во внешний validator pair.
-- [ ] DTO зависит только от разрешённых transport-типов и presentation metadata.
+- [ ] Внутри только транспортные данные и декларативные метаданные.
+- [ ] Нет `Callback`, `validate*()`, логики в конструкторе и нормализации.
+- [ ] Межполевое правило вынесено во внешнюю пару валидаторов.
+- [ ] DTO зависит только от разрешённых transport-типов и presentation-метаданных.

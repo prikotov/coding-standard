@@ -6,12 +6,12 @@ description: Правила организации изолированных Sy
 
 # Приложения на фреймворке Symfony (Symfony Applications)
 
-**Приложение Symfony (Symfony Application)** — изолированный экземпляр Symfony Kernel с собственным набором модулей, конфигурацией и назначением. Подробности: [Symfony Applications](https://symfony.com/doc/current/configuration/multiple_applications.html).
+**Приложение Symfony (Symfony Application)** — изолированный экземпляр ядра Symfony (Kernel) с собственным набором модулей, конфигурацией и назначением. Подробности: [Приложения Symfony](https://symfony.com/doc/current/configuration/multiple_applications.html).
 
 ## Общие правила
 
 - Каждое приложение находится в директории `apps/<app_name>/`.
-- Все приложения наследуются от общего [`ProjectName\Common\Kernel`](examples/Kernel.php). В namespace: `ProjectName\Common\Kernel`.
+- Все приложения наследуются от общего [`ProjectName\Common\Kernel`](examples/Kernel.php).
 - Каждое приложение имеет собственный идентификатор (`id`), который используется для разделения кэша и логов.
 - Конфигурация приложения находится в `apps/<app_name>/config/`.
 - Модули приложения регистрируются в `apps/<app_name>/config/modules.php`.
@@ -33,8 +33,8 @@ apps/<app_name>/
 │   ├── Controller/          # Контроллеры
 │   ├── EventSubscriber/     # Подписчики событий
 │   ├── Module/              # Модули приложения
-│   └── Security/           # Безопасность
-├── templates/               # Шаблоны (для web/blog)
+│   └── Security/            # Безопасность
+├── templates/               # Шаблоны (при необходимости)
 ├── tests/                   # Тесты приложения
 └── translations/            # Переводы приложения
 ```
@@ -47,78 +47,34 @@ apps/<app_name>/
 
 ## Назначение приложений
 
-### Web (`apps/web`)
+Приложения разделяются по назначению — каждое со своим набором модулей, конфигурацией и тестами. Состав модулей зависит от назначения и фиксируется в `apps/<app_name>/config/modules.php`.
 
-**Web-приложение** — основной пользовательский интерфейс проекта с поддержкой аутентификации, авторизации и UI-компонентов.
+Примеры типов приложений:
 
-- **Назначение**: веб-интерфейс для пользователей, включая dashboard, управление проектами, чатами и т.д.
-- **Особенности**:
-  - Полная поддержка Symfony Security (аутентификация через OAuth2, email, ESIA).
-  - Twig-шаблоны и Twig Components.
-  - AssetMapper и Stimulus-контроллеры.
-  - Mercure для real-time обновлений.
-  - Модули с UI-компонентами (Phoenix, формы, виджеты).
-- **Модули**: AppOption, Attribution, Billing, Chat, Dashboard, Landing, Llm, Project, Rag, Search, Source, Secret, User, Tag, Notification.
-- **Типы тестов**: Functional (страницы), Integration (подписчики событий), Unit (компоненты).
+- **Web** (`apps/web`) — пользовательский интерфейс: Twig, формы, аутентификация, UI-компоненты.
+- **API** (`apps/api`) — REST/JSON API для внешних клиентов.
+- **Консоль** (`apps/console`) — CLI-команды, фоновые задачи, обработка очередей.
 
-### API (`apps/api`)
+Конкретный набор приложений и модулей определяется проектом.
 
-**API-приложение** — RESTful API для интеграции с внешними системами и мобильными клиентами.
-
-- **Назначение**: программный интерфейс для работы с данными проекта.
-- **Особенности**:
-  - RESTful-эндпоинты.
-  - JSON-формат запросов и ответов.
-  - CORS-поддержка через NelmioCorsBundle.
-  - OpenAPI-документация через NelmioApiDocBundle.
-  - Версионирование API через пространство имён (`Api\v1\`).
-- **Модули**: Chat, Project (API v1).
-- **Типы тестов**: Integration (API-эндпоинты).
-
-### Console (`apps/console`)
-
-**Console-приложение** — CLI-интерфейс для выполнения фоновых задач, cron-заданий и административных операций.
-
-- **Назначение**: консольные команды, обработка очередей, миграции, технические скрипты.
-- **Особенности**:
-  - Symfony Console Commands.
-  - Интеграция с Symfony Messenger для обработки очередей.
-  - Доступ к утилитам (pdfinfo, MinerU/Docling и др.) в контейнере `worker-cli`.
-  - Отсутствие веб-интерфейса и HTTP-маршрутов.
-- **Модули**: Chat, Llm, Project, Rag, Source, SpeechToText, User, Billing, Notification, Fix.
-- **Типы тестов**: Integration (консольные команды).
-
-### Blog (`apps/blog`)
-
-**Blog-приложение** — публичный блог с контентом и статическими страницами.
-
-- **Назначение**: публикация статей, новостей и документации.
-- **Особенности**:
-  - Статический контент в `apps/blog/content/`.
-  - Twig-шаблоны для рендеринга страниц.
-  - Мультиязычность через переводы.
-  - Минимальный набор модулей (только Blog).
-- **Модули**: Blog.
-- **Типы тестов**: Functional (страницы блога).
-
-## Общий Kernel
+## Общее ядро (Kernel)
 
 Все приложения наследуются от [`ProjectName\Common\Kernel`](examples/Kernel.php), который реализует:
 
-- **ModuleKernelTrait** — поддержка модульной системы.
-- **MicroKernelTrait** — гибкая конфигурация через PHP.
+- **`ModuleKernelTrait`** — поддержка модульной системы.
+- **`MicroKernelTrait`** — гибкая конфигурация через PHP.
 - **Разделение конфигурации** — общая (`config/`) и приложения (`apps/<app_name>/config/`).
 - **Разделение модулей** — общие (`config/modules.php`) и приложения (`apps/<app_name>/config/modules.php`).
 - **Разделение кэша и логов** — по идентификатору приложения.
 
-### Пример Kernel приложения
+### Пример ядра (Kernel) приложения
 
 ```php
 <?php
 
 declare(strict_types=1);
 
-namespace ProjectName\Blog;
+namespace ProjectName\<AppName>;
 
 use ProjectName\Common\Kernel as CommonKernel;
 
@@ -144,9 +100,9 @@ return [
 ];
 ```
 
-### Регистрация bundles
+### Регистрация пакетов (bundles)
 
-Bundles приложения регистрируются в `apps/<app_name>/config/bundles.php`:
+Пакеты (bundles) приложения регистрируются в `apps/<app_name>/config/bundles.php`:
 
 ```php
 <?php
@@ -188,67 +144,18 @@ dashboard:
 
 ## Как используем
 
-- **Создание нового приложения**: создайте директорию `apps/<app_name>/` с необходимой структурой и Kernel, наследуемым от `ProjectName\Common\Kernel`.
+- **Создание нового приложения**: создайте директорию `apps/<app_name>/` с необходимой структурой и ядром (Kernel), наследуемым от `ProjectName\Common\Kernel`.
 - **Добавление модуля в приложение**: зарегистрируйте модуль в `apps/<app_name>/config/modules.php`.
 - **Переопределение конфигурации**: создайте файл конфигурации в `apps/<app_name>/config/` для переопределения общих настроек.
 - **Разделение тестов**: размещайте тесты в `apps/<app_name>/tests/` для изоляции тестов разных приложений.
 - **Разделение кэша и логов**: используйте идентификатор приложения для автоматического разделения директорий.
 
-## Пример
-
-Пример конфигурации модулей для web-приложения (`apps/web/config/modules.php`):
-
-```php
-<?php
-
-declare(strict_types=1);
-
-return [
-    ProjectName\Web\Module\AppOption\AppOptionModule::class => ['all' => true],
-    ProjectName\Web\Module\Attribution\AttributionModule::class => ['all' => true],
-    ProjectName\Web\Module\Billing\BillingModule::class => ['all' => true],
-    ProjectName\Web\Module\Chat\ChatModule::class => ['all' => true],
-    ProjectName\Web\Module\Dashboard\DashboardModule::class => ['all' => true],
-    ProjectName\Web\Module\Landing\LandingModule::class => ['all' => true],
-    ProjectName\Web\Module\Llm\LlmModule::class => ['all' => true],
-    ProjectName\Web\Module\Project\ProjectModule::class => ['all' => true],
-    ProjectName\Web\Module\Rag\RagModule::class => ['all' => true],
-    ProjectName\Web\Module\Search\SearchModule::class => ['all' => true],
-    ProjectName\Web\Module\Source\SourceModule::class => ['all' => true],
-    ProjectName\Web\Module\Secret\SecretModule::class => ['all' => true],
-    ProjectName\Web\Module\User\UserModule::class => ['all' => true],
-    ProjectName\Web\Module\Tag\TagModule::class => ['all' => true],
-    ProjectName\Web\Module\Notification\NotificationModule::class => ['all' => true],
-];
-```
-
-Пример конфигурации модулей для console-приложения (`apps/console/config/modules.php`):
-
-```php
-<?php
-
-declare(strict_types=1);
-
-return [
-    ProjectName\Console\Module\Chat\ChatModule::class => ['all' => true],
-    ProjectName\Console\Module\Llm\LlmModule::class => ['all' => true],
-    ProjectName\Console\Module\Project\ProjectModule::class => ['all' => true],
-    ProjectName\Console\Module\Rag\RagModule::class => ['all' => true],
-    ProjectName\Console\Module\Source\SourceModule::class => ['all' => true],
-    ProjectName\Console\Module\SpeechToText\SpeechToTextModule::class => ['all' => true],
-    ProjectName\Console\Module\User\UserModule::class => ['all' => true],
-    ProjectName\Console\Module\Billing\BillingModule::class => ['all' => true],
-    ProjectName\Console\Module\Notification\NotificationModule::class => ['all' => true],
-    ProjectName\Console\Module\Fix\FixModule::class => ['all' => true],
-];
-```
-
 ## Чек-лист для проведения ревью кода
 
 - [ ] Приложение имеет правильную структуру директорий.
-- [ ] Kernel приложения наследуется от `ProjectName\Common\Kernel`.
+- [ ] Ядро приложения наследуется от `ProjectName\Common\Kernel`.
 - [ ] Модули зарегистрированы в `apps/<app_name>/config/modules.php`.
-- [ ] Bundles зарегистрированы в `apps/<app_name>/config/bundles.php`.
+- [ ] Пакеты (bundles) зарегистрированы в `apps/<app_name>/config/bundles.php`.
 - [ ] Конфигурация сервисов находится в `apps/<app_name>/config/services.yaml`.
 - [ ] Маршруты приложения находятся в `apps/<app_name>/config/routes/`.
 - [ ] Тесты приложения находятся в `apps/<app_name>/tests/`.

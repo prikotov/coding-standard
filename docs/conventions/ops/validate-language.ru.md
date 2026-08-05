@@ -12,7 +12,7 @@ description: Настройка и использование валидатор
 ## Общие правила
 
 - **`ratio`** = (латинские слова вне allowlist) / (все слова). Англицизм — любое латинское слово вне allowlist: одиночное (например «allowlist») или в обороте (например «persisted rows»). Файлы, где `ratio` превышает порог, помечаются warning. Порог по умолчанию — **2%** (настраивается через `--max-ratio` или ключ `max_ratio` конфига).
-- Латиница в inline code (`` `ratio` ``), code blocks, URL, namespaces и т.п. исключается экстрактором; разрешённые термины — allowlist'ом. Они не раздувают `ratio`.
+- Латиница в `inline code` (`` `ratio` ``), `code blocks`, URL, `namespaces` и т.п. исключается экстрактором; разрешённые термины — allowlist'ом. Они не раздувают `ratio`.
 - Латиница в кавычках «термин» и скобках `(term)` исключается экстрактором — это цитирование терминов и переводы, а не англицизмы в тексте.
 - Режим по умолчанию — **warning**: выводит файлы с превышением, но завершается кодом 0. Флаг `--strict` — завершать кодом 1.
 
@@ -36,11 +36,11 @@ description: Настройка и использование валидатор
 | Фрагмент | Пример |
 |---|---|
 | YAML front matter | `---\nname: ...\n---` |
-| Fenced code blocks | ` ``` ... ``` ` |
-| Inline code | `` `code` `` |
+| `Fenced code blocks` | ` ``` ... ``` ` |
+| `Inline code` | `` `code` `` |
 | URL | `https://example.com` |
-| Namespaces | `\App\Module\Foo` |
-| References | `#65`, `@user`, `gh-123` |
+| `Namespaces` | `\App\Module\Foo` |
+| `References` | `#65`, `@user`, `gh-123` |
 | Task IDs | `TASK-feat-...` |
 | Имена файлов | `AGENTS.md`, `config.php` |
 | UPPER_SNAKE идентификаторы | `AGENTS_TASK_WRITING_GUIDE` |

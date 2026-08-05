@@ -6,14 +6,14 @@ description: Правила создания представлений чере
 
 # Представление (View)
 
-**Представление (View)** — слой, отвечающий за отображение данных пользователю через HTML-шаблоны, использующие Twig и Bootstrap 5 Phoenix. Подробнее см. руководство [Symfony Twig](https://symfony.com/doc/current/templates.html), [Symfony UX TwigComponent](https://symfony.com/bundles/ux-twig-component/current/index.html) и документацию [Bootstrap 5 Phoenix]().
+**Представление (View)** — слой, отвечающий за отображение данных пользователю через HTML-шаблоны, использующие Twig и `Bootstrap 5 Phoenix`. Подробнее см. руководство [Symfony Twig](https://symfony.com/doc/current/templates.html), [Symfony UX `TwigComponent`](https://symfony.com/bundles/ux-twig-component/current/index.html) и документацию [`Bootstrap 5 Phoenix`]().
 
 ## Общие правила
 
 - Шаблоны храним в `apps/<app>/src/Module/<ModuleName>/Resource/templates/` или в `templates/` для общих шаблонов.
-- Используем синтаксис Twig с расширениями Symfony UX (TwigComponent).
+- Используем синтаксис Twig с расширениями Symfony UX (`TwigComponent`).
 - Все текстовые строки для UI оборачиваем в фильтр `|trans` для локализации.
-- Для переиспользуемых UI-элементов используем компоненты Symfony UX TwigComponent (Bootstrap 5 Phoenix).
+- Для переиспользуемых UI-элементов используем компоненты Symfony UX `TwigComponent` (`Bootstrap 5 Phoenix`).
 - Передача данных из контроллера — через ассоциативный массив вторым аргументом `$this->render()`.
 - Для частичных шаблонов используем директиву `include` с параметром `only` для изоляции контекста.
 - Смысловые блоки помечаем HTML-комментариями `<!-- BEGIN/END: block-name -->` для навигации AI-агента.
@@ -21,8 +21,8 @@ description: Правила создания представлений чере
 
 ## Зависимости
 
-- Разрешено: данные из контроллера (DTO, простые типы), Twig-функции, фильтры, компоненты Phoenix.
-- Запрещено: прямое обращение к сервисам, репозиториям, доменным сущностям, Application-UseCase.
+- Разрешено: данные из контроллера (DTO, простые типы), Twig-функции, фильтры, компоненты `Phoenix`.
+- Запрещено: прямое обращение к сервисам, репозиториям, доменным сущностям, UseCase Application-слоя.
 
 ## Расположение
 
@@ -37,7 +37,7 @@ templates/<module>/<template>.html.twig  # общие шаблоны
 2. Переопределяем блоки: `title`, `stylesheets`, `body`, `javascripts`.
 3. Данные передаём из контроллера через массив: `$this->render('template.html.twig', ['key' => $value])`.
 4. Для переиспользуемых фрагментов используем `include` с явным перечислением параметров и `only`.
-5. Для сложных UI-элементов используем компоненты Phoenix: `<twig:Phoenix:Alert ...>`, `<twig:Phoenix:Pagination ...>`.
+5. Для сложных UI-элементов используем компоненты `Phoenix`: `<twig:Phoenix:Alert ...>`, `<twig:Phoenix:Pagination ...>`.
 6. Для локализации используем фильтр `|trans` с ключами переводов.
 
 ## Пример
@@ -92,21 +92,21 @@ templates/<module>/<template>.html.twig  # общие шаблоны
 {% endblock %}
 ```
 
-## Компоненты Bootstrap 5 Phoenix
+## Компоненты `Bootstrap 5 Phoenix`
 
-Проект использует Symfony UX TwigComponent для переиспользуемых UI-элементов на основе Bootstrap 5 Phoenix. Компоненты расположены в `apps/web/src/Component/Twig/Phoenix/`.
+Проект использует Symfony UX `TwigComponent` для переиспользуемых UI-элементов на основе `Bootstrap 5 Phoenix`. Компоненты расположены в `apps/web/src/Component/Twig/Phoenix/`.
 
 Правила проектирования и ревью Twig-компонентов описаны в [Twig-компонент (Twig Component)](twig-component.md).
 
 ### Основные компоненты
 
-- **Alert** — уведомления с иконками и вариантами (primary, success, danger, warning, info).
-- **Pagination** — постраничная навигация с поддержкой сортировки и фильтров.
-- **DropdownActions** — выпадающее меню действий в таблицах.
-- **Badge** — бейджи для статусов.
-- **NavLink**, **NavList**, **NavListItem** — навигационные элементы.
-- **Spinner** — индикатор загрузки.
-- **Tooltip** — всплывающие подсказки.
+- **`Alert`** — уведомления с иконками и вариантами (primary, success, danger, warning, info).
+- **`Pagination`** — постраничная навигация с поддержкой сортировки и фильтров.
+- **`DropdownActions`** — выпадающее меню действий в таблицах.
+- **`Badge`** — бейджи для статусов.
+- **`NavLink`**, **`NavList`**, **`NavListItem`** — навигационные элементы.
+- **`Spinner`** — индикатор загрузки.
+- **`Tooltip`** — всплывающие подсказки.
 
 ### Пример использования компонента
 
@@ -152,9 +152,9 @@ return $this->render('@web.user/user/list.html.twig', [
 
 ## Переиспользование шаблонов
 
-### Include
+### Подключение (`include`)
 
-Для включения частичных шаблонов используем `include` с параметром `only`:
+Для подключения частичных шаблонов используем `include` с параметром `only`:
 
 ```twig
 {% include '@web.user/user/_table.html.twig' with {
@@ -169,9 +169,9 @@ return $this->render('@web.user/user/list.html.twig', [
 
 Параметр `only` изолирует контекст включаемого шаблона, предотвращая случайный доступ к переменным родительского шаблона.
 
-### Twig Components
+### Twig-компоненты
 
-Для сложных переиспользуемых элементов используем Symfony UX TwigComponent:
+Для сложных переиспользуемых элементов используем Symfony UX `TwigComponent`:
 
 ```php
 #[AsTwigComponent]
@@ -196,7 +196,7 @@ final class Alert
 ## Лучшие практики
 
 - Изолируйте контекст включаемых шаблонов через `only`.
-- Используйте компоненты Phoenix для UI-элементов вместо дублирования HTML.
+- Используйте компоненты `Phoenix` для UI-элементов вместо дублирования HTML.
 - Все текстовые строки оборачивайте в `|trans` для локализации.
 - Не размещайте бизнес-логику в шаблонах — делегируйте её в контроллер или Application.
 - Повторяющиеся вычисления и форматирование выносите в [Twig-расширения](twig-extension.md), а переиспользуемые HTML-блоки — в [Twig-компоненты](twig-component.md).
@@ -208,7 +208,7 @@ final class Alert
 - [ ] Шаблон хранится в правильной директории `Resource/templates/`.
 - [ ] Все текстовые строки обёрнуты в `|trans`.
 - [ ] Для включаемых шаблонов используется параметр `only`.
-- [ ] Для UI-элементов используются компоненты Phoenix.
+- [ ] Для UI-элементов используются компоненты `Phoenix`.
 - [ ] Нет бизнес-логики и прямых обращений к сервисам.
 - [ ] Данные передаются из контроллера через массив.
 - [ ] Шаблон наследует `base.html.twig` или другой базовый шаблон.

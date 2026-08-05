@@ -11,8 +11,8 @@ description: Правила реализации сценариев исполь
 
 **Состоят из:**
 
-- [CommandHandler](command-handler.md) — изменяют состояние (данные) приложения;
-- [QueryHandler](query-handler.md) — возвращают данные.
+- [Command Handler](command-handler.md) — изменяют состояние (данные) приложения;
+- [Query Handler](query-handler.md) — возвращают данные.
 
 UseCase-ы являются частью слоя [Application](../application.md) и могут располагаться только там.
 
@@ -55,14 +55,14 @@ src/Module/{ModuleName}/Application/UseCase/
 
 ## Исключение: compute-операции без БД
 
-В проектах без БД (compute, CLI-инструменты) CommandHandler может возвращать DTO с результатом вычислений.
-Это не соответствует строгому CQRS (Command не возвращает данные), но оправдано когда:
+В проектах без БД (compute, CLI-инструменты) Command Handler может возвращать DTO с результатом вычислений.
+Это не соответствует строгому разделению команд и запросов (CQRS), при котором команда не возвращает данные, но оправдано когда:
 
 - Результат нужен синхронно, в той же команде.
-- Нет хранилища для паттерна Command → token → Query.
-- Store был бы overengineering.
+- Нет хранилища для паттерна «команда → токен → запрос» (Command → token → Query).
+- Введение отдельного хранилища было бы избыточным усложнением (overengineering).
 
-**Оформление в коде:** suppress сниффа с комментарием-причиной.
+**Оформление в коде:** подавление сниффа (suppress) комментарием-причиной.
 
 ```php
 // phpcs:ignore PrikotovCodingStandard.Application.CommandHandlerReturnType.ForbiddenReturnType

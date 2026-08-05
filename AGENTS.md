@@ -6,17 +6,17 @@
 
 ## Проект
 
-**prikotov/coding-standard** — PHP-пакет с двумя частями:
+**`prikotov/coding-standard`** — PHP-пакет с двумя частями:
 
-1. **PHPCS Sniffs** — автоматические проверки через PHP CodeSniffer 4.x (`src/`).
-2. **Conventions** — документация DDD-конвенций (`docs/conventions/`), копируемая в проект-потребитель через `bin/coding-standard-init`.
+1. **`PHPCS`-сниффы** — автоматические проверки через PHP CodeSniffer 4.x (`src/`).
+2. **Конвенции** — документация DDD-конвенций (`docs/conventions/`), копируемая в проект-потребитель через `bin/coding-standard-init`.
 
 ---
 
 ## Перед каждым пушем / PR
 
 - **Запускать `composer check`**, а не только `composer test`.
-  `composer check` = PHPUnit + sniff-test + validate-docs + phpcs.
+  `composer check` = PHPUnit + `sniff-test` + `validate-docs` + `phpcs`.
   `composer test` покрывает только PHPUnit — этого недостаточно.
 - **Проверять `composer.json`** на приватные зависимости — в CI нет доступа к VCS-репозиториям.
 
@@ -27,7 +27,7 @@
 - **Стабильность**: покрывайте ключевую логику тестами, низкая связанность.
 - **Умеренность**: не добавляйте технологии и абстракции без необходимости.
 
-Подробнее: [Ценности](docs/conventions/principles/values.md) | [Code Style](docs/conventions/principles/code-style.md).
+Подробнее: [Ценности](docs/conventions/principles/values.md) | [стиль кода](docs/conventions/principles/code-style.md).
 
 ---
 
@@ -93,7 +93,7 @@ description: Правила создания и использования об�
 
 **Типы документов:**
 
-| type | Когда | Проверка секций |
+| `type` | Когда | Проверка секций |
 |------|--------|----------------|
 | `rule` | Документ-правило (конвенция, паттерн) | Да — обязательные секции |
 | `index` | Индексный файл категории (список ссылок) | Нет |
@@ -157,7 +157,7 @@ declare(strict_types=1);
 1. **Проверьте существование** — нет ли уже документа на тему в `docs/conventions/`.
 2. **Добавьте front matter** — `name`, `type`, `description`.
 3. **Выберите категорию**: `layers/`, `core-patterns/`, `modules/`, `ops/`, `testing/`, `principles/`, или создайте новую.
-4. **Именование файлов и папок**: kebab-case, lowercase с дефисами (`value-object.md`, `core-patterns/`). Для документов на другом языке — суффикс кода языка перед `.md` (`glossary.en.md`).
+4. **Именование файлов и папок**: `kebab-case`, нижний регистр с дефисами (`value-object.md`, `core-patterns/`). Для документов на другом языке — суффикс кода языка перед `.md` (`glossary.en.md`).
 5. **Обновите индекс** — добавьте ссылку в `docs/conventions/index.md`.
 6. **Проверьте ссылки** — все относительные ссылки должны быть актуальны.
 7. **Примеры кода** — берите из реального проекта, упрощайте.
@@ -183,16 +183,16 @@ declare(strict_types=1);
 
 ---
 
-## Git workflow
+## Git-процесс (workflow)
 
 - **Все изменения — через ветку + PR.** Прямой пуш в `master` запрещён.
 - Создать ветку `task/<short-description>`, сделать коммиты, открыть PR, дождаться CI, смержить, удалить ветку.
 
-Правила работы с git — ветки, коммиты, PR, релизы, SemVer:
+Правила работы с git — ветки, коммиты, PR, релизы, `SemVer`:
 
 - [Ветки](vendor/prikotov/git-workflow/docs/git-workflow/branches.md)
 - [Коммиты (Conventional Commits)](vendor/prikotov/git-workflow/docs/git-workflow/commits.md)
-- [Pull Request](vendor/prikotov/git-workflow/docs/git-workflow/pull-request.md)
+- [PR](vendor/prikotov/git-workflow/docs/git-workflow/pull-request.md)
 - [Code Review](vendor/prikotov/git-workflow/docs/git-workflow/code-review.md)
 - [Релизы и CHANGELOG](vendor/prikotov/git-workflow/docs/git-workflow/release.md)
 
@@ -200,9 +200,9 @@ declare(strict_types=1);
 
 ## Ссылки
 
-- **Конвенции**: [docs/conventions/index.md](docs/conventions/index.md)
-- **Deptrac**: [config/deptrac/depfile.yaml](config/deptrac/depfile.yaml)
-- **Git workflow**: [vendor/prikotov/git-workflow/docs/git-workflow/index.md](vendor/prikotov/git-workflow/docs/git-workflow/index.md)
+- **Конвенции**: [индекс конвенций](docs/conventions/index.md)
+- **Deptrac**: [`config/deptrac/depfile.yaml`](config/deptrac/depfile.yaml)
+- **Git-процесс**: [`vendor/prikotov/git-workflow/docs/git-workflow/index.md`](vendor/prikotov/git-workflow/docs/git-workflow/index.md)
 - **README**: [README.md](README.md)
-- **PHPCS Ruleset**: [ruleset.xml](ruleset.xml)
-- **Задачи (todo-md)**: [todo/AGENTS.md](todo/AGENTS.md)
+- **Набор правил `PHPCS`**: [`ruleset.xml`](ruleset.xml)
+- **Задачи (todo-md)**: [`todo/AGENTS.md`](todo/AGENTS.md)
