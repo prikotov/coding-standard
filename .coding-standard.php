@@ -24,7 +24,7 @@ return [
             'CI', 'CD',
             // 3. Языки, стандарты, форматы.
             'PHP', 'SQL', 'JSON', 'YAML', 'XML', 'PSR', 'HTML', 'CSS', 'HTTP', 'HTTPS',
-            'Markdown', 'namespace', 'phpdoc',
+            'Markdown', 'namespace', 'PHPDoc',
             // 4. Общеупотребимые термины и аббревиатуры.
             'URL', 'URI', 'ID', 'UUID', 'VO', 'DAO', 'REST', 'RPC', 'SDK',
             'CLI', 'UI', 'UX', 'IO', 'OS', 'PR', 'DI',
