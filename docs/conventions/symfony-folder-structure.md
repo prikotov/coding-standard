@@ -14,7 +14,7 @@ description: Организация директорий проекта на о�
 - Каждое приложение находится в `apps/<app_name>/` и наследуется от общего [`ProjectName\Common\Kernel`](examples/Kernel.php).
 - Все модули размещаются в `src/Module/{ModuleName}/`.
 - Конфигурация разделена на общую (`config/`) и приложения (`apps/<app_name>/config/`).
-- Тесты разделены по типам: модульные (`tests/Unit/`), интеграционные (`tests/Integration/`), сквозные (E2E) (`apps/*/tests/`).
+- Тесты разделены по типам: модульные (Unit) в `tests/Unit/`, интеграционные (Integration) в `tests/Integration/`, сквозные (E2E) в `apps/*/tests/`.
 
 ### Namespace и PSR-4
 
