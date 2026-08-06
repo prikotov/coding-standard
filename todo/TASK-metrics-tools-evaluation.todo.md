@@ -9,8 +9,8 @@ epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee: Исследователь (codex)
 branch: task/metrics-tools-evaluation
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/86
+status: review
 ---
 
 # TASK-metrics-tools-evaluation: Оценка анализаторов метрик (PhpMetrics / PDepend / PhpCodeArcheology) и выбор основы
@@ -180,3 +180,4 @@ vendor/bin/phpcodearcheology \
 | 2026-08-02 | pi (Pi Coding Agent) | Создание задачи. |
 | 2026-08-06 | codex (Codex) | Задача взята в работу; добавлен план реализации. |
 | 2026-08-06 | codex (Codex) | Выполнены прогоны кандидатов; основой выбран PhpCodeArcheology 2.11.x. |
+| 2026-08-06 | codex (Codex) | Создан PR #86; задача переведена в review. |
