@@ -9,8 +9,8 @@ epic:
 author: pi
 assignee: Codex
 branch: task/docs-phpdoc-override-methods
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/85
+status: review
 ---
 
 # TASK-docs-phpdoc-override-methods: PHPDoc для #[Override]/имплементаций интерфейсов — устранить неоднозначность
@@ -114,3 +114,4 @@ composer check
 | 2026-07-27 | Dev (Pi) | Приведение задачи к шаблону todo-md: добавлена секция 0 «Простое описание (Human Brief)» (Problem/Solution Sketch/Expected Result) и подсекция Won't Have — для прохождения `validate-todo`. Содержание взято из существующих секций 1–3, новых требований не добавлено. |
 | 2026-08-06 | Codex | Задача взята в работу: создана ветка и заполнен план реализации. |
 | 2026-08-06 | Codex | Уточнены правило, примеры и чек-лист; `composer check` успешно выполнен. |
+| 2026-08-06 | Codex | Создан draft PR #85; задача переведена в статус `review`. |
