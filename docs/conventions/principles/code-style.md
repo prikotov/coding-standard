@@ -266,6 +266,12 @@ PHPDoc обязателен для:
 - Публичных и защищённых методов
 - Свойств классов (если неочевидно)
 
+**Исключение для реализации контракта:**
+
+- Для метода, реализующего интерфейс, достаточно PHPDoc интерфейса: не дублируйте его в реализации.
+- Атрибут `#[\Override]`, доступный в PHP 8.4, явно обозначает такое переопределение (override), но не требует отдельного PHPDoc.
+- Добавьте PHPDoc к реализации, только если она сообщает нечто сверх контракта: поведенческий нюанс, специфичное исключение или ограничение.
+
 **Структура PHPDoc:**
 
 ```php
@@ -288,6 +294,77 @@ final readonly class PaymentService
         CurrencyEnum $currency,
     ): PaymentModel {
         // ...
+    }
+}
+```
+
+### PHPDoc в реализации интерфейса
+
+Документированный интерфейс — источник публичного контракта. Реализация не повторяет его PHPDoc:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+final readonly class Report
+{
+}
+
+interface ReportEncoderInterface
+{
+    public function encode(Report $report): string;
+}
+
+interface ReportExporterInterface
+{
+    /**
+     * Экспортирует отчёт в строку CSV.
+     */
+    public function export(Report $report): string;
+}
+
+final readonly class CsvReportExporter implements ReportExporterInterface
+{
+    public function __construct(
+        private ReportEncoderInterface $encoder,
+    ) {
+    }
+
+    #[\Override]
+    public function export(Report $report): string
+    {
+        return $this->encoder->encode($report);
+    }
+}
+```
+
+Если реализация добавляет информацию, которой нет в контракте, PHPDoc нужен и не считается дублированием:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+interface RemoteReportExporterClientInterface
+{
+    public function export(Report $report): string;
+}
+
+final readonly class RemoteCsvReportExporter implements ReportExporterInterface
+{
+    public function __construct(
+        private RemoteReportExporterClientInterface $client,
+    ) {
+    }
+
+    /**
+     * @throws RemoteExporterUnavailableException если внешний экспортёр недоступен
+     */
+    #[\Override]
+    public function export(Report $report): string
+    {
+        return $this->client->export($report);
     }
 }
 ```
@@ -582,7 +659,7 @@ public function createPayment(User $user, string $amount): PaymentModel
 - [ ] Переменные названы в camelCase, описательные имена
 - [ ] Константы названы в `UPPER_SNAKE_CASE`
 - [ ] Интерфейсы имеют суффикс `Interface`
-- [ ] Публичные классы, интерфейсы и методы имеют PHPDoc
+- [ ] Публичные классы, интерфейсы и методы имеют PHPDoc; для реализации документированного интерфейса достаточно PHPDoc контракта
 - [ ] Нет избыточных комментариев для очевидного кода
 - [ ] Сложная логика прокомментирована
 - [ ] Используются именованные аргументы для улучшения читаемости
