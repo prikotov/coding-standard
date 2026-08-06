@@ -7,7 +7,7 @@ priority: P2
 depends_on:
 epic:
 author: pi
-assignee: Codex
+assignee: Разработчик (codex-cli)
 branch: task/docs-phpdoc-override-methods
 pr: https://github.com/prikotov/coding-standard/pull/85
 status: review

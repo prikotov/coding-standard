@@ -26,7 +26,7 @@
         "deptrac/deptrac": "^2.0",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^10.5",
-        "prikotov/todo-md": "^0.0"
+        "prikotov/todo-md": "^0.0.8"
     },
     "autoload": {
         "psr-4": {
@@ -56,8 +56,8 @@
         "validate-md-links": "php bin/validate-md-links",
         "validate-language": "php bin/validate-language --strict",
         "validate-todo": [
-            "php vendor/bin/todo-md-validate todo/*.todo.md",
-            "php vendor/bin/todo-md-validate todo/backlog/"
+            "php vendor/bin/todo-md validate todo/*.todo.md",
+            "php vendor/bin/todo-md validate todo/backlog/"
         ],
         "check": [
             "@test",
