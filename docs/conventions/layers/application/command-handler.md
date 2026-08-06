@@ -49,6 +49,7 @@ description: Правила создания и использования об�
       Подробнее: [События и транзакции — взаимодействие событий и транзакций БД](../../architecture/events/transactions.md).
 - Command Handler должен **выполнять только одну логическую транзакцию**.
 - **Запрещено** вызывать другие UseCase внутри Command Handler, включая вызов через `__invoke()` другого `*Handler` и запуск через CommandBus/QueryBus.
+- Command Handler вызывается только через CommandBus. Прямой вызов через `__invoke()` или как вызываемого объекта запрещён.
 
 ## Пример команды
 
@@ -230,8 +231,8 @@ final class CreateController extends AbstractController
 }
 ```
 
-> 💡 В продакшн-коде рекомендуется использовать CommandBus для доставки команд, особенно при
-> использовании «Symfony Messenger» и очередей. Прямой вызов Command Handler допустим для unit-тестов или простых MVP-прототипов.
+> Command Handler вызывается только через CommandBus. Это сохраняет единую точку доставки команд для middleware,
+> транзакций, журналирования и выбора транспорта.
 
 ## Чек-лист для проведения ревью кода
 
@@ -240,5 +241,5 @@ final class CreateController extends AbstractController
 - [ ] События диспетчеризуются после `flush()`.
 - [ ] Исключения внешних зависимостей обёрнуты.
 - [ ] Нет вызовов других UseCase/Handler внутри.
+- [ ] Command Handler вызывается только через CommandBus.
 - [ ] Возвращается `void`, идентификатор или `IdDto`.
-

@@ -57,13 +57,18 @@ AI-агенты склонны отклоняться от конвенций. �
 | Правило | Что проверяет |
 |---|---|
 | `DtoReuseRule` | Находит DTO в общей папке модуля (`Module\{ModuleName}\Application\Dto`), которые по факту использует только один use case, и предлагает переложить их рядом с владельцем. |
+| `MessageContractDtoLocationRule` | Проверяет расположение DTO, используемых в контрактах Command и Query. |
+| `ForbiddenInvokableHandlerCallRule` | Запрещает прямой вызов Command Handler и Query Handler как вызываемого объекта. |
+| `ForbiddenExplicitHandlerInvokeRule` | Запрещает прямой вызов метода `__invoke()` у Command Handler и Query Handler. |
 
-**Подключение:** потребитель добавляет `phpstan/phpstan` в `require-dev` (сосуществует с `Psalm`) и расширение подхватывается автоматически через `phpstan/extension-installer`, либо вручную через `includes:` в `phpstan.neon`:
+Потребитель добавляет `phpstan/phpstan` в `require-dev` и подключает правила пакета в конфигурации PHPStan:
 
 ```neon
 includes:
     - vendor/prikotov/coding-standard/phpstan-rules.neon
 ```
+
+Подробные варианты подключения описаны в разделе [«Подключение PHPStan»](#подключение-phpstan).
 
 Конвенция размещения DTO: [`docs/conventions/core-patterns/dto.md`](docs/conventions/core-patterns/dto.md).
 
@@ -86,6 +91,12 @@ includes:
 composer require --dev prikotov/coding-standard
 ```
 
+Скопируйте конвенции и конфигурации в проект:
+
+```bash
+php vendor/bin/coding-standard-init --project-name=ProjectName
+```
+
 В состав пакета входят:
 
 - **Сниффы** — PHP CodeSniffer-правила, работают сразу из `vendor/`
@@ -101,6 +112,33 @@ composer require --dev prikotov/coding-standard
 <config name="installed_paths" value="vendor/prikotov/coding-standard"/>
 <rule ref="PrikotovCodingStandard"/>
 ```
+
+### Подключение PHPStan
+
+Добавьте PHPStan в проект, если он ещё не установлен:
+
+```bash
+composer require --dev phpstan/phpstan
+```
+
+Рекомендуемый вариант — явно подключить правила пакета в `phpstan.neon` или `phpstan.neon.dist`:
+
+```neon
+includes:
+    - vendor/prikotov/coding-standard/phpstan-rules.neon
+```
+
+Явное подключение не зависит от Composer-плагинов и гарантирует применение правил после обновления пакета.
+
+Альтернативный вариант — автоматическое подключение через `phpstan/extension-installer`:
+
+```bash
+composer config allow-plugins.phpstan/extension-installer true
+composer require --dev phpstan/extension-installer
+```
+
+При автоматическом подключении добавлять `phpstan-rules.neon` в `includes` не нужно. Без одного из этих двух вариантов
+пользовательские PHPStan-правила пакета не выполняются.
 
 ### Копирование конвенций в проект
 
@@ -131,6 +169,40 @@ php vendor/bin/coding-standard-init --project-name=Task
 | `--no-exceptions` | Пропустить копирование исключений |
 
 Без `--project-name` исключения пропускаются, остальные файлы копируются как обычно.
+
+---
+
+## Обновление
+
+Обновите пакет в пределах версии, разрешённой в `composer.json`:
+
+```bash
+composer update prikotov/coding-standard --with-dependencies
+```
+
+Для перехода на следующую минорную версию до `1.0` обновите ограничение явно. Например, `^0.26` не разрешает установку
+`0.27`:
+
+```bash
+composer require --dev prikotov/coding-standard:^0.27 --with-all-dependencies
+```
+
+Обновите скопированные конвенции и обязательную конфигурацию пакета:
+
+```bash
+php vendor/bin/coding-standard-init --force
+```
+
+Флаг `--force` перезаписывает ранее скопированные конвенции и `.coding-standard.php`. Проверьте изменения через
+`git diff` и верните проектные настройки, если они отличаются от стандартных. Конфигурации `depfile.yaml`,
+`phpcs.xml.dist` и `phpstan.neon.dist`, уже существующие в проекте, init-команда не перезаписывает.
+
+После обновления запустите проверки проекта, включая PHPStan:
+
+```bash
+vendor/bin/phpstan analyse
+composer check
+```
 
 ---
 
