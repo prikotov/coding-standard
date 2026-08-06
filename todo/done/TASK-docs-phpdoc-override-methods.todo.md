@@ -10,7 +10,8 @@ author: Тимлид (pi)
 assignee: Разработчик (codex-cli)
 branch: task/docs-phpdoc-override-methods
 pr: https://github.com/prikotov/coding-standard/pull/85
-status: review
+status: done
+completed: 2026-08-06 15:17:06 (1786029426)
 ---
 
 # TASK-docs-phpdoc-override-methods: PHPDoc для #[Override]/имплементаций интерфейсов — устранить неоднозначность
