@@ -89,7 +89,7 @@ Integration вызывает Application чужого модуля:
 ### Presentation → Application
 
 Presentation зависит только от Application:
-- Контроллеры вызывают Command/Query через Handler
+- Контроллеры передают Command/Query через CommandBus/QueryBus
 - Не обращается к Domain, Infrastructure, Integration напрямую
 - Валидация на уровне формы/DTO
 

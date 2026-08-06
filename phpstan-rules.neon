@@ -14,3 +14,9 @@ services:
     -
         class: PrikotovCodingStandard\PhpStan\MessageContractDtoLocationRule
         tags: [phpstan.rules.rule]
+    -
+        class: PrikotovCodingStandard\PhpStan\ForbiddenInvokableHandlerCallRule
+        tags: [phpstan.rules.rule]
+    -
+        class: PrikotovCodingStandard\PhpStan\ForbiddenExplicitHandlerInvokeRule
+        tags: [phpstan.rules.rule]

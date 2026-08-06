@@ -57,6 +57,9 @@ AI-агенты склонны отклоняться от конвенций. �
 | Правило | Что проверяет |
 |---|---|
 | `DtoReuseRule` | Находит DTO в общей папке модуля (`Module\{ModuleName}\Application\Dto`), которые по факту использует только один use case, и предлагает переложить их рядом с владельцем. |
+| `MessageContractDtoLocationRule` | Проверяет расположение DTO, используемых в контрактах Command и Query. |
+| `ForbiddenInvokableHandlerCallRule` | Запрещает прямой вызов Command Handler и Query Handler как вызываемого объекта. |
+| `ForbiddenExplicitHandlerInvokeRule` | Запрещает прямой вызов метода `__invoke()` у Command Handler и Query Handler. |
 
 **Подключение:** потребитель добавляет `phpstan/phpstan` в `require-dev` (сосуществует с `Psalm`) и расширение подхватывается автоматически через `phpstan/extension-installer`, либо вручную через `includes:` в `phpstan.neon`:
 

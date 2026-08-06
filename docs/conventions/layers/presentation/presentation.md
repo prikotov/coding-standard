@@ -30,7 +30,7 @@ description: Детальное описание слоя представлен
 
 | Слой | Что можно использовать |
 |------|------------------------|
-| Application | Command, Query, DTO, Handler (через `__invoke`) |
+| Application | Command, Query, DTO, CommandBus/QueryBus |
 | `Common` | Исключения, Helper, общие компоненты |
 | `Symfony` | `HttpFoundation`, `Form`, `Validator`, `Security`, `Console` |
 | `Twig` | Шаблоны, функции, фильтры |
@@ -121,7 +121,7 @@ apps/
 **Поток выполнения:**
 1. Команда получает аргументы и опции
 2. Валидирует входные данные
-3. Вызывает Handler через Command/Query
+3. Передаёт Command/Query через CommandBus/QueryBus
 4. Выводит результат через `SymfonyStyle`
 
 ### Blog-приложение
