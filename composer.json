@@ -24,6 +24,7 @@
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
         "deptrac/deptrac": "^2.0",
+        "php-code-archeology/php-code-archeology": "^2.11",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^10.5",
         "prikotov/todo-md": "^0.0.8"
@@ -45,7 +46,8 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "php-code-archeology/php-code-archeology": true
         }
     },
     "scripts": {
