@@ -144,6 +144,7 @@ vendor/bin/phpcodearcheology \
 
 - Рекомендация из обсуждения: PhpCodeArcheology + Deptrac — быстрый эксперимент; PhpMetrics/PDepend + Deptrac + агрегатор — контролируемая система. Задача выбирает между ними по фактам прогона.
 - Гипотеза автора: метрики должны покрывать cohesion, coupling, размер и количество компонентов (пара класс-метод / модуль-класс).
+- Постоянный отчёт об исследовании: [Сравнение PHP-анализаторов метрик](../docs/research/metrics-tools-evaluation.md).
 
 ### Результаты оценки
 
@@ -181,3 +182,4 @@ vendor/bin/phpcodearcheology \
 | 2026-08-06 | codex (Codex) | Задача взята в работу; добавлен план реализации. |
 | 2026-08-06 | codex (Codex) | Выполнены прогоны кандидатов; основой выбран PhpCodeArcheology 2.11.x. |
 | 2026-08-06 | codex (Codex) | Создан PR #86; задача переведена в review. |
+| 2026-08-07 | codex (Codex) | Результаты исследования вынесены в постоянный документ `docs/research/metrics-tools-evaluation.md`. |
