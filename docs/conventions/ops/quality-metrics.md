@@ -97,40 +97,62 @@ description: Единая модель метрик поддерживаемос
 
 ## Пример
 
-Ниже класс с двумя независимыми группами методов: `amount()`/`increase()` используют `$amount`, а `label()`/`rename()` — `$label`. Сборщик учитывает четыре нестатических метода и получает `LCOM4.components = 2`, `normalized = 1 / 3`.
+Фрагмент `report.json` показывает контракт отчёта, а не реализацию кода. `null` у `churn` означает, что история Git не была предоставлена; он не означает отсутствие изменений.
 
-```php
-<?php
-
-declare(strict_types=1);
-
-final class ProductDraft
+```json
 {
-    public function __construct(
-        private int $amount,
-        private string $label,
-    ) {
-    }
-
-    public function amount(): int
+  "schema_version": "1.0",
+  "metrics": {
+    "classes": [
+      {
+        "id": "Project\\Catalog\\Domain\\ProductDraft",
+        "kind": "class",
+        "file": "src/Catalog/Domain/ProductDraft.php",
+        "module": "Catalog",
+        "loc": 42,
+        "method_count": 4,
+        "property_count": 2,
+        "wmc": 4,
+        "max_cc": 1,
+        "lcom4": {
+          "components": 2,
+          "normalized": 0.333333,
+          "method_count": 4,
+          "definition_version": "1.0"
+        },
+        "ca": {"count": 1, "types": ["Project\\Catalog\\Application\\RenameProduct"]},
+        "ce": {"count": 0, "types": []},
+        "churn": null
+      }
+    ],
+    "modules": [
+      {
+        "id": "Catalog",
+        "class_count": 18,
+        "file_count": 18,
+        "loc": 1240,
+        "class_loc": {"median": 48, "max": 220, "p90": 116, "p95": 168},
+        "wmc": {"median": 6, "max": 38, "p90": 20, "p95": 29},
+        "max_cc": {"median": 2, "max": 9, "p90": 5, "p95": 7},
+        "internal_dependencies": 24,
+        "incoming_dependencies": 7,
+        "outgoing_dependencies": 8,
+        "external_dependency_share": 0.25,
+        "cohesion": 0.75,
+        "cycles": {"count": 0, "components": []},
+        "external_interface_size": 3
+      }
+    ]
+  },
+  "findings": [
     {
-        return $this->amount;
+      "rule_id": "class.multiple-cohesion-components",
+      "rule_version": "1.0",
+      "subject": {"type": "class", "id": "Project\\Catalog\\Domain\\ProductDraft"},
+      "values": {"lcom4_components": 2, "max_cc": 1},
+      "explanation": "Класс содержит несколько несвязанных групп методов; проверьте необходимость разделения ответственности."
     }
-
-    public function increase(int $value): void
-    {
-        $this->amount += $value;
-    }
-
-    public function label(): string
-    {
-        return $this->label;
-    }
-
-    public function rename(string $label): void
-    {
-        $this->label = $label;
-    }
+  ]
 }
 ```
 
