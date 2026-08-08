@@ -32,11 +32,12 @@ AI-агенты склонны отклоняться от конвенций. �
 
 ### Агрегация метрик
 
-После создания JSON-отчёта PhpCodeArcheology и полного графа Deptrac команда собирает единый `var/metrics/report.json`:
+Сначала собственный сборщик на `nikic/php-parser` создаёт структурный отчёт, затем агрегатор объединяет его с полным графом Deptrac в `var/metrics/report.json`:
 
 ```bash
+php bin/metrics-collect.php --source=src --output=var/metrics/collector.json
 php bin/metrics-aggregate.php \
-  --analyzer=var/metrics/code-archeology/json/report.json \
+  --analyzer=var/metrics/collector.json \
   --deptrac=var/metrics/deptrac.json \
   --output=var/metrics/report.json
 ```
