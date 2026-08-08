@@ -50,11 +50,12 @@ var/metrics/
 │   └── Module/
 │       └── Billing/
 │           ├── report.json
-│           ├── BillingModule.php.json
 │           ├── Application/
 │           │   ├── report.json
-│           │   └── UseCase/
-│           │       └── report.json
+│           │   └── Service/
+│           │       └── TBusinessPayment/
+│           │           ├── report.json
+│           │           └── SetPaymentStatusService.php.json
 │           ├── Domain/
 │           │   ├── report.json
 │           │   └── Entity/
@@ -131,6 +132,15 @@ var/metrics/
 
 Средний `LCOM4` классов **не является** связностью модуля. `LCOM4` описывает граф методов одного класса, а `cohesion` модуля — долю его внутренних рёбер в графе типов.
 
+### Уровень проекта
+
+Корневой `var/metrics/report.json` агрегирует только production-код: количество
+классов и файлов, суммарный `LOC`, число модулей, распределения `class_loc`,
+`WMC` и `max_cc`, количество межмодульных зависимостей и циклы модулей. Он
+содержит ссылки на отчёты первых каталогов зеркала, но не дублирует записи
+всех классов и методов. Статистику тестов, покрытие и размер всей кодовой базы
+добавляют отдельные источники project-level метрик.
+
 ## Как используем
 
 ### Сырые метрики и находки
@@ -152,9 +162,37 @@ var/metrics/
 
 ## Пример
 
-Содержимое зависит от позиции файла в зеркале. Отчёт каталога хранит его
-агрегат и ссылки только на непосредственных потомков. Например,
-`var/metrics/src/Module/Billing/report.json`:
+Корневой отчёт содержит только агрегаты всего production-кода и ссылки на
+первые уровни зеркала. Например, `var/metrics/report.json`:
+
+```json
+{
+  "schema_version": "1.0",
+  "scope": {"kind": "project", "source_path": "."},
+  "metadata": {"commit": "abc123", "generated_at": "2026-08-08T12:00:00Z"},
+  "metrics": {
+    "project": {
+      "class_count": 2898,
+      "file_count": 3592,
+      "loc": 177222,
+      "module_count": 20,
+      "class_loc": {"median": 42, "max": 335, "p90": 122, "p95": 184},
+      "wmc": {"median": 5, "max": 53, "p90": 21, "p95": 31},
+      "max_cc": {"median": 2, "max": 18, "p90": 7, "p95": 10},
+      "inter_module_dependencies": 148,
+      "cycles": {"count": 0, "components": []}
+    }
+  },
+  "children": [
+    {"path": "src/report.json", "kind": "directory"},
+    {"path": "apps/web/src/report.json", "kind": "directory"}
+  ],
+  "findings": []
+}
+```
+
+Отчёт каталога хранит его агрегат и ссылки только на непосредственных
+потомков. Например, `var/metrics/src/Module/Billing/report.json`:
 
 ```json
 {
@@ -185,7 +223,7 @@ var/metrics/
   "children": [
     {"path": "Application/report.json", "kind": "directory"},
     {"path": "Domain/report.json", "kind": "directory"},
-    {"path": "BillingModule.php.json", "kind": "file"}
+    {"path": "Infrastructure/report.json", "kind": "directory"}
   ],
   "findings": []
 }
@@ -193,57 +231,49 @@ var/metrics/
 
 Метрики класса и методов лежат в отчёте соответствующего PHP-файла, а не
 дублируются в отчёте всего модуля. Например,
-`var/metrics/src/Module/Billing/BillingModule.php.json`:
+`var/metrics/src/Module/Billing/Application/Service/TBusinessPayment/SetPaymentStatusService.php.json`:
 
 ```json
 {
   "schema_version": "1.0",
   "scope": {
     "kind": "file",
-    "source_path": "src/Module/Billing/BillingModule.php",
+    "source_path": "src/Module/Billing/Application/Service/TBusinessPayment/SetPaymentStatusService.php",
     "module": "Billing"
   },
   "metrics": {
     "classes": [
       {
-        "id": "ProjectName\\Common\\Module\\Billing\\BillingModule",
+        "id": "ProjectName\\Common\\Module\\Billing\\Application\\Service\\TBusinessPayment\\SetPaymentStatusService",
         "kind": "class",
-        "file": "src/Module/Billing/BillingModule.php",
+        "file": "src/Module/Billing/Application/Service/TBusinessPayment/SetPaymentStatusService.php",
         "module": "Billing",
-        "loc": 42,
+        "loc": 124,
         "method_count": 4,
-        "property_count": 0,
-        "wmc": 4,
-        "max_cc": 1,
+        "property_count": 6,
+        "wmc": 12,
+        "max_cc": 5,
         "lcom4": {
-          "components": 2,
-          "normalized": 0.5,
-          "method_count": 3,
+          "components": 1,
+          "normalized": 0.0,
+          "method_count": 4,
           "definition_version": "1.0"
         },
-        "ca": {"count": 1, "types": ["ProjectName\\Common\\Kernel"]},
-        "ce": {"count": 0, "types": []},
+        "ca": {"count": 1, "types": ["ProjectName\\Common\\Module\\Billing\\Application\\Service\\TBusinessPayment\\SetPaymentStatusServiceInterface"]},
+        "ce": {"count": 3, "types": ["ProjectName\\Common\\Component\\Event\\EventBusInterface", "ProjectName\\Common\\Component\\Persistence\\PersistenceManagerInterface", "ProjectName\\Common\\Module\\Billing\\Domain\\Repository\\Payment\\PaymentWriteRepositoryInterface"]},
         "churn": null
       }
     ],
     "methods": [
       {
-        "id": "ProjectName\\Common\\Module\\Billing\\BillingModule::getModuleDir",
-        "loc": 3,
-        "cc": 1,
+        "id": "ProjectName\\Common\\Module\\Billing\\Application\\Service\\TBusinessPayment\\SetPaymentStatusService::handle",
+        "loc": 31,
+        "cc": 5,
         "cc_definition_version": "1.0"
       }
     ]
   },
-  "findings": [
-    {
-      "rule_id": "class.multiple-cohesion-components",
-      "rule_version": "1.0",
-      "subject": {"type": "class", "id": "ProjectName\\Common\\Module\\Billing\\BillingModule"},
-      "values": {"lcom4_components": 2, "max_cc": 1},
-      "explanation": "Класс содержит несколько несвязанных групп методов; проверьте необходимость разделения ответственности."
-    }
-  ]
+  "findings": []
 }
 ```
 
