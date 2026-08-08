@@ -38,6 +38,41 @@ description: Единая модель метрик поддерживаемос
 - **Модули:** не имеют отдельного хранилища. Например, отчёт `src/Module/Billing/` хранится в `var/metrics/src/Module/Billing/report.json`, а часть модуля в веб-приложении — в `var/metrics/apps/web/src/Module/Billing/report.json`.
 - **Модуль:** предметный компонент проекта, а не технический слой. В DDD-проекте это `{ProjectName}\Common\Module\{ModuleName}`; Domain, Application, Infrastructure и Presentation остаются внутренними слоями модуля. В этом пакете модули задаются согласованными группами `src/`.
 
+Пример зеркала для проекта с общим кодом и веб-приложением:
+
+```text
+var/metrics/
+├── report.json
+├── src/
+│   ├── report.json
+│   ├── Application/
+│   │   └── report.json
+│   └── Module/
+│       └── Billing/
+│           ├── report.json
+│           └── Domain/
+│               ├── report.json
+│               └── Invoice.php.json
+├── apps/
+│   └── web/
+│       └── src/
+│           ├── report.json
+│           └── Module/
+│               └── Billing/
+│                   ├── report.json
+│                   └── Presentation/
+│                       └── InvoiceController.php.json
+└── packages/
+    └── shared/
+        └── src/
+            └── report.json
+```
+
+В примере `src/Module/Billing/Domain/Invoice.php` и
+`apps/web/src/Module/Billing/Presentation/InvoiceController.php` — исходные
+пути, которым соответствуют JSON-файлы. В зеркале присутствуют только
+каталоги и PHP-файлы, попавшие в область анализа.
+
 ## Область анализа
 
 - Корни production-кода определяются из секции `autoload` в `composer.json`; `autoload-dev` не входит в структурные метрики.
