@@ -30,6 +30,19 @@ AI-агенты склонны отклоняться от конвенций. �
 
 Развитие инструментального контура ведётся в эпике [`EPIC-metrics-ai-maintainability`](todo/EPIC-metrics-ai-maintainability.todo.md). Результаты исследования формул, готовых анализаторов, диагностических инструментов и варианта собственного сборщика собраны в [отчёте о выборе инструментов метрик](docs/research/metrics-tools-evaluation.md).
 
+### Агрегация метрик
+
+После создания JSON-отчёта PhpCodeArcheology и полного графа Deptrac команда собирает единый `var/metrics/report.json`:
+
+```bash
+php bin/metrics-aggregate.php \
+  --analyzer=var/metrics/code-archeology/json/report.json \
+  --deptrac=var/metrics/deptrac.json \
+  --output=var/metrics/report.json
+```
+
+В отчёте содержатся снимки методов, классов, модулей и проекта; `findings` являются неблокирующими.
+
 ---
 
 ## Конвенции

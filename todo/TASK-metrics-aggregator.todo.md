@@ -7,10 +7,10 @@ priority: P2
 depends_on:
 epic: EPIC-metrics-ai-maintainability
 author: pi
-assignee:
-branch:
+assignee: Разработчик (codex)
+branch: task/metrics-aggregator
 pr:
-status: todo
+status: in_progress
 ---
 
 # TASK-metrics-aggregator: PHP-агрегатор метрик → единый var/metrics/report.json
@@ -80,7 +80,10 @@ status: todo
 
 ## 4. Implementation Plan (План реализации)
 
-*Заполняется исполнителем перед стартом.*
+- [x] Подтвердить контракт входов: JSON PhpCodeArcheology 2.11.x и полный JSON-граф `metrics-json` Deptrac.
+- [x] Реализовать агрегатор с нормализацией классов/методов, графом зависимостей, распределениями и SCC-циклами.
+- [x] Добавить CLI с проверкой входов, детерминированной записью JSON и метаданными Git.
+- [x] Покрыть формулы и `findings` PHPUnit-тестами на фикстурах; выполнить полный `composer check`.
 
 ## 5. Definition of Done (Критерии приёмки)
 
@@ -124,3 +127,5 @@ composer test
 | 2026-08-07 | codex (Codex) | В выходную схему добавлен отдельный неблокирующий блок `findings` для проблемных мест. |
 | 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-model-convention удалена из depends_on. |
 | 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-module-boundaries-deptrac удалена из depends_on. |
+| 2026-08-08 | Codex | Задача взята в работу: создана ветка `task/metrics-aggregator`, закреплён план реализации. |
+| 2026-08-08 | Codex | Реализованы CLI и агрегатор отчётов PhpCodeArcheology/Deptrac, добавлены тесты и документация запуска. |
