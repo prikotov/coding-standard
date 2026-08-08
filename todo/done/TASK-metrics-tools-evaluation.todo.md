@@ -10,7 +10,7 @@ author: pi
 assignee: Исследователь (codex)
 branch: task/metrics-tools-evaluation
 pr: https://github.com/prikotov/coding-standard/pull/86
-status: review
+status: done
 ---
 
 # TASK-metrics-tools-evaluation: Оценка анализаторов метрик (PhpMetrics / PDepend / PhpCodeArcheology) и выбор основы
@@ -193,3 +193,5 @@ vendor/bin/phpcodearcheology \
 | 2026-08-07 | codex (Codex) | Инструменты повторно проверены на крупном проекте `TasK/Development`; добавлены измерения времени, памяти и размера отчётов. |
 | 2026-08-07 | codex (Codex) | Рассмотрен собственный сборщик на `nikic/php-parser`; определён минимальный набор метрик и критерии переключения с внешнего инструмента. |
 | 2026-08-07 | codex (Codex) | Добавлен обзор диагностических альтернатив PHPMD и разделение полного снимка метрик, `findings` и CI-проверок. |
+
+| 2026-08-08 | Codex | PR #86 ранее смержен; задача завершена и перенесена в done. |

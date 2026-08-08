@@ -105,7 +105,7 @@ flowchart LR
 
 ## 5. Implementation Plan (План реализации)
 
-- [ ] [TASK-metrics-tools-evaluation](TASK-metrics-tools-evaluation.todo.md) — оценка анализаторов и выбор основы
+- [x] [TASK-metrics-tools-evaluation](done/TASK-metrics-tools-evaluation.todo.md) — оценка анализаторов и выбор основы
 - [x] [TASK-metrics-model-convention](done/TASK-metrics-model-convention.todo.md) — модель метрик в docs/conventions/
 - [x] [TASK-metrics-module-boundaries-deptrac](done/TASK-metrics-module-boundaries-deptrac.todo.md) — границы модулей пакета в Deptrac
 - [x] [TASK-metrics-aggregator](done/TASK-metrics-aggregator.todo.md) — агрегатор и report.json
