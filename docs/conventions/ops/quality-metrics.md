@@ -38,7 +38,7 @@ description: Единая модель метрик поддерживаемос
 - **Модули:** не имеют отдельного хранилища. Например, отчёт `src/Module/Billing/` хранится в `var/metrics/src/Module/Billing/report.json`, а часть модуля в веб-приложении — в `var/metrics/apps/web/src/Module/Billing/report.json`.
 - **Модуль:** предметный компонент проекта, а не технический слой. В DDD-проекте это `{ProjectName}\Common\Module\{ModuleName}`; Domain, Application, Infrastructure и Presentation остаются внутренними слоями модуля. В этом пакете модули задаются согласованными группами `src/`.
 
-Пример зеркала для проекта с общим кодом и веб-приложением:
+Пример зеркала для структуры из [конвенции папок Symfony](../symfony-folder-structure.md):
 
 ```text
 var/metrics/
@@ -50,28 +50,37 @@ var/metrics/
 │   └── Module/
 │       └── Billing/
 │           ├── report.json
-│           └── Domain/
-│               ├── report.json
-│               └── Invoice.php.json
-├── apps/
-│   └── web/
-│       └── src/
-│           ├── report.json
-│           └── Module/
-│               └── Billing/
-│                   ├── report.json
-│                   └── Presentation/
-│                       └── InvoiceController.php.json
-└── packages/
-    └── shared/
+│           ├── BillingModule.php.json
+│           ├── Application/
+│           │   ├── report.json
+│           │   └── UseCase/
+│           │       └── report.json
+│           ├── Domain/
+│           │   ├── report.json
+│           │   └── Entity/
+│           │       └── report.json
+│           ├── Infrastructure/
+│           │   └── report.json
+│           └── Integration/
+│               └── report.json
+└── apps/
+    └── web/
         └── src/
-            └── report.json
+            ├── report.json
+            └── Module/
+                └── Billing/
+                    ├── report.json
+                    ├── BillingModule.php.json
+                    └── Controller/
+                        └── Payment/
+                            ├── report.json
+                            └── CancelController.php.json
 ```
 
-В примере `src/Module/Billing/Domain/Invoice.php` и
-`apps/web/src/Module/Billing/Presentation/InvoiceController.php` — исходные
-пути, которым соответствуют JSON-файлы. В зеркале присутствуют только
-каталоги и PHP-файлы, попавшие в область анализа.
+Каждый путь после `var/metrics/` повторяет путь production-исходника от
+корня проекта. Например, `src/Module/Billing/BillingModule.php` создаёт
+`var/metrics/src/Module/Billing/BillingModule.php.json`, а отчёт папки
+`src/Module/Billing/` — `var/metrics/src/Module/Billing/report.json`.
 
 ## Область анализа
 
