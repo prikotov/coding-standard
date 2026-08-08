@@ -10,7 +10,7 @@
             "email": "prikotov@gmail.com"
         }
     ],
-    "bin": ["bin/coding-standard-init", "bin/validate-md-links", "bin/validate-language", "bin/metrics-collect.php"],
+    "bin": ["bin/coding-standard-init", "bin/validate-md-links", "bin/validate-language", "bin/metrics-collect"],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {

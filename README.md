@@ -35,7 +35,7 @@ AI-агенты склонны отклоняться от конвенций. �
 Сначала собственный сборщик на `nikic/php-parser` создаёт структурный отчёт, затем агрегатор объединяет его с полным графом Deptrac в `var/metrics/report.json`:
 
 ```bash
-php bin/metrics-collect.php --source=src --output=var/metrics/collector.json
+php bin/metrics-collect --source=src --output=var/metrics/collector.json
 php bin/metrics-aggregate.php \
   --analyzer=var/metrics/collector.json \
   --deptrac=var/metrics/deptrac.json \

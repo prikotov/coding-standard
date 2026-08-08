@@ -26,7 +26,7 @@ final class Sample {
 }
 PHP_SOURCE);
 
-        exec(sprintf('%s bin/metrics-collect.php --source=%s --output=%s', escapeshellarg(PHP_BINARY), escapeshellarg($directory), escapeshellarg($output)), $lines, $code);
+        exec(sprintf('%s bin/metrics-collect --source=%s --output=%s', escapeshellarg(PHP_BINARY), escapeshellarg($directory), escapeshellarg($output)), $lines, $code);
         $report = json_decode((string) file_get_contents($output), true, flags: JSON_THROW_ON_ERROR);
         unlink($source);
         unlink($output);
