@@ -152,50 +152,86 @@ var/metrics/
 
 ## Пример
 
-Фрагмент `report.json` показывает контракт отчёта, а не реализацию кода. `null` у `churn` означает, что история Git не была предоставлена; он не означает отсутствие изменений.
+Содержимое зависит от позиции файла в зеркале. Отчёт каталога хранит его
+агрегат и ссылки только на непосредственных потомков. Например,
+`var/metrics/src/Module/Billing/report.json`:
 
 ```json
 {
   "schema_version": "1.0",
+  "scope": {
+    "kind": "directory",
+    "source_path": "src/Module/Billing",
+    "module": "Billing"
+  },
+  "metrics": {
+    "module": {
+      "id": "Billing",
+      "class_count": 18,
+      "file_count": 18,
+      "loc": 1240,
+      "class_loc": {"median": 48, "max": 220, "p90": 116, "p95": 168},
+      "wmc": {"median": 6, "max": 38, "p90": 20, "p95": 29},
+      "max_cc": {"median": 2, "max": 9, "p90": 5, "p95": 7},
+      "internal_dependencies": 24,
+      "incoming_dependencies": 7,
+      "outgoing_dependencies": 8,
+      "external_dependency_share": 0.25,
+      "cohesion": 0.75,
+      "cycles": {"count": 0, "components": []},
+      "external_interface_size": 3
+    }
+  },
+  "children": [
+    {"path": "Application/report.json", "kind": "directory"},
+    {"path": "Domain/report.json", "kind": "directory"},
+    {"path": "BillingModule.php.json", "kind": "file"}
+  ],
+  "findings": []
+}
+```
+
+Метрики класса и методов лежат в отчёте соответствующего PHP-файла, а не
+дублируются в отчёте всего модуля. Например,
+`var/metrics/src/Module/Billing/BillingModule.php.json`:
+
+```json
+{
+  "schema_version": "1.0",
+  "scope": {
+    "kind": "file",
+    "source_path": "src/Module/Billing/BillingModule.php",
+    "module": "Billing"
+  },
   "metrics": {
     "classes": [
       {
-        "id": "Project\\Catalog\\Domain\\ProductDraft",
+        "id": "ProjectName\\Common\\Module\\Billing\\BillingModule",
         "kind": "class",
-        "file": "src/Catalog/Domain/ProductDraft.php",
-        "module": "Catalog",
+        "file": "src/Module/Billing/BillingModule.php",
+        "module": "Billing",
         "loc": 42,
         "method_count": 4,
-        "property_count": 2,
+        "property_count": 0,
         "wmc": 4,
         "max_cc": 1,
         "lcom4": {
           "components": 2,
-          "normalized": 0.333333,
-          "method_count": 4,
+          "normalized": 0.5,
+          "method_count": 3,
           "definition_version": "1.0"
         },
-        "ca": {"count": 1, "types": ["Project\\Catalog\\Application\\RenameProduct"]},
+        "ca": {"count": 1, "types": ["ProjectName\\Common\\Kernel"]},
         "ce": {"count": 0, "types": []},
         "churn": null
       }
     ],
-    "modules": [
+    "methods": [
       {
-        "id": "Catalog",
-        "class_count": 18,
-        "file_count": 18,
-        "loc": 1240,
-        "class_loc": {"median": 48, "max": 220, "p90": 116, "p95": 168},
-        "wmc": {"median": 6, "max": 38, "p90": 20, "p95": 29},
-        "max_cc": {"median": 2, "max": 9, "p90": 5, "p95": 7},
-        "internal_dependencies": 24,
-        "incoming_dependencies": 7,
-        "outgoing_dependencies": 8,
-        "external_dependency_share": 0.25,
-        "cohesion": 0.75,
-        "cycles": {"count": 0, "components": []},
-        "external_interface_size": 3
+        "id": "ProjectName\\Common\\Module\\Billing\\BillingModule::getModuleDir",
+        "loc": 3,
+        "cc": 1,
+        "cc_definition_version": "1.0"
       }
     ]
   },
@@ -203,13 +239,16 @@ var/metrics/
     {
       "rule_id": "class.multiple-cohesion-components",
       "rule_version": "1.0",
-      "subject": {"type": "class", "id": "Project\\Catalog\\Domain\\ProductDraft"},
+      "subject": {"type": "class", "id": "ProjectName\\Common\\Module\\Billing\\BillingModule"},
       "values": {"lcom4_components": 2, "max_cc": 1},
       "explanation": "Класс содержит несколько несвязанных групп методов; проверьте необходимость разделения ответственности."
     }
   ]
 }
 ```
+
+Числа в примере иллюстративны; пути и роли файлов соответствуют структуре
+модуля из конвенций.
 
 ## Чек-лист для проведения ревью кода
 
