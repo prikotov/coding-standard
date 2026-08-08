@@ -9,8 +9,8 @@ epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee: Разработчик (codex)
 branch: task/metrics-model-convention
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/87
+status: review
 ---
 
 # TASK-metrics-model-convention: Модель метрик качества (class-level и module-level) в docs/conventions/
@@ -132,3 +132,4 @@ composer validate-todo
 | 2026-08-07 | codex (Codex) | Сырые метрики отделены от неблокирующих `findings` и пороговых CI-проверок. |
 | 2026-08-08 | codex (Codex) | Задача взята в работу; создана ветка и заполнен план реализации. |
 | 2026-08-08 | codex (Codex) | Описана версионированная модель метрик и обновлены индексы конвенций. |
+| 2026-08-08 | codex (Codex) | Создан черновик PR #87; задача переведена в review. |
