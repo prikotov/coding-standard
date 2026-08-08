@@ -83,7 +83,12 @@ final class MetricsReportWriter
             }
         }
         usort($children, static fn (array $left, array $right): int => $left['path'] <=> $right['path']);
-        $this->writeJson($output, ['schema_version' => '1.0', 'scope' => ['kind' => 'project', 'source_path' => '.'], 'metadata' => $metadata, 'metrics' => ['project' => $full['metrics']['project']], 'children' => $children, 'findings' => $findings]);
+        $this->writeJson($output, ['schema_version' => '1.0', 'scope' => ['kind' => 'project', 'source_path' => '.'], 'metadata' => $metadata, 'metrics' => array_filter([
+                'project' => $full['metrics']['project'],
+                'codebase' => $full['metrics']['codebase'] ?? null,
+                'tests' => $full['metrics']['tests'] ?? null,
+                'coverage' => $full['metrics']['coverage'] ?? null,
+            ], static fn (mixed $value): bool => $value !== null), 'children' => $children, 'findings' => $findings]);
     }
 
 /** @param array<string, mixed> $data */

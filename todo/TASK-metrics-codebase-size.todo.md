@@ -7,10 +7,10 @@ priority: P2
 depends_on:
 epic: EPIC-metrics-ai-maintainability
 author: pi
-assignee:
-branch:
+assignee: Разработчик (codex)
+branch: task/metrics-codebase-size
 pr:
-status: todo
+status: in_progress
 ---
 
 # TASK-metrics-codebase-size: Метрика размера кодовой базы (scc), статистика тестов и покрытие
@@ -80,7 +80,9 @@ status: todo
 
 ## 4. Implementation Plan (План реализации)
 
-*Заполняется исполнителем перед стартом.*
+- Добавить необязательные входы `scc`, статистики тестов и Clover в агрегатор и сохранить их в корневом отчёте.
+- Добавить `bin/metrics-scc`, `bin/test-stats.sh` и Composer-скрипты без включения PCOV и scc в `composer check`.
+- Покрыть преобразование данных агрегатора тестом и обновить модель метрик.
 
 ## 5. Definition of Done (Критерии приёмки)
 
@@ -130,3 +132,4 @@ php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=v
 | :--- | :--- | :--- |
 | 2026-08-02 | pi (Pi Coding Agent) | Создание задачи по итогам обсуждения с пользователем: метрика размера кодовой базы через scc, статистика тестов и покрытие по образцу инструментов проекта TasK. |
 | 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-model-convention удалена из depends_on. |
+| 2026-08-08 | codex (Codex) | Подтверждён план реализации; задача переведена в работу. |

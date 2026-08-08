@@ -10,7 +10,7 @@
             "email": "prikotov@gmail.com"
         }
     ],
-    "bin": ["bin/coding-standard-init", "bin/validate-md-links", "bin/validate-language", "bin/metrics-collect"],
+    "bin": ["bin/coding-standard-init", "bin/validate-md-links", "bin/validate-language", "bin/metrics-collect", "bin/metrics-scc", "bin/test-stats.sh"],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
@@ -71,7 +71,12 @@
             "@validate-todo",
             "@phpstan",
             "phpcs src/"
-        ]
+        ],
+        "coverage": [
+            "@php -r \"is_dir('var/metrics') || mkdir('var/metrics', 0777, true);\"",
+            "php -d pcov.enabled=1 vendor/bin/phpunit --coverage-clover var/metrics/clover.xml --coverage-text=php://stdout --only-summary-for-coverage-text --no-progress"
+        ],
+        "metrics-test-stats": "bin/test-stats.sh --format=json --output var/metrics/test-stats.json"
     },
     "extra": {
         "branch-alias": {

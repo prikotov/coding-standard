@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+output=${1:-var/metrics/scc.json}
+if ! command -v scc >/dev/null 2>&1; then
+    printf 'metrics-scc: scc is not installed; install it with go install github.com/boyter/scc/v3@latest\n' >&2
+    exit 0
+fi
+mkdir -p "$(dirname "$output")"
+scc --format json --by-file --exclude-dir vendor --exclude-dir .git --exclude-dir var --output "$output" .
+printf 'SCC report written to %s\n' "$output"

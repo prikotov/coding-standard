@@ -32,6 +32,32 @@ final class MetricsAggregatorTest extends TestCase
         self::assertSame(['class.loc', 'module.cycles', 'module.cycles'], array_column($report['findings'], 'rule_id'));
     }
 
+    public function testAddsCodebaseTestAndCoverageMetricsWhenSourcesAreAvailable(): void
+    {
+        $report = (new MetricsAggregator())->aggregate(
+            ['classes' => [], 'functions' => []],
+            ['schema_version' => '1.0', 'dependencies' => []],
+            [],
+            null,
+            [[
+                'Name' => 'PHP', 'Count' => 2, 'Lines' => 30, 'Code' => 20, 'Comment' => 5, 'Blank' => 5,
+                'Files' => [
+                    ['Location' => 'src/Metrics/Example.php', 'Lines' => 10, 'Code' => 7, 'Comment' => 2, 'Blank' => 1],
+                    ['Location' => 'tests/Metrics/ExampleTest.php', 'Lines' => 20, 'Code' => 13, 'Comment' => 3, 'Blank' => 4],
+                ],
+            ]],
+            ['suites' => [['name' => 'Unit', 'files' => 2, 'lines' => 20, 'average_lines' => 10]], 'total' => ['files' => 2, 'lines' => 20, 'average_lines' => 10]],
+            '<coverage><project><metrics statements="10" coveredstatements="8" methods="4" coveredmethods="3" /></project></coverage>',
+        );
+
+        self::assertSame(20, $report['metrics']['codebase']['languages']['PHP']['code']);
+        self::assertSame(7, $report['metrics']['codebase']['modules']['src/Metrics']['code']);
+        self::assertSame(13, $report['metrics']['codebase']['modules']['tests']['code']);
+        self::assertSame(2, $report['metrics']['tests']['total']['files']);
+        self::assertSame(80.0, $report['metrics']['coverage']['lines']['percent']);
+        self::assertSame(75.0, $report['metrics']['coverage']['methods']['percent']);
+    }
+
     public function testRejectsIncompatibleInputs(): void
     {
         $this->expectExceptionMessage('Analyzer JSON');
