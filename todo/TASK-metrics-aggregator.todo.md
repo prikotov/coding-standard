@@ -4,7 +4,7 @@ created: 2026-08-02
 value: V3
 complexity: C3
 priority: P2
-depends_on: TASK-metrics-module-boundaries-deptrac
+depends_on:
 epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee:
@@ -123,3 +123,4 @@ composer test
 | 2026-08-07 | codex (Codex) | Входы и схема уточнены для собственного сборщика, method-level метрик и полного графа Deptrac. |
 | 2026-08-07 | codex (Codex) | В выходную схему добавлен отдельный неблокирующий блок `findings` для проблемных мест. |
 | 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-model-convention удалена из depends_on. |
+| 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-module-boundaries-deptrac удалена из depends_on. |

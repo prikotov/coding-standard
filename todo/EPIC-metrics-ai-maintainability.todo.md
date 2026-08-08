@@ -107,7 +107,7 @@ flowchart LR
 
 - [ ] [TASK-metrics-tools-evaluation](TASK-metrics-tools-evaluation.todo.md) — оценка анализаторов и выбор основы
 - [x] [TASK-metrics-model-convention](done/TASK-metrics-model-convention.todo.md) — модель метрик в docs/conventions/
-- [ ] [TASK-metrics-module-boundaries-deptrac](TASK-metrics-module-boundaries-deptrac.todo.md) — границы модулей пакета в Deptrac
+- [x] [TASK-metrics-module-boundaries-deptrac](done/TASK-metrics-module-boundaries-deptrac.todo.md) — границы модулей пакета в Deptrac
 - [ ] [TASK-metrics-aggregator](TASK-metrics-aggregator.todo.md) — агрегатор и report.json
 - [ ] [TASK-metrics-codebase-size](TASK-metrics-codebase-size.todo.md) — размер кодовой базы (scc), статистика тестов, покрытие
 - [ ] [TASK-metrics-html-dashboard](TASK-metrics-html-dashboard.todo.md) — статический HTML-дашборд
