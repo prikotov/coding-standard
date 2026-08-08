@@ -7,10 +7,10 @@ priority: P1
 depends_on: TASK-metrics-tools-evaluation
 epic: EPIC-metrics-ai-maintainability
 author: pi
-assignee:
-branch:
+assignee: Разработчик (codex)
+branch: task/metrics-model-convention
 pr:
-status: todo
+status: in_progress
 ---
 
 # TASK-metrics-model-convention: Модель метрик качества (class-level и module-level) в docs/conventions/
@@ -85,7 +85,10 @@ status: todo
 
 ## 4. Implementation Plan (План реализации)
 
-*Заполняется исполнителем перед стартом.*
+- [ ] Сверить доступные поля и семантику метрик с результатами `TASK-metrics-tools-evaluation` и текущими конвенциями пакета.
+- [ ] Описать в `docs/conventions/ops/quality-metrics.md` модель уровней method, class и module, формулы, версионирование и трактовку отсутствующих значений.
+- [ ] Описать разделение сырых метрик и неблокирующих `findings`, а также рекомендации для интерпретации отчёта ИИ-агентом.
+- [ ] Добавить документ в индексы `docs/conventions/ops/index.md` и `docs/conventions/index.md`; проверить ссылки и валидации.
 
 ## 5. Definition of Done (Критерии приёмки)
 
@@ -127,3 +130,4 @@ composer validate-todo
 | 2026-08-02 | pi (Pi Coding Agent) | Создание задачи. |
 | 2026-08-07 | codex (Codex) | Уточнён минимальный набор метрик, формулы и исключения по результатам исследования собственного сборщика. |
 | 2026-08-07 | codex (Codex) | Сырые метрики отделены от неблокирующих `findings` и пороговых CI-проверок. |
+| 2026-08-08 | codex (Codex) | Задача взята в работу; создана ветка и заполнен план реализации. |
