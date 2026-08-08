@@ -98,6 +98,31 @@ Namespace-паттерны в `collectors` следуют конвенциям �
 
 ## Пользовательские правила
 
+### MetricsJsonOutputFormatter
+
+Форматтер сохраняет полный граф зависимостей Deptrac для внешнего
+агрегатора метрик. Он не задаёт модули, пути или правила зависимостей:
+всё это остаётся в конфигурации конкретного проекта.
+
+Добавьте сервис в `depfile.yaml`:
+
+```yaml
+services:
+  - class: PrikotovCodingStandard\Deptrac\MetricsJsonOutputFormatter
+    tags:
+      - output_formatter
+```
+
+Запуск создаёт JSON со всеми разрешёнными, запрещёнными, пропущенными и
+непокрытыми зависимостями:
+
+```bash
+vendor/bin/deptrac analyse --formatter=metrics-json --output=var/metrics/deptrac.json
+```
+
+Список типов, включая типы без зависимостей, и маппинг «тип → модуль»
+собирает агрегатор метрик по конфигурации проекта, а не форматтер.
+
 ### ServiceContractDependencyRule
 
 Пользовательский event subscriber для Deptrac, который проверяет **границы сервис-контрактов** — выходит за рамки того, что могут выразить статические правила слоёв:
