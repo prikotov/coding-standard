@@ -9,8 +9,8 @@ epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee: Разработчик (codex)
 branch: task/metrics-codebase-size
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/92
+status: review
 ---
 
 # TASK-metrics-codebase-size: Метрика размера кодовой базы (scc), статистика тестов и покрытие
@@ -86,9 +86,9 @@ status: in_progress
 
 ## 5. Definition of Done (Критерии приёмки)
 
-- [ ] scc-вывод и clover.xml собираются командами из Verification; агрегатор включает секции codebase / tests / coverage в report.json.
-- [ ] Модель метрик (quality-metrics.md) обновлена project-level метриками; `composer validate-docs` проходит.
-- [ ] `composer test` и `composer validate-todo` зелёные.
+- [x] scc-вывод и clover.xml собираются командами из Verification; агрегатор включает секции codebase / tests / coverage в report.json.
+- [x] Модель метрик (quality-metrics.md) обновлена project-level метриками; `composer validate-docs` проходит.
+- [x] `composer test` и `composer validate-todo` зелёные.
 
 ## 6. Verification (Самопроверка)
 
@@ -133,3 +133,4 @@ php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=v
 | 2026-08-02 | pi (Pi Coding Agent) | Создание задачи по итогам обсуждения с пользователем: метрика размера кодовой базы через scc, статистика тестов и покрытие по образцу инструментов проекта TasK. |
 | 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-model-convention удалена из depends_on. |
 | 2026-08-08 | codex (Codex) | Подтверждён план реализации; задача переведена в работу. |
+| 2026-08-08 | codex (Codex) | Реализованы источники scc, статистики тестов и Clover; PR открыт на ревью. |
