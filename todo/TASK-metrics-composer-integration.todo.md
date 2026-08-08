@@ -4,7 +4,7 @@ created: 2026-08-02
 value: V2
 complexity: C1
 priority: P2
-depends_on:, TASK-metrics-html-dashboard, TASK-metrics-codebase-size
+depends_on: TASK-metrics-html-dashboard, TASK-metrics-codebase-size
 epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee:
