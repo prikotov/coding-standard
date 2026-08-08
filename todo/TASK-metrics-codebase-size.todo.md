@@ -4,7 +4,7 @@ created: 2026-08-02
 value: V2
 complexity: C2
 priority: P2
-depends_on: TASK-metrics-model-convention, TASK-metrics-aggregator
+depends_on: TASK-metrics-aggregator
 epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee:
@@ -129,3 +129,4 @@ php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=v
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-08-02 | pi (Pi Coding Agent) | Создание задачи по итогам обсуждения с пользователем: метрика размера кодовой базы через scc, статистика тестов и покрытие по образцу инструментов проекта TasK. |
+| 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-model-convention удалена из depends_on. |

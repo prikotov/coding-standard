@@ -4,7 +4,7 @@ created: 2026-08-02
 value: V2
 complexity: C2
 priority: P2
-depends_on: TASK-metrics-model-convention
+depends_on:
 epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee:
@@ -117,3 +117,4 @@ vendor/bin/deptrac --config-file=config/deptrac/metrics.php --formatter=metrics-
 | :--- | :--- | :--- |
 | 2026-08-02 | pi (Pi Coding Agent) | Создание задачи. |
 | 2026-08-07 | codex (Codex) | Исправлено предположение о штатном JSON Deptrac; в scope добавлен собственный форматтер полного графа. |
+| 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-model-convention удалена из depends_on. |

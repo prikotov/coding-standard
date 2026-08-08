@@ -12,6 +12,7 @@ description: Правила и гайды по операционным прак
 
 - [`Fixes`](fixes.md) — типичные проблемы и их решения
 - [`Smoke Commands`](smoke-commands.md) — команды для проверки работоспособности
+- [Метрики качества (Quality Metrics)](quality-metrics.md) — модель метрик поддерживаемости и чтение отчёта
 - [Обоснованные подавления PHPMD](phpmd-suppressions-guidelines.md) — когда и как подавлять предупреждения PHPMD
 - [Валидация внутренних ссылок](validate-md-links.md) — настройка и использование `validate-md-links`
 - [Валидация англицизмов](validate-language.ru.md) — расчёт доли англицизмов в русскоязычном тексте

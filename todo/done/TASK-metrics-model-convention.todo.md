@@ -7,10 +7,10 @@ priority: P1
 depends_on: TASK-metrics-tools-evaluation
 epic: EPIC-metrics-ai-maintainability
 author: pi
-assignee:
-branch:
-pr:
-status: todo
+assignee: Разработчик (codex)
+branch: task/metrics-model-convention
+pr: https://github.com/prikotov/coding-standard/pull/87
+status: done
 ---
 
 # TASK-metrics-model-convention: Модель метрик качества (class-level и module-level) в docs/conventions/
@@ -81,17 +81,20 @@ status: todo
 - [ ] Не автоматизируем сбор метрик (отдельные задачи эпика).
 - [ ] Не меняем существующие конвенции.
 - [ ] Не включаем в первую модель Halstead, Maintainability Index, Kan defect, Card–Agresti, PageRank, RFC, CBO и несколько вариантов одной метрики.
-- [ ] Не вводим универсальные пороги до накопления истории проекта.
+- [ ] Не вводим пакетные универсальные пороги: допустимые границы задаются проектом в `.coding-standard.php` и пересматриваются по его истории.
 
 ## 4. Implementation Plan (План реализации)
 
-*Заполняется исполнителем перед стартом.*
+- [x] Сверить доступные поля и семантику метрик с результатами `TASK-metrics-tools-evaluation` и текущими конвенциями пакета.
+- [x] Описать в `docs/conventions/ops/quality-metrics.md` модель уровней method, class и module, формулы, версионирование и трактовку отсутствующих значений.
+- [x] Описать разделение сырых метрик и неблокирующих `findings`, а также рекомендации для интерпретации отчёта ИИ-агентом.
+- [x] Добавить документ в индексы `docs/conventions/ops/index.md` и `docs/conventions/index.md`; проверить ссылки и валидации.
 
 ## 5. Definition of Done (Критерии приёмки)
 
-- [ ] quality-metrics.md создан по шаблону документа-правила; index.md обновлён.
-- [ ] Модель покрывает уровни «метод → класс» и «класс → модуль»; cohesion модуля определена как графовая метрика.
-- [ ] `composer validate-docs` и `composer validate-todo` проходят.
+- [x] quality-metrics.md создан по шаблону документа-правила; index.md обновлён.
+- [x] Модель покрывает уровни «метод → класс» и «класс → модуль»; cohesion модуля определена как графовая метрика.
+- [x] `composer validate-docs` и `composer validate-todo` проходят.
 
 ## 6. Verification (Самопроверка)
 
@@ -112,7 +115,7 @@ composer validate-todo
 - `docs/conventions/ops/index.md` — категория операционных практик
 - `docs/conventions/modules/index.md` — конвенции о модулях
 - [PhpMetrics — описание метрик](https://github.com/phpmetrics/PhpMetrics/blob/master/doc/metrics.md)
-- [Исследование анализаторов и собственного сборщика](../docs/research/metrics-tools-evaluation.md)
+- [Исследование анализаторов и собственного сборщика](../../docs/research/metrics-tools-evaluation.md)
 - Эпик EPIC-metrics-ai-maintainability, TASK-metrics-tools-evaluation
 
 ## 9. Comments (Комментарии)
@@ -127,3 +130,17 @@ composer validate-todo
 | 2026-08-02 | pi (Pi Coding Agent) | Создание задачи. |
 | 2026-08-07 | codex (Codex) | Уточнён минимальный набор метрик, формулы и исключения по результатам исследования собственного сборщика. |
 | 2026-08-07 | codex (Codex) | Сырые метрики отделены от неблокирующих `findings` и пороговых CI-проверок. |
+| 2026-08-08 | codex (Codex) | Задача взята в работу; создана ветка и заполнен план реализации. |
+| 2026-08-08 | codex (Codex) | Описана версионированная модель метрик и обновлены индексы конвенций. |
+| 2026-08-08 | codex (Codex) | Создан черновик PR #87; задача переведена в review. |
+| 2026-08-08 | codex (Codex) | Пример конвенции заменён фрагментом `report.json`: документ задаёт правила отчёта, а не кодовый стиль. |
+| 2026-08-08 | codex (Codex) | Закреплена область анализа: production-код отдельно от тестов, миграций, конфигурации и документации. |
+| 2026-08-08 | codex (Codex) | Область анализа закреплена в `.coding-standard.php` и шаблоне init: Composer autoload, исключения и шаблоны модулей. |
+| 2026-08-08 | codex (Codex) | В конфиге и конвенции закреплено зеркальное хранение: отчёты каталогов и PHP-файлов повторяют путь исходников от корня проекта. |
+| 2026-08-08 | codex (Codex) | Раздел «Расположение» уточнён: в нём оставлена только структура хранения JSON-метрик. |
+| 2026-08-08 | codex (Codex) | В «Расположение» добавлен пример зеркала `var/metrics/` для общих модулей, приложений и пакетов. |
+| 2026-08-08 | codex (Codex) | Пример зеркала приведён к структуре DDD-модуля и web-приложения из конвенций Symfony. |
+| 2026-08-08 | codex (Codex) | JSON-пример разделён на отчёты каталога и PHP-файла по зеркальной структуре хранения. |
+| 2026-08-08 | codex (Codex) | Добавлен пример корневого отчёта проекта; пример файла заменён на прикладной сервис SetPaymentStatusService. |
+| 2026-08-08 | codex (Codex) | Автоматические инварианты перенесены в контракт сборщика, а ручной чек-лист — на проверку конфигурации границ и findings. |
+| 2026-08-08 | codex (Codex) | PR #87 принят; задача завершена и перенесена в done. |
