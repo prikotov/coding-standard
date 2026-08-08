@@ -9,6 +9,21 @@ declare(strict_types=1);
 return [
     'docs_path' => 'docs/conventions',
 
+    // Конфигурация метрик качества production-кода.
+    // Корни исходников определяются из Composer autoload; пути ниже исключаются
+    // даже при их попадании в область автозагрузки.
+    'metrics' => [
+        'exclude' => [
+            'vendor/', '.git/', 'var/', 'tmp/',
+            'migrations/', 'config/', 'docs/',
+            'public/', 'templates/', 'translations/',
+        ],
+        'module_patterns' => [
+            'src/Module/*',
+            'apps/*/src/Module/*',
+        ],
+    ],
+
     // Конфигурация validate-language (поиск англицизмов в русскоязычной документации).
     'language' => [
         'paths' => ['docs/', 'README.md', 'AGENTS.md'],
