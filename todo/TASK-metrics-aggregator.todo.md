@@ -9,8 +9,8 @@ epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee: Разработчик (codex)
 branch: task/metrics-aggregator
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/90
+status: review
 ---
 
 # TASK-metrics-aggregator: PHP-агрегатор метрик → единый var/metrics/report.json
@@ -129,3 +129,4 @@ composer test
 | 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-module-boundaries-deptrac удалена из depends_on. |
 | 2026-08-08 | Codex | Задача взята в работу: создана ветка `task/metrics-aggregator`, закреплён план реализации. |
 | 2026-08-08 | Codex | Реализованы CLI и агрегатор отчётов PhpCodeArcheology/Deptrac, добавлены тесты и документация запуска. |
+| 2026-08-08 | Codex | Создан черновик PR #90; задача переведена в review. |
