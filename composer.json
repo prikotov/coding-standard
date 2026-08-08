@@ -10,13 +10,14 @@
             "email": "prikotov@gmail.com"
         }
     ],
-    "bin": ["bin/coding-standard-init", "bin/validate-md-links", "bin/validate-language"],
+    "bin": ["bin/coding-standard-init", "bin/validate-md-links", "bin/validate-language", "bin/metrics-collect"],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": "^8.4",
-        "squizlabs/php_codesniffer": "^4.0",
-        "slevomat/coding-standard": "^8.0"
+        "nikic/php-parser": "^5.8",
+        "slevomat/coding-standard": "^8.0",
+        "squizlabs/php_codesniffer": "^4.0"
     },
     "repositories": [
         {"type": "vcs", "url": "https://github.com/prikotov/todo-md"}

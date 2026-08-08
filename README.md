@@ -30,6 +30,20 @@ AI-агенты склонны отклоняться от конвенций. �
 
 Развитие инструментального контура ведётся в эпике [`EPIC-metrics-ai-maintainability`](todo/EPIC-metrics-ai-maintainability.todo.md). Результаты исследования формул, готовых анализаторов, диагностических инструментов и варианта собственного сборщика собраны в [отчёте о выборе инструментов метрик](docs/research/metrics-tools-evaluation.md).
 
+### Агрегация метрик
+
+Сначала собственный сборщик на `nikic/php-parser` создаёт структурный отчёт, затем агрегатор объединяет его с полным графом Deptrac в `var/metrics/report.json`:
+
+```bash
+php bin/metrics-collect --source=src --output=var/metrics/collector.json
+php bin/metrics-aggregate.php \
+  --analyzer=var/metrics/collector.json \
+  --deptrac=var/metrics/deptrac.json \
+  --output=var/metrics/report.json
+```
+
+В отчёте содержатся снимки методов, классов, модулей и проекта; `findings` являются неблокирующими.
+
 ---
 
 ## Конвенции

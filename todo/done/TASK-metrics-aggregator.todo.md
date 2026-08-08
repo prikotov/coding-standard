@@ -7,10 +7,10 @@ priority: P2
 depends_on:
 epic: EPIC-metrics-ai-maintainability
 author: pi
-assignee:
-branch:
-pr:
-status: todo
+assignee: Разработчик (codex)
+branch: task/metrics-aggregator
+pr: https://github.com/prikotov/coding-standard/pull/90
+status: done
 ---
 
 # TASK-metrics-aggregator: PHP-агрегатор метрик → единый var/metrics/report.json
@@ -80,7 +80,10 @@ status: todo
 
 ## 4. Implementation Plan (План реализации)
 
-*Заполняется исполнителем перед стартом.*
+- [x] Подтвердить контракт входов: JSON собственного сборщика на `nikic/php-parser` и полный JSON-граф `metrics-json` Deptrac.
+- [x] Реализовать агрегатор с нормализацией классов/методов, графом зависимостей, распределениями и SCC-циклами.
+- [x] Добавить CLI с проверкой входов, детерминированной записью JSON и метаданными Git.
+- [x] Покрыть формулы и `findings` PHPUnit-тестами на фикстурах; выполнить полный `composer check`.
 
 ## 5. Definition of Done (Критерии приёмки)
 
@@ -124,3 +127,11 @@ composer test
 | 2026-08-07 | codex (Codex) | В выходную схему добавлен отдельный неблокирующий блок `findings` для проблемных мест. |
 | 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-model-convention удалена из depends_on. |
 | 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-module-boundaries-deptrac удалена из depends_on. |
+| 2026-08-08 | Codex | Задача взята в работу: создана ветка `task/metrics-aggregator`, закреплён план реализации. |
+| 2026-08-08 | Codex | Реализованы собственный сборщик AST, CLI-агрегатор и интеграция с Deptrac, добавлены тесты и документация запуска. |
+| 2026-08-08 | Codex | Создан черновик PR #90; задача переведена в review. |
+| 2026-08-08 | Codex | PR возвращён в работу: PhpCodeArcheology заменён собственным AST-сборщиком; внешний инструмент остаётся эталоном для сверки. |
+| 2026-08-08 | Codex | Собственный сборщик проверен на `src/`; изменения повторно отправлены в PR #90. |
+| 2026-08-08 | Codex | PR возвращён в работу для приведения зеркальной структуры отчётов к quality-metrics.md. |
+
+| 2026-08-08 | Codex | PR #90 принят; задача завершена и перенесена в done. |

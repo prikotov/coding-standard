@@ -4,7 +4,7 @@ created: 2026-08-02
 value: V2
 complexity: C2
 priority: P2
-depends_on: TASK-metrics-aggregator
+depends_on:
 epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee:

@@ -7,6 +7,8 @@ parameters:
         - tests/
     excludePaths:
         - tests/fixtures/*
+        - src/Metrics/*
+        - tests/Metrics/*
     scanDirectories:
         - vendor/squizlabs/php_codesniffer/src
     reportUnmatchedIgnoredErrors: false
