@@ -10,7 +10,7 @@ author: pi
 assignee: Разработчик (codex)
 branch: task/metrics-aggregator
 pr: https://github.com/prikotov/coding-standard/pull/90
-status: in_progress
+status: done
 ---
 
 # TASK-metrics-aggregator: PHP-агрегатор метрик → единый var/metrics/report.json
@@ -133,3 +133,5 @@ composer test
 | 2026-08-08 | Codex | PR возвращён в работу: PhpCodeArcheology заменён собственным AST-сборщиком; внешний инструмент остаётся эталоном для сверки. |
 | 2026-08-08 | Codex | Собственный сборщик проверен на `src/`; изменения повторно отправлены в PR #90. |
 | 2026-08-08 | Codex | PR возвращён в работу для приведения зеркальной структуры отчётов к quality-metrics.md. |
+
+| 2026-08-08 | Codex | PR #90 принят; задача завершена и перенесена в done. |
