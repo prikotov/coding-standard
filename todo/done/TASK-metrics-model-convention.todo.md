@@ -10,7 +10,7 @@ author: pi
 assignee: Разработчик (codex)
 branch: task/metrics-model-convention
 pr: https://github.com/prikotov/coding-standard/pull/87
-status: review
+status: done
 ---
 
 # TASK-metrics-model-convention: Модель метрик качества (class-level и module-level) в docs/conventions/
@@ -115,7 +115,7 @@ composer validate-todo
 - `docs/conventions/ops/index.md` — категория операционных практик
 - `docs/conventions/modules/index.md` — конвенции о модулях
 - [PhpMetrics — описание метрик](https://github.com/phpmetrics/PhpMetrics/blob/master/doc/metrics.md)
-- [Исследование анализаторов и собственного сборщика](../docs/research/metrics-tools-evaluation.md)
+- [Исследование анализаторов и собственного сборщика](../../docs/research/metrics-tools-evaluation.md)
 - Эпик EPIC-metrics-ai-maintainability, TASK-metrics-tools-evaluation
 
 ## 9. Comments (Комментарии)
@@ -143,3 +143,4 @@ composer validate-todo
 | 2026-08-08 | codex (Codex) | JSON-пример разделён на отчёты каталога и PHP-файла по зеркальной структуре хранения. |
 | 2026-08-08 | codex (Codex) | Добавлен пример корневого отчёта проекта; пример файла заменён на прикладной сервис SetPaymentStatusService. |
 | 2026-08-08 | codex (Codex) | Автоматические инварианты перенесены в контракт сборщика, а ручной чек-лист — на проверку конфигурации границ и findings. |
+| 2026-08-08 | codex (Codex) | PR #87 принят; задача завершена и перенесена в done. |
