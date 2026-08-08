@@ -25,6 +25,25 @@ return [
             'src/Module/*',
             'apps/*/src/Module/*',
         ],
+        // Допустимые границы project-level правил. Сборщик преобразует
+        // превышения в findings; значения пересматриваются по распределениям.
+        'thresholds' => [
+            'method' => [
+                'loc' => 50,
+                'cc' => 10,
+            ],
+            'class' => [
+                'loc' => 300,
+                'wmc' => 50,
+                'max_cc' => 10,
+                'lcom4_components' => 1,
+                'ce' => 10,
+            ],
+            'module' => [
+                'external_dependency_share' => 0.5,
+                'cycles' => 0,
+            ],
+        ],
     ],
 
     // Конфигурация validate-language (поиск англицизмов в русскоязычной документации).
