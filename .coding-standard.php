@@ -13,6 +13,9 @@ return [
     // Корни исходников определяются из Composer autoload; пути ниже исключаются
     // даже при их попадании в область автозагрузки.
     'metrics' => [
+        // Корень артефактов. Структура каталогов повторяет пути исходников.
+        'report_dir' => 'var/metrics',
+        'report_layout' => 'mirror',
         'exclude' => [
             'vendor/', '.git/', 'var/', 'tmp/',
             'migrations/', 'config/', 'docs/',
