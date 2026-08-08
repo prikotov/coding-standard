@@ -9,8 +9,8 @@ epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee: Разработчик (codex)
 branch: task/metrics-deptrac-boundaries
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/88
+status: done
 ---
 
 # TASK-metrics-module-boundaries-deptrac: Полный JSON-граф Deptrac для метрик
@@ -82,6 +82,7 @@ status: in_progress
 
 - [x] Форматтер создан; прогон на проекте-потребителе выдаёт полный JSON зависимостей.
 - [x] `composer validate-todo` проходит.
+- [x] PR [#88](https://github.com/prikotov/coding-standard/pull/88) смержен в `master`.
 
 ## 6. Verification (Самопроверка)
 
@@ -115,3 +116,4 @@ vendor/bin/deptrac analyse --formatter=metrics-json --output=var/metrics/deptrac
 | 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-model-convention удалена из depends_on. |
 | 2026-08-08 | codex (Codex) | Задача взята в работу; добавлены конфигурация Deptrac и форматтер полного графа. |
 | 2026-08-08 | codex (Codex) | Форматтер обобщён: конфигурация и маппинг модулей перенесены в проект-потребитель. |
+| 2026-08-08 | codex (Codex) | PR #88 смержен; задача завершена и перенесена в архив. |
