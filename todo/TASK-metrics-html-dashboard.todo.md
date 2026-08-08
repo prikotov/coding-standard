@@ -4,7 +4,7 @@ created: 2026-08-02
 value: V2
 complexity: C3
 priority: P3
-depends_on: TASK-metrics-aggregator
+depends_on:
 epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee:
@@ -113,3 +113,4 @@ php bin/metrics-dashboard.php --input=var/metrics/report.json --output=var/metri
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-08-02 | pi (Pi Coding Agent) | Создание задачи. |
+| 2026-08-08 | Codex | Выполненная TASK-metrics-aggregator удалена из depends_on. |
