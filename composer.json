@@ -10,7 +10,7 @@
             "email": "prikotov@gmail.com"
         }
     ],
-    "bin": ["bin/coding-standard-init", "bin/validate-md-links", "bin/validate-language", "bin/metrics-collect", "bin/metrics-scc", "bin/metrics-coverage", "bin/test-stats.sh"],
+    "bin": ["bin/coding-standard-init", "bin/validate-md-links", "bin/validate-language", "bin/metrics-collect", "bin/metrics-scc", "bin/metrics-coverage", "bin/test-stats"],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
@@ -74,7 +74,7 @@
             "phpcs src/"
         ],
         "coverage": "bin/metrics-coverage",
-        "metrics-test-stats": "bin/test-stats.sh --format=json --output var/metrics/test-stats.json"
+        "metrics-test-stats": "bin/test-stats --format=json --output var/metrics/test-stats.json"
     },
     "extra": {
         "branch-alias": {

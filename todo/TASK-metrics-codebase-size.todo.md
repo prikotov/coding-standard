@@ -81,7 +81,7 @@ status: review
 ## 4. Implementation Plan (План реализации)
 
 - Добавить необязательные входы `scc`, статистики тестов и Clover в агрегатор и сохранить их в корневом отчёте.
-- Добавить `bin/metrics-scc`, `bin/test-stats.sh` и Composer-скрипты без включения PCOV и scc в `composer check`.
+- Добавить `bin/metrics-scc`, `bin/test-stats` и Composer-скрипты без включения PCOV и scc в `composer check`.
 - Покрыть преобразование данных агрегатора тестом и обновить модель метрик.
 
 ## 5. Definition of Done (Критерии приёмки)
@@ -100,7 +100,7 @@ bin/metrics-scc
 composer coverage
 
 # статистика тестов
-bin/test-stats.sh
+composer metrics-test-stats
 
 # агрегация с новыми источниками
 php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=var/metrics/deptrac.json --scc=var/metrics/scc.json --tests=var/metrics/test-stats.json --clover=var/metrics/clover.xml --output=var/metrics/report.json
@@ -135,3 +135,4 @@ php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=v
 | 2026-08-08 | codex (Codex) | Подтверждён план реализации; задача переведена в работу. |
 | 2026-08-08 | codex (Codex) | Реализованы источники scc, статистики тестов и Clover; PR открыт на ревью. |
 | 2026-08-09 | codex (Codex) | Учтены замечания ревью: опциональный PCOV, версия scc, сьюты PHPUnit, SimpleXML и команды проверки. |
+| 2026-08-09 | codex (Codex) | Сбор статистики тестов вынесен в тестируемый класс; команда приведена к формату остальных PHP-команд в `bin/`. |

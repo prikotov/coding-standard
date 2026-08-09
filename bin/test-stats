@@ -1,0 +1,44 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+use PrikotovCodingStandard\Metrics\TestStatisticsCollector;
+
+$options = getopt('', ['format::', 'output:']);
+$format = $options['format'] ?? 'text';
+$output = $options['output'] ?? null;
+if (!in_array($format, ['text', 'json'], true)) {
+    fwrite(STDERR, "test-stats: --format must be text or json\n");
+    exit(1);
+}
+
+try {
+    $report = (new TestStatisticsCollector())->collect(dirname(__DIR__) . '/phpunit.xml');
+    if ($format === 'json') {
+        $result = json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n";
+        if (is_string($output)) {
+            $directory = dirname($output);
+            if (!is_dir($directory) && !mkdir($directory, 0777, true) && !is_dir($directory)) {
+                throw new RuntimeException("Cannot create output directory: $directory");
+            }
+            file_put_contents($output, $result);
+        } else {
+            fwrite(STDOUT, $result);
+        }
+        exit(0);
+    }
+
+    foreach ($report['suites'] as $suite) {
+        $average = $suite['average_lines'] === null ? 'n/a' : number_format($suite['average_lines'], 2, '.', '');
+        printf("%s: %d files, %d lines, %s lines/file\n", $suite['name'], $suite['files'], $suite['lines'], $average);
+    }
+    $total = $report['total'];
+    $average = $total['average_lines'] === null ? 'n/a' : number_format($total['average_lines'], 2, '.', '');
+    printf("Total: %d files, %d lines, %s lines/file\n", $total['files'], $total['lines'], $average);
+} catch (Throwable $exception) {
+    fwrite(STDERR, "test-stats: {$exception->getMessage()}\n");
+    exit(1);
+}
