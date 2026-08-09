@@ -9,8 +9,8 @@ epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee: Разработчик (codex)
 branch: task/metrics-html-dashboard
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/93
+status: review
 ---
 
 # TASK-metrics-html-dashboard: Статический HTML-дашборд метрик
@@ -120,3 +120,4 @@ php bin/metrics-dashboard.php --input=var/metrics/report.json --output=var/metri
 | 2026-08-08 | Codex | Выполненная TASK-metrics-aggregator удалена из depends_on. |
 | 2026-08-09 | Codex | Задача взята в работу: создана ветка `task/metrics-html-dashboard`, добавлен план реализации. |
 | 2026-08-09 | Codex | Реализованы и проверены генератор, четыре SVG-визуализации и PHPUnit-тесты. |
+| 2026-08-09 | Codex | Создан черновик PR #93; задача переведена в review. |
