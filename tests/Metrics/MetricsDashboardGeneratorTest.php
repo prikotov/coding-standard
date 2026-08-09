@@ -21,6 +21,7 @@ final class MetricsDashboardGeneratorTest extends TestCase
             'metadata' => ['generated_at' => '2026-08-09T10:00:00Z', 'commit' => 'abc123'],
             'metrics' => [
                 'project' => ['class_count' => 2, 'loc' => 50, 'cycles' => ['count' => 1]],
+                'codebase' => ['languages' => ['PHP' => ['files' => 4, 'lines' => 120]]],
             ],
             'children' => [['path' => 'src/report.json', 'kind' => 'directory']],
         ]);
@@ -55,6 +56,8 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('id="scatter-chart"', $html);
             self::assertStringContainsString('id="treemap-chart"', $html);
             self::assertStringContainsString('id="matrix-chart"', $html);
+            self::assertStringContainsString('LOC внутри классов модулей', $html);
+            self::assertStringContainsString('Строки PHP проекта', $html);
             self::assertStringContainsString('Как читать метрики', $html);
             self::assertStringContainsString('Дашборд помогает оценивать качество и поддерживаемость кода', $html);
             self::assertStringContainsString('Отдельная метрика показывает, куда смотреть', $html);
@@ -86,6 +89,7 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertSame(['App\\Alpha', 'App\\Beta'], array_column($dashboardData['classes'], 'id'));
             self::assertTrue($dashboardData['dependencies'][0]['cycle']);
             self::assertSame('abc123', $dashboardData['report']['commit']);
+            self::assertSame(120, $dashboardData['codebase']['languages']['PHP']['lines']);
         } finally {
             $this->removeDirectory($directory);
         }

@@ -99,6 +99,7 @@ final class MetricsDashboardGenerator
                 'commit' => $metadata['commit'] ?? null,
             ],
             'project' => is_array($rootMetrics['project'] ?? null) ? $rootMetrics['project'] : [],
+            'codebase' => is_array($rootMetrics['codebase'] ?? null) ? $rootMetrics['codebase'] : [],
             'modules' => $moduleData,
             'classes' => $classData,
             'dependencies' => $dependencies,
