@@ -10,7 +10,7 @@ author: pi
 assignee: Разработчик (codex)
 branch: task/metrics-codebase-size
 pr: https://github.com/prikotov/coding-standard/pull/92
-status: review
+status: done
 ---
 
 # TASK-metrics-codebase-size: Метрика размера кодовой базы (scc), статистика тестов и покрытие
@@ -140,3 +140,4 @@ php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=v
 | 2026-08-09 | codex (Codex) | Статистика тестов закреплена как обязательный источник; опциональными оставлены только зависящие от `scc` и PCOV метрики. |
 | 2026-08-09 | codex (Codex) | По решению пользователя `scc` сделан обязательным источником для проверки полноты структурного отчёта; опциональным осталось только покрытие. |
 | 2026-08-09 | codex (Codex) | По решению пользователя покрытие также сделано обязательной project-level метрикой; окружение сбора требует PCOV. |
+| 2026-08-09 | codex (Codex) | Изменения приняты пользователем; задача завершена перед merge PR. |

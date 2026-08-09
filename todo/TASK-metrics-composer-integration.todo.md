@@ -4,7 +4,7 @@ created: 2026-08-02
 value: V2
 complexity: C1
 priority: P2
-depends_on: TASK-metrics-html-dashboard, TASK-metrics-codebase-size
+depends_on: TASK-metrics-html-dashboard
 epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee:
@@ -116,3 +116,4 @@ composer check
 | :--- | :--- | :--- |
 | 2026-08-02 | pi (Pi Coding Agent) | Создание задачи. |
 | 2026-08-08 | Codex | Выполненная TASK-metrics-aggregator удалена из depends_on. |
+| 2026-08-09 | codex (Codex) | Выполненная TASK-metrics-codebase-size удалена из depends_on. |

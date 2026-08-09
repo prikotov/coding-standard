@@ -109,7 +109,7 @@ flowchart LR
 - [x] [TASK-metrics-model-convention](done/TASK-metrics-model-convention.todo.md) — модель метрик в docs/conventions/
 - [x] [TASK-metrics-module-boundaries-deptrac](done/TASK-metrics-module-boundaries-deptrac.todo.md) — границы модулей пакета в Deptrac
 - [x] [TASK-metrics-aggregator](done/TASK-metrics-aggregator.todo.md) — агрегатор и report.json
-- [ ] [TASK-metrics-codebase-size](TASK-metrics-codebase-size.todo.md) — размер кодовой базы (scc), статистика тестов, покрытие
+- [x] [TASK-metrics-codebase-size](done/TASK-metrics-codebase-size.todo.md) — размер кодовой базы (scc), статистика тестов, покрытие
 - [ ] [TASK-metrics-html-dashboard](TASK-metrics-html-dashboard.todo.md) — статический HTML-дашборд
 - [ ] [TASK-metrics-composer-integration](TASK-metrics-composer-integration.todo.md) — composer metrics и документация
 
@@ -169,3 +169,4 @@ flowchart LR
 | 2026-08-07 | codex (Codex) | Цель инструментов уточнена как детерминированная обратная связь ИИ-агенту о качестве его решений. |
 | 2026-08-09 | codex (Codex) | `scc` закреплён как обязательный источник размера кодовой базы; опциональным осталось покрытие, зависящее от PCOV. |
 | 2026-08-09 | codex (Codex) | Покрытие закреплено как обязательная project-level метрика; окружение сбора метрик требует PCOV. |
+| 2026-08-09 | codex (Codex) | TASK-metrics-codebase-size завершена и перенесена в архив. |
