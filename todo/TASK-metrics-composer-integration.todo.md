@@ -9,8 +9,8 @@ epic: EPIC-metrics-ai-maintainability
 author: pi
 assignee: Разработчик (codex)
 branch: task/metrics-consumer-integration
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/96
+status: review
 ---
 
 # TASK-metrics-composer-integration: запуск метрик в подключаемом проекте
@@ -137,3 +137,4 @@ composer check
 | 2026-08-10 | codex (Codex) | Выполненная TASK-metrics-html-dashboard удалена из depends_on. |
 | 2026-08-10 | codex (Codex) | Задача переориентирована с анализа `coding-standard` на запуск и инструкцию для подключаемого проекта; начата реализация. |
 | 2026-08-10 | codex (Codex) | Добавлена публичная команда, инструкция для проекта-потребителя и автоматические тесты; полный пайплайн проверен на отдельном потребительском проекте, сбор модулей и графа — на TasK. |
+| 2026-08-10 | codex (Codex) | Создан draft PR #96; задача передана на проверку. |
