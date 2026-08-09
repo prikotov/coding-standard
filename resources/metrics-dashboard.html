@@ -537,10 +537,10 @@
         <section class="chart-card wide" id="modules-bubble">
             <div class="chart-header">
                 <div>
-                    <h2>Модули: размер и внешняя связанность</h2>
-                    <p class="chart-note">X — LOC, Y — external share, размер — изменчивость (число Git-коммитов), цвет — число циклов. Правый верхний сектор требует совместной проверки размера и связанности.</p>
+                    <h2>Размер модулей и зависимости от других модулей</h2>
+                    <p class="chart-note">По горизонтали — строки внутри классов модуля; по вертикали — доля его связей, ведущих в другие модули. Размер круга показывает частоту изменений по Git. Красный круг означает, что модуль входит в циклическую зависимость.</p>
                 </div>
-                <div class="legend"><span><i></i>без циклов</span><span><i class="hot"></i>есть циклы</span></div>
+                <div class="legend"><span><i></i>не входит в цикл</span><span><i class="hot"></i>входит в цикл</span></div>
             </div>
             <div class="chart-frame"><svg id="bubble-chart" role="img" aria-label="Пузырьковая диаграмма модулей"></svg></div>
             <ol class="ranking" id="module-ranking" aria-label="Модули с наибольшим риском"></ol>
@@ -684,7 +684,7 @@
             height: yPosition(yRisk) - yPosition(yMax),
             class: 'risk-zone',
         }));
-        appendAxes(svg, {width, height, margin, xMax, yMax, xLabel: 'LOC классов модуля', yLabel: 'Доля внешних связей', yPercent: true});
+        appendAxes(svg, {width, height, margin, xMax, yMax, xLabel: 'LOC внутри классов модуля', yLabel: 'Доля связей с другими модулями', yPercent: true});
         [...data.modules]
             .sort((left, right) => number(right.loc) - number(left.loc))
             .forEach(module => {
@@ -703,9 +703,9 @@
                 addTooltip(circle, [
                     module.id,
                     `LOC: ${formatInteger(module.loc)} · классы: ${formatInteger(module.class_count)}`,
-                    `Внешние связи: ${formatPercent(module.external_dependency_share)}`,
-                    `Cohesion: ${formatPercent(module.cohesion)}`,
-                    `Исходящие зависимости: ${formatInteger(module.outgoing_dependencies)}`,
+                    `Доля связей с другими модулями: ${formatPercent(module.external_dependency_share)}`,
+                    `Доля связей внутри модуля: ${formatPercent(module.cohesion)}`,
+                    `Связей с классами других модулей: ${formatInteger(module.outgoing_dependencies)}`,
                     `Изменчивость, коммитов: ${module.churn === null ? 'нет данных' : formatInteger(module.churn)}`,
                     `Циклических групп: ${formatInteger(module.cycles)}`,
                 ]);
@@ -725,7 +725,7 @@
                 const item = document.createElement('li');
                 const name = document.createElement('strong');
                 name.textContent = `${index + 1}. ${module.id}`;
-                item.append(name, document.createTextNode(` · ${formatPercent(module.external_dependency_share)} · ${formatInteger(module.loc)} LOC`));
+                item.append(name, document.createTextNode(` · связи с другими модулями: ${formatPercent(module.external_dependency_share)} · LOC: ${formatInteger(module.loc)}`));
                 ranking.append(item);
             });
     };

@@ -60,6 +60,8 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('Классы в модулях', $html);
             self::assertStringContainsString('Все строки проекта (все файлы)', $html);
             self::assertStringContainsString('Модули с циклическими зависимостями', $html);
+            self::assertStringContainsString('Размер модулей и зависимости от других модулей', $html);
+            self::assertStringContainsString('Красный круг означает, что модуль входит в циклическую зависимость', $html);
             self::assertStringContainsString('Как читать метрики', $html);
             self::assertStringContainsString('Дашборд помогает оценивать качество и поддерживаемость кода', $html);
             self::assertStringContainsString('Отдельная метрика показывает, куда смотреть', $html);
