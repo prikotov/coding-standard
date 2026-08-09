@@ -10,7 +10,7 @@ author: pi
 assignee: Разработчик (codex)
 branch: task/metrics-html-dashboard
 pr: https://github.com/prikotov/coding-standard/pull/93
-status: review
+status: done
 ---
 
 # TASK-metrics-html-dashboard: Статический HTML-дашборд метрик
@@ -122,3 +122,4 @@ php bin/metrics-dashboard.php --input=var/metrics/report.json --output=var/metri
 | 2026-08-09 | Codex | Реализованы и проверены генератор, четыре SVG-визуализации и PHPUnit-тесты. |
 | 2026-08-09 | Codex | Создан черновик PR #93; задача переведена в review. |
 | 2026-08-09 | Codex | По обратной связи добавлена справка по смыслу и интерпретации метрик. |
+| 2026-08-10 | codex (Codex) | PR #93 и PR #94 приняты и объединены с master; задача завершена. |
