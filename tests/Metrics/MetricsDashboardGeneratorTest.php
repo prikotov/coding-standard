@@ -63,8 +63,9 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('Значение сравнивается с классами того же типа', $html);
             self::assertStringContainsString('Churn</code> — изменчивость кода', $html);
             self::assertStringContainsString('Сколько Git-коммитов затрагивало файл класса', $html);
-            self::assertStringContainsString('LCOM4</code> — несвязность методов', $html);
+            self::assertStringContainsString('LCOM4</code> — недостаток связности методов', $html);
             self::assertStringContainsString('Lack of Cohesion in Methods 4', $html);
+            self::assertStringContainsString('<em>Lack</em> — недостаток', $html);
             self::assertStringContainsString('Ca / Ce</code> — входящая и исходящая связанность', $html);
             self::assertStringContainsString('Afferent Coupling', $html);
             self::assertStringContainsString('Efferent Coupling', $html);
