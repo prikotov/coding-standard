@@ -396,6 +396,10 @@
             font-size: 8px;
         }
 
+        .treemap-class-label {
+            font-size: 8px;
+        }
+
         .risk-zone {
             fill: rgb(255 104 120 / 7%);
             stroke: rgb(255 104 120 / 48%);
@@ -1230,7 +1234,7 @@
                 svg.append(rectangle);
                 if (moduleWidth > 72 && itemHeight > 18) {
                     const label = item.name.length > 22 ? `${item.name.slice(0, 20)}…` : item.name;
-                    svg.append(svgElement('text', {x: x + 7, y: y + Math.min(15, itemHeight - 4), class: 'mark-label'}, label));
+                    svg.append(svgElement('text', {x: x + 7, y: y + Math.min(15, itemHeight - 4), class: 'mark-label treemap-class-label'}, label));
                 }
                 y += itemHeight;
             });
