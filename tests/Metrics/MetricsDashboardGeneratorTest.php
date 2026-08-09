@@ -76,6 +76,7 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('Cyclomatic Complexity', $html);
             self::assertStringContainsString('Maximum Cyclomatic Complexity', $html);
             self::assertStringContainsString('Lines of Code', $html);
+            self::assertStringContainsString('<code>namespace</code> и <code>use</code> перед объявлением не входят', $html);
             self::assertStringContainsString('Исключённый shared-код', $html);
             self::assertStringNotContainsString('fetch(', $html);
             self::assertMatchesRegularExpression(
