@@ -23,6 +23,12 @@ final class MetricsAggregator
         if ($tests === null) {
             throw new InvalidArgumentException('Test statistics are required.');
         }
+        if ($scc === null || $scc === []) {
+            throw new InvalidArgumentException('SCC statistics are required.');
+        }
+        if ($sccVersion === null || trim($sccVersion) === '') {
+            throw new InvalidArgumentException('SCC version is required.');
+        }
 
         $methodsByClass = [];
         foreach ($analyzer['functions'] as $method) {

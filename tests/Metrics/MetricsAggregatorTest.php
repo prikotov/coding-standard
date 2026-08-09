@@ -17,7 +17,7 @@ final class MetricsAggregatorTest extends TestCase
             'functions' => [$this->method('App\\Alpha', 'run', 4, 2), $this->method('App\\Beta', 'run', 8, 4), $this->method('App\\Gamma', 'run', 12, 6)],
         ], ['schema_version' => '1.0', 'dependencies' => [
             ['source' => 'App\\Alpha', 'target' => 'App\\Beta'], ['source' => 'App\\Beta', 'target' => 'App\\Alpha'], ['source' => 'App\\Alpha', 'target' => 'App\\Gamma'],
-        ]], ['thresholds' => ['class' => ['loc' => 25], 'module' => ['cycles' => 0]]], 'abc', null, ['suites' => [], 'total' => ['files' => 0, 'lines' => 0, 'average_lines' => null]]);
+        ]], ['thresholds' => ['class' => ['loc' => 25], 'module' => ['cycles' => 0]]], 'abc', $this->scc(), $this->testStatistics(), null, '3.7.0');
 
         self::assertSame('1.0', $report['schema_version']);
         self::assertSame(3, $report['metrics']['project']['class_count']);
@@ -70,6 +70,30 @@ final class MetricsAggregatorTest extends TestCase
     {
         $this->expectExceptionMessage('Test statistics are required');
         (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []]);
+    }
+
+    public function testRejectsMissingSccStatistics(): void
+    {
+        $this->expectExceptionMessage('SCC statistics are required');
+        (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []], [], null, null, $this->testStatistics());
+    }
+
+    public function testRejectsMissingSccVersion(): void
+    {
+        $this->expectExceptionMessage('SCC version is required');
+        (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []], [], null, $this->scc(), $this->testStatistics());
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function scc(): array
+    {
+        return [['Name' => 'PHP', 'Count' => 0, 'Lines' => 0, 'Code' => 0, 'Comment' => 0, 'Blank' => 0, 'Files' => []]];
+    }
+
+    /** @return array<string, mixed> */
+    private function testStatistics(): array
+    {
+        return ['suites' => [], 'total' => ['files' => 0, 'lines' => 0, 'average_lines' => null]];
     }
 
     /** @return array<string, mixed> */

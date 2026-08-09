@@ -18,20 +18,20 @@ $tests = $options['tests'] ?? 'var/metrics/test-stats.json';
 $clover = $options['clover'] ?? 'var/metrics/clover.xml';
 
 try {
-    foreach (['Analyzer' => $analyzer, 'Deptrac' => $deptrac, 'Test statistics' => $tests] as $name => $path) {
+    foreach (['Analyzer' => $analyzer, 'Deptrac' => $deptrac, 'Test statistics' => $tests, 'SCC' => $scc, 'SCC version' => $sccVersion] as $name => $path) {
         if (!is_file($path) || filesize($path) === 0) {
             throw new RuntimeException(sprintf('%s report is missing or empty: %s', $name, $path));
         }
     }
     $optional = [];
-    foreach (['SCC' => $scc, 'Clover' => $clover] as $name => $path) {
+    foreach (['Clover' => $clover] as $name => $path) {
         if (is_file($path) && filesize($path) > 0) {
             $optional[$name] = (string) file_get_contents($path);
         } else {
             fwrite(STDERR, sprintf("metrics-aggregate: optional %s report is unavailable: %s\n", $name, $path));
         }
     }
-    $version = isset($optional['SCC']) && is_file($sccVersion) ? trim((string) file_get_contents($sccVersion)) : null;
+    $version = trim((string) file_get_contents($sccVersion));
     $config = require dirname(__DIR__) . '/.coding-standard.php';
     $commit = trim((string) shell_exec('git rev-parse HEAD 2>/dev/null')) ?: null;
     $full = (new MetricsAggregator())->aggregate(
@@ -39,10 +39,10 @@ try {
         json_decode((string) file_get_contents($deptrac), true, flags: JSON_THROW_ON_ERROR),
         $config['metrics'] ?? [],
         $commit,
-        isset($optional['SCC']) ? json_decode($optional['SCC'], true, flags: JSON_THROW_ON_ERROR) : null,
+        json_decode((string) file_get_contents($scc), true, flags: JSON_THROW_ON_ERROR),
         json_decode((string) file_get_contents($tests), true, flags: JSON_THROW_ON_ERROR),
         $optional['Clover'] ?? null,
-        $version !== '' ? $version : null,
+        $version,
     );
     (new MetricsReportWriter())->writeMirror($output, $full);
     fwrite(STDOUT, "Metrics reports written to " . dirname($output) . "\n");
