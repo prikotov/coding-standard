@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Метрики качества проекта</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --background: #08111f;
+            --panel: #101c2e;
+            --panel-strong: #15253b;
+            --border: #263b56;
+            --text: #edf5ff;
+            --muted: #9eb1c8;
+            --accent: #4dd9c0;
+            --warning: #ffbe55;
+            --danger: #ff6878;
+            --grid: #2b4059;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at 90% 0, rgb(38 89 119 / 28%), transparent 32rem),
+                var(--background);
+            color: var(--text);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        main {
+            width: min(1480px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 42px 0 64px;
+        }
+
+        header {
+            display: flex;
+            gap: 24px;
+            align-items: end;
+            justify-content: space-between;
+            margin-bottom: 26px;
+        }
+
+        h1,
+        h2,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: clamp(28px, 4vw, 52px);
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+
+        h2 {
+            margin-bottom: 7px;
+            font-size: 20px;
+            letter-spacing: -0.015em;
+        }
+
+        .eyebrow {
+            margin-bottom: 10px;
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 750;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .subtitle,
+        .chart-note,
+        .report-meta {
+            color: var(--muted);
+        }
+
+        .subtitle {
+            max-width: 760px;
+            margin-bottom: 0;
+            font-size: 15px;
+        }
+
+        .report-meta {
+            min-width: 230px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .summary-card,
+        .chart-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: linear-gradient(155deg, rgb(24 41 64 / 92%), rgb(12 24 40 / 96%));
+            box-shadow: 0 18px 48px rgb(0 0 0 / 18%);
+        }
+
+        .summary-card {
+            padding: 17px 18px;
+        }
+
+        .summary-card span {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .summary-card strong {
+            font-size: 28px;
+            letter-spacing: -0.03em;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .chart-card {
+            min-width: 0;
+            padding: 20px;
+        }
+
+        .chart-card.wide {
+            grid-column: 1 / -1;
+        }
+
+        .chart-header {
+            display: flex;
+            gap: 16px;
+            align-items: start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .chart-note {
+            margin-bottom: 0;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .legend {
+            display: flex;
+            flex: 0 0 auto;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: end;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .legend span {
+            display: inline-flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .legend i {
+            width: 9px;
+            height: 9px;
+            border-radius: 999px;
+            background: var(--accent);
+        }
+
+        .legend i.hot {
+            background: var(--danger);
+        }
+
+        .chart-frame {
+            overflow: auto;
+            min-height: 320px;
+            border: 1px solid rgb(72 98 127 / 35%);
+            border-radius: 12px;
+            background: rgb(4 13 24 / 46%);
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            min-width: 620px;
+            height: auto;
+        }
+
+        .matrix-frame svg {
+            width: auto;
+            min-width: 100%;
+        }
+
+        .axis,
+        .grid-line {
+            stroke: var(--grid);
+            stroke-width: 1;
+        }
+
+        .axis-label,
+        .tick-label,
+        .mark-label,
+        .empty-label {
+            fill: var(--muted);
+            font-size: 11px;
+        }
+
+        .axis-label {
+            fill: #c7d4e4;
+            font-weight: 650;
+        }
+
+        .mark-label {
+            fill: #f6fbff;
+            font-size: 10px;
+            font-weight: 650;
+            pointer-events: none;
+        }
+
+        .risk-zone {
+            fill: rgb(255 104 120 / 7%);
+            stroke: rgb(255 104 120 / 48%);
+            stroke-dasharray: 6 5;
+        }
+
+        .ranking {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            margin: 12px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .ranking li {
+            overflow: hidden;
+            padding: 9px 10px;
+            border-radius: 9px;
+            background: rgb(78 108 140 / 14%);
+            color: var(--muted);
+            font-size: 11px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ranking strong {
+            color: var(--text);
+        }
+
+        .tooltip {
+            position: fixed;
+            z-index: 20;
+            max-width: 360px;
+            padding: 9px 11px;
+            border: 1px solid #42607e;
+            border-radius: 8px;
+            background: #071321;
+            box-shadow: 0 10px 28px rgb(0 0 0 / 35%);
+            color: #eef6ff;
+            font-size: 12px;
+            line-height: 1.45;
+            pointer-events: none;
+            white-space: pre-line;
+        }
+
+        .tooltip[hidden] {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            header {
+                display: block;
+            }
+
+            .report-meta {
+                margin-top: 14px;
+                text-align: left;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-card.wide {
+                grid-column: auto;
+            }
+        }
+
+        @media (max-width: 620px) {
+            main {
+                width: min(100% - 20px, 1480px);
+                padding-top: 26px;
+            }
+
+            .summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .chart-header {
+                display: block;
+            }
+
+            .legend {
+                justify-content: start;
+                margin-top: 10px;
+            }
+
+            .ranking {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <div>
+            <p class="eyebrow">Quality metrics · offline report</p>
+            <h1>Карта поддерживаемости</h1>
+            <p class="subtitle">Размер, связанность, сложность и циклы зависимостей в одном автономном отчёте.</p>
+        </div>
+        <div class="report-meta" id="report-meta"></div>
+    </header>
+
+    <section class="summary" aria-label="Сводка проекта">
+        <div class="summary-card"><span>Модули</span><strong id="summary-modules">0</strong></div>
+        <div class="summary-card"><span>Классы</span><strong id="summary-classes">0</strong></div>
+        <div class="summary-card"><span>LOC классов</span><strong id="summary-loc">0</strong></div>
+        <div class="summary-card"><span>Циклы модулей</span><strong id="summary-cycles">0</strong></div>
+    </section>
+
+    <div class="dashboard-grid">
+        <section class="chart-card wide" id="modules-bubble">
+            <div class="chart-header">
+                <div>
+                    <h2>Модули: размер и внешняя связанность</h2>
+                    <p class="chart-note">X — LOC, Y — доля исходящих внешних связей, размер — Git churn, цвет — число циклов.</p>
+                </div>
+                <div class="legend"><span><i></i>без циклов</span><span><i class="hot"></i>есть циклы</span></div>
+            </div>
+            <div class="chart-frame"><svg id="bubble-chart" role="img" aria-label="Пузырьковая диаграмма модулей"></svg></div>
+            <ol class="ranking" id="module-ranking" aria-label="Модули с наибольшим риском"></ol>
+        </section>
+
+        <section class="chart-card" id="classes-scatter">
+            <div class="chart-header">
+                <div>
+                    <h2>Классы: размер и LCOM4</h2>
+                    <p class="chart-note">X — LOC, Y — компоненты LCOM4, размер — Ce, цвет — максимальная CC.</p>
+                </div>
+            </div>
+            <div class="chart-frame"><svg id="scatter-chart" role="img" aria-label="Точечная диаграмма классов"></svg></div>
+        </section>
+
+        <section class="chart-card" id="classes-treemap">
+            <div class="chart-header">
+                <div>
+                    <h2>Размер классов по модулям</h2>
+                    <p class="chart-note">Площадь — LOC, цвет — компоненты LCOM4. Мелкие классы агрегируются при большом отчёте.</p>
+                </div>
+            </div>
+            <div class="chart-frame"><svg id="treemap-chart" role="img" aria-label="Карта классов и модулей"></svg></div>
+        </section>
+
+        <section class="chart-card wide" id="modules-matrix">
+            <div class="chart-header">
+                <div>
+                    <h2>Матрица зависимостей модулей</h2>
+                    <p class="chart-note">Строки — источники, столбцы — получатели. Число и насыщенность показывают количество связей; красная рамка — ребро внутри цикла.</p>
+                </div>
+            </div>
+            <div class="chart-frame matrix-frame"><svg id="matrix-chart" role="img" aria-label="Матрица зависимостей модулей"></svg></div>
+        </section>
+    </div>
+</main>
+
+<div class="tooltip" id="tooltip" hidden></div>
+<script type="application/json" id="dashboard-data">__METRICS_DASHBOARD_DATA__</script>
+<script>
+(() => {
+    'use strict';
+
+    const data = JSON.parse(document.getElementById('dashboard-data').textContent);
+    const namespace = 'http://www.w3.org/2000/svg';
+    const integer = new Intl.NumberFormat('ru-RU');
+    const decimal = new Intl.NumberFormat('ru-RU', {maximumFractionDigits: 2});
+    const percent = new Intl.NumberFormat('ru-RU', {style: 'percent', maximumFractionDigits: 1});
+
+    const number = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+    const formatInteger = value => integer.format(number(value));
+    const formatDecimal = value => value === null || value === undefined ? 'нет данных' : decimal.format(number(value));
+    const formatPercent = value => value === null || value === undefined ? 'нет данных' : percent.format(number(value));
+    const median = values => {
+        const sorted = values.map(value => number(value)).sort((left, right) => left - right);
+        if (sorted.length === 0) return 0;
+        const middle = Math.floor(sorted.length / 2);
+        return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
+    };
+    const maximum = (values, fallback = 1) => Math.max(fallback, ...values.map(value => number(value)));
+    const scale = (value, domainMax, rangeMin, rangeMax) => {
+        if (domainMax <= 0) return rangeMin;
+        return rangeMin + Math.max(0, Math.min(1, number(value) / domainMax)) * (rangeMax - rangeMin);
+    };
+    const heatColor = (value, max, saturation = 78) => {
+        const ratio = max <= 0 ? 0 : Math.max(0, Math.min(1, number(value) / max));
+        return `hsl(${166 - ratio * 166} ${saturation}% ${55 + ratio * 7}%)`;
+    };
+    const svgElement = (name, attributes = {}, content = null) => {
+        const node = document.createElementNS(namespace, name);
+        Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, String(value)));
+        if (content !== null) node.textContent = String(content);
+        return node;
+    };
+    const addTooltip = (node, lines) => {
+        node.dataset.tooltip = lines.join('\n');
+        node.setAttribute('tabindex', '0');
+        return node;
+    };
+    const emptyChart = (svg, text, width, height) => {
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        svg.append(svgElement('text', {x: width / 2, y: height / 2, 'text-anchor': 'middle', class: 'empty-label'}, text));
+    };
+    const appendAxes = (svg, options) => {
+        const {width, height, margin, xMax, yMax, xLabel, yLabel, yPercent = false} = options;
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
+        for (let index = 0; index <= 5; index++) {
+            const x = margin.left + chartWidth * index / 5;
+            const y = margin.top + chartHeight * index / 5;
+            svg.append(svgElement('line', {x1: x, y1: margin.top, x2: x, y2: height - margin.bottom, class: 'grid-line'}));
+            svg.append(svgElement('line', {x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: 'grid-line'}));
+            svg.append(svgElement('text', {x, y: height - margin.bottom + 18, 'text-anchor': 'middle', class: 'tick-label'}, formatInteger(xMax * index / 5)));
+            const yValue = yMax * (5 - index) / 5;
+            svg.append(svgElement('text', {x: margin.left - 9, y: y + 4, 'text-anchor': 'end', class: 'tick-label'}, yPercent ? formatPercent(yValue) : formatDecimal(yValue)));
+        }
+        svg.append(svgElement('line', {x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: 'axis'}));
+        svg.append(svgElement('line', {x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: 'axis'}));
+        svg.append(svgElement('text', {x: margin.left + chartWidth / 2, y: height - 8, 'text-anchor': 'middle', class: 'axis-label'}, xLabel));
+        svg.append(svgElement('text', {x: 15, y: margin.top + chartHeight / 2, transform: `rotate(-90 15 ${margin.top + chartHeight / 2})`, 'text-anchor': 'middle', class: 'axis-label'}, yLabel));
+    };
+
+    const renderSummary = () => {
+        const project = data.project || {};
+        document.getElementById('summary-modules').textContent = formatInteger(data.modules.length);
+        document.getElementById('summary-classes').textContent = formatInteger(data.classes.length);
+        document.getElementById('summary-loc').textContent = formatInteger(project.loc ?? data.classes.reduce((sum, item) => sum + number(item.loc), 0));
+        document.getElementById('summary-cycles').textContent = formatInteger(project.cycles?.count ?? 0);
+        const generated = data.report?.generated_at ? new Date(data.report.generated_at).toLocaleString('ru-RU') : 'не указано';
+        const commit = data.report?.commit ? String(data.report.commit).slice(0, 12) : 'не указан';
+        document.getElementById('report-meta').textContent = `Отчёт: ${generated}\nCommit: ${commit}`;
+    };
+
+    const renderBubbleChart = () => {
+        const svg = document.getElementById('bubble-chart');
+        const width = 960;
+        const height = 460;
+        const margin = {top: 24, right: 30, bottom: 56, left: 72};
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        if (data.modules.length === 0) {
+            emptyChart(svg, 'Нет данных о модулях', width, height);
+            return;
+        }
+        const xMax = maximum(data.modules.map(module => module.loc));
+        const yMax = Math.max(1, maximum(data.modules.map(module => module.external_dependency_share), 0));
+        const churnMax = maximum(data.modules.map(module => module.churn), 0);
+        const cyclesMax = maximum(data.modules.map(module => module.cycles), 0);
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
+        const xPosition = value => margin.left + scale(value, xMax, 0, chartWidth);
+        const yPosition = value => height - margin.bottom - scale(value, yMax, 0, chartHeight);
+        const xRisk = median(data.modules.map(module => module.loc));
+        const yRisk = median(data.modules.map(module => module.external_dependency_share));
+        svg.append(svgElement('rect', {
+            x: xPosition(xRisk),
+            y: yPosition(yMax),
+            width: width - margin.right - xPosition(xRisk),
+            height: yPosition(yRisk) - yPosition(yMax),
+            class: 'risk-zone',
+        }));
+        appendAxes(svg, {width, height, margin, xMax, yMax, xLabel: 'LOC классов модуля', yLabel: 'Доля внешних связей', yPercent: true});
+        [...data.modules]
+            .sort((left, right) => number(right.loc) - number(left.loc))
+            .forEach(module => {
+                const radius = churnMax > 0 ? 7 + Math.sqrt(number(module.churn) / churnMax) * 22 : 11;
+                const x = xPosition(module.loc);
+                const y = yPosition(module.external_dependency_share);
+                const circle = svgElement('circle', {
+                    cx: x,
+                    cy: y,
+                    r: radius,
+                    fill: heatColor(module.cycles, cyclesMax),
+                    'fill-opacity': 0.82,
+                    stroke: module.cycles > 0 ? '#ffd1d6' : '#b9fff2',
+                    'stroke-width': module.cycles > 0 ? 2 : 1,
+                });
+                addTooltip(circle, [
+                    module.id,
+                    `LOC: ${formatInteger(module.loc)} · классы: ${formatInteger(module.class_count)}`,
+                    `Внешние связи: ${formatPercent(module.external_dependency_share)}`,
+                    `Исходящие зависимости: ${formatInteger(module.outgoing_dependencies)}`,
+                    `Churn: ${module.churn === null ? 'нет данных' : formatInteger(module.churn)}`,
+                    `Циклы: ${formatInteger(module.cycles)}`,
+                ]);
+                svg.append(circle);
+                if (radius >= 11 || data.modules.length < 18) {
+                    svg.append(svgElement('text', {x, y: y - radius - 5, 'text-anchor': 'middle', class: 'mark-label'}, module.id));
+                }
+            });
+
+        const ranking = document.getElementById('module-ranking');
+        [...data.modules]
+            .sort((left, right) => number(right.cycles) - number(left.cycles)
+                || number(right.external_dependency_share) - number(left.external_dependency_share)
+                || number(right.loc) - number(left.loc))
+            .slice(0, 6)
+            .forEach((module, index) => {
+                const item = document.createElement('li');
+                const name = document.createElement('strong');
+                name.textContent = `${index + 1}. ${module.id}`;
+                item.append(name, document.createTextNode(` · ${formatPercent(module.external_dependency_share)} · ${formatInteger(module.loc)} LOC`));
+                ranking.append(item);
+            });
+    };
+
+    const renderScatterChart = () => {
+        const svg = document.getElementById('scatter-chart');
+        const width = 760;
+        const height = 500;
+        const margin = {top: 24, right: 24, bottom: 58, left: 68};
+        const classes = [...data.classes].sort((left, right) => number(right.loc) - number(left.loc)).slice(0, 600);
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        if (classes.length === 0) {
+            emptyChart(svg, 'Нет данных о классах', width, height);
+            return;
+        }
+        const xMax = maximum(classes.map(item => item.loc));
+        const yMax = maximum(classes.map(item => item.lcom));
+        const cboMax = maximum(classes.map(item => item.cbo), 0);
+        const ccMax = maximum(classes.map(item => item.cc), 0);
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
+        appendAxes(svg, {width, height, margin, xMax, yMax, xLabel: 'LOC класса', yLabel: 'LCOM4 (компоненты)'});
+        classes
+            .sort((left, right) => number(right.cbo) - number(left.cbo))
+            .forEach(item => {
+                const x = margin.left + scale(item.loc, xMax, 0, chartWidth);
+                const y = height - margin.bottom - scale(item.lcom, yMax, 0, chartHeight);
+                const radius = cboMax > 0 ? 3.5 + Math.sqrt(number(item.cbo) / cboMax) * 10 : 4.5;
+                const circle = svgElement('circle', {
+                    cx: x,
+                    cy: y,
+                    r: radius,
+                    fill: heatColor(item.cc, ccMax, 82),
+                    'fill-opacity': 0.72,
+                    stroke: '#dce9f7',
+                    'stroke-opacity': 0.46,
+                });
+                addTooltip(circle, [
+                    item.id,
+                    `Модуль: ${item.module}`,
+                    `LOC: ${formatInteger(item.loc)} · LCOM4: ${formatInteger(item.lcom)}`,
+                    `LCOM4 normalized: ${formatDecimal(item.lcom_normalized)}`,
+                    `Ce: ${formatInteger(item.cbo)} · max CC: ${formatInteger(item.cc)}`,
+                    item.file,
+                ]);
+                svg.append(circle);
+            });
+    };
+
+    const renderTreemap = () => {
+        const svg = document.getElementById('treemap-chart');
+        const width = 760;
+        const height = 500;
+        const headerHeight = 25;
+        const gap = 3;
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        if (data.classes.length === 0) {
+            emptyChart(svg, 'Нет данных о классах', width, height);
+            return;
+        }
+        const classesByModule = new Map();
+        data.classes.forEach(item => {
+            if (!classesByModule.has(item.module)) classesByModule.set(item.module, []);
+            classesByModule.get(item.module).push(item);
+        });
+        const moduleGroups = [...classesByModule.entries()]
+            .map(([id, classes]) => ({id, classes, loc: classes.reduce((sum, item) => sum + Math.max(1, number(item.loc)), 0)}))
+            .sort((left, right) => right.loc - left.loc);
+        const totalLoc = moduleGroups.reduce((sum, module) => sum + module.loc, 0);
+        const lcomMax = maximum(data.classes.map(item => item.lcom), 0);
+        let x = 0;
+        moduleGroups.forEach((module, moduleIndex) => {
+            const remaining = width - x;
+            const moduleWidth = moduleIndex === moduleGroups.length - 1
+                ? remaining
+                : Math.max(2, width * module.loc / totalLoc);
+            svg.append(svgElement('rect', {x: x + gap / 2, y: gap / 2, width: Math.max(0, moduleWidth - gap), height: headerHeight, fill: '#1b334c'}));
+            if (moduleWidth > 42) {
+                svg.append(svgElement('text', {x: x + 7, y: 18, class: 'mark-label'}, module.id));
+            }
+            const sorted = [...module.classes].sort((left, right) => number(right.loc) - number(left.loc));
+            const visible = sorted.slice(0, 80);
+            if (sorted.length > visible.length) {
+                const omitted = sorted.slice(visible.length);
+                visible.push({
+                    id: `Остальные классы (${omitted.length})`,
+                    name: `Остальные (${omitted.length})`,
+                    module: module.id,
+                    file: '',
+                    loc: omitted.reduce((sum, item) => sum + number(item.loc), 0),
+                    lcom: Math.max(...omitted.map(item => number(item.lcom))),
+                    lcom_normalized: null,
+                    cbo: omitted.reduce((sum, item) => sum + number(item.cbo), 0),
+                    cc: Math.max(...omitted.map(item => number(item.cc))),
+                });
+            }
+            const contentHeight = height - headerHeight - gap * 1.5;
+            const visibleLoc = visible.reduce((sum, item) => sum + Math.max(1, number(item.loc)), 0);
+            let y = headerHeight + gap;
+            visible.forEach((item, itemIndex) => {
+                const remainingHeight = height - gap / 2 - y;
+                const itemHeight = itemIndex === visible.length - 1
+                    ? remainingHeight
+                    : contentHeight * Math.max(1, number(item.loc)) / visibleLoc;
+                const rectangle = svgElement('rect', {
+                    x: x + gap / 2,
+                    y: y,
+                    width: Math.max(0, moduleWidth - gap),
+                    height: Math.max(0, itemHeight - 1),
+                    fill: heatColor(item.lcom, lcomMax, 70),
+                    'fill-opacity': 0.82,
+                    stroke: '#08111f',
+                });
+                addTooltip(rectangle, [
+                    item.id,
+                    `Модуль: ${module.id}`,
+                    `LOC: ${formatInteger(item.loc)} · LCOM4: ${formatInteger(item.lcom)}`,
+                    `Ce: ${formatInteger(item.cbo)} · max CC: ${formatInteger(item.cc)}`,
+                    item.file || '',
+                ]);
+                svg.append(rectangle);
+                if (moduleWidth > 72 && itemHeight > 18) {
+                    const label = item.name.length > 22 ? `${item.name.slice(0, 20)}…` : item.name;
+                    svg.append(svgElement('text', {x: x + 7, y: y + Math.min(15, itemHeight - 4), class: 'mark-label'}, label));
+                }
+                y += itemHeight;
+            });
+            x += moduleWidth;
+        });
+    };
+
+    const renderMatrix = () => {
+        const svg = document.getElementById('matrix-chart');
+        const modules = data.modules.map(module => module.id);
+        if (modules.length === 0) {
+            emptyChart(svg, 'Нет данных о модулях', 960, 360);
+            return;
+        }
+        const cellSize = Math.max(16, Math.min(38, Math.floor(680 / modules.length)));
+        const left = 145;
+        const top = 145;
+        const size = modules.length * cellSize;
+        const width = left + size + 34;
+        const height = top + size + 48;
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        svg.style.width = `${Math.max(900, width)}px`;
+        const dependencyMap = new Map(data.dependencies.map(item => [`${item.source}\u0000${item.target}`, item]));
+        const maxCount = maximum(data.dependencies.map(item => item.count), 0);
+        modules.forEach((module, index) => {
+            const coordinate = index * cellSize;
+            svg.append(svgElement('text', {x: left - 8, y: top + coordinate + cellSize * 0.68, 'text-anchor': 'end', class: 'tick-label'}, module));
+            svg.append(svgElement('text', {
+                x: left + coordinate + cellSize * 0.64,
+                y: top - 9,
+                transform: `rotate(-45 ${left + coordinate + cellSize * 0.64} ${top - 9})`,
+                'text-anchor': 'start',
+                class: 'tick-label',
+            }, module));
+            modules.forEach((target, targetIndex) => {
+                const dependency = dependencyMap.get(`${module}\u0000${target}`);
+                const count = dependency ? number(dependency.count) : 0;
+                const diagonal = index === targetIndex;
+                const rectangle = svgElement('rect', {
+                    x: left + targetIndex * cellSize,
+                    y: top + coordinate,
+                    width: cellSize - 1,
+                    height: cellSize - 1,
+                    fill: diagonal ? '#26394e' : count > 0 ? heatColor(count, maxCount, 70) : '#0c1929',
+                    'fill-opacity': count > 0 ? 0.86 : 0.62,
+                    stroke: dependency?.cycle ? '#ff6878' : '#263b56',
+                    'stroke-width': dependency?.cycle ? 2.5 : 0.7,
+                });
+                addTooltip(rectangle, [
+                    `${module} → ${target}`,
+                    diagonal ? 'Тот же модуль' : `Зависимости: ${formatInteger(count)}`,
+                    dependency?.cycle ? 'Ребро входит в цикл' : 'Цикл не обнаружен',
+                ]);
+                svg.append(rectangle);
+                if (count > 0 && cellSize >= 24) {
+                    svg.append(svgElement('text', {
+                        x: left + targetIndex * cellSize + cellSize / 2,
+                        y: top + coordinate + cellSize / 2 + 4,
+                        'text-anchor': 'middle',
+                        class: 'mark-label',
+                    }, count));
+                }
+            });
+        });
+        svg.append(svgElement('text', {x: left + size / 2, y: height - 8, 'text-anchor': 'middle', class: 'axis-label'}, 'Получатель зависимости'));
+        svg.append(svgElement('text', {x: 15, y: top + size / 2, transform: `rotate(-90 15 ${top + size / 2})`, 'text-anchor': 'middle', class: 'axis-label'}, 'Источник зависимости'));
+    };
+
+    const setupTooltips = () => {
+        const tooltip = document.getElementById('tooltip');
+        let active = null;
+        const show = (node, event = null) => {
+            active = node;
+            tooltip.textContent = node.dataset.tooltip;
+            tooltip.hidden = false;
+            if (event) move(event);
+        };
+        const move = event => {
+            if (!active) return;
+            const left = Math.min(window.innerWidth - tooltip.offsetWidth - 12, event.clientX + 14);
+            const top = Math.min(window.innerHeight - tooltip.offsetHeight - 12, event.clientY + 14);
+            tooltip.style.left = `${Math.max(8, left)}px`;
+            tooltip.style.top = `${Math.max(8, top)}px`;
+        };
+        const hide = () => {
+            active = null;
+            tooltip.hidden = true;
+        };
+        document.addEventListener('pointerover', event => {
+            const node = event.target.closest?.('[data-tooltip]');
+            if (node) show(node, event);
+        });
+        document.addEventListener('pointermove', move);
+        document.addEventListener('pointerout', event => {
+            if (active && !event.relatedTarget?.closest?.('[data-tooltip]')) hide();
+        });
+        document.addEventListener('focusin', event => {
+            const node = event.target.closest?.('[data-tooltip]');
+            if (node) show(node);
+        });
+        document.addEventListener('focusout', hide);
+    };
+
+    renderSummary();
+    renderBubbleChart();
+    renderScatterChart();
+    renderTreemap();
+    renderMatrix();
+    setupTooltips();
+})();
+</script>
+</body>
+</html>
