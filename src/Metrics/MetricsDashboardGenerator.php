@@ -219,12 +219,19 @@ final class MetricsDashboardGenerator
     /**
      * @param array<string, array<string, mixed>> $classes
      * @param array<string, array<string, mixed>> $modules
-     * @return list<array{source: string, target: string, count: int, cycle: bool}>
+     * @return list<array{
+     *     source: string,
+     *     target: string,
+     *     count: int,
+     *     cycle: bool,
+     *     examples: list<array{source: string, target: string}>
+     * }>
      */
     private function dependencies(array $classes, array $modules): array
     {
         $counts = [];
-        foreach ($classes as $class) {
+        $examples = [];
+        foreach ($classes as $sourceId => $class) {
             foreach ($class['_dependencies'] as $targetId) {
                 if (!isset($classes[$targetId])) {
                     continue;
@@ -236,6 +243,11 @@ final class MetricsDashboardGenerator
                 }
                 $key = $source . "\0" . $target;
                 $counts[$key] = ($counts[$key] ?? 0) + 1;
+                $examples[$key][$sourceId . "\0" . $targetId] = [
+                    'source' => $sourceId,
+                    'target' => $targetId,
+                    'loc' => $class['loc'] + $classes[$targetId]['loc'],
+                ];
             }
         }
 
@@ -243,11 +255,24 @@ final class MetricsDashboardGenerator
         $dependencies = [];
         foreach ($counts as $key => $count) {
             [$source, $target] = explode("\0", $key, 2);
+            $relationExamples = array_values($examples[$key] ?? []);
+            usort(
+                $relationExamples,
+                static fn (array $left, array $right): int => $right['loc'] <=> $left['loc']
+                    ?: [$left['source'], $left['target']] <=> [$right['source'], $right['target']],
+            );
             $dependencies[] = [
                 'source' => $source,
                 'target' => $target,
                 'count' => $count,
                 'cycle' => $this->isCyclicPair($source, $target, $cycleGroups),
+                'examples' => array_map(
+                    static fn (array $example): array => [
+                        'source' => $example['source'],
+                        'target' => $example['target'],
+                    ],
+                    array_slice($relationExamples, 0, 3),
+                ),
             ];
         }
         usort(
@@ -427,7 +452,13 @@ final class MetricsDashboardGenerator
     /**
      * @param array<string, array<string, mixed>> $modules
      * @param array<string, array<string, mixed>> $classes
-     * @param list<array{source: string, target: string, count: int, cycle: bool}> $dependencies
+     * @param list<array{
+     *     source: string,
+     *     target: string,
+     *     count: int,
+     *     cycle: bool,
+     *     examples: list<array{source: string, target: string}>
+     * }> $dependencies
      * @return list<array<string, mixed>>
      */
     private function normalizeModules(array $modules, array $classes, array $dependencies): array

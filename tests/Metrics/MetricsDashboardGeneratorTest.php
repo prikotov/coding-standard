@@ -68,7 +68,7 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('Оценка качества границ модулей:', $html);
             self::assertStringContainsString('совмещают не менее трёх признаков', $html);
             self::assertStringContainsString('10 примеров циклических зависимостей в коде', $html);
-            self::assertSame(3, substr_count($html, 'slice(0, 10)'));
+            self::assertSame(4, substr_count($html, 'slice(0, 10)'));
             self::assertStringContainsString('grid-template-columns: repeat(2, minmax(0, 1fr))', $html);
             self::assertStringContainsString('word-break: break-word', $html);
             self::assertStringContainsString('class="chart-card wide" id="classes-scatter"', $html);
@@ -88,6 +88,12 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('Цвет прямоугольника: LCOM4', $html);
             self::assertStringContainsString('физические строки кода внутри класса (LOC, <em>Lines of Code</em>)', $html);
             self::assertStringContainsString('количество несвязанных групп методов (LCOM4, <em>Lack of Cohesion in Methods 4</em>)', $html);
+            self::assertStringContainsString('id="matrix-assessment"', $html);
+            self::assertStringContainsString('Оценка структуры зависимостей модулей:', $html);
+            self::assertStringContainsString('Цвет ячейки: количество зависимостей', $html);
+            self::assertStringContainsString('id="matrix-dependency-max"', $html);
+            self::assertStringContainsString('Связи модулей для проверки', $html);
+            self::assertStringContainsString('Смотреть связи:', $html);
             self::assertStringContainsString('Причины: ${reasons.join', $html);
             self::assertStringContainsString('Смотреть классы:', $html);
             self::assertStringContainsString("maximumFractionDigits: 0", $html);
@@ -123,6 +129,10 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertSame(['Alpha', 'Beta'], array_column($dashboardData['modules'], 'id'));
             self::assertSame(['App\\Alpha', 'App\\Beta'], array_column($dashboardData['classes'], 'id'));
             self::assertTrue($dashboardData['dependencies'][0]['cycle']);
+            self::assertSame(
+                [['source' => 'App\\Alpha', 'target' => 'App\\Beta']],
+                $dashboardData['dependencies'][0]['examples'],
+            );
             self::assertSame(
                 ['App\\Alpha', 'App\\Beta', 'App\\Alpha'],
                 $dashboardData['cycle_examples'][0]['classes'],

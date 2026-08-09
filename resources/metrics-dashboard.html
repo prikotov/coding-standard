@@ -331,6 +331,21 @@
             margin-top: 4px;
         }
 
+        .matrix-cycle-key {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-top: 7px;
+        }
+
+        .matrix-cycle-key i {
+            width: 14px;
+            height: 10px;
+            border: 2px solid var(--danger);
+            border-radius: 2px;
+            background: #0c1929;
+        }
+
         .chart-frame {
             overflow: auto;
             min-height: 320px;
@@ -736,10 +751,20 @@
             <div class="chart-header">
                 <div>
                     <h2>Матрица зависимостей модулей</h2>
-                    <p class="chart-note">Строки — источники, столбцы — получатели. Число и насыщенность показывают статические PHP-связи; красная рамка — ребро внутри цикла.</p>
+                    <p class="chart-note">Каждая ячейка показывает направленную связь между модулями: модуль в строке использует модуль в столбце. Число — количество уникальных статических PHP-связей «класс → класс»; чем насыщеннее цвет, тем больше связей. Красная рамка означает, что связь входит в циклическую зависимость.</p>
+                    <p class="chart-note"><strong>На что обратить внимание при рефакторинге:</strong> сначала проверяйте ячейки с красной рамкой и большим числом — через них одновременно проходит много связей и замыкается цикл. Затем проверяйте самые насыщенные ячейки без рамки: большое количество связей может означать слишком широкий контракт между двумя модулями. Конкретные пары классов для первых десяти связей перечислены под матрицей.</p>
+                </div>
+                <div class="gradient-legend" aria-label="Шкала количества зависимостей между модулями">
+                    <strong>Цвет ячейки: количество зависимостей</strong>
+                    <div class="gradient-bar"></div>
+                    <div class="gradient-scale"><span>0</span><span id="matrix-dependency-max">max</span></div>
+                    <span class="matrix-cycle-key"><i></i>красная рамка — цикл</span>
                 </div>
             </div>
+            <div class="quality-assessment" id="matrix-assessment"></div>
             <div class="chart-frame matrix-frame"><svg id="matrix-chart" role="img" aria-label="Матрица зависимостей модулей"></svg></div>
+            <h3 class="ranking-title">Связи модулей для проверки</h3>
+            <ol class="ranking" id="matrix-ranking" aria-label="Связи модулей для проверки"></ol>
         </section>
     </div>
 </main>
@@ -1227,9 +1252,37 @@
         const svg = document.getElementById('matrix-chart');
         const modules = data.modules.map(module => module.id);
         if (modules.length === 0) {
+            setAssessment('matrix-assessment', 'good', 'Оценка структуры зависимостей модулей: нет данных', ['В отчёте нет модулей для оценки.']);
             emptyChart(svg, 'Нет данных о модулях', 960, 360);
             return;
         }
+        const dependencies = Array.isArray(data.dependencies) ? data.dependencies : [];
+        const totalDependencies = dependencies.reduce((sum, dependency) => sum + number(dependency.count), 0);
+        const cyclicRelations = dependencies.filter(dependency => dependency.cycle);
+        const cyclicDependencies = cyclicRelations.reduce((sum, dependency) => sum + number(dependency.count), 0);
+        const cyclicRelationShare = dependencies.length === 0 ? 0 : cyclicRelations.length / dependencies.length;
+        const cyclicDependencyShare = totalDependencies === 0 ? 0 : cyclicDependencies / totalDependencies;
+        const highRisk = cyclicRelations.length >= Math.max(3, Math.ceil(dependencies.length * 0.1));
+        const needsAttention = cyclicRelations.length > 0;
+        const maxCount = maximum(dependencies.map(dependency => dependency.count), 0);
+        const denseThreshold = percentile(dependencies.map(dependency => dependency.count), 0.9) ?? 0;
+        const candidates = [...dependencies]
+            .sort((left, right) => Number(Boolean(right.cycle)) - Number(Boolean(left.cycle))
+                || number(right.count) - number(left.count)
+                || left.source.localeCompare(right.source)
+                || left.target.localeCompare(right.target));
+        document.getElementById('matrix-dependency-max').textContent = formatInteger(maxCount);
+        const assessmentDetails = [
+            `${formatInteger(cyclicRelations.length)} из ${formatInteger(dependencies.length)} направленных связей между модулями (${formatPercent(cyclicRelationShare)}) входят в циклические зависимости.`,
+            `По ним проходят ${formatInteger(cyclicDependencies)} из ${formatInteger(totalDependencies)} связей между классами (${formatPercent(cyclicDependencyShare)}).`,
+        ];
+        if (candidates.length > 0) assessmentDetails.push('Причины и конкретные пары классов для первых десяти связей перечислены под матрицей.');
+        setAssessment(
+            'matrix-assessment',
+            highRisk ? 'high' : (needsAttention ? 'attention' : 'good'),
+            `Оценка структуры зависимостей модулей: ${highRisk ? 'низкая' : (needsAttention ? 'требует внимания' : 'хорошая')}`,
+            assessmentDetails,
+        );
         const cellSize = Math.max(16, Math.min(38, Math.floor(680 / modules.length)));
         const left = 145;
         const top = 145;
@@ -1238,8 +1291,7 @@
         const height = top + size + 48;
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.style.width = `${Math.max(900, width)}px`;
-        const dependencyMap = new Map(data.dependencies.map(item => [`${item.source}\u0000${item.target}`, item]));
-        const maxCount = maximum(data.dependencies.map(item => item.count), 0);
+        const dependencyMap = new Map(dependencies.map(item => [`${item.source}\u0000${item.target}`, item]));
         modules.forEach((module, index) => {
             const coordinate = index * cellSize;
             svg.append(svgElement('text', {x: left - 8, y: top + coordinate + cellSize * 0.68, 'text-anchor': 'end', class: 'tick-label'}, module));
@@ -1282,6 +1334,39 @@
         });
         svg.append(svgElement('text', {x: left + size / 2, y: height - 8, 'text-anchor': 'middle', class: 'axis-label'}, 'Получатель зависимости'));
         svg.append(svgElement('text', {x: 15, y: top + size / 2, transform: `rotate(-90 15 ${top + size / 2})`, 'text-anchor': 'middle', class: 'axis-label'}, 'Источник зависимости'));
+
+        const ranking = document.getElementById('matrix-ranking');
+        if (candidates.length === 0) {
+            const item = document.createElement('li');
+            item.textContent = 'Статические зависимости между анализируемыми модулями не найдены.';
+            ranking.append(item);
+            return;
+        }
+        candidates.slice(0, 10).forEach((dependency, index) => {
+            const item = document.createElement('li');
+            const name = document.createElement('strong');
+            name.textContent = `${index + 1}. ${dependency.source} → ${dependency.target}`;
+            const reasons = [];
+            if (dependency.cycle) reasons.push('связь входит в циклическую зависимость');
+            if (number(dependency.count) >= denseThreshold) {
+                reasons.push(`${formatInteger(dependency.count)} связей между классами — среди 10% наиболее плотных`);
+            } else {
+                reasons.push(`${formatInteger(dependency.count)} связей между классами`);
+            }
+            const reason = document.createElement('span');
+            reason.textContent = `Причины: ${reasons.join('; ')}.`;
+            const examples = Array.isArray(dependency.examples) ? dependency.examples : [];
+            item.append(name, reason);
+            if (examples.length > 0) {
+                const place = document.createElement('span');
+                place.append(document.createTextNode('Смотреть связи: '));
+                const code = document.createElement('code');
+                code.textContent = examples.map(example => `${example.source} → ${example.target}`).join('; ');
+                place.append(code, document.createTextNode('.'));
+                item.append(document.createElement('br'), place);
+            }
+            ranking.append(item);
+        });
     };
 
     const setupTooltips = () => {
