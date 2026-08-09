@@ -67,6 +67,9 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('id="module-assessment"', $html);
             self::assertStringContainsString('Оценка качества границ модулей:', $html);
             self::assertStringContainsString('совмещают не менее трёх признаков', $html);
+            self::assertStringContainsString('Пять примеров циклических зависимостей в коде', $html);
+            self::assertStringContainsString('Причины: ${reasons.join', $html);
+            self::assertStringContainsString('Смотреть классы:', $html);
             self::assertStringContainsString("maximumFractionDigits: 0", $html);
             self::assertStringContainsString('Как читать метрики', $html);
             self::assertStringContainsString('Дашборд помогает оценивать качество и поддерживаемость кода', $html);
@@ -100,6 +103,10 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertSame(['Alpha', 'Beta'], array_column($dashboardData['modules'], 'id'));
             self::assertSame(['App\\Alpha', 'App\\Beta'], array_column($dashboardData['classes'], 'id'));
             self::assertTrue($dashboardData['dependencies'][0]['cycle']);
+            self::assertSame(
+                ['App\\Alpha', 'App\\Beta', 'App\\Alpha'],
+                $dashboardData['cycle_examples'][0]['classes'],
+            );
             self::assertSame('abc123', $dashboardData['report']['commit']);
             self::assertSame(120, $dashboardData['codebase']['languages']['PHP']['lines']);
         } finally {

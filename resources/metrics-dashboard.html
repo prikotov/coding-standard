@@ -358,7 +358,7 @@
 
         .ranking {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 8px;
             margin: 12px 0 0;
             padding: 0;
@@ -366,18 +366,68 @@
         }
 
         .ranking li {
-            overflow: hidden;
             padding: 9px 10px;
             border-radius: 9px;
             background: rgb(78 108 140 / 14%);
             color: var(--muted);
             font-size: 11px;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            line-height: 1.45;
         }
 
         .ranking strong {
+            display: block;
+            margin-bottom: 4px;
             color: var(--text);
+        }
+
+        .ranking code,
+        .cycle-examples code {
+            overflow-wrap: anywhere;
+            color: #dcecff;
+            white-space: normal;
+        }
+
+        .ranking-title,
+        .cycle-examples h3 {
+            margin: 14px 0 6px;
+            font-size: 14px;
+        }
+
+        .cycle-examples {
+            margin-top: 14px;
+            padding-top: 2px;
+            border-top: 1px solid rgb(72 98 127 / 35%);
+        }
+
+        .cycle-examples > p {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .cycle-list {
+            display: grid;
+            gap: 8px;
+            margin: 0;
+            padding-left: 24px;
+        }
+
+        .cycle-list li {
+            padding: 9px 10px;
+            border-radius: 9px;
+            background: rgb(255 104 120 / 7%);
+        }
+
+        .cycle-list code {
+            display: block;
+            line-height: 1.55;
+            white-space: pre-wrap;
+        }
+
+        .cycle-list small {
+            display: block;
+            margin-top: 5px;
+            color: var(--muted);
         }
 
         .tooltip {
@@ -581,7 +631,13 @@
             </div>
             <div class="module-assessment" id="module-assessment"></div>
             <div class="chart-frame"><svg id="bubble-chart" role="img" aria-label="Пузырьковая диаграмма модулей"></svg></div>
-            <ol class="ranking" id="module-ranking" aria-label="Модули с наибольшим риском"></ol>
+            <h3 class="ranking-title">С чего начать рефакторинг модулей</h3>
+            <ol class="ranking" id="module-ranking" aria-label="Кандидаты на рефакторинг модулей"></ol>
+            <div class="cycle-examples">
+                <h3>Пять примеров циклических зависимостей в коде</h3>
+                <p>Показаны реальные замкнутые цепочки «класс зависит от класса»: сначала самые короткие, среди равных — чаще изменяемые.</p>
+                <ol class="cycle-list" id="cycle-example-list"></ol>
+            </div>
         </section>
 
         <section class="chart-card" id="classes-scatter">
@@ -747,9 +803,7 @@
             `${formatInteger(cyclicModules.length)} из ${formatInteger(data.modules.length)} модулей (${formatPercent(cyclicShare)}) входят в циклические зависимости.`,
             `${formatInteger(refactoringCandidates.length)} модулей совмещают не менее трёх признаков: LOC в верхней половине, доля связей с другими модулями в верхней половине, участие в цикле, частота изменений в верхней четверти.`,
         ];
-        if (refactoringCandidates.length > 0) {
-            details.push(`Начать с: ${refactoringCandidates.slice(0, 5).map(module => module.id).join(', ')}.`);
-        }
+        if (refactoringCandidates.length > 0) details.push('Причины и конкретные классы для начала работы перечислены под графиком.');
         assessmentText.textContent = details.join(' ');
         assessment.replaceChildren(assessmentTitle, assessmentText);
         svg.append(svgElement('rect', {
@@ -791,18 +845,56 @@
             });
 
         const ranking = document.getElementById('module-ranking');
-        [...data.modules]
-            .sort((left, right) => number(right.cycles) - number(left.cycles)
-                || number(right.external_dependency_share) - number(left.external_dependency_share)
-                || number(right.loc) - number(left.loc))
-            .slice(0, 6)
+        refactoringCandidates
+            .slice(0, 5)
             .forEach((module, index) => {
                 const item = document.createElement('li');
                 const name = document.createElement('strong');
                 name.textContent = `${index + 1}. ${module.id}`;
-                item.append(name, document.createTextNode(` · связи с другими модулями: ${formatPercent(module.external_dependency_share)} · LOC: ${formatInteger(module.loc)}`));
+                const reasons = [];
+                if (module.cycles > 0) reasons.push('входит в циклическую зависимость');
+                if (module.loc >= xRisk) reasons.push('LOC в верхней половине');
+                if (module.external_dependency_share >= yRisk) reasons.push('доля связей с другими модулями в верхней половине');
+                if (highChurn !== null && module.churn !== null && module.churn >= highChurn) reasons.push('частота изменений в верхней четверти');
+                const reason = document.createElement('span');
+                reason.textContent = `Причины: ${reasons.join('; ')}.`;
+                const moduleClasses = data.classes.filter(item => item.module === module.id);
+                const largestClass = [...moduleClasses].sort((left, right) => number(right.loc) - number(left.loc))[0];
+                const changingClass = moduleClasses
+                    .filter(item => item.churn !== null)
+                    .sort((left, right) => number(right.churn) - number(left.churn))[0];
+                const places = [];
+                if (largestClass) places.push(`крупнейший — ${largestClass.id} (${formatInteger(largestClass.loc)} LOC)`);
+                if (changingClass && changingClass.id !== largestClass?.id) places.push(`чаще меняется — ${changingClass.id} (${formatInteger(changingClass.churn)} коммитов)`);
+                const place = document.createElement('span');
+                place.append(document.createTextNode('Смотреть классы: '));
+                const code = document.createElement('code');
+                code.textContent = places.join('; ');
+                place.append(code, document.createTextNode('.'));
+                item.append(name, reason, document.createElement('br'), place);
                 ranking.append(item);
             });
+    };
+
+    const renderCycleExamples = () => {
+        const list = document.getElementById('cycle-example-list');
+        const examples = Array.isArray(data.cycle_examples) ? data.cycle_examples : [];
+        if (examples.length === 0) {
+            const item = document.createElement('li');
+            item.textContent = 'Замкнутые цепочки классов не найдены.';
+            list.append(item);
+            return;
+        }
+        examples.forEach(example => {
+            const item = document.createElement('li');
+            const code = document.createElement('code');
+            code.textContent = example.classes.join('\n→ ');
+            const meta = document.createElement('small');
+            const churn = example.churn === null ? 'нет данных об изменениях' : `${formatInteger(example.churn)} коммитов`;
+            meta.textContent = `${formatInteger(example.edge_count)} зависимостей · ${formatInteger(example.loc)} LOC · ${churn}`;
+            item.append(code, meta);
+            list.append(item);
+        });
     };
 
     const renderScatterChart = () => {
@@ -1030,6 +1122,7 @@
 
     renderSummary();
     renderBubbleChart();
+    renderCycleExamples();
     renderScatterChart();
     renderTreemap();
     renderMatrix();

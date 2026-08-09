@@ -86,6 +86,7 @@ final class MetricsDashboardGenerator
         ksort($classes);
 
         $dependencies = $this->dependencies($classes, $modules);
+        $cycleExamples = $this->cycleExamples($classes, $modules);
         $moduleData = $this->normalizeModules($modules, $classes, $dependencies);
         $classData = array_values(array_map(
             static fn (array $class): array => array_diff_key($class, ['_dependencies' => true]),
@@ -103,6 +104,7 @@ final class MetricsDashboardGenerator
             'modules' => $moduleData,
             'classes' => $classData,
             'dependencies' => $dependencies,
+            'cycle_examples' => $cycleExamples,
         ];
     }
 
@@ -289,6 +291,137 @@ final class MetricsDashboardGenerator
         }
 
         return false;
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $classes
+     * @param array<string, array<string, mixed>> $modules
+     * @return list<array{classes: list<string>, edge_count: int, loc: int, churn: int|null}>
+     */
+    private function cycleExamples(array $classes, array $modules): array
+    {
+        $groups = $this->cycleGroups($modules);
+        $adjacency = [];
+        foreach ($classes as $id => $class) {
+            $adjacency[$id] = array_values(array_filter(
+                $class['_dependencies'],
+                static fn (string $target): bool => isset($classes[$target]),
+            ));
+            sort($adjacency[$id]);
+        }
+
+        $cycles = [];
+        foreach ($classes as $sourceId => $source) {
+            foreach ($adjacency[$sourceId] as $targetId) {
+                $target = $classes[$targetId];
+                if ($source['module'] === $target['module']) {
+                    continue;
+                }
+                $group = $this->cycleGroupForPair($source['module'], $target['module'], $groups);
+                if ($group === null) {
+                    continue;
+                }
+                $allowedModules = array_fill_keys($group, true);
+                $returnPath = $this->shortestClassPath(
+                    $targetId,
+                    $sourceId,
+                    $adjacency,
+                    $classes,
+                    $allowedModules,
+                );
+                if ($returnPath === null) {
+                    continue;
+                }
+                $path = [$sourceId, ...$returnPath];
+                $key = $this->cycleKey($path);
+                $ids = array_values(array_unique(array_slice($path, 0, -1)));
+                $churnValues = array_values(array_filter(
+                    array_map(static fn (string $id): ?int => $classes[$id]['churn'], $ids),
+                    static fn (?int $value): bool => $value !== null,
+                ));
+                $cycles[$key] ??= [
+                    'classes' => $path,
+                    'edge_count' => count($path) - 1,
+                    'loc' => array_sum(array_map(static fn (string $id): int => $classes[$id]['loc'], $ids)),
+                    'churn' => $churnValues === [] ? null : array_sum($churnValues),
+                ];
+            }
+        }
+
+        $cycles = array_values($cycles);
+        usort($cycles, static fn (array $left, array $right): int => $left['edge_count'] <=> $right['edge_count']
+            ?: ($right['churn'] ?? -1) <=> ($left['churn'] ?? -1)
+            ?: $right['loc'] <=> $left['loc']
+            ?: $left['classes'] <=> $right['classes']);
+
+        return array_slice($cycles, 0, 5);
+    }
+
+    /** @param list<list<string>> $groups @return list<string>|null */
+    private function cycleGroupForPair(string $source, string $target, array $groups): ?array
+    {
+        foreach ($groups as $group) {
+            if (in_array($source, $group, true) && in_array($target, $group, true)) {
+                return $group;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<string, list<string>> $adjacency
+     * @param array<string, array<string, mixed>> $classes
+     * @param array<string, bool> $allowedModules
+     * @return list<string>|null
+     */
+    private function shortestClassPath(
+        string $start,
+        string $target,
+        array $adjacency,
+        array $classes,
+        array $allowedModules,
+    ): ?array {
+        $queue = [$start];
+        $offset = 0;
+        $parents = [$start => null];
+        while (isset($queue[$offset]) && !array_key_exists($target, $parents)) {
+            $current = $queue[$offset++];
+            foreach ($adjacency[$current] as $next) {
+                if (!isset($allowedModules[$classes[$next]['module']]) || array_key_exists($next, $parents)) {
+                    continue;
+                }
+                $parents[$next] = $current;
+                $queue[] = $next;
+                if ($next === $target) {
+                    break;
+                }
+            }
+        }
+        if (!array_key_exists($target, $parents)) {
+            return null;
+        }
+
+        $path = [];
+        for ($current = $target; $current !== null; $current = $parents[$current]) {
+            $path[] = $current;
+        }
+
+        return array_reverse($path);
+    }
+
+    /** @param list<string> $path */
+    private function cycleKey(array $path): string
+    {
+        $nodes = array_slice($path, 0, -1);
+        $keys = [];
+        foreach (array_keys($nodes) as $offset) {
+            $rotation = [...array_slice($nodes, $offset), ...array_slice($nodes, 0, $offset)];
+            $keys[] = implode("\0", $rotation);
+        }
+        sort($keys);
+
+        return $keys[0];
     }
 
     /**
