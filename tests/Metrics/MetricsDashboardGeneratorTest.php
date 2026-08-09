@@ -69,7 +69,7 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('совмещают не менее трёх признаков', $html);
             self::assertStringContainsString('10 примеров циклических зависимостей в коде', $html);
             self::assertSame(3, substr_count($html, 'slice(0, 10)'));
-            self::assertStringContainsString('grid-template-columns: repeat(5, minmax(0, 1fr))', $html);
+            self::assertStringContainsString('grid-template-columns: repeat(2, minmax(0, 1fr))', $html);
             self::assertStringContainsString('class="chart-card wide" id="classes-scatter"', $html);
             self::assertStringContainsString('Классы: размер и недостаток связности методов (LCOM4)', $html);
             self::assertStringContainsString('class="chart-card wide" id="classes-treemap"', $html);
