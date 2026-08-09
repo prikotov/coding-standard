@@ -124,6 +124,94 @@
             letter-spacing: -0.03em;
         }
 
+        .metric-guide {
+            margin-bottom: 18px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgb(13 27 45 / 92%);
+        }
+
+        .metric-guide summary {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 17px 20px;
+            cursor: pointer;
+            font-size: 17px;
+            font-weight: 750;
+            list-style-position: inside;
+        }
+
+        .metric-guide summary small {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 450;
+        }
+
+        .metric-guide-content {
+            padding: 0 20px 20px;
+        }
+
+        .metric-guide-intro {
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            border-left: 3px solid var(--accent);
+            border-radius: 0 9px 9px 0;
+            background: rgb(77 217 192 / 8%);
+            color: #cbd8e8;
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .metric-definition {
+            padding: 14px;
+            border: 1px solid rgb(72 98 127 / 42%);
+            border-radius: 11px;
+            background: rgb(5 15 27 / 42%);
+        }
+
+        .metric-definition h3 {
+            margin: 0 0 10px;
+            font-size: 14px;
+        }
+
+        .metric-definition code {
+            color: var(--accent);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 13px;
+        }
+
+        .metric-definition dl,
+        .metric-definition dd {
+            margin: 0;
+        }
+
+        .metric-definition dl > div {
+            display: grid;
+            grid-template-columns: 92px 1fr;
+            gap: 9px;
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .metric-definition dt {
+            color: #d9e5f2;
+            font-weight: 700;
+        }
+
+        .metric-definition .attention dt {
+            color: var(--warning);
+        }
+
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -317,6 +405,24 @@
             .ranking {
                 grid-template-columns: 1fr;
             }
+
+            .metric-guide summary {
+                display: block;
+            }
+
+            .metric-guide summary small {
+                display: block;
+                margin-top: 6px;
+            }
+
+            .glossary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-definition dl > div {
+                grid-template-columns: 1fr;
+                gap: 2px;
+            }
         }
     </style>
 </head>
@@ -338,12 +444,92 @@
         <div class="summary-card"><span>Циклы модулей</span><strong id="summary-cycles">0</strong></div>
     </section>
 
+    <details class="metric-guide" open>
+        <summary>
+            Как читать метрики
+            <small>Что измеряют числа, какой результат ожидаем и когда нужна проверка</small>
+        </summary>
+        <div class="metric-guide-content">
+            <p class="metric-guide-intro">
+                Метрика — сигнал для исследования, а не оценка качества. Сравнивайте объекты одной роли,
+                распределение внутри проекта и изменение показателей во времени. Порог проекта важнее общего ориентира;
+                одно большое число без контекста не считается нарушением.
+            </p>
+            <div class="glossary-grid">
+                <article class="metric-definition">
+                    <h3><code>LCOM4</code> — несвязность методов</h3>
+                    <dl>
+                        <div><dt>Измеряет</dt><dd>Число независимых групп нестатических методов, связанных общими свойствами или вызовами друг друга.</dd></div>
+                        <div><dt>Ожидаем</dt><dd><strong>1</strong> у класса с поведением: его методы образуют одну связную ответственность. <strong>0</strong> или отсутствие значения может означать, что метрика неприменима.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Значение больше 1 вместе с большим LOC или CC: класс может объединять несколько ответственностей.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3><code>Ca / Ce</code> — входящая и исходящая связанность</h3>
+                    <dl>
+                        <div><dt>Измеряет</dt><dd>Ca — сколько внутренних типов зависит от класса; Ce — от скольких внутренних типов зависит сам класс. Размер точки на scatter chart показывает Ce.</dd></div>
+                        <div><dt>Ожидаем</dt><dd>Универсальной нормы нет: DTO обычно имеет низкий Ce, оркестратор или адаптер — более высокий. Высокий Ca допустим у стабильного контракта.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Ce заметно выше классов той же роли, особенно вместе с большим размером, churn или сложностью.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3><code>CC / max CC</code> — цикломатическая сложность</h3>
+                    <dl>
+                        <div><dt>Измеряет</dt><dd>Количество независимых путей выполнения метода. Значение 1 означает линейный код; max CC — самый сложный метод класса.</dd></div>
+                        <div><dt>Ожидаем</dt><dd>Чем меньше, тем проще проверка и тестирование. Значение около 10 и выше — распространённый повод для ревью, но не автоматическая ошибка.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Метод одновременно имеет высокий CC и LOC: разветвления могут скрывать несколько сценариев или правил.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3><code>LOC</code> — физический размер</h3>
+                    <dl>
+                        <div><dt>Измеряет</dt><dd>Строки от объявления до конца класса, включая пустые строки и комментарии.</dd></div>
+                        <div><dt>Ожидаем</dt><dd>LOC сам по себе не показывает плохой код. Сравнивайте классы одной роли и перцентили проекта.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Большой класс одновременно имеет высокий LCOM4, CC, Ce или часто меняется.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3><code>External share / cohesion</code> — связи модуля</h3>
+                    <dl>
+                        <div><dt>Измеряет</dt><dd>External share — доля исходящих связей в другие модули; cohesion — доля связей внутри модуля среди внутренних и исходящих.</dd></div>
+                        <div><dt>Ожидаем</dt><dd>У доменного модуля внешняя доля обычно ниже. У Presentation или Integration-модуля высокая доля может быть естественной.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Доля растёт, модуль зависит от многих направлений или одновременно участвует в цикле.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3><code>Churn</code> — частота изменений</h3>
+                    <dl>
+                        <div><dt>Измеряет</dt><dd>Сколько коммитов затрагивало класс или его файл, если источник Git доступен. Размер пузыря модуля отражает суммарный churn.</dd></div>
+                        <div><dt>Ожидаем</dt><dd>Зависит от возраста и назначения кода; сравнивайте один период и похожие объекты.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Часто меняющийся код одновременно крупный, сложный или сильно связанный — это hotspot для рефакторинга.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3><code>Cycles</code> — циклы зависимостей</h3>
+                    <dl>
+                        <div><dt>Измеряет</dt><dd>Группы модулей, из которых по статическим PHP-зависимостям можно вернуться в исходный модуль.</dd></div>
+                        <div><dt>Ожидаем</dt><dd><strong>0</strong>: зависимости образуют направленную структуру без взаимной связанности модулей.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Любой цикл: он повышает цену изменения и усложняет выделение или независимое тестирование модуля.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3>Матрица зависимостей</h3>
+                    <dl>
+                        <div><dt>Измеряет</dt><dd>Количество уникальных статических связей «класс → класс» между исходным модулем в строке и целевым модулем в столбце.</dd></div>
+                        <div><dt>Пустая ячейка</dt><dd>Статическая PHP-связь между анализируемыми модулями не найдена. Это не означает, что модуль вообще ничего не использует.</dd></div>
+                        <div class="attention"><dt>Не включает</dt><dd>Исключённый shared-код, YAML/DI-конфигурацию, маршрутизацию через bus или events во время выполнения и логическую связь одноимённых модулей.</dd></div>
+                    </dl>
+                </article>
+            </div>
+        </div>
+    </details>
+
     <div class="dashboard-grid">
         <section class="chart-card wide" id="modules-bubble">
             <div class="chart-header">
                 <div>
                     <h2>Модули: размер и внешняя связанность</h2>
-                    <p class="chart-note">X — LOC, Y — доля исходящих внешних связей, размер — Git churn, цвет — число циклов.</p>
+                    <p class="chart-note">X — LOC, Y — external share, размер — Git churn, цвет — число циклов. Правый верхний сектор требует совместной проверки размера и связанности.</p>
                 </div>
                 <div class="legend"><span><i></i>без циклов</span><span><i class="hot"></i>есть циклы</span></div>
             </div>
@@ -355,7 +541,7 @@
             <div class="chart-header">
                 <div>
                     <h2>Классы: размер и LCOM4</h2>
-                    <p class="chart-note">X — LOC, Y — компоненты LCOM4, размер — Ce, цвет — максимальная CC.</p>
+                    <p class="chart-note">X — LOC, Y — компоненты LCOM4, размер — Ce, цвет — max CC. Наведите на точку для исходных значений.</p>
                 </div>
             </div>
             <div class="chart-frame"><svg id="scatter-chart" role="img" aria-label="Точечная диаграмма классов"></svg></div>
@@ -375,7 +561,7 @@
             <div class="chart-header">
                 <div>
                     <h2>Матрица зависимостей модулей</h2>
-                    <p class="chart-note">Строки — источники, столбцы — получатели. Число и насыщенность показывают количество связей; красная рамка — ребро внутри цикла.</p>
+                    <p class="chart-note">Строки — источники, столбцы — получатели. Число и насыщенность показывают статические PHP-связи; красная рамка — ребро внутри цикла.</p>
                 </div>
             </div>
             <div class="chart-frame matrix-frame"><svg id="matrix-chart" role="img" aria-label="Матрица зависимостей модулей"></svg></div>
@@ -506,6 +692,7 @@
                     module.id,
                     `LOC: ${formatInteger(module.loc)} · классы: ${formatInteger(module.class_count)}`,
                     `Внешние связи: ${formatPercent(module.external_dependency_share)}`,
+                    `Cohesion: ${formatPercent(module.cohesion)}`,
                     `Исходящие зависимости: ${formatInteger(module.outgoing_dependencies)}`,
                     `Churn: ${module.churn === null ? 'нет данных' : formatInteger(module.churn)}`,
                     `Циклы: ${formatInteger(module.cycles)}`,
