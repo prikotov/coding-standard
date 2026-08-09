@@ -48,8 +48,10 @@ final class MetricsAggregatorTest extends TestCase
             ]],
             ['suites' => [['name' => 'Unit', 'files' => 2, 'lines' => 20, 'average_lines' => 10]], 'total' => ['files' => 2, 'lines' => 20, 'average_lines' => 10]],
             '<coverage><project><metrics statements="10" coveredstatements="8" methods="4" coveredmethods="3" /></project></coverage>',
+            '3.7.0',
         );
 
+        self::assertSame('3.7.0', $report['metadata']['scc_version']);
         self::assertSame(20, $report['metrics']['codebase']['languages']['PHP']['code']);
         self::assertSame(7, $report['metrics']['codebase']['modules']['src/Metrics']['code']);
         self::assertSame(13, $report['metrics']['codebase']['modules']['tests']['code']);

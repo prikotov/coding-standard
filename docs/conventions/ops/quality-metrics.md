@@ -152,10 +152,12 @@ var/metrics/
 Необязательный источник, которого нет на машине, не заменяется нулями: его
 секция отсутствует. `scc` устанавливают отдельно: `go install
 github.com/boyter/scc/v3@latest` или используют готовый бинарник. Команда
-`bin/metrics-scc` создаёт `var/metrics/scc.json`; `composer metrics-test-stats`
-создаёт `var/metrics/test-stats.json`; `composer coverage` требует PCOV и
-создаёт `var/metrics/clover.xml`. Агрегатор принимает пути через `--scc`,
-`--tests` и `--clover`.
+`bin/metrics-scc` создаёт `var/metrics/scc.json` и сохраняет версию
+анализатора в `metadata.scc_version`; `composer metrics-test-stats` читает
+сьюты из `phpunit.xml` и создаёт `var/metrics/test-stats.json`; `composer
+coverage` создаёт `var/metrics/clover.xml`, а при отсутствии PCOV пропускает
+шаг с предупреждением. Агрегатор принимает пути через `--scc`,
+`--scc-version`, `--tests` и `--clover`.
 
 ## Автоматизация и конфигурация
 

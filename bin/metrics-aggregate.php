@@ -8,11 +8,12 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 use PrikotovCodingStandard\Metrics\MetricsAggregator;
 use PrikotovCodingStandard\Metrics\MetricsReportWriter;
 
-$options = getopt('', ['analyzer::', 'deptrac::', 'scc::', 'tests::', 'clover::', 'output::']);
+$options = getopt('', ['analyzer::', 'deptrac::', 'scc::', 'scc-version::', 'tests::', 'clover::', 'output::']);
 $analyzer = $options['analyzer'] ?? 'var/metrics/collector.json';
 $deptrac = $options['deptrac'] ?? 'var/metrics/deptrac.json';
 $output = $options['output'] ?? 'var/metrics/report.json';
 $scc = $options['scc'] ?? 'var/metrics/scc.json';
+$sccVersion = $options['scc-version'] ?? dirname($scc) . '/scc-version.txt';
 $tests = $options['tests'] ?? 'var/metrics/test-stats.json';
 $clover = $options['clover'] ?? 'var/metrics/clover.xml';
 
@@ -30,6 +31,7 @@ try {
             fwrite(STDERR, sprintf("metrics-aggregate: optional %s report is unavailable: %s\n", $name, $path));
         }
     }
+    $version = isset($optional['SCC']) && is_file($sccVersion) ? trim((string) file_get_contents($sccVersion)) : null;
     $config = require dirname(__DIR__) . '/.coding-standard.php';
     $commit = trim((string) shell_exec('git rev-parse HEAD 2>/dev/null')) ?: null;
     $full = (new MetricsAggregator())->aggregate(
@@ -40,6 +42,7 @@ try {
         isset($optional['SCC']) ? json_decode($optional['SCC'], true, flags: JSON_THROW_ON_ERROR) : null,
         isset($optional['test statistics']) ? json_decode($optional['test statistics'], true, flags: JSON_THROW_ON_ERROR) : null,
         $optional['Clover'] ?? null,
+        $version !== '' ? $version : null,
     );
     (new MetricsReportWriter())->writeMirror($output, $full);
     fwrite(STDOUT, "Metrics reports written to " . dirname($output) . "\n");

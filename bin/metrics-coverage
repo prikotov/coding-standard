@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! php -m | grep -qi '^pcov$'; then
+    rm -f var/metrics/clover.xml
+    printf 'metrics-coverage: PCOV is not installed; coverage collection skipped\n' >&2
+    exit 0
+fi
+mkdir -p var/metrics
+exec php -d pcov.enabled=1 vendor/bin/phpunit \
+    --coverage-clover var/metrics/clover.xml \
+    --coverage-text=php://stdout \
+    --only-summary-for-coverage-text \
+    --no-progress

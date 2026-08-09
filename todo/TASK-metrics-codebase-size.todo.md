@@ -21,7 +21,7 @@ status: review
 
 - Модель метрик (TASK-metrics-model-convention) покрывает классы и модули, но не размер всей кодовой базы: LOC за пределами src/ (bin, tests, docs, конфиги) не учитывается.
 - Нет статистики тестов (число файлов, строк, среднее по сьютам) и покрытия — агенты не могут оценить объём тестов и доверие к ним.
-- Эталоны есть на проекте TasK: Go-утилита scc (обёртка bin/scc-clean.sh), bin/test-stats.sh, make coverage-unit / coverage-integration (phpunit + pcov → clover.xml).
+- Эталоны есть на проекте TasK: Go-утилита scc (обёртка bin/scc-clean.sh), composer metrics-test-stats, make coverage-unit / coverage-integration (phpunit + pcov → clover.xml).
 
 ### Варианты или путь решения (Solution Sketch)
 
@@ -94,16 +94,16 @@ status: review
 
 ```bash
 # размер кодовой базы (Go-бинарник scc)
-scc --format json --exclude-dir vendor --output var/metrics/scc.json .
+bin/metrics-scc
 
 # покрытие (требуется расширение pcov)
-php -d pcov.enabled=1 vendor/bin/phpunit --coverage-clover var/metrics/clover.xml --coverage-text=php://stdout --only-summary-for-coverage-text --no-progress
+composer coverage
 
 # статистика тестов
 bin/test-stats.sh
 
 # агрегация с новыми источниками
-php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=var/metrics/deptrac.json --scc=var/metrics/scc.json --clover=var/metrics/clover.xml --output=var/metrics/report.json
+php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=var/metrics/deptrac.json --scc=var/metrics/scc.json --tests=var/metrics/test-stats.json --clover=var/metrics/clover.xml --output=var/metrics/report.json
 ```
 
 ## 7. Risks and Dependencies (Риски и зависимости)
@@ -134,3 +134,4 @@ php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=v
 | 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-model-convention удалена из depends_on. |
 | 2026-08-08 | codex (Codex) | Подтверждён план реализации; задача переведена в работу. |
 | 2026-08-08 | codex (Codex) | Реализованы источники scc, статистики тестов и Clover; PR открыт на ревью. |
+| 2026-08-09 | codex (Codex) | Учтены замечания ревью: опциональный PCOV, версия scc, сьюты PHPUnit, SimpleXML и команды проверки. |

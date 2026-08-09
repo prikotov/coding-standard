@@ -18,6 +18,9 @@ final class MetricsReportWriterTest extends TestCase
             'findings' => [],
             'metrics' => [
                 'project' => ['class_count' => 1],
+                'codebase' => ['languages' => ['PHP' => ['code' => 10]]],
+                'tests' => ['total' => ['files' => 1]],
+                'coverage' => ['lines' => ['percent' => 80.0]],
                 'modules' => [['id' => 'Metrics', 'class_count' => 1]],
                 'classes' => [[
                     'id' => 'App\\Metrics\\Collector',
@@ -39,7 +42,8 @@ final class MetricsReportWriterTest extends TestCase
         rmdir($directory . '/src');
         rmdir($directory);
 
-        self::assertSame(['project' => ['class_count' => 1]], $root['metrics']);
+        self::assertSame(['project', 'codebase', 'tests', 'coverage'], array_keys($root['metrics']));
+        self::assertSame(80, $root['metrics']['coverage']['lines']['percent']);
         self::assertSame([['path' => 'src/report.json', 'kind' => 'directory']], $root['children']);
         self::assertSame('file', $file['scope']['kind']);
         self::assertSame(['App\\Metrics\\Collector::collect'], array_column($file['metrics']['methods'], 'id'));

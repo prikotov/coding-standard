@@ -12,7 +12,7 @@ use InvalidArgumentException;
 final class MetricsAggregator
 {
     /** @param array<string, mixed> $analyzer @param array<string, mixed> $deptrac @param array<string, mixed> $config @return array<string, mixed> */
-    public function aggregate(array $analyzer, array $deptrac, array $config = [], ?string $commit = null, ?array $scc = null, ?array $tests = null, ?string $cloverXml = null): array
+    public function aggregate(array $analyzer, array $deptrac, array $config = [], ?string $commit = null, ?array $scc = null, ?array $tests = null, ?string $cloverXml = null, ?string $sccVersion = null): array
     {
         if (!isset($analyzer['classes'], $analyzer['functions']) || !is_array($analyzer['classes']) || !is_array($analyzer['functions'])) {
             throw new InvalidArgumentException('Analyzer JSON must contain classes and functions arrays.');
@@ -102,7 +102,7 @@ final class MetricsAggregator
 
         return [
             'schema_version' => '1.0', 'scope' => ['kind' => 'project', 'source_path' => '.'],
-            'metadata' => ['generated_at' => gmdate('Y-m-d\\TH:i:s\\Z'), 'commit' => $commit, 'analyzer_version' => $analyzer['toolVersion'] ?? null, 'deptrac_schema_version' => '1.0'],
+            'metadata' => array_filter(['generated_at' => gmdate('Y-m-d\\TH:i:s\\Z'), 'commit' => $commit, 'analyzer_version' => $analyzer['toolVersion'] ?? null, 'deptrac_schema_version' => '1.0', 'scc_version' => $sccVersion], static fn (mixed $value): bool => $value !== null),
             'metrics' => array_filter([
                 'project' => $this->project($classes, $modules, $edges),
                 'codebase' => $scc === null ? null : $this->codebase($scc),
