@@ -586,7 +586,7 @@
 
     const data = JSON.parse(document.getElementById('dashboard-data').textContent);
     const namespace = 'http://www.w3.org/2000/svg';
-    const integer = new Intl.NumberFormat('ru-RU');
+    const integer = new Intl.NumberFormat('ru-RU', {maximumFractionDigits: 0});
     const decimal = new Intl.NumberFormat('ru-RU', {maximumFractionDigits: 2});
     const percent = new Intl.NumberFormat('ru-RU', {style: 'percent', maximumFractionDigits: 1});
 
