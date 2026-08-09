@@ -39,10 +39,56 @@ php bin/metrics-collect --source=src --output=var/metrics/collector.json
 php bin/metrics-aggregate.php \
   --analyzer=var/metrics/collector.json \
   --deptrac=var/metrics/deptrac.json \
+  --scc=var/metrics/scc.json \
+  --tests=var/metrics/test-stats.json \
+  --clover=var/metrics/clover.xml \
   --output=var/metrics/report.json
 ```
 
 В отчёте содержатся снимки методов, классов, модулей и проекта; `findings` являются неблокирующими.
+
+Необязательные источники project-level метрик собираются отдельно:
+
+```bash
+bin/metrics-scc
+composer metrics-test-stats
+composer coverage
+```
+
+Отсутствие `scc` или PCOV не завершает сбор с ошибкой: соответствующая секция
+не попадает в отчёт. Подробная схема описана в
+[конвенции метрик качества](docs/conventions/ops/quality-metrics.md).
+
+### CLI-утилиты
+
+После установки пакета команды из секции `bin` в `composer.json` доступны
+через `vendor/bin/`. При разработке самого пакета их запускают напрямую из
+`bin/`.
+
+| Утилита | Назначение |
+|---|---|
+| `coding-standard-init` | Копирует конвенции, конфигурацию Deptrac и шаблоны исключений в проект-потребитель |
+| `validate-md-links` | Проверяет относительные ссылки и якоря во всех Markdown-файлах проекта |
+| `validate-language` | Проверяет долю англицизмов в русскоязычной документации |
+| `metrics-collect` | Собирает структурные метрики PHP-кода через `nikic/php-parser` |
+| `metrics-scc` | Запускает внешний `scc`, сохраняет размер кодовой базы и версию анализатора; при отсутствии `scc` пропускает шаг |
+| `metrics-coverage` | Запускает PHPUnit с PCOV и создаёт `var/metrics/clover.xml`; при отсутствии PCOV пропускает шаг |
+| `test-stats` | Читает сьюты из `phpunit.xml` и считает PHP-файлы, строки и средний размер файла |
+
+Основные параметры новых утилит:
+
+```bash
+bin/metrics-scc [путь-к-scc.json]
+bin/test-stats --configuration=phpunit.xml --format=json --output=var/metrics/test-stats.json
+```
+
+Внутренние сценарии не публикуются как отдельные Composer-команды:
+
+| Сценарий | Назначение |
+|---|---|
+| `metrics-aggregate.php` | Объединяет структурные метрики, граф Deptrac, данные `scc`, статистику тестов и Clover в `report.json` |
+| `validate-docs.php` | Проверяет структуру документов в `docs/conventions/`; запускается через `composer validate-docs` |
+| `run-sniff-tests.php` | Запускает набор проверок сниффов; используется командой `composer sniff-test` |
 
 ---
 

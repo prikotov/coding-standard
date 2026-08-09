@@ -7,7 +7,8 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 use PrikotovCodingStandard\Metrics\TestStatisticsCollector;
 
-$options = getopt('', ['format::', 'output:']);
+$options = getopt('', ['configuration:', 'format::', 'output:']);
+$configuration = $options['configuration'] ?? getcwd() . '/phpunit.xml';
 $format = $options['format'] ?? 'text';
 $output = $options['output'] ?? null;
 if (!in_array($format, ['text', 'json'], true)) {
@@ -16,7 +17,7 @@ if (!in_array($format, ['text', 'json'], true)) {
 }
 
 try {
-    $report = (new TestStatisticsCollector())->collect(dirname(__DIR__) . '/phpunit.xml');
+    $report = (new TestStatisticsCollector())->collect($configuration);
     if ($format === 'json') {
         $result = json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n";
         if (is_string($output)) {

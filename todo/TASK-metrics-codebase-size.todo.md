@@ -136,3 +136,4 @@ php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=v
 | 2026-08-08 | codex (Codex) | Реализованы источники scc, статистики тестов и Clover; PR открыт на ревью. |
 | 2026-08-09 | codex (Codex) | Учтены замечания ревью: опциональный PCOV, версия scc, сьюты PHPUnit, SimpleXML и команды проверки. |
 | 2026-08-09 | codex (Codex) | Сбор статистики тестов вынесен в тестируемый класс; команда приведена к формату остальных PHP-команд в `bin/`. |
+| 2026-08-09 | codex (Codex) | В README добавлены назначение CLI-утилит, команды сбора project-level метрик и внешние зависимости. |
