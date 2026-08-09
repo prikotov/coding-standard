@@ -16,14 +16,17 @@ return [
         // Корень артефактов. Структура каталогов повторяет пути исходников.
         'report_dir' => 'var/metrics',
         'report_layout' => 'mirror',
+        'deptrac_config' => 'depfile.yaml',
+        'phpunit_config' => 'phpunit.xml.dist',
         'exclude' => [
-            'vendor/', '.git/', 'var/', 'tmp/',
+            'vendor/', '.git/', 'var/', 'tmp/', 'packages/',
             'migrations/', 'config/', 'docs/',
             'public/', 'templates/', 'translations/',
         ],
         'module_patterns' => [
             'src/Module/*',
             'apps/*/src/Module/*',
+            'apps/*/src/**/Module/*',
         ],
         // Допустимые границы project-level правил. Сборщик преобразует
         // превышения в findings; значения пересматриваются по распределениям.

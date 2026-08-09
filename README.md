@@ -6,51 +6,156 @@ AI-агенты склонны отклоняться от конвенций. �
 
 ---
 
-## Вектор развития
+## Метрики качества подключаемого проекта
 
-Проект объединяет конвенции, автоматические проверки и метрики качества. Цель —
-давать разработчику и ИИ-агенту воспроизводимую обратную связь до кодревью.
-Модель отчёта описана в [конвенции метрик качества](docs/conventions/ops/quality-metrics.md),
-выбор инструментов — в [отчёте об исследовании](docs/research/metrics-tools-evaluation.md),
-план развития — в [`EPIC-metrics-ai-maintainability`](todo/EPIC-metrics-ai-maintainability.todo.md).
+Пакет собирает метрики **проекта-потребителя**, из корня которого запущена
+команда. Репозиторий `coding-standard` для получения отчёта анализировать не
+нужно. Модель и расшифровка показателей описаны в
+[конвенции метрик качества](docs/conventions/ops/quality-metrics.md).
 
-### Сбор источников метрик
+### Требования
 
-Для полного отчёта обязательны структурные метрики, граф Deptrac, размер
-кодовой базы, статистика тестов и покрытие:
+В проекте должны быть установлены пакет, Deptrac и PHPUnit с командой
+`vendor/bin/phpunit`:
 
 ```bash
-php bin/metrics-collect --source=src --output=var/metrics/collector.json
-vendor/bin/deptrac analyse --formatter=metrics-json --output=var/metrics/deptrac.json
-bin/metrics-scc
-composer metrics-test-stats
-composer coverage
+composer require --dev prikotov/coding-standard deptrac/deptrac phpunit/phpunit
 ```
 
-Для `metrics-scc` требуется `scc`, для `coverage` — PCOV. Они устанавливаются
-отдельно и не входят в `composer check`:
+`require-dev` зависимостей пакета не наследуется проектом, поэтому Deptrac и
+PHPUnit должны присутствовать в его собственном `composer.json`. Если PHPUnit
+уже установлен напрямую или другим совместимым способом, повторно добавлять
+его не нужно.
+
+Для размера кодовой базы требуется `scc`, для покрытия — расширение PCOV:
 
 ```bash
 go install github.com/boyter/scc/v3@latest
 pecl install pcov
 ```
 
-### Агрегация метрик
+Бинарник `scc` должен находиться в `PATH`, а `php -m` — показывать `pcov`.
 
-Агрегатор объединяет подготовленные источники в `var/metrics/report.json`:
+### Настройка проекта
+
+Для нового подключения создайте `.coding-standard.php` и `depfile.yaml`:
 
 ```bash
-php bin/metrics-aggregate.php \
-  --analyzer=var/metrics/collector.json \
-  --deptrac=var/metrics/deptrac.json \
-  --scc=var/metrics/scc.json \
-  --tests=var/metrics/test-stats.json \
-  --clover=var/metrics/clover.xml \
-  --output=var/metrics/report.json
+vendor/bin/coding-standard-init --project-name=ProjectName
 ```
 
-Отсутствие обязательного источника завершает команду ошибкой. `findings` в
-итоговом отчёте остаются неблокирующими.
+В существующем проекте проверьте секцию `metrics` файла
+`.coding-standard.php`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'docs_path' => 'docs/conventions',
+    'metrics' => [
+        'report_dir' => 'var/metrics',
+        'deptrac_config' => 'depfile.yaml',
+        'phpunit_config' => 'phpunit.xml.dist',
+        'exclude' => [
+            'vendor/', '.git/', 'var/', 'tmp/', 'packages/',
+            'migrations/', 'config/', 'docs/',
+            'public/', 'templates/', 'translations/',
+        ],
+        'module_patterns' => [
+            'src/Module/*',
+            'apps/*/src/Module/*',
+            'apps/*/src/**/Module/*',
+        ],
+        'thresholds' => [
+            'class' => ['loc' => 300, 'wmc' => 50, 'max_cc' => 10],
+            'module' => ['external_dependency_share' => 0.5, 'cycles' => 0],
+        ],
+    ],
+];
+```
+
+Укажите реальные пути к конфигурациям Deptrac и PHPUnit. Проектный
+`depfile.yaml`, созданный командой инициализации, импортирует общий конфиг
+пакета, где уже зарегистрирован форматтер `metrics-json`. При полностью своей
+конфигурации Deptrac зарегистрируйте форматтер вручную:
+
+```yaml
+services:
+  - class: PrikotovCodingStandard\Deptrac\MetricsJsonOutputFormatter
+    tags:
+      - { name: output_formatter }
+```
+
+Сгенерированные файлы не должны попадать в репозиторий проекта:
+
+```gitignore
+/var/metrics/
+```
+
+### Команда Composer проекта
+
+Scripts Composer установленных зависимостей не переносятся в корневой
+`composer.json`. Добавьте команду именно в проект-потребитель:
+
+```bash
+composer config scripts.metrics vendor/bin/coding-standard-metrics
+```
+
+Эквивалентная запись в его `composer.json`:
+
+```json
+{
+  "scripts": {
+    "metrics": "vendor/bin/coding-standard-metrics"
+  }
+}
+```
+
+После настройки полный отчёт собирается из корня проекта:
+
+```bash
+composer metrics
+```
+
+Без Composer script доступна та же команда напрямую:
+
+```bash
+vendor/bin/coding-standard-metrics
+```
+
+Команда последовательно собирает структурные метрики, полный граф Deptrac,
+размер кодовой базы, статистику тестов и покрытие, затем создаёт:
+
+- `var/metrics/report.json` — машиночитаемый отчёт для разработчика и ИИ-агента;
+- `var/metrics/index.html` — автономный HTML-дашборд для просмотра в браузере;
+- зеркальные отчёты каталогов и PHP-файлов внутри `var/metrics/`.
+
+### Какие классы считаются модулями
+
+Структурные метрики читают только production-корни из Composer `autoload`.
+`autoload-dev`, тесты и классы вне каталогов из `module_patterns` не входят в
+метрики классов и модулей. Название приложения берётся из PSR-4-префикса:
+
+- `Project\Common\Module\Billing` → `Common:Billing`;
+- `Project\Web\Module\Billing` → `Web:Billing`;
+- `Project\Api\v1\Module\Chat` → `Api/v1:Chat`.
+
+Классы из `packages/*` и технические классы вне `Module/*` не считаются
+модулями и не входят в class-level и module-level метрики.
+
+### Ошибки запуска
+
+- `scc is required` — установите `scc` и добавьте бинарник в `PATH`.
+- `PCOV is required` — установите и включите PCOV для используемой версии PHP.
+- `Deptrac is not installed` — добавьте `deptrac/deptrac` в `require-dev` проекта.
+- `PHPUnit is not installed` — обеспечьте команду `vendor/bin/phpunit` и укажите
+  конфигурацию в `metrics.phpunit_config`.
+- `metrics-json` не найден — импортируйте общий `depfile.yaml` пакета или
+  зарегистрируйте `MetricsJsonOutputFormatter` вручную.
+- Ошибка тестов прерывает сбор покрытия и всего отчёта. Архитектурные нарушения
+  Deptrac не прерывают сбор, если файл полного графа успешно сформирован.
 
 ### Пример HTML-дашборда
 
@@ -71,19 +176,18 @@ php bin/metrics-aggregate.php \
 
 ### CLI-утилиты
 
-Публичные команды пакета доступны через `vendor/bin/`. Внутренний
-`metrics-aggregate.php` запускается из репозитория, как показано выше.
+Публичные команды пакета доступны через `vendor/bin/`.
 
 | Команда | Назначение |
 |---|---|
 | `coding-standard-init` | Копирует конвенции и конфигурации в проект |
 | `validate-md-links` | Проверяет ссылки и якоря Markdown |
 | `validate-language` | Проверяет англицизмы в русскоязычной документации |
+| `coding-standard-metrics` | Собирает полный отчёт и HTML-дашборд подключаемого проекта |
 | `metrics-collect` | Собирает структурные метрики PHP-кода |
 | `metrics-scc` | Собирает размер кодовой базы и версию `scc` |
 | `metrics-coverage` | Создаёт Clover-отчёт покрытия через PHPUnit и PCOV |
 | `test-stats` | Считает файлы и строки по сьютам PHPUnit |
-| `metrics-aggregate.php` | Формирует итоговый `report.json` |
 
 ---
 
@@ -181,6 +285,7 @@ php vendor/bin/coding-standard-init --project-name=ProjectName
 В состав пакета входят:
 
 - **Сниффы** — PHP CodeSniffer-правила, работают сразу из `vendor/`
+- **Метрики качества** — сбор отчёта подключаемого проекта и автономный HTML-дашборд
 - **Deptrac-правила** — пользовательские правила для deptrac
 - **PHPStan-правила** — пользовательские правила для phpstan
 - **Конфигурации** — `depfile.yaml` для Deptrac, `phpcs.xml.dist` для `PHPCS`, `phpstan.neon.dist` для PHPStan

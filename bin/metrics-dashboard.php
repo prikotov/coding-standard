@@ -3,7 +3,11 @@
 
 declare(strict_types=1);
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+$autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . '/vendor/autoload.php';
+if (!is_file($autoloadPath)) {
+    $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
+}
+require $autoloadPath;
 
 use PrikotovCodingStandard\Metrics\MetricsDashboardGenerator;
 

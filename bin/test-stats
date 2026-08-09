@@ -3,12 +3,19 @@
 
 declare(strict_types=1);
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+$autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . '/vendor/autoload.php';
+if (!is_file($autoloadPath)) {
+    $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
+}
+require $autoloadPath;
 
 use PrikotovCodingStandard\Metrics\TestStatisticsCollector;
 
 $options = getopt('', ['configuration:', 'format::', 'output:']);
-$configuration = $options['configuration'] ?? getcwd() . '/phpunit.xml';
+$configuration = $options['configuration'] ?? null;
+if (!is_string($configuration)) {
+    $configuration = is_file(getcwd() . '/phpunit.xml') ? getcwd() . '/phpunit.xml' : getcwd() . '/phpunit.xml.dist';
+}
 $format = $options['format'] ?? 'text';
 $output = $options['output'] ?? null;
 if (!in_array($format, ['text', 'json'], true)) {

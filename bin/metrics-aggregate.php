@@ -3,12 +3,19 @@
 
 declare(strict_types=1);
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+$autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . '/vendor/autoload.php';
+if (!is_file($autoloadPath)) {
+    $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
+}
+require $autoloadPath;
 
 use PrikotovCodingStandard\Metrics\MetricsAggregator;
 use PrikotovCodingStandard\Metrics\MetricsReportWriter;
 
-$options = getopt('', ['analyzer::', 'deptrac::', 'scc::', 'scc-version::', 'tests::', 'clover::', 'output::']);
+$options = getopt('', [
+    'config::', 'analyzer::', 'deptrac::', 'scc::', 'scc-version::', 'tests::', 'clover::', 'output::',
+]);
+$configPath = $options['config'] ?? '.coding-standard.php';
 $analyzer = $options['analyzer'] ?? 'var/metrics/collector.json';
 $deptrac = $options['deptrac'] ?? 'var/metrics/deptrac.json';
 $output = $options['output'] ?? 'var/metrics/report.json';
@@ -18,13 +25,27 @@ $tests = $options['tests'] ?? 'var/metrics/test-stats.json';
 $clover = $options['clover'] ?? 'var/metrics/clover.xml';
 
 try {
-    foreach (['Analyzer' => $analyzer, 'Deptrac' => $deptrac, 'Test statistics' => $tests, 'SCC' => $scc, 'SCC version' => $sccVersion, 'Clover' => $clover] as $name => $path) {
+    $sources = [
+        'Analyzer' => $analyzer,
+        'Deptrac' => $deptrac,
+        'Test statistics' => $tests,
+        'SCC' => $scc,
+        'SCC version' => $sccVersion,
+        'Clover' => $clover,
+    ];
+    foreach ($sources as $name => $path) {
         if (!is_file($path) || filesize($path) === 0) {
             throw new RuntimeException(sprintf('%s report is missing or empty: %s', $name, $path));
         }
     }
     $version = trim((string) file_get_contents($sccVersion));
-    $config = require dirname(__DIR__) . '/.coding-standard.php';
+    if (!is_file($configPath)) {
+        throw new RuntimeException("Project configuration is missing: $configPath");
+    }
+    $config = require $configPath;
+    if (!is_array($config)) {
+        throw new RuntimeException("Project configuration must return an array: $configPath");
+    }
     $commit = trim((string) shell_exec('git rev-parse HEAD 2>/dev/null')) ?: null;
     $full = (new MetricsAggregator())->aggregate(
         json_decode((string) file_get_contents($analyzer), true, flags: JSON_THROW_ON_ERROR),

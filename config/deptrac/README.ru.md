@@ -104,20 +104,21 @@ Namespace-паттерны в `collectors` следуют конвенциям �
 агрегатора метрик. Он не задаёт модули, пути или правила зависимостей:
 всё это остаётся в конфигурации конкретного проекта.
 
-Добавьте сервис в `depfile.yaml`:
+Общий `config/deptrac/depfile.yaml` пакета уже регистрирует форматтер. Если
+проект не импортирует этот файл, добавьте сервис в свой `depfile.yaml`:
 
 ```yaml
 services:
   - class: PrikotovCodingStandard\Deptrac\MetricsJsonOutputFormatter
     tags:
-      - output_formatter
+      - { name: output_formatter }
 ```
 
 Запуск создаёт JSON со всеми разрешёнными, запрещёнными, пропущенными и
 непокрытыми зависимостями:
 
 ```bash
-vendor/bin/deptrac analyse --formatter=metrics-json --output=var/metrics/deptrac.json
+vendor/bin/deptrac --formatter=metrics-json --output=var/metrics/deptrac.json
 ```
 
 Список типов, включая типы без зависимостей, и маппинг «тип → модуль»
@@ -157,7 +158,7 @@ services:
 Напрямую:
 
 ```bash
-vendor/bin/deptrac analyse
+vendor/bin/deptrac
 ```
 
 Через Makefile:
@@ -165,13 +166,13 @@ vendor/bin/deptrac analyse
 ```makefile
 .PHONY: deptrac
 deptrac:
-	vendor/bin/deptrac analyse --no-progress
+	vendor/bin/deptrac
 ```
 
 В CI:
 
 ```yaml
-- run: vendor/bin/deptrac analyse --no-progress
+- run: vendor/bin/deptrac
 ```
 
 В составе `make check`:

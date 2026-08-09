@@ -16,7 +16,7 @@ pr:
 
 ### Проблема простыми словами (Problem)
 
-- ИИ-агенты и разработчики не имеют объективных числовых метрик качества кода пакета: связности (cohesion), связанности (coupling), размера и количества компонентов на уровнях «метод → класс» и «класс → модуль».
+- ИИ-агенты и разработчики не имеют объективных числовых метрик качества проекта, подключившего `coding-standard`: связности (cohesion), связанности (coupling), размера и количества компонентов на уровнях «метод → класс» и «класс → модуль».
 - Поддерживаемость оценивается субъективно (чтение кода, code review); нет данных для приоритизации рефакторинга и точки входа для агента в незнакомый код.
 - Единого инструмента «модуль → классы → cohesion/coupling/размер → узкие места» нет; есть набор частичных анализаторов (PhpMetrics, PDepend, Deptrac, PhpCodeArcheology), которые нужно свести в единую модель и отчёт.
 
@@ -33,7 +33,7 @@ pr:
 ### Ожидаемый результат (Expected Result)
 
 - Команда `composer metrics` генерирует var/metrics/report.json со всеми метриками модели и статический HTML-дашборд.
-- ИИ-агент по сырым метрикам и отдельному неблокирующему списку `findings` в `report.json` может оценить поддерживаемость пакета: крупные несвязные классы, сложные методы, сильно связанные модули, циклы зависимостей и узкие места.
+- ИИ-агент по сырым метрикам и отдельному неблокирующему списку `findings` в `report.json` может оценить поддерживаемость подключаемого проекта: крупные несвязные классы, сложные методы, сильно связанные модули, циклы зависимостей и узкие места.
 - Документация (docs/conventions/ + README + AGENTS.md) описывает модель метрик, команду запуска и интерпретацию чисел.
 
 ## 1. Concept and Goal (Концепция и Цель)
@@ -46,12 +46,12 @@ pr:
 
 ### Goal (Цель по SMART)
 
-Собрать в пакете `prikotov/coding-standard` инструментальную цепочку метрик качества: одна команда `composer metrics` генерирует `var/metrics/report.json` (method-level: физический LOC и CC; class-level: размер, состав, WMC, LCOM4, Ca/Ce и модуль; module-level: распределение размера и сложности, связность, циклы и внешний интерфейс; project-level: размер кодовой базы, статистика тестов и покрытие) и статический HTML-дашборд. Модуль определяется как предметный компонент пакета, а не как технический слой. Критерий: отчёт покрывает модель из docs/conventions/ops/quality-metrics.md, генерируется одной командой, `composer check` остаётся зелёным.
+Собрать в пакете `prikotov/coding-standard` инструментальную цепочку метрик качества подключаемого проекта: публичная команда `vendor/bin/coding-standard-metrics`, вызываемая его собственным script `composer metrics`, генерирует `var/metrics/report.json` (method-level: физический LOC и CC; class-level: размер, состав, WMC, LCOM4, Ca/Ce и модуль; module-level: распределение размера и сложности, связность, циклы и внешний интерфейс; project-level: размер кодовой базы, статистика тестов и покрытие) и статический HTML-дашборд. Модуль определяется как предметный компонент подключаемого проекта, а не как технический слой или пакет. Критерий: отчёт покрывает модель из docs/conventions/ops/quality-metrics.md, генерируется одной командой, `composer check` пакета остаётся зелёным.
 
 ## 2. Context and Scope (Контекст и Границы)
 
-- **Где делаем:** этот пакет — src/ (Sniffs, Language, PhpStan, Deptrac, Config), bin/, config/, docs/conventions/, composer.json, README.md, AGENTS.md.
-- **Модули пакета для метрик (стартовая гипотеза, уточняется в задачах):** src/Sniffs/Structure, src/Sniffs/Application, src/Sniffs/Config, src/Sniffs/Namespaces, src/Language, src/PhpStan, src/Deptrac, src/Config, bin, tests.
+- **Где делаем:** публичные CLI и классы этого пакета, шаблоны конфигурации, docs/conventions/, composer.json, README.md и AGENTS.md.
+- **Что анализируем:** production-классы предметных модулей проекта-потребителя из Composer `autoload`; общий код и приложения различаются префиксами `Common`, `Web`, `Console`, `Api` и другими PSR-4-корнями. `packages/`, технические классы вне `Module/*` и `autoload-dev` не считаются модулями основного проекта.
 - **Границы (Out of Scope):**
   - Не внедряем цепочку метрик в consumer-проекты автоматически (init-скрипт не трогаем).
   - Не меняем существующие сниффы и конвенции.
@@ -64,7 +64,7 @@ pr:
 
 - [ ] Выбор инструмента-основы по результатам прогона на этом пакете (TASK-metrics-tools-evaluation).
 - [ ] Модель метрик (class-level + module-level, определение модуля, интерпретация для агентов) в docs/conventions/ (TASK-metrics-model-convention).
-- [ ] Границы модулей пакета и JSON-вывод зависимостей через Deptrac (TASK-metrics-module-boundaries-deptrac).
+- [ ] Границы модулей проекта и JSON-вывод зависимостей через Deptrac (TASK-metrics-module-boundaries-deptrac).
 - [ ] Агрегатор: единый var/metrics/report.json по модели (TASK-metrics-aggregator).
 - [ ] `composer metrics` + документация запуска и чтения отчёта (README, AGENTS.md) (TASK-metrics-composer-integration).
 
@@ -91,7 +91,7 @@ pr:
 ```mermaid
 flowchart LR
     A[Сборщик классов: собственный на php-parser или PhpCodeArcheology] -->|JSON| D
-    B[Deptrac: границы модулей пакета] -->|JSON| D
+    B[Deptrac: границы модулей проекта] -->|JSON| D
     C[git log: churn] --> D
     S[scc: размер кодовой базы, статистика тестов, покрытие clover.xml] -->|JSON/XML| D
     D[Агрегатор bin/metrics-aggregate.php] -->|report.json| E[HTML-дашборд]
@@ -107,7 +107,7 @@ flowchart LR
 
 - [x] [TASK-metrics-tools-evaluation](done/TASK-metrics-tools-evaluation.todo.md) — оценка анализаторов и выбор основы
 - [x] [TASK-metrics-model-convention](done/TASK-metrics-model-convention.todo.md) — модель метрик в docs/conventions/
-- [x] [TASK-metrics-module-boundaries-deptrac](done/TASK-metrics-module-boundaries-deptrac.todo.md) — границы модулей пакета в Deptrac
+- [x] [TASK-metrics-module-boundaries-deptrac](done/TASK-metrics-module-boundaries-deptrac.todo.md) — полный граф зависимостей проекта через Deptrac
 - [x] [TASK-metrics-aggregator](done/TASK-metrics-aggregator.todo.md) — агрегатор и report.json
 - [x] [TASK-metrics-codebase-size](done/TASK-metrics-codebase-size.todo.md) — размер кодовой базы (scc), статистика тестов, покрытие
 - [x] [TASK-metrics-html-dashboard](done/TASK-metrics-html-dashboard.todo.md) — статический HTML-дашборд
@@ -116,22 +116,22 @@ flowchart LR
 ## 6. Definition of Done (Критерии приёмки эпика)
 
 - [ ] Все Must-задачи выполнены: report.json покрывает модель метрик.
-- [ ] `composer metrics` работает end-to-end одной командой.
-- [x] HTML-дашборд отображает реальные данные пакета.
+- [ ] `composer metrics` работает end-to-end одной командой в проекте-потребителе.
+- [x] HTML-дашборд отображает реальные данные проекта TasK.
 - [ ] docs/conventions/, README, AGENTS.md обновлены; `composer check` зелёный.
 
 ## 7. Release Notes and Deployment (Инструкция по релизу)
 
-- [ ] В composer.json добавлены dev-зависимости выбранного анализатора (только публичные Packagist-пакеты).
-- [ ] Добавлен composer script `metrics`.
-- [ ] var/metrics/ добавлен в .gitignore.
+- [ ] Публичная команда метрик и её зависимости поставляются пакетом через Packagist.
+- [ ] Инструкция показывает script `metrics` в `composer.json` проекта-потребителя.
+- [ ] Инструкция требует добавить `var/metrics/` в `.gitignore` проекта-потребителя.
 - [ ] README содержит раздел «Метрики качества».
 
 ## 8. Risks and Dependencies (Риски и зависимости)
 
 - Значения LCOM/Ca/Ce у разных инструментов расходятся — нужна сверка на знакомых классах (TASK-metrics-tools-evaluation).
 - Поддержка PHP 8.4 (атрибуты, readonly-свойства) у PhpMetrics/PDepend может быть неполной — проверяется в TASK-metrics-tools-evaluation.
-- Модуль ≠ namespace для этого пакета: маппинг «класс → модуль» делается по структуре src/, а не по namespace-шаблону consumer-проектов.
+- Модуль ≠ пакет или технический namespace: маппинг «класс → модуль» строится по Composer `autoload`, namespace с сегментом `Module` и `metrics.module_patterns` проекта-потребителя.
 - Churn требует истории git репозитория; на короткой истории значения малоинформативны.
 - scc и PCOV — обязательные внешние инструменты контура метрик, но не `composer check`; без размера кодовой базы и покрытия project-level отчёт считается неполным (TASK-metrics-codebase-size).
 - Новые dev-зависимости — только публичные пакеты Packagist (в CI нет доступа к VCS-репозиториям).
@@ -171,3 +171,4 @@ flowchart LR
 | 2026-08-09 | codex (Codex) | Покрытие закреплено как обязательная project-level метрика; окружение сбора метрик требует PCOV. |
 | 2026-08-09 | codex (Codex) | TASK-metrics-codebase-size завершена и перенесена в архив. |
 | 2026-08-10 | codex (Codex) | TASK-metrics-html-dashboard завершена и перенесена в архив. |
+| 2026-08-10 | codex (Codex) | Финальная интеграция переориентирована с анализа самого `coding-standard` на анализ подключаемого проекта; проверочным проектом выбран TasK. |

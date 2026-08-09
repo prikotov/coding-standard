@@ -132,7 +132,7 @@ services:
 直接运行：
 
 ```bash
-vendor/bin/deptrac analyse
+vendor/bin/deptrac
 ```
 
 通过 Makefile：
@@ -140,13 +140,13 @@ vendor/bin/deptrac analyse
 ```makefile
 .PHONY: deptrac
 deptrac:
-	vendor/bin/deptrac analyse --no-progress
+	vendor/bin/deptrac
 ```
 
 在 CI 中：
 
 ```yaml
-- run: vendor/bin/deptrac analyse --no-progress
+- run: vendor/bin/deptrac
 ```
 
 作为 `make check` 的一部分：

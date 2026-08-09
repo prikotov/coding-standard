@@ -1,14 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+output=${1:-var/metrics/clover.xml}
+configuration=${2:-}
+
 if ! php -m | grep -qi '^pcov$'; then
-    rm -f var/metrics/clover.xml
+    rm -f "$output"
     printf 'metrics-coverage: PCOV is required to collect coverage\n' >&2
     exit 1
 fi
-mkdir -p var/metrics
-exec php -d pcov.enabled=1 vendor/bin/phpunit \
-    --coverage-clover var/metrics/clover.xml \
+if [[ ! -x vendor/bin/phpunit ]]; then
+    printf 'metrics-coverage: PHPUnit is required at vendor/bin/phpunit\n' >&2
+    exit 1
+fi
+mkdir -p "$(dirname "$output")"
+arguments=()
+if [[ -n "$configuration" ]]; then
+    arguments+=(--configuration "$configuration")
+fi
+exec php -d pcov.enabled=1 vendor/bin/phpunit "${arguments[@]}" \
+    --coverage-clover "$output" \
     --coverage-text=php://stdout \
     --only-summary-for-coverage-text \
     --no-progress
