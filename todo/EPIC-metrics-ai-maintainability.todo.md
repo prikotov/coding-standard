@@ -70,7 +70,7 @@ pr:
 
 ### 🟡 Should Have (Желательно)
 
-- [ ] HTML-дашборд: bubble chart, scatter, treemap, матрица зависимостей (TASK-metrics-html-dashboard).
+- [x] HTML-дашборд: bubble chart, scatter, treemap, матрица зависимостей (TASK-metrics-html-dashboard).
 - [ ] Git churn как метрика класса и модуля (в TASK-metrics-aggregator).
 - [ ] Метрика размера кодовой базы (scc), статистика тестов и покрытие (TASK-metrics-codebase-size).
 
@@ -110,14 +110,14 @@ flowchart LR
 - [x] [TASK-metrics-module-boundaries-deptrac](done/TASK-metrics-module-boundaries-deptrac.todo.md) — границы модулей пакета в Deptrac
 - [x] [TASK-metrics-aggregator](done/TASK-metrics-aggregator.todo.md) — агрегатор и report.json
 - [x] [TASK-metrics-codebase-size](done/TASK-metrics-codebase-size.todo.md) — размер кодовой базы (scc), статистика тестов, покрытие
-- [ ] [TASK-metrics-html-dashboard](TASK-metrics-html-dashboard.todo.md) — статический HTML-дашборд
+- [x] [TASK-metrics-html-dashboard](done/TASK-metrics-html-dashboard.todo.md) — статический HTML-дашборд
 - [ ] [TASK-metrics-composer-integration](TASK-metrics-composer-integration.todo.md) — composer metrics и документация
 
 ## 6. Definition of Done (Критерии приёмки эпика)
 
 - [ ] Все Must-задачи выполнены: report.json покрывает модель метрик.
 - [ ] `composer metrics` работает end-to-end одной командой.
-- [ ] HTML-дашборд отображает реальные данные пакета.
+- [x] HTML-дашборд отображает реальные данные пакета.
 - [ ] docs/conventions/, README, AGENTS.md обновлены; `composer check` зелёный.
 
 ## 7. Release Notes and Deployment (Инструкция по релизу)
@@ -170,3 +170,4 @@ flowchart LR
 | 2026-08-09 | codex (Codex) | `scc` закреплён как обязательный источник размера кодовой базы; опциональным осталось покрытие, зависящее от PCOV. |
 | 2026-08-09 | codex (Codex) | Покрытие закреплено как обязательная project-level метрика; окружение сбора метрик требует PCOV. |
 | 2026-08-09 | codex (Codex) | TASK-metrics-codebase-size завершена и перенесена в архив. |
+| 2026-08-10 | codex (Codex) | TASK-metrics-html-dashboard завершена и перенесена в архив. |
