@@ -81,6 +81,8 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('Модули с крупными несвязными классами', $html);
             self::assertStringContainsString('Шкала недостатка связности методов', $html);
             self::assertStringContainsString('id="treemap-lcom-max"', $html);
+            self::assertStringContainsString('<strong>Метрики:</strong> LOC — <em>Lines of Code</em>', $html);
+            self::assertStringContainsString('LCOM4 — <em>Lack of Cohesion in Methods 4</em>', $html);
             self::assertStringContainsString('Причины: ${reasons.join', $html);
             self::assertStringContainsString('Смотреть классы:', $html);
             self::assertStringContainsString("maximumFractionDigits: 0", $html);
