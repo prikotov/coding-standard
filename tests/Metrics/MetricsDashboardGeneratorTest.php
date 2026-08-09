@@ -71,6 +71,12 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('class="chart-card wide" id="classes-scatter"', $html);
             self::assertStringContainsString('Классы: размер и недостаток связности методов (LCOM4)', $html);
             self::assertStringContainsString('class="chart-card wide" id="classes-treemap"', $html);
+            self::assertStringContainsString('id="class-assessment"', $html);
+            self::assertStringContainsString('Оценка качества классов:', $html);
+            self::assertStringContainsString('С чего начать рефакторинг классов', $html);
+            self::assertStringContainsString('id="treemap-assessment"', $html);
+            self::assertStringContainsString('Оценка распределения классов по модулям:', $html);
+            self::assertStringContainsString('Модули с крупными несвязными классами', $html);
             self::assertStringContainsString('Причины: ${reasons.join', $html);
             self::assertStringContainsString('Смотреть классы:', $html);
             self::assertStringContainsString("maximumFractionDigits: 0", $html);

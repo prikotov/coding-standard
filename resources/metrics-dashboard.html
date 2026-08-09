@@ -241,7 +241,7 @@
             line-height: 1.5;
         }
 
-        .module-assessment {
+        .quality-assessment {
             margin: 0 0 14px;
             padding: 12px 14px;
             border: 1px solid rgb(255 202 102 / 38%);
@@ -252,28 +252,28 @@
             line-height: 1.55;
         }
 
-        .module-assessment strong {
+        .quality-assessment strong {
             display: block;
             margin-bottom: 3px;
             color: var(--warning);
             font-size: 13px;
         }
 
-        .module-assessment.high {
+        .quality-assessment.high {
             border-color: rgb(255 104 120 / 42%);
             background: rgb(255 104 120 / 9%);
         }
 
-        .module-assessment.high strong {
+        .quality-assessment.high strong {
             color: #ff9aa5;
         }
 
-        .module-assessment.good {
+        .quality-assessment.good {
             border-color: rgb(45 212 191 / 38%);
             background: rgb(45 212 191 / 8%);
         }
 
-        .module-assessment.good strong {
+        .quality-assessment.good strong {
             color: var(--accent);
         }
 
@@ -629,7 +629,7 @@
                 </div>
                 <div class="legend"><span><i></i>не входит в цикл</span><span><i class="hot"></i>входит в цикл</span></div>
             </div>
-            <div class="module-assessment" id="module-assessment"></div>
+            <div class="quality-assessment" id="module-assessment"></div>
             <div class="chart-frame"><svg id="bubble-chart" role="img" aria-label="Пузырьковая диаграмма модулей"></svg></div>
             <h3 class="ranking-title">С чего начать рефакторинг модулей</h3>
             <ol class="ranking" id="module-ranking" aria-label="Кандидаты на рефакторинг модулей"></ol>
@@ -644,20 +644,28 @@
             <div class="chart-header">
                 <div>
                     <h2>Классы: размер и недостаток связности методов (LCOM4)</h2>
-                    <p class="chart-note">X — LOC, Y — компоненты LCOM4, размер — Ce, цвет — max CC. Наведите на точку для исходных значений.</p>
+                    <p class="chart-note">Каждая точка — класс. По горизонтали — LOC; по вертикали — количество несвязанных групп методов (LCOM4); размер точки — число исходящих зависимостей (Ce); цвет — максимальная цикломатическая сложность метода (max CC). Показаны 600 крупнейших классов.</p>
+                    <p class="chart-note"><strong>На что обратить внимание при рефакторинге:</strong> сначала проверяйте крупные точки в верхней правой области. Чем точка больше и краснее, тем больше у класса одновременно размер, несвязность методов, количество зависимостей и сложность.</p>
                 </div>
             </div>
+            <div class="quality-assessment" id="class-assessment"></div>
             <div class="chart-frame"><svg id="scatter-chart" role="img" aria-label="Точечная диаграмма классов"></svg></div>
+            <h3 class="ranking-title">С чего начать рефакторинг классов</h3>
+            <ol class="ranking" id="class-ranking" aria-label="Кандидаты на рефакторинг классов"></ol>
         </section>
 
         <section class="chart-card wide" id="classes-treemap">
             <div class="chart-header">
                 <div>
                     <h2>Размер классов по модулям</h2>
-                    <p class="chart-note">Площадь — LOC, цвет — компоненты LCOM4. Мелкие классы агрегируются при большом отчёте.</p>
+                    <p class="chart-note">Ширина полосы модуля показывает его суммарный LOC. Площадь прямоугольника класса соответствует его LOC; цвет меняется от зелёного к красному при росте LCOM4. Мелкие классы агрегируются при большом отчёте.</p>
+                    <p class="chart-note"><strong>На что обратить внимание при рефакторинге:</strong> ищите крупные красные прямоугольники и широкие модули, в которых таких классов много. Это означает, что значительная часть модуля сосредоточена в крупных классах с несколькими несвязанными группами методов. Для оценки крупными считаются 10% классов с наибольшим LOC в проекте.</p>
                 </div>
             </div>
+            <div class="quality-assessment" id="treemap-assessment"></div>
             <div class="chart-frame"><svg id="treemap-chart" role="img" aria-label="Карта классов и модулей"></svg></div>
+            <h3 class="ranking-title">Модули с крупными несвязными классами</h3>
+            <ol class="ranking" id="treemap-ranking" aria-label="Модули с крупными несвязными классами"></ol>
         </section>
 
         <section class="chart-card wide" id="modules-matrix">
@@ -720,6 +728,15 @@
     const emptyChart = (svg, text, width, height) => {
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.append(svgElement('text', {x: width / 2, y: height / 2, 'text-anchor': 'middle', class: 'empty-label'}, text));
+    };
+    const setAssessment = (id, tone, title, details) => {
+        const assessment = document.getElementById(id);
+        assessment.className = `quality-assessment ${tone}`;
+        const heading = document.createElement('strong');
+        heading.textContent = title;
+        const text = document.createElement('span');
+        text.textContent = details.join(' ');
+        assessment.replaceChildren(heading, text);
     };
     const appendAxes = (svg, options) => {
         const {width, height, margin, xMax, yMax, xLabel, yLabel, yPercent = false} = options;
@@ -794,18 +811,17 @@
         const cyclicShare = cyclicModules.length / data.modules.length;
         const highRisk = cyclicShare >= 0.25 || refactoringCandidates.length >= Math.max(3, Math.ceil(data.modules.length * 0.1));
         const needsAttention = cyclicModules.length > 0 || refactoringCandidates.length > 0;
-        const assessment = document.getElementById('module-assessment');
-        assessment.className = `module-assessment ${highRisk ? 'high' : (needsAttention ? 'attention' : 'good')}`;
-        const assessmentTitle = document.createElement('strong');
-        assessmentTitle.textContent = `Оценка качества границ модулей: ${highRisk ? 'низкая' : (needsAttention ? 'требует внимания' : 'хорошая')}`;
-        const assessmentText = document.createElement('span');
         const details = [
             `${formatInteger(cyclicModules.length)} из ${formatInteger(data.modules.length)} модулей (${formatPercent(cyclicShare)}) входят в циклические зависимости.`,
             `${formatInteger(refactoringCandidates.length)} модулей совмещают не менее трёх признаков: LOC в верхней половине, доля связей с другими модулями в верхней половине, участие в цикле, частота изменений в верхней четверти.`,
         ];
         if (refactoringCandidates.length > 0) details.push('Причины и конкретные классы для начала работы перечислены под графиком.');
-        assessmentText.textContent = details.join(' ');
-        assessment.replaceChildren(assessmentTitle, assessmentText);
+        setAssessment(
+            'module-assessment',
+            highRisk ? 'high' : (needsAttention ? 'attention' : 'good'),
+            `Оценка качества границ модулей: ${highRisk ? 'низкая' : (needsAttention ? 'требует внимания' : 'хорошая')}`,
+            details,
+        );
         svg.append(svgElement('rect', {
             x: xPosition(xRisk),
             y: yPosition(yMax),
@@ -902,24 +918,72 @@
         const width = 760;
         const height = 500;
         const margin = {top: 24, right: 24, bottom: 58, left: 68};
-        const classes = [...data.classes].sort((left, right) => number(right.loc) - number(left.loc)).slice(0, 600);
+        const allClasses = [...data.classes];
+        const classes = [...allClasses].sort((left, right) => number(right.loc) - number(left.loc)).slice(0, 600);
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         if (classes.length === 0) {
+            setAssessment('class-assessment', 'good', 'Оценка качества классов: нет данных', ['В отчёте нет классов для оценки.']);
             emptyChart(svg, 'Нет данных о классах', width, height);
             return;
         }
+        const locRisk = percentile(allClasses.map(item => item.loc), 0.9) ?? 0;
+        const ceRisk = Math.max(1, percentile(allClasses.map(item => item.cbo), 0.9) ?? 0);
+        const churnValues = allClasses.filter(item => item.churn !== null).map(item => item.churn);
+        const churnRisk = percentile(churnValues, 0.9);
+        const assessedClasses = allClasses.map(item => {
+            const signs = [
+                item.loc >= locRisk,
+                item.lcom > 1,
+                item.cbo >= ceRisk,
+                item.cc >= 10,
+                churnRisk !== null && churnRisk > 0 && item.churn !== null && item.churn >= churnRisk,
+            ].filter(Boolean).length;
+            return {...item, signs};
+        });
+        const refactoringCandidates = assessedClasses
+            .filter(item => item.signs >= 4)
+            .sort((left, right) => right.signs - left.signs
+                || number(right.cc) - number(left.cc)
+                || number(right.churn) - number(left.churn)
+                || number(right.loc) - number(left.loc)
+                || left.id.localeCompare(right.id));
+        const criticalClasses = refactoringCandidates.filter(item => item.signs === 5);
+        const highRisk = criticalClasses.length >= 3
+            || refactoringCandidates.length >= Math.max(3, Math.ceil(allClasses.length * 0.02));
+        const needsAttention = refactoringCandidates.length > 0;
+        setAssessment(
+            'class-assessment',
+            highRisk ? 'high' : (needsAttention ? 'attention' : 'good'),
+            `Оценка качества классов: ${highRisk ? 'низкая' : (needsAttention ? 'требует внимания' : 'хорошая')}`,
+            [
+                `${formatInteger(refactoringCandidates.length)} из ${formatInteger(allClasses.length)} классов совмещают не менее четырёх признаков риска.`,
+                `${formatInteger(criticalClasses.length)} классов совмещают все пять: LOC, Ce и частота изменений входят в 10% наибольших значений проекта, LCOM4 больше 1 и max CC не меньше 10.`,
+                'Причины и файлы первых кандидатов перечислены под графиком.',
+            ],
+        );
         const xMax = maximum(classes.map(item => item.loc));
         const yMax = maximum(classes.map(item => item.lcom));
         const cboMax = maximum(classes.map(item => item.cbo), 0);
         const ccMax = maximum(classes.map(item => item.cc), 0);
         const chartWidth = width - margin.left - margin.right;
         const chartHeight = height - margin.top - margin.bottom;
+        const xPosition = value => margin.left + scale(value, xMax, 0, chartWidth);
+        const yPosition = value => height - margin.bottom - scale(value, yMax, 0, chartHeight);
+        if (yMax >= 2) {
+            svg.append(svgElement('rect', {
+                x: xPosition(locRisk),
+                y: yPosition(yMax),
+                width: width - margin.right - xPosition(locRisk),
+                height: yPosition(2) - yPosition(yMax),
+                class: 'risk-zone',
+            }));
+        }
         appendAxes(svg, {width, height, margin, xMax, yMax, xLabel: 'LOC класса', yLabel: 'LCOM4 (компоненты)'});
         classes
             .sort((left, right) => number(right.cbo) - number(left.cbo))
             .forEach(item => {
-                const x = margin.left + scale(item.loc, xMax, 0, chartWidth);
-                const y = height - margin.bottom - scale(item.lcom, yMax, 0, chartHeight);
+                const x = xPosition(item.loc);
+                const y = yPosition(item.lcom);
                 const radius = cboMax > 0 ? 3.5 + Math.sqrt(number(item.cbo) / cboMax) * 10 : 4.5;
                 const circle = svgElement('circle', {
                     cx: x,
@@ -934,12 +998,34 @@
                     item.id,
                     `Модуль: ${item.module}`,
                     `LOC: ${formatInteger(item.loc)} · LCOM4: ${formatInteger(item.lcom)}`,
-                    `LCOM4 normalized: ${formatDecimal(item.lcom_normalized)}`,
+                    `Нормализованный LCOM4: ${formatDecimal(item.lcom_normalized)}`,
                     `Ce: ${formatInteger(item.cbo)} · max CC: ${formatInteger(item.cc)}`,
                     item.file,
                 ]);
                 svg.append(circle);
             });
+
+        const ranking = document.getElementById('class-ranking');
+        refactoringCandidates.slice(0, 5).forEach((item, index) => {
+            const row = document.createElement('li');
+            const name = document.createElement('strong');
+            name.textContent = `${index + 1}. ${item.id}`;
+            const reasons = [];
+            if (item.loc >= locRisk) reasons.push(`LOC ${formatInteger(item.loc)} — среди 10% наибольших`);
+            if (item.lcom > 1) reasons.push(`LCOM4: ${formatInteger(item.lcom)}`);
+            if (item.cbo >= ceRisk) reasons.push(`Ce ${formatInteger(item.cbo)} — среди 10% наибольших`);
+            if (item.cc >= 10) reasons.push(`max CC: ${formatInteger(item.cc)}`);
+            if (churnRisk !== null && churnRisk > 0 && item.churn !== null && item.churn >= churnRisk) reasons.push(`${formatInteger(item.churn)} коммитов — среди 10% наибольших`);
+            const reason = document.createElement('span');
+            reason.textContent = `Причины: ${reasons.join('; ')}.`;
+            const place = document.createElement('span');
+            place.append(document.createTextNode('Смотреть файл: '));
+            const file = document.createElement('code');
+            file.textContent = item.file;
+            place.append(file, document.createTextNode('.'));
+            row.append(name, reason, document.createElement('br'), place);
+            ranking.append(row);
+        });
     };
 
     const renderTreemap = () => {
@@ -958,10 +1044,37 @@
             if (!classesByModule.has(item.module)) classesByModule.set(item.module, []);
             classesByModule.get(item.module).push(item);
         });
+        const classLocRisk = percentile(data.classes.map(item => item.loc), 0.9) ?? 0;
         const moduleGroups = [...classesByModule.entries()]
-            .map(([id, classes]) => ({id, classes, loc: classes.reduce((sum, item) => sum + Math.max(1, number(item.loc)), 0)}))
+            .map(([id, classes]) => {
+                const loc = classes.reduce((sum, item) => sum + Math.max(1, number(item.loc)), 0);
+                const problemClasses = classes.filter(item => item.loc >= classLocRisk && item.lcom > 1);
+                const problemLoc = problemClasses.reduce((sum, item) => sum + number(item.loc), 0);
+                return {id, classes, loc, problemClasses, problemLoc, problemShare: problemLoc / loc};
+            })
             .sort((left, right) => right.loc - left.loc);
         const totalLoc = moduleGroups.reduce((sum, module) => sum + module.loc, 0);
+        const affectedModules = moduleGroups
+            .filter(module => module.problemClasses.length > 0)
+            .sort((left, right) => right.problemLoc - left.problemLoc
+                || right.problemClasses.length - left.problemClasses.length
+                || right.loc - left.loc);
+        const problemClasses = affectedModules.flatMap(module => module.problemClasses);
+        const problemLoc = affectedModules.reduce((sum, module) => sum + module.problemLoc, 0);
+        const affectedShare = affectedModules.length / moduleGroups.length;
+        const problemLocShare = problemLoc / totalLoc;
+        const highRisk = affectedShare >= 0.25 || problemLocShare >= 0.1;
+        const needsAttention = affectedModules.length > 0;
+        setAssessment(
+            'treemap-assessment',
+            highRisk ? 'high' : (needsAttention ? 'attention' : 'good'),
+            `Оценка распределения классов по модулям: ${highRisk ? 'низкая' : (needsAttention ? 'требует внимания' : 'хорошая')}`,
+            [
+                `${formatInteger(problemClasses.length)} крупных классов с LCOM4 больше 1 занимают ${formatPercent(problemLocShare)} LOC анализируемых модулей.`,
+                `Такие классы есть в ${formatInteger(affectedModules.length)} из ${formatInteger(moduleGroups.length)} модулей (${formatPercent(affectedShare)}).`,
+                'Причины и конкретные классы первых модулей перечислены под картой.',
+            ],
+        );
         const lcomMax = maximum(data.classes.map(item => item.lcom), 0);
         let x = 0;
         moduleGroups.forEach((module, moduleIndex) => {
@@ -1021,6 +1134,26 @@
                 y += itemHeight;
             });
             x += moduleWidth;
+        });
+
+        const ranking = document.getElementById('treemap-ranking');
+        affectedModules.slice(0, 5).forEach((module, index) => {
+            const item = document.createElement('li');
+            const name = document.createElement('strong');
+            name.textContent = `${index + 1}. ${module.id}`;
+            const reason = document.createElement('span');
+            reason.textContent = `Причины: ${formatInteger(module.problemClasses.length)} крупных классов с LCOM4 больше 1; они занимают ${formatPercent(module.problemShare)} LOC модуля; общий LOC модуля — ${formatInteger(module.loc)}.`;
+            const classes = [...module.problemClasses]
+                .sort((left, right) => number(right.loc) - number(left.loc))
+                .slice(0, 2)
+                .map(problem => `${problem.id} (${formatInteger(problem.loc)} LOC, LCOM4: ${formatInteger(problem.lcom)})`);
+            const place = document.createElement('span');
+            place.append(document.createTextNode('Смотреть классы: '));
+            const code = document.createElement('code');
+            code.textContent = classes.join('; ');
+            place.append(code, document.createTextNode('.'));
+            item.append(name, reason, document.createElement('br'), place);
+            ranking.append(item);
         });
     };
 
