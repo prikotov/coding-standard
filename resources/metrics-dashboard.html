@@ -441,7 +441,7 @@
         <div class="summary-card"><span>Модули в отчёте</span><strong id="summary-modules">0</strong></div>
         <div class="summary-card"><span>Классы модулей</span><strong id="summary-classes">0</strong></div>
         <div class="summary-card"><span>LOC внутри классов модулей</span><strong id="summary-loc">0</strong></div>
-        <div class="summary-card"><span>Строки PHP проекта</span><strong id="summary-php-lines">нет данных</strong></div>
+        <div class="summary-card"><span>Строки проекта, все языки</span><strong id="summary-project-lines">нет данных</strong></div>
         <div class="summary-card"><span>Циклы модулей</span><strong id="summary-cycles">0</strong></div>
     </section>
 
@@ -491,7 +491,7 @@
                     <dl>
                         <div><dt>Расшифровка</dt><dd><em>Lines of Code</em> — строки кода.</dd></div>
                         <div><dt>Измеряет</dt><dd>Строки от объявления до конца класса, включая пустые строки и комментарии.</dd></div>
-                        <div><dt>Область</dt><dd>LOC в сводке суммирует только классы модулей из отчёта. Отдельный счётчик строк PHP включает все PHP-файлы, попавшие в анализ проекта.</dd></div>
+                        <div><dt>Область</dt><dd>LOC в сводке суммирует только классы модулей из отчёта. Отдельный счётчик строк проекта суммирует все языки, попавшие в анализ кодовой базы.</dd></div>
                         <div><dt>Ожидаем</dt><dd>LOC сам по себе не показывает плохой код. Сравнивайте классы с одинаковым назначением и перцентили проекта.</dd></div>
                         <div class="attention"><dt>Проверить</dt><dd>Большой класс одновременно имеет высокий LCOM4, CC, Ce или часто меняется.</dd></div>
                     </dl>
@@ -647,8 +647,9 @@
         document.getElementById('summary-modules').textContent = formatInteger(data.modules.length);
         document.getElementById('summary-classes').textContent = formatInteger(data.classes.length);
         document.getElementById('summary-loc').textContent = formatInteger(project.loc ?? data.classes.reduce((sum, item) => sum + number(item.loc), 0));
-        const phpLines = data.codebase?.languages?.PHP?.lines;
-        document.getElementById('summary-php-lines').textContent = phpLines === null || phpLines === undefined ? 'нет данных' : formatInteger(phpLines);
+        const languages = Object.values(data.codebase?.languages || {});
+        const projectLines = languages.length === 0 ? null : languages.reduce((sum, language) => sum + number(language.lines), 0);
+        document.getElementById('summary-project-lines').textContent = projectLines === null ? 'нет данных' : formatInteger(projectLines);
         document.getElementById('summary-cycles').textContent = formatInteger(project.cycles?.count ?? 0);
         const generated = data.report?.generated_at ? new Date(data.report.generated_at).toLocaleString('ru-RU') : 'не указано';
         const commit = data.report?.commit ? String(data.report.commit).slice(0, 12) : 'не указан';
