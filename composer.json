@@ -10,10 +10,11 @@
             "email": "prikotov@gmail.com"
         }
     ],
-    "bin": ["bin/coding-standard-init", "bin/validate-md-links", "bin/validate-language", "bin/metrics-collect"],
+    "bin": ["bin/coding-standard-init", "bin/validate-md-links", "bin/validate-language", "bin/metrics-collect", "bin/metrics-scc", "bin/metrics-coverage", "bin/test-stats"],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
+        "ext-simplexml": "*",
         "php": "^8.4",
         "nikic/php-parser": "^5.8",
         "slevomat/coding-standard": "^8.0",
@@ -71,7 +72,9 @@
             "@validate-todo",
             "@phpstan",
             "phpcs src/"
-        ]
+        ],
+        "coverage": "bin/metrics-coverage",
+        "metrics-test-stats": "bin/test-stats --format=json --output var/metrics/test-stats.json"
     },
     "extra": {
         "branch-alias": {

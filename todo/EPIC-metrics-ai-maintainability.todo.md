@@ -109,7 +109,7 @@ flowchart LR
 - [x] [TASK-metrics-model-convention](done/TASK-metrics-model-convention.todo.md) — модель метрик в docs/conventions/
 - [x] [TASK-metrics-module-boundaries-deptrac](done/TASK-metrics-module-boundaries-deptrac.todo.md) — границы модулей пакета в Deptrac
 - [x] [TASK-metrics-aggregator](done/TASK-metrics-aggregator.todo.md) — агрегатор и report.json
-- [ ] [TASK-metrics-codebase-size](TASK-metrics-codebase-size.todo.md) — размер кодовой базы (scc), статистика тестов, покрытие
+- [x] [TASK-metrics-codebase-size](done/TASK-metrics-codebase-size.todo.md) — размер кодовой базы (scc), статистика тестов, покрытие
 - [ ] [TASK-metrics-html-dashboard](TASK-metrics-html-dashboard.todo.md) — статический HTML-дашборд
 - [ ] [TASK-metrics-composer-integration](TASK-metrics-composer-integration.todo.md) — composer metrics и документация
 
@@ -133,7 +133,7 @@ flowchart LR
 - Поддержка PHP 8.4 (атрибуты, readonly-свойства) у PhpMetrics/PDepend может быть неполной — проверяется в TASK-metrics-tools-evaluation.
 - Модуль ≠ namespace для этого пакета: маппинг «класс → модуль» делается по структуре src/, а не по namespace-шаблону consumer-проектов.
 - Churn требует истории git репозитория; на короткой истории значения малоинформативны.
-- scc — внешний Go-бинарник (не composer-зависимость), покрытие требует расширения pcov: шаги пайплайна должны быть опциональными при их отсутствии (TASK-metrics-codebase-size).
+- scc и PCOV — обязательные внешние инструменты контура метрик, но не `composer check`; без размера кодовой базы и покрытия project-level отчёт считается неполным (TASK-metrics-codebase-size).
 - Новые dev-зависимости — только публичные пакеты Packagist (в CI нет доступа к VCS-репозиториям).
 
 ## 9. Sources (Источники)
@@ -167,3 +167,6 @@ flowchart LR
 | 2026-08-07 | codex (Codex) | Зафиксировано разделение сырых метрик, неблокирующих `findings` и пороговых диагностических инструментов. |
 | 2026-08-07 | codex (Codex) | В README зафиксирован вектор развития от набора конвенций к детерминированной системе проверок и метрик. |
 | 2026-08-07 | codex (Codex) | Цель инструментов уточнена как детерминированная обратная связь ИИ-агенту о качестве его решений. |
+| 2026-08-09 | codex (Codex) | `scc` закреплён как обязательный источник размера кодовой базы; опциональным осталось покрытие, зависящее от PCOV. |
+| 2026-08-09 | codex (Codex) | Покрытие закреплено как обязательная project-level метрика; окружение сбора метрик требует PCOV. |
+| 2026-08-09 | codex (Codex) | TASK-metrics-codebase-size завершена и перенесена в архив. |

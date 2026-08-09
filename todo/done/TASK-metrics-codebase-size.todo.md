@@ -7,10 +7,10 @@ priority: P2
 depends_on:
 epic: EPIC-metrics-ai-maintainability
 author: pi
-assignee:
-branch:
-pr:
-status: todo
+assignee: Разработчик (codex)
+branch: task/metrics-codebase-size
+pr: https://github.com/prikotov/coding-standard/pull/92
+status: done
 ---
 
 # TASK-metrics-codebase-size: Метрика размера кодовой базы (scc), статистика тестов и покрытие
@@ -21,7 +21,7 @@ status: todo
 
 - Модель метрик (TASK-metrics-model-convention) покрывает классы и модули, но не размер всей кодовой базы: LOC за пределами src/ (bin, tests, docs, конфиги) не учитывается.
 - Нет статистики тестов (число файлов, строк, среднее по сьютам) и покрытия — агенты не могут оценить объём тестов и доверие к ним.
-- Эталоны есть на проекте TasK: Go-утилита scc (обёртка bin/scc-clean.sh), bin/test-stats.sh, make coverage-unit / coverage-integration (phpunit + pcov → clover.xml).
+- Эталоны есть на проекте TasK: Go-утилита scc (обёртка bin/scc-clean.sh), composer metrics-test-stats, make coverage-unit / coverage-integration (phpunit + pcov → clover.xml).
 
 ### Варианты или путь решения (Solution Sketch)
 
@@ -70,7 +70,7 @@ status: todo
 ### 🟡 Should Have (Желательно)
 
 - [ ] Секция codebase size по модулям пакета (src/*, bin, tests) — согласована с module-level моделью.
-- [ ] Отсутствие scc/pcov не роняет пайплайн: шаг пропускается с предупреждением, отчёт собирается без секции.
+- [ ] Отсутствие `scc` или PCOV останавливает сбор метрик с понятной ошибкой: размер кодовой базы и покрытие обязательны для полного project-level отчёта.
 
 ### ⚫ Won't Have (Не будем делать)
 
@@ -80,34 +80,36 @@ status: todo
 
 ## 4. Implementation Plan (План реализации)
 
-*Заполняется исполнителем перед стартом.*
+- Добавить необязательные входы `scc`, статистики тестов и Clover в агрегатор и сохранить их в корневом отчёте.
+- Добавить `bin/metrics-scc`, `bin/test-stats` и Composer-скрипты без включения PCOV и scc в `composer check`.
+- Покрыть преобразование данных агрегатора тестом и обновить модель метрик.
 
 ## 5. Definition of Done (Критерии приёмки)
 
-- [ ] scc-вывод и clover.xml собираются командами из Verification; агрегатор включает секции codebase / tests / coverage в report.json.
-- [ ] Модель метрик (quality-metrics.md) обновлена project-level метриками; `composer validate-docs` проходит.
-- [ ] `composer test` и `composer validate-todo` зелёные.
+- [x] scc-вывод и clover.xml собираются командами из Verification; агрегатор включает секции codebase / tests / coverage в report.json.
+- [x] Модель метрик (quality-metrics.md) обновлена project-level метриками; `composer validate-docs` проходит.
+- [x] `composer test` и `composer validate-todo` зелёные.
 
 ## 6. Verification (Самопроверка)
 
 ```bash
 # размер кодовой базы (Go-бинарник scc)
-scc --format json --exclude-dir vendor --output var/metrics/scc.json .
+bin/metrics-scc
 
 # покрытие (требуется расширение pcov)
-php -d pcov.enabled=1 vendor/bin/phpunit --coverage-clover var/metrics/clover.xml --coverage-text=php://stdout --only-summary-for-coverage-text --no-progress
+composer coverage
 
 # статистика тестов
-bin/test-stats.sh
+composer metrics-test-stats
 
 # агрегация с новыми источниками
-php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=var/metrics/deptrac.json --scc=var/metrics/scc.json --clover=var/metrics/clover.xml --output=var/metrics/report.json
+php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=var/metrics/deptrac.json --scc=var/metrics/scc.json --tests=var/metrics/test-stats.json --clover=var/metrics/clover.xml --output=var/metrics/report.json
 ```
 
 ## 7. Risks and Dependencies (Риски и зависимости)
 
-- scc — внешний бинарник: в CI может отсутствовать; шаг опционален (см. Should Have).
-- pcov может быть не установлен — покрытие считается локально/опционально.
+- scc — обязательный внешний бинарник для контура метрик; перед сбором его необходимо установить отдельно.
+- PCOV — обязательное расширение окружения сбора метрик, но не окружения `composer check`.
 - Разные версии scc дают разные цифры — зафиксировать версию в метаданных отчёта.
 - bin/test-stats.sh из TasK завязан на структуру tests/ + apps/*/tests — нужна адаптация, не копирование.
 - Зависимости: TASK-metrics-model-convention (схема), TASK-metrics-aggregator (расширение парсера и отчёта).
@@ -130,3 +132,12 @@ php bin/metrics-aggregate.php --analyzer=var/metrics/phpmetrics.json --deptrac=v
 | :--- | :--- | :--- |
 | 2026-08-02 | pi (Pi Coding Agent) | Создание задачи по итогам обсуждения с пользователем: метрика размера кодовой базы через scc, статистика тестов и покрытие по образцу инструментов проекта TasK. |
 | 2026-08-08 | codex (Codex) | Выполненная TASK-metrics-model-convention удалена из depends_on. |
+| 2026-08-08 | codex (Codex) | Подтверждён план реализации; задача переведена в работу. |
+| 2026-08-08 | codex (Codex) | Реализованы источники scc, статистики тестов и Clover; PR открыт на ревью. |
+| 2026-08-09 | codex (Codex) | Учтены замечания ревью: опциональный PCOV, версия scc, сьюты PHPUnit, SimpleXML и команды проверки. |
+| 2026-08-09 | codex (Codex) | Сбор статистики тестов вынесен в тестируемый класс; команда приведена к формату остальных PHP-команд в `bin/`. |
+| 2026-08-09 | codex (Codex) | В README добавлены назначение CLI-утилит, команды сбора project-level метрик и внешние зависимости. |
+| 2026-08-09 | codex (Codex) | Статистика тестов закреплена как обязательный источник; опциональными оставлены только зависящие от `scc` и PCOV метрики. |
+| 2026-08-09 | codex (Codex) | По решению пользователя `scc` сделан обязательным источником для проверки полноты структурного отчёта; опциональным осталось только покрытие. |
+| 2026-08-09 | codex (Codex) | По решению пользователя покрытие также сделано обязательной project-level метрикой; окружение сбора требует PCOV. |
+| 2026-08-09 | codex (Codex) | Изменения приняты пользователем; задача завершена перед merge PR. |

@@ -12,13 +12,25 @@ use InvalidArgumentException;
 final class MetricsAggregator
 {
     /** @param array<string, mixed> $analyzer @param array<string, mixed> $deptrac @param array<string, mixed> $config @return array<string, mixed> */
-    public function aggregate(array $analyzer, array $deptrac, array $config = [], ?string $commit = null): array
+    public function aggregate(array $analyzer, array $deptrac, array $config = [], ?string $commit = null, ?array $scc = null, ?array $tests = null, ?string $cloverXml = null, ?string $sccVersion = null): array
     {
         if (!isset($analyzer['classes'], $analyzer['functions']) || !is_array($analyzer['classes']) || !is_array($analyzer['functions'])) {
             throw new InvalidArgumentException('Analyzer JSON must contain classes and functions arrays.');
         }
         if (($deptrac['schema_version'] ?? null) !== '1.0' || !is_array($deptrac['dependencies'] ?? null)) {
             throw new InvalidArgumentException('Deptrac JSON must be a metrics-json report with schema_version 1.0.');
+        }
+        if ($tests === null) {
+            throw new InvalidArgumentException('Test statistics are required.');
+        }
+        if ($scc === null || $scc === []) {
+            throw new InvalidArgumentException('SCC statistics are required.');
+        }
+        if ($sccVersion === null || trim($sccVersion) === '') {
+            throw new InvalidArgumentException('SCC version is required.');
+        }
+        if ($cloverXml === null || trim($cloverXml) === '') {
+            throw new InvalidArgumentException('Clover coverage is required.');
         }
 
         $methodsByClass = [];
@@ -102,10 +114,80 @@ final class MetricsAggregator
 
         return [
             'schema_version' => '1.0', 'scope' => ['kind' => 'project', 'source_path' => '.'],
-            'metadata' => ['generated_at' => gmdate('Y-m-d\\TH:i:s\\Z'), 'commit' => $commit, 'analyzer_version' => $analyzer['toolVersion'] ?? null, 'deptrac_schema_version' => '1.0'],
-            'metrics' => ['project' => $this->project($classes, $modules, $edges), 'modules' => array_values($modules), 'classes' => $publicClasses, 'methods' => $methods],
+            'metadata' => array_filter(['generated_at' => gmdate('Y-m-d\\TH:i:s\\Z'), 'commit' => $commit, 'analyzer_version' => $analyzer['toolVersion'] ?? null, 'deptrac_schema_version' => '1.0', 'scc_version' => $sccVersion], static fn (mixed $value): bool => $value !== null),
+            'metrics' => array_filter([
+                'project' => $this->project($classes, $modules, $edges),
+                'codebase' => $scc === null ? null : $this->codebase($scc),
+                'tests' => $tests,
+                'coverage' => $this->coverage($cloverXml),
+                'modules' => array_values($modules), 'classes' => $publicClasses, 'methods' => $methods,
+            ], static fn (mixed $value): bool => $value !== null),
             'findings' => $findings,
         ];
+    }
+
+    /** @param array<string|int,mixed> $scc @return array<string,mixed> */
+    private function codebase(array $scc): array
+    {
+        $languages = [];
+        $modules = [];
+        foreach ($scc as $language) {
+            if (!is_array($language) || !is_string($language['Name'] ?? null)) {
+                continue;
+            }
+            $name = $language['Name'];
+            $languages[$name] = ['files' => (int) ($language['Count'] ?? 0), 'lines' => (int) ($language['Lines'] ?? 0), 'code' => (int) ($language['Code'] ?? 0), 'comment' => (int) ($language['Comment'] ?? 0), 'blank' => (int) ($language['Blank'] ?? 0)];
+            foreach ($language['Files'] ?? [] as $file) {
+                if (!is_array($file)) {
+                    continue;
+                }
+                $path = str_replace('\\', '/', (string) ($file['Location'] ?? ''));
+                $module = $this->codebaseModule($path);
+                $modules[$module] ??= ['files' => 0, 'lines' => 0, 'code' => 0, 'comment' => 0, 'blank' => 0];
+                $modules[$module]['files']++;
+                foreach (['Lines' => 'lines', 'Code' => 'code', 'Comment' => 'comment', 'Blank' => 'blank'] as $source => $target) {
+                    $modules[$module][$target] += (int) ($file[$source] ?? 0);
+                }
+            }
+        }
+        ksort($languages);
+        ksort($modules);
+        return ['languages' => $languages, 'modules' => $modules];
+    }
+
+    private function codebaseModule(string $path): string
+    {
+        $path = ltrim($path, './');
+        if (preg_match('#(?:^|/)(src/[^/]+|bin|tests)(?:/|$)#', $path, $match)) {
+            return $match[1];
+        }
+        return 'other';
+    }
+
+    /** @return array<string,mixed> */
+    private function coverage(string $cloverXml): array
+    {
+        $xml = @simplexml_load_string($cloverXml);
+        if ($xml === false) {
+            throw new InvalidArgumentException('Clover XML is invalid.');
+        }
+        $metrics = $xml->project->metrics;
+        if ($metrics === null) {
+            throw new InvalidArgumentException('Clover XML does not contain project metrics.');
+        }
+        $statements = (int) $metrics['statements'];
+        $coveredStatements = (int) $metrics['coveredstatements'];
+        $methods = (int) $metrics['methods'];
+        $coveredMethods = (int) $metrics['coveredmethods'];
+        return [
+            'lines' => ['total' => $statements, 'covered' => $coveredStatements, 'percent' => $this->coveragePercent($coveredStatements, $statements)],
+            'methods' => ['total' => $methods, 'covered' => $coveredMethods, 'percent' => $this->coveragePercent($coveredMethods, $methods)],
+        ];
+    }
+
+    private function coveragePercent(int $covered, int $total): ?float
+    {
+        return $total === 0 ? null : round($covered / $total * 100, 2);
     }
 
     /** @param array<string, array<string,mixed>> $classes @param list<array{string,string}> $edges @return array<string, array<string,mixed>> */
