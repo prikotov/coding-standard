@@ -366,6 +366,11 @@
             min-width: 100%;
         }
 
+        .treemap-frame svg {
+            width: auto;
+            min-width: 100%;
+        }
+
         .axis,
         .grid-line {
             stroke: var(--grid);
@@ -731,7 +736,7 @@
             <div class="chart-header">
                 <div>
                     <h2>Размер классов по модулям</h2>
-                    <p class="chart-note">Ширина полосы модуля показывает суммарное количество строк кода внутри его классов (LOC). Площадь прямоугольника класса соответствует количеству строк кода (LOC); цвет меняется от зелёного к красному при росте количества несвязанных групп методов (LCOM4). Мелкие классы агрегируются при большом отчёте.</p>
+                    <p class="chart-note">У каждой полосы есть минимальная ширина, чтобы название модуля было видно; дополнительная ширина показывает суммарное количество строк кода внутри его классов (LOC). Площадь прямоугольника класса соответствует количеству строк кода (LOC); цвет меняется от зелёного к красному при росте количества несвязанных групп методов (LCOM4). Мелкие классы агрегируются при большом отчёте. Карта прокручивается по горизонтали.</p>
                     <p class="chart-note"><strong>Метрики:</strong> физические строки кода внутри класса (LOC, <em>Lines of Code</em>); количество несвязанных групп методов (LCOM4, <em>Lack of Cohesion in Methods 4</em>) по четвёртому варианту расчёта.</p>
                     <p class="chart-note"><strong>На что обратить внимание при рефакторинге:</strong> ищите крупные красные прямоугольники и широкие модули, в которых таких классов много. Это означает, что значительная часть модуля сосредоточена в крупных классах с несколькими несвязанными группами методов. Для оценки крупными считаются 10% классов с наибольшим LOC в проекте.</p>
                 </div>
@@ -742,7 +747,7 @@
                 </div>
             </div>
             <div class="quality-assessment" id="treemap-assessment"></div>
-            <div class="chart-frame"><svg id="treemap-chart" role="img" aria-label="Карта классов и модулей"></svg></div>
+            <div class="chart-frame treemap-frame"><svg id="treemap-chart" role="img" aria-label="Карта классов и модулей"></svg></div>
             <h3 class="ranking-title">Модули с крупными несвязными классами</h3>
             <ol class="ranking" id="treemap-ranking" aria-label="Модули с крупными несвязными классами"></ol>
         </section>
@@ -1120,13 +1125,11 @@
 
     const renderTreemap = () => {
         const svg = document.getElementById('treemap-chart');
-        const width = 760;
         const height = 500;
-        const headerHeight = 25;
+        const headerHeight = 40;
         const gap = 3;
-        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         if (data.classes.length === 0) {
-            emptyChart(svg, 'Нет данных о классах', width, height);
+            emptyChart(svg, 'Нет данных о классах', 760, height);
             return;
         }
         const classesByModule = new Map();
@@ -1144,6 +1147,20 @@
             })
             .sort((left, right) => right.loc - left.loc);
         const totalLoc = moduleGroups.reduce((sum, module) => sum + module.loc, 0);
+        const moduleHeaderLines = id => {
+            const separator = id.indexOf(':');
+            return separator === -1 ? [id] : [id.slice(0, separator + 1), id.slice(separator + 1)];
+        };
+        const minimumModuleWidth = id => Math.max(
+            68,
+            maximum(moduleHeaderLines(id).map(line => line.length), 0) * 6.4 + 16,
+        );
+        const proportionalWidth = 3000;
+        const moduleWidths = moduleGroups.map(module => minimumModuleWidth(module.id)
+            + proportionalWidth * module.loc / totalLoc);
+        const width = moduleWidths.reduce((sum, moduleWidth) => sum + moduleWidth, 0);
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        svg.style.width = `${Math.max(760, width)}px`;
         const affectedModules = moduleGroups
             .filter(module => module.problemClasses.length > 0)
             .sort((left, right) => right.problemLoc - left.problemLoc
@@ -1169,14 +1186,15 @@
         document.getElementById('treemap-lcom-max').textContent = formatInteger(lcomMax);
         let x = 0;
         moduleGroups.forEach((module, moduleIndex) => {
-            const remaining = width - x;
-            const moduleWidth = moduleIndex === moduleGroups.length - 1
-                ? remaining
-                : Math.max(2, width * module.loc / totalLoc);
-            svg.append(svgElement('rect', {x: x + gap / 2, y: gap / 2, width: Math.max(0, moduleWidth - gap), height: headerHeight, fill: '#1b334c'}));
-            if (moduleWidth > 42) {
-                svg.append(svgElement('text', {x: x + 7, y: 18, class: 'mark-label'}, module.id));
-            }
+            const moduleWidth = moduleWidths[moduleIndex];
+            const header = svgElement('rect', {x: x + gap / 2, y: gap / 2, width: Math.max(0, moduleWidth - gap), height: headerHeight, fill: '#1b334c'});
+            addTooltip(header, [module.id, `LOC: ${formatInteger(module.loc)}`, `Классы: ${formatInteger(module.classes.length)}`]);
+            svg.append(header);
+            const label = svgElement('text', {x: x + 7, y: 15, class: 'mark-label'});
+            moduleHeaderLines(module.id).forEach((line, lineIndex) => {
+                label.append(svgElement('tspan', {x: x + 7, y: 15 + lineIndex * 13}, line));
+            });
+            svg.append(label);
             const sorted = [...module.classes].sort((left, right) => number(right.loc) - number(left.loc));
             const visible = sorted.slice(0, 80);
             if (sorted.length > visible.length) {
