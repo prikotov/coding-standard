@@ -79,6 +79,8 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('id="treemap-assessment"', $html);
             self::assertStringContainsString('Оценка распределения классов по модулям:', $html);
             self::assertStringContainsString('Модули с крупными несвязными классами', $html);
+            self::assertStringContainsString('Шкала недостатка связности методов', $html);
+            self::assertStringContainsString('id="treemap-lcom-max"', $html);
             self::assertStringContainsString('Причины: ${reasons.join', $html);
             self::assertStringContainsString('Смотреть классы:', $html);
             self::assertStringContainsString("maximumFractionDigits: 0", $html);

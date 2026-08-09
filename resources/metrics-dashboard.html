@@ -698,6 +698,11 @@
                     <p class="chart-note">Ширина полосы модуля показывает его суммарный LOC. Площадь прямоугольника класса соответствует его LOC; цвет меняется от зелёного к красному при росте LCOM4. Мелкие классы агрегируются при большом отчёте.</p>
                     <p class="chart-note"><strong>На что обратить внимание при рефакторинге:</strong> ищите крупные красные прямоугольники и широкие модули, в которых таких классов много. Это означает, что значительная часть модуля сосредоточена в крупных классах с несколькими несвязанными группами методов. Для оценки крупными считаются 10% классов с наибольшим LOC в проекте.</p>
                 </div>
+                <div class="gradient-legend" aria-label="Шкала недостатка связности методов">
+                    <strong>Цвет прямоугольника: LCOM4</strong>
+                    <div class="gradient-bar"></div>
+                    <div class="gradient-scale"><span>0–1 — низкий</span><span><span id="treemap-lcom-max">max</span> — высокий</span></div>
+                </div>
             </div>
             <div class="quality-assessment" id="treemap-assessment"></div>
             <div class="chart-frame"><svg id="treemap-chart" role="img" aria-label="Карта классов и модулей"></svg></div>
@@ -1114,6 +1119,7 @@
             ],
         );
         const lcomMax = maximum(data.classes.map(item => item.lcom), 0);
+        document.getElementById('treemap-lcom-max').textContent = formatInteger(lcomMax);
         let x = 0;
         moduleGroups.forEach((module, moduleIndex) => {
             const remaining = width - x;
