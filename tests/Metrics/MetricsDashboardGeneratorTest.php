@@ -60,6 +60,8 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('Отдельная метрика показывает, куда смотреть', $html);
             self::assertStringContainsString('типу класса', $html);
             self::assertStringContainsString('Common или модуль приложения Web, Console, Api', $html);
+            self::assertStringContainsString('Значение сравнивается с классами того же типа', $html);
+            self::assertStringContainsString('динамику метрик между несколькими отчётами этот дашборд не строит', $html);
             self::assertStringContainsString('LCOM4</code> — несвязность методов', $html);
             self::assertStringContainsString('Ca / Ce</code> — входящая и исходящая связанность', $html);
             self::assertStringContainsString('CC / max CC</code> — цикломатическая сложность', $html);
