@@ -12,7 +12,7 @@ final class MetricsDashboardGenerator
     private const DATA_PLACEHOLDER = '__METRICS_DASHBOARD_DATA__';
 
     public function __construct(
-        private readonly string $template = __DIR__ . '/../../resources/metrics-dashboard.html',
+        private readonly string $template = __DIR__ . '/../../resources/metrics-dashboard.template.html',
     ) {
     }
 
