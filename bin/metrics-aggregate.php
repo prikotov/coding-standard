@@ -18,17 +18,9 @@ $tests = $options['tests'] ?? 'var/metrics/test-stats.json';
 $clover = $options['clover'] ?? 'var/metrics/clover.xml';
 
 try {
-    foreach (['Analyzer' => $analyzer, 'Deptrac' => $deptrac, 'Test statistics' => $tests, 'SCC' => $scc, 'SCC version' => $sccVersion] as $name => $path) {
+    foreach (['Analyzer' => $analyzer, 'Deptrac' => $deptrac, 'Test statistics' => $tests, 'SCC' => $scc, 'SCC version' => $sccVersion, 'Clover' => $clover] as $name => $path) {
         if (!is_file($path) || filesize($path) === 0) {
             throw new RuntimeException(sprintf('%s report is missing or empty: %s', $name, $path));
-        }
-    }
-    $optional = [];
-    foreach (['Clover' => $clover] as $name => $path) {
-        if (is_file($path) && filesize($path) > 0) {
-            $optional[$name] = (string) file_get_contents($path);
-        } else {
-            fwrite(STDERR, sprintf("metrics-aggregate: optional %s report is unavailable: %s\n", $name, $path));
         }
     }
     $version = trim((string) file_get_contents($sccVersion));
@@ -41,7 +33,7 @@ try {
         $commit,
         json_decode((string) file_get_contents($scc), true, flags: JSON_THROW_ON_ERROR),
         json_decode((string) file_get_contents($tests), true, flags: JSON_THROW_ON_ERROR),
-        $optional['Clover'] ?? null,
+        (string) file_get_contents($clover),
         $version,
     );
     (new MetricsReportWriter())->writeMirror($output, $full);

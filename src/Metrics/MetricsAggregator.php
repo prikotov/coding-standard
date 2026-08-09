@@ -29,6 +29,9 @@ final class MetricsAggregator
         if ($sccVersion === null || trim($sccVersion) === '') {
             throw new InvalidArgumentException('SCC version is required.');
         }
+        if ($cloverXml === null || trim($cloverXml) === '') {
+            throw new InvalidArgumentException('Clover coverage is required.');
+        }
 
         $methodsByClass = [];
         foreach ($analyzer['functions'] as $method) {
@@ -116,7 +119,7 @@ final class MetricsAggregator
                 'project' => $this->project($classes, $modules, $edges),
                 'codebase' => $scc === null ? null : $this->codebase($scc),
                 'tests' => $tests,
-                'coverage' => $cloverXml === null ? null : $this->coverage($cloverXml),
+                'coverage' => $this->coverage($cloverXml),
                 'modules' => array_values($modules), 'classes' => $publicClasses, 'methods' => $methods,
             ], static fn (mixed $value): bool => $value !== null),
             'findings' => $findings,

@@ -17,7 +17,7 @@ final class MetricsAggregatorTest extends TestCase
             'functions' => [$this->method('App\\Alpha', 'run', 4, 2), $this->method('App\\Beta', 'run', 8, 4), $this->method('App\\Gamma', 'run', 12, 6)],
         ], ['schema_version' => '1.0', 'dependencies' => [
             ['source' => 'App\\Alpha', 'target' => 'App\\Beta'], ['source' => 'App\\Beta', 'target' => 'App\\Alpha'], ['source' => 'App\\Alpha', 'target' => 'App\\Gamma'],
-        ]], ['thresholds' => ['class' => ['loc' => 25], 'module' => ['cycles' => 0]]], 'abc', $this->scc(), $this->testStatistics(), null, '3.7.0');
+        ]], ['thresholds' => ['class' => ['loc' => 25], 'module' => ['cycles' => 0]]], 'abc', $this->scc(), $this->testStatistics(), $this->clover(), '3.7.0');
 
         self::assertSame('1.0', $report['schema_version']);
         self::assertSame(3, $report['metrics']['project']['class_count']);
@@ -84,6 +84,12 @@ final class MetricsAggregatorTest extends TestCase
         (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []], [], null, $this->scc(), $this->testStatistics());
     }
 
+    public function testRejectsMissingCoverage(): void
+    {
+        $this->expectExceptionMessage('Clover coverage is required');
+        (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []], [], null, $this->scc(), $this->testStatistics(), null, '3.7.0');
+    }
+
     /** @return list<array<string, mixed>> */
     private function scc(): array
     {
@@ -94,6 +100,11 @@ final class MetricsAggregatorTest extends TestCase
     private function testStatistics(): array
     {
         return ['suites' => [], 'total' => ['files' => 0, 'lines' => 0, 'average_lines' => null]];
+    }
+
+    private function clover(): string
+    {
+        return '<coverage><project><metrics statements="0" coveredstatements="0" methods="0" coveredmethods="0" /></project></coverage>';
     }
 
     /** @return array<string, mixed> */
