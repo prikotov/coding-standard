@@ -354,7 +354,7 @@ final class MetricsDashboardGenerator
             ?: $right['loc'] <=> $left['loc']
             ?: $left['classes'] <=> $right['classes']);
 
-        return array_slice($cycles, 0, 5);
+        return array_slice($cycles, 0, 10);
     }
 
     /** @param list<list<string>> $groups @return list<string>|null */
