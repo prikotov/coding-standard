@@ -56,6 +56,8 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('id="treemap-chart"', $html);
             self::assertStringContainsString('id="matrix-chart"', $html);
             self::assertStringContainsString('Как читать метрики', $html);
+            self::assertStringContainsString('Дашборд помогает оценивать качество и поддерживаемость кода', $html);
+            self::assertStringContainsString('Отдельная метрика показывает, куда смотреть', $html);
             self::assertStringContainsString('LCOM4</code> — несвязность методов', $html);
             self::assertStringContainsString('Ca / Ce</code> — входящая и исходящая связанность', $html);
             self::assertStringContainsString('CC / max CC</code> — цикломатическая сложность', $html);
