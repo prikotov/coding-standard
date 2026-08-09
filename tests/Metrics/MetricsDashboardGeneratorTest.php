@@ -57,7 +57,9 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('id="treemap-chart"', $html);
             self::assertStringContainsString('id="matrix-chart"', $html);
             self::assertStringContainsString('LOC внутри классов модулей', $html);
+            self::assertStringContainsString('Классы в модулях', $html);
             self::assertStringContainsString('Все строки проекта (все файлы)', $html);
+            self::assertStringContainsString('Модули с циклическими зависимостями', $html);
             self::assertStringContainsString('Как читать метрики', $html);
             self::assertStringContainsString('Дашборд помогает оценивать качество и поддерживаемость кода', $html);
             self::assertStringContainsString('Отдельная метрика показывает, куда смотреть', $html);
@@ -77,6 +79,7 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('Maximum Cyclomatic Complexity', $html);
             self::assertStringContainsString('Lines of Code', $html);
             self::assertStringContainsString('<code>namespace</code> и <code>use</code> перед объявлением не входят', $html);
+            self::assertStringContainsString('A → B → A', $html);
             self::assertStringContainsString('Исключённый shared-код', $html);
             self::assertStringNotContainsString('fetch(', $html);
             self::assertMatchesRegularExpression(

@@ -439,10 +439,10 @@
 
     <section class="summary" aria-label="Сводка анализируемого отчёта">
         <div class="summary-card"><span>Модули в отчёте</span><strong id="summary-modules">0</strong></div>
-        <div class="summary-card"><span>Классы модулей</span><strong id="summary-classes">0</strong></div>
+        <div class="summary-card"><span>Классы в модулях</span><strong id="summary-classes">0</strong></div>
         <div class="summary-card"><span>LOC внутри классов модулей</span><strong id="summary-loc">0</strong></div>
         <div class="summary-card"><span>Все строки проекта (все файлы)</span><strong id="summary-project-lines">нет данных</strong></div>
-        <div class="summary-card"><span>Циклы модулей</span><strong id="summary-cycles">0</strong></div>
+        <div class="summary-card"><span>Модули с циклическими зависимостями</span><strong id="summary-cycles">0</strong></div>
     </section>
 
     <details class="metric-guide" open>
@@ -513,11 +513,12 @@
                     </dl>
                 </article>
                 <article class="metric-definition">
-                    <h3><code>Cycles</code> — циклы зависимостей</h3>
+                    <h3><code>Cycles</code> — циклические зависимости модулей</h3>
                     <dl>
-                        <div><dt>Измеряет</dt><dd>Группы модулей, из которых по статическим PHP-зависимостям можно вернуться в исходный модуль.</dd></div>
-                        <div><dt>Ожидаем</dt><dd><strong>0</strong>: зависимости образуют направленную структуру без взаимной связанности модулей.</dd></div>
-                        <div class="attention"><dt>Проверить</dt><dd>Любой цикл: он повышает цену изменения и усложняет выделение или независимое тестирование модуля.</dd></div>
+                        <div><dt>Что это</dt><dd>Цепочка статических PHP-зависимостей возвращается в исходный модуль: например, <code>A → B → A</code> или <code>A → B → C → A</code>.</dd></div>
+                        <div><dt>Сводка</dt><dd>Верхний счётчик показывает количество модулей, которые входят хотя бы в одну такую цепочку.</dd></div>
+                        <div><dt>Ожидаем</dt><dd><strong>0</strong>: ни один модуль не зависит прямо или косвенно сам от себя.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Цикл связывает изменения нескольких модулей и мешает тестировать или выделять их независимо.</dd></div>
                     </dl>
                 </article>
                 <article class="metric-definition">
@@ -650,7 +651,7 @@
         const languages = Object.values(data.codebase?.languages || {});
         const projectLines = languages.length === 0 ? null : languages.reduce((sum, language) => sum + number(language.lines), 0);
         document.getElementById('summary-project-lines').textContent = projectLines === null ? 'нет данных' : formatInteger(projectLines);
-        document.getElementById('summary-cycles').textContent = formatInteger(project.cycles?.count ?? 0);
+        document.getElementById('summary-cycles').textContent = formatInteger(data.modules.filter(module => module.cycles > 0).length);
         const generated = data.report?.generated_at ? new Date(data.report.generated_at).toLocaleString('ru-RU') : 'не указано';
         const commit = data.report?.commit ? String(data.report.commit).slice(0, 12) : 'не указан';
         document.getElementById('report-meta').textContent = `Отчёт: ${generated}\nCommit: ${commit}`;
@@ -706,7 +707,7 @@
                     `Cohesion: ${formatPercent(module.cohesion)}`,
                     `Исходящие зависимости: ${formatInteger(module.outgoing_dependencies)}`,
                     `Изменчивость, коммитов: ${module.churn === null ? 'нет данных' : formatInteger(module.churn)}`,
-                    `Циклы: ${formatInteger(module.cycles)}`,
+                    `Циклических групп: ${formatInteger(module.cycles)}`,
                 ]);
                 svg.append(circle);
                 if (radius >= 11 || data.modules.length < 18) {
