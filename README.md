@@ -52,6 +52,23 @@ php bin/metrics-aggregate.php \
 Отсутствие обязательного источника завершает команду ошибкой. `findings` в
 итоговом отчёте остаются неблокирующими.
 
+### Пример HTML-дашборда
+
+Пример автономного HTML-дашборда на данных проекта TasK:
+[`examples/task-metrics-dashboard.html`](examples/task-metrics-dashboard.html).
+
+#### Размер модулей и зависимости от других модулей
+
+![Размер модулей и зависимости от других модулей](docs/images/metrics-dashboard/modules-size-and-dependencies.webp)
+
+#### Классы: размер и недостаток связности методов (LCOM4)
+
+![Классы: размер и недостаток связности методов](docs/images/metrics-dashboard/classes-size-and-lcom4.webp)
+
+#### Матрица зависимостей модулей
+
+![Матрица зависимостей модулей](docs/images/metrics-dashboard/module-dependency-matrix.webp)
+
 ### CLI-утилиты
 
 Публичные команды пакета доступны через `vendor/bin/`. Внутренний

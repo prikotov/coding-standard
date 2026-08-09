@@ -74,6 +74,11 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('class="chart-card wide" id="classes-scatter"', $html);
             self::assertStringContainsString('Классы: размер и недостаток связности методов (LCOM4)', $html);
             self::assertStringContainsString('class="chart-card wide" id="classes-treemap"', $html);
+            self::assertStringContainsString('Длинные названия модулей сокращаются', $html);
+            self::assertStringContainsString('.treemap-module-label', $html);
+            self::assertStringContainsString('.treemap-class-label', $html);
+            self::assertStringContainsString('const moduleLabel = module.id.length > characterLimit', $html);
+            self::assertStringContainsString('addTooltip(header, [module.id', $html);
             self::assertStringContainsString('id="class-assessment"', $html);
             self::assertStringContainsString('Оценка качества классов:', $html);
             self::assertStringContainsString('С чего начать рефакторинг классов', $html);
