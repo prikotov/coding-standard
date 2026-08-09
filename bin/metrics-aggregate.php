@@ -18,13 +18,13 @@ $tests = $options['tests'] ?? 'var/metrics/test-stats.json';
 $clover = $options['clover'] ?? 'var/metrics/clover.xml';
 
 try {
-    foreach (['Analyzer' => $analyzer, 'Deptrac' => $deptrac] as $name => $path) {
+    foreach (['Analyzer' => $analyzer, 'Deptrac' => $deptrac, 'Test statistics' => $tests] as $name => $path) {
         if (!is_file($path) || filesize($path) === 0) {
             throw new RuntimeException(sprintf('%s report is missing or empty: %s', $name, $path));
         }
     }
     $optional = [];
-    foreach (['SCC' => $scc, 'test statistics' => $tests, 'Clover' => $clover] as $name => $path) {
+    foreach (['SCC' => $scc, 'Clover' => $clover] as $name => $path) {
         if (is_file($path) && filesize($path) > 0) {
             $optional[$name] = (string) file_get_contents($path);
         } else {
@@ -40,7 +40,7 @@ try {
         $config['metrics'] ?? [],
         $commit,
         isset($optional['SCC']) ? json_decode($optional['SCC'], true, flags: JSON_THROW_ON_ERROR) : null,
-        isset($optional['test statistics']) ? json_decode($optional['test statistics'], true, flags: JSON_THROW_ON_ERROR) : null,
+        json_decode((string) file_get_contents($tests), true, flags: JSON_THROW_ON_ERROR),
         $optional['Clover'] ?? null,
         $version !== '' ? $version : null,
     );
@@ -50,4 +50,3 @@ try {
     fwrite(STDERR, "metrics-aggregate: {$exception->getMessage()}\n");
     exit(1);
 }
-

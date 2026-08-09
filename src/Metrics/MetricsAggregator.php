@@ -20,6 +20,9 @@ final class MetricsAggregator
         if (($deptrac['schema_version'] ?? null) !== '1.0' || !is_array($deptrac['dependencies'] ?? null)) {
             throw new InvalidArgumentException('Deptrac JSON must be a metrics-json report with schema_version 1.0.');
         }
+        if ($tests === null) {
+            throw new InvalidArgumentException('Test statistics are required.');
+        }
 
         $methodsByClass = [];
         foreach ($analyzer['functions'] as $method) {

@@ -149,8 +149,9 @@ var/metrics/
 | `tests.suites`, `tests.total` | Число тестовых файлов, строк и среднее число строк на файл по сьютам PHPUnit и всего |
 | `coverage.lines`, `coverage.methods` | `total`, `covered`, `percent` из `clover.xml`; процент равен `null`, если объектов нет |
 
-Необязательный источник, которого нет на машине, не заменяется нулями: его
-секция отсутствует. `scc` устанавливают отдельно: `go install
+Статистика тестов — обязательный project-level источник. Размер кодовой базы и
+покрытие необязательны, потому что `scc` и PCOV могут отсутствовать в
+окружении; отсутствующая секция не заменяется нулями. `scc` устанавливают отдельно: `go install
 github.com/boyter/scc/v3@latest` или используют готовый бинарник. Команда
 `bin/metrics-scc` создаёт `var/metrics/scc.json` и сохраняет версию
 анализатора в `metadata.scc_version`; `composer metrics-test-stats` читает

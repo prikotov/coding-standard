@@ -17,7 +17,7 @@ final class MetricsAggregatorTest extends TestCase
             'functions' => [$this->method('App\\Alpha', 'run', 4, 2), $this->method('App\\Beta', 'run', 8, 4), $this->method('App\\Gamma', 'run', 12, 6)],
         ], ['schema_version' => '1.0', 'dependencies' => [
             ['source' => 'App\\Alpha', 'target' => 'App\\Beta'], ['source' => 'App\\Beta', 'target' => 'App\\Alpha'], ['source' => 'App\\Alpha', 'target' => 'App\\Gamma'],
-        ]], ['thresholds' => ['class' => ['loc' => 25], 'module' => ['cycles' => 0]]], 'abc');
+        ]], ['thresholds' => ['class' => ['loc' => 25], 'module' => ['cycles' => 0]]], 'abc', null, ['suites' => [], 'total' => ['files' => 0, 'lines' => 0, 'average_lines' => null]]);
 
         self::assertSame('1.0', $report['schema_version']);
         self::assertSame(3, $report['metrics']['project']['class_count']);
@@ -64,6 +64,12 @@ final class MetricsAggregatorTest extends TestCase
     {
         $this->expectExceptionMessage('Analyzer JSON');
         (new MetricsAggregator())->aggregate([], ['schema_version' => '1.0', 'dependencies' => []]);
+    }
+
+    public function testRejectsMissingTestStatistics(): void
+    {
+        $this->expectExceptionMessage('Test statistics are required');
+        (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []]);
     }
 
     /** @return array<string, mixed> */
