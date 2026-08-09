@@ -78,11 +78,13 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('С чего начать рефакторинг классов', $html);
             self::assertStringContainsString('Шкала максимальной цикломатической сложности', $html);
             self::assertStringContainsString('id="scatter-cc-max"', $html);
+            self::assertStringContainsString('Цвет точки: max CC', $html);
             self::assertStringContainsString('id="treemap-assessment"', $html);
             self::assertStringContainsString('Оценка распределения классов по модулям:', $html);
             self::assertStringContainsString('Модули с крупными несвязными классами', $html);
             self::assertStringContainsString('Шкала недостатка связности методов', $html);
             self::assertStringContainsString('id="treemap-lcom-max"', $html);
+            self::assertStringContainsString('Цвет прямоугольника: LCOM4', $html);
             self::assertStringContainsString('физические строки кода внутри класса (LOC, <em>Lines of Code</em>)', $html);
             self::assertStringContainsString('количество несвязанных групп методов (LCOM4, <em>Lack of Cohesion in Methods 4</em>)', $html);
             self::assertStringContainsString('Причины: ${reasons.join', $html);
