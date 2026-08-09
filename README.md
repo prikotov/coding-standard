@@ -32,10 +32,29 @@ AI-агенты склонны отклоняться от конвенций. �
 
 ### Агрегация метрик
 
-Сначала собственный сборщик на `nikic/php-parser` создаёт структурный отчёт, затем агрегатор объединяет его с полным графом Deptrac в `var/metrics/report.json`:
+Сбор источников и агрегация — разные этапы. `metrics-aggregate.php` не запускает
+анализаторы, а только читает уже созданные файлы и объединяет их в
+`var/metrics/report.json`.
+
+Обязательные источники — структурный отчёт и полный граф Deptrac. Структурный
+отчёт создаёт собственный сборщик на `nikic/php-parser`:
 
 ```bash
 php bin/metrics-collect --source=src --output=var/metrics/collector.json
+```
+
+Размер кодовой базы, статистика тестов и покрытие — необязательные источники.
+Для полного отчёта их собирают до запуска агрегатора:
+
+```bash
+bin/metrics-scc
+composer metrics-test-stats
+composer coverage
+```
+
+После подготовки источников агрегатор формирует итоговый отчёт:
+
+```bash
 php bin/metrics-aggregate.php \
   --analyzer=var/metrics/collector.json \
   --deptrac=var/metrics/deptrac.json \
@@ -46,14 +65,6 @@ php bin/metrics-aggregate.php \
 ```
 
 В отчёте содержатся снимки методов, классов, модулей и проекта; `findings` являются неблокирующими.
-
-Необязательные источники project-level метрик собираются отдельно:
-
-```bash
-bin/metrics-scc
-composer metrics-test-stats
-composer coverage
-```
 
 Отсутствие `scc` или PCOV не завершает сбор с ошибкой: соответствующая секция
 не попадает в отчёт. Подробная схема описана в
