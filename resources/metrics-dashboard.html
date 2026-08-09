@@ -241,6 +241,42 @@
             line-height: 1.5;
         }
 
+        .module-assessment {
+            margin: 0 0 14px;
+            padding: 12px 14px;
+            border: 1px solid rgb(255 202 102 / 38%);
+            border-radius: 10px;
+            background: rgb(255 202 102 / 8%);
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .module-assessment strong {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--warning);
+            font-size: 13px;
+        }
+
+        .module-assessment.high {
+            border-color: rgb(255 104 120 / 42%);
+            background: rgb(255 104 120 / 9%);
+        }
+
+        .module-assessment.high strong {
+            color: #ff9aa5;
+        }
+
+        .module-assessment.good {
+            border-color: rgb(45 212 191 / 38%);
+            background: rgb(45 212 191 / 8%);
+        }
+
+        .module-assessment.good strong {
+            color: var(--accent);
+        }
+
         .legend {
             display: flex;
             flex: 0 0 auto;
@@ -543,6 +579,7 @@
                 </div>
                 <div class="legend"><span><i></i>не входит в цикл</span><span><i class="hot"></i>входит в цикл</span></div>
             </div>
+            <div class="module-assessment" id="module-assessment"></div>
             <div class="chart-frame"><svg id="bubble-chart" role="img" aria-label="Пузырьковая диаграмма модулей"></svg></div>
             <ol class="ranking" id="module-ranking" aria-label="Модули с наибольшим риском"></ol>
         </section>
@@ -595,12 +632,15 @@
     const formatInteger = value => integer.format(number(value));
     const formatDecimal = value => value === null || value === undefined ? 'нет данных' : decimal.format(number(value));
     const formatPercent = value => value === null || value === undefined ? 'нет данных' : percent.format(number(value));
-    const median = values => {
+    const percentile = (values, ratio) => {
         const sorted = values.map(value => number(value)).sort((left, right) => left - right);
-        if (sorted.length === 0) return 0;
-        const middle = Math.floor(sorted.length / 2);
-        return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
+        if (sorted.length === 0) return null;
+        const index = (sorted.length - 1) * ratio;
+        const lower = Math.floor(index);
+        const upper = Math.ceil(index);
+        return sorted[lower] + (sorted[upper] - sorted[lower]) * (index - lower);
     };
+    const median = values => percentile(values, 0.5) ?? 0;
     const maximum = (values, fallback = 1) => Math.max(fallback, ...values.map(value => number(value)));
     const scale = (value, domainMax, rangeMin, rangeMax) => {
         if (domainMax <= 0) return rangeMin;
@@ -678,6 +718,40 @@
         const yPosition = value => height - margin.bottom - scale(value, yMax, 0, chartHeight);
         const xRisk = median(data.modules.map(module => module.loc));
         const yRisk = median(data.modules.map(module => module.external_dependency_share));
+        const churnValues = data.modules.filter(module => module.churn !== null).map(module => module.churn);
+        const highChurn = percentile(churnValues, 0.75);
+        const assessedModules = data.modules.map(module => {
+            const signs = [
+                module.loc >= xRisk,
+                module.external_dependency_share >= yRisk,
+                module.cycles > 0,
+                highChurn !== null && module.churn !== null && module.churn >= highChurn,
+            ].filter(Boolean).length;
+            return {...module, signs};
+        });
+        const cyclicModules = assessedModules.filter(module => module.cycles > 0);
+        const refactoringCandidates = assessedModules
+            .filter(module => module.signs >= 3)
+            .sort((left, right) => right.signs - left.signs
+                || number(right.churn) - number(left.churn)
+                || number(right.loc) - number(left.loc));
+        const cyclicShare = cyclicModules.length / data.modules.length;
+        const highRisk = cyclicShare >= 0.25 || refactoringCandidates.length >= Math.max(3, Math.ceil(data.modules.length * 0.1));
+        const needsAttention = cyclicModules.length > 0 || refactoringCandidates.length > 0;
+        const assessment = document.getElementById('module-assessment');
+        assessment.className = `module-assessment ${highRisk ? 'high' : (needsAttention ? 'attention' : 'good')}`;
+        const assessmentTitle = document.createElement('strong');
+        assessmentTitle.textContent = `Оценка качества границ модулей: ${highRisk ? 'низкая' : (needsAttention ? 'требует внимания' : 'хорошая')}`;
+        const assessmentText = document.createElement('span');
+        const details = [
+            `${formatInteger(cyclicModules.length)} из ${formatInteger(data.modules.length)} модулей (${formatPercent(cyclicShare)}) входят в циклические зависимости.`,
+            `${formatInteger(refactoringCandidates.length)} модулей совмещают не менее трёх признаков: LOC в верхней половине, доля связей с другими модулями в верхней половине, участие в цикле, частота изменений в верхней четверти.`,
+        ];
+        if (refactoringCandidates.length > 0) {
+            details.push(`Начать с: ${refactoringCandidates.slice(0, 5).map(module => module.id).join(', ')}.`);
+        }
+        assessmentText.textContent = details.join(' ');
+        assessment.replaceChildren(assessmentTitle, assessmentText);
         svg.append(svgElement('rect', {
             x: xPosition(xRisk),
             y: yPosition(yMax),
