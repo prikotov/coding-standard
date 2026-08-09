@@ -304,6 +304,33 @@
             background: var(--danger);
         }
 
+        .gradient-legend {
+            flex: 0 0 190px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .gradient-legend strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text);
+            font-size: 11px;
+        }
+
+        .gradient-bar {
+            height: 9px;
+            border: 1px solid rgb(220 233 247 / 35%);
+            border-radius: 999px;
+            background: linear-gradient(90deg, hsl(166 82% 55%), hsl(83 82% 59%), hsl(0 82% 62%));
+        }
+
+        .gradient-scale {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
         .chart-frame {
             overflow: auto;
             min-height: 320px;
@@ -488,6 +515,11 @@
                 margin-top: 10px;
             }
 
+            .gradient-legend {
+                max-width: 240px;
+                margin-top: 10px;
+            }
+
             .ranking {
                 grid-template-columns: 1fr;
             }
@@ -646,6 +678,11 @@
                     <h2>Классы: размер и недостаток связности методов (LCOM4)</h2>
                     <p class="chart-note">Каждая точка — класс. По горизонтали — LOC; по вертикали — количество несвязанных групп методов (LCOM4); размер точки — число исходящих зависимостей (Ce); цвет — максимальная цикломатическая сложность метода (max CC). Показаны 600 крупнейших классов.</p>
                     <p class="chart-note"><strong>На что обратить внимание при рефакторинге:</strong> сначала проверяйте крупные точки в верхней правой области. Чем точка больше и краснее, тем больше у класса одновременно размер, несвязность методов, количество зависимостей и сложность.</p>
+                </div>
+                <div class="gradient-legend" aria-label="Шкала максимальной цикломатической сложности">
+                    <strong>Цвет точки: max CC</strong>
+                    <div class="gradient-bar"></div>
+                    <div class="gradient-scale"><span>0 — низкая</span><span><span id="scatter-cc-max">max</span> — высокая</span></div>
                 </div>
             </div>
             <div class="quality-assessment" id="class-assessment"></div>
@@ -965,6 +1002,7 @@
         const yMax = maximum(classes.map(item => item.lcom));
         const cboMax = maximum(classes.map(item => item.cbo), 0);
         const ccMax = maximum(classes.map(item => item.cc), 0);
+        document.getElementById('scatter-cc-max').textContent = formatInteger(ccMax);
         const chartWidth = width - margin.left - margin.right;
         const chartHeight = height - margin.top - margin.bottom;
         const xPosition = value => margin.left + scale(value, xMax, 0, chartWidth);

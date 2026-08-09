@@ -74,6 +74,8 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('id="class-assessment"', $html);
             self::assertStringContainsString('Оценка качества классов:', $html);
             self::assertStringContainsString('С чего начать рефакторинг классов', $html);
+            self::assertStringContainsString('Шкала максимальной цикломатической сложности', $html);
+            self::assertStringContainsString('id="scatter-cc-max"', $html);
             self::assertStringContainsString('id="treemap-assessment"', $html);
             self::assertStringContainsString('Оценка распределения классов по модулям:', $html);
             self::assertStringContainsString('Модули с крупными несвязными классами', $html);
