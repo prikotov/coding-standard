@@ -1,0 +1,1417 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Метрики качества проекта</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --background: #08111f;
+            --panel: #101c2e;
+            --panel-strong: #15253b;
+            --border: #263b56;
+            --text: #edf5ff;
+            --muted: #9eb1c8;
+            --accent: #4dd9c0;
+            --warning: #ffbe55;
+            --danger: #ff6878;
+            --grid: #2b4059;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at 90% 0, rgb(38 89 119 / 28%), transparent 32rem),
+                var(--background);
+            color: var(--text);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        main {
+            width: min(1480px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 42px 0 64px;
+        }
+
+        header {
+            display: flex;
+            gap: 24px;
+            align-items: end;
+            justify-content: space-between;
+            margin-bottom: 26px;
+        }
+
+        h1,
+        h2,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: clamp(28px, 4vw, 52px);
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+
+        h2 {
+            margin-bottom: 7px;
+            font-size: 20px;
+            letter-spacing: -0.015em;
+        }
+
+        .eyebrow {
+            margin-bottom: 10px;
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 750;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .subtitle,
+        .chart-note,
+        .report-meta {
+            color: var(--muted);
+        }
+
+        .subtitle {
+            max-width: 760px;
+            margin-bottom: 0;
+            font-size: 15px;
+        }
+
+        .report-meta {
+            min-width: 230px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .summary-card,
+        .chart-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: linear-gradient(155deg, rgb(24 41 64 / 92%), rgb(12 24 40 / 96%));
+            box-shadow: 0 18px 48px rgb(0 0 0 / 18%);
+        }
+
+        .summary-card {
+            padding: 17px 18px;
+        }
+
+        .summary-card span {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .summary-card strong {
+            font-size: 28px;
+            letter-spacing: -0.03em;
+        }
+
+        .metric-guide {
+            margin-bottom: 18px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgb(13 27 45 / 92%);
+        }
+
+        .metric-guide summary {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 17px 20px;
+            cursor: pointer;
+            font-size: 17px;
+            font-weight: 750;
+            list-style-position: inside;
+        }
+
+        .metric-guide summary small {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 450;
+        }
+
+        .metric-guide-content {
+            padding: 0 20px 20px;
+        }
+
+        .metric-guide-intro {
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            border-left: 3px solid var(--accent);
+            border-radius: 0 9px 9px 0;
+            background: rgb(77 217 192 / 8%);
+            color: #cbd8e8;
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .metric-definition {
+            padding: 14px;
+            border: 1px solid rgb(72 98 127 / 42%);
+            border-radius: 11px;
+            background: rgb(5 15 27 / 42%);
+        }
+
+        .metric-definition h3 {
+            margin: 0 0 10px;
+            font-size: 14px;
+        }
+
+        .metric-definition code {
+            color: var(--accent);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 13px;
+        }
+
+        .metric-definition dl,
+        .metric-definition dd {
+            margin: 0;
+        }
+
+        .metric-definition dl > div {
+            display: grid;
+            grid-template-columns: 92px 1fr;
+            gap: 9px;
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .metric-definition dt {
+            color: #d9e5f2;
+            font-weight: 700;
+        }
+
+        .metric-definition .attention dt {
+            color: var(--warning);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .chart-card {
+            min-width: 0;
+            padding: 20px;
+        }
+
+        .chart-card.wide {
+            grid-column: 1 / -1;
+        }
+
+        .chart-header {
+            display: flex;
+            gap: 16px;
+            align-items: start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .chart-note {
+            margin-bottom: 0;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .quality-assessment {
+            margin: 0 0 14px;
+            padding: 12px 14px;
+            border: 1px solid rgb(255 202 102 / 38%);
+            border-radius: 10px;
+            background: rgb(255 202 102 / 8%);
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .quality-assessment strong {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--warning);
+            font-size: 13px;
+        }
+
+        .quality-assessment.high {
+            border-color: rgb(255 104 120 / 42%);
+            background: rgb(255 104 120 / 9%);
+        }
+
+        .quality-assessment.high strong {
+            color: #ff9aa5;
+        }
+
+        .quality-assessment.good {
+            border-color: rgb(45 212 191 / 38%);
+            background: rgb(45 212 191 / 8%);
+        }
+
+        .quality-assessment.good strong {
+            color: var(--accent);
+        }
+
+        .legend {
+            display: flex;
+            flex: 0 0 auto;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: end;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .legend span {
+            display: inline-flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .legend i {
+            width: 9px;
+            height: 9px;
+            border-radius: 999px;
+            background: var(--accent);
+        }
+
+        .legend i.hot {
+            background: var(--danger);
+        }
+
+        .gradient-legend {
+            flex: 0 0 190px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .gradient-legend strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text);
+            font-size: 11px;
+        }
+
+        .gradient-bar {
+            height: 9px;
+            border: 1px solid rgb(220 233 247 / 35%);
+            border-radius: 999px;
+            background: linear-gradient(90deg, hsl(166 82% 55%), hsl(83 82% 59%), hsl(0 82% 62%));
+        }
+
+        .gradient-scale {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .matrix-cycle-key {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-top: 7px;
+        }
+
+        .matrix-cycle-key i {
+            width: 14px;
+            height: 10px;
+            border: 2px solid var(--danger);
+            border-radius: 2px;
+            background: #0c1929;
+        }
+
+        .chart-frame {
+            overflow: auto;
+            min-height: 320px;
+            border: 1px solid rgb(72 98 127 / 35%);
+            border-radius: 12px;
+            background: rgb(4 13 24 / 46%);
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            min-width: 620px;
+            height: auto;
+        }
+
+        .matrix-frame svg {
+            width: auto;
+            min-width: 100%;
+        }
+
+        .axis,
+        .grid-line {
+            stroke: var(--grid);
+            stroke-width: 1;
+        }
+
+        .axis-label,
+        .tick-label,
+        .mark-label,
+        .empty-label {
+            fill: var(--muted);
+            font-size: 11px;
+        }
+
+        .axis-label {
+            fill: #c7d4e4;
+            font-weight: 650;
+        }
+
+        .mark-label {
+            fill: #f6fbff;
+            font-size: 10px;
+            font-weight: 650;
+            pointer-events: none;
+        }
+
+        .risk-zone {
+            fill: rgb(255 104 120 / 7%);
+            stroke: rgb(255 104 120 / 48%);
+            stroke-dasharray: 6 5;
+        }
+
+        .ranking {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin: 12px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .ranking li,
+        .cycle-list li {
+            min-width: 0;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .ranking li {
+            padding: 9px 10px;
+            border-radius: 9px;
+            background: rgb(78 108 140 / 14%);
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .ranking strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .ranking code,
+        .cycle-examples code {
+            overflow-wrap: anywhere;
+            color: #dcecff;
+            white-space: normal;
+        }
+
+        .ranking-title,
+        .cycle-examples h3 {
+            margin: 14px 0 6px;
+            font-size: 14px;
+        }
+
+        .cycle-examples {
+            margin-top: 14px;
+            padding-top: 2px;
+            border-top: 1px solid rgb(72 98 127 / 35%);
+        }
+
+        .cycle-examples > p {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .cycle-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            counter-reset: cycle;
+        }
+
+        .cycle-list li {
+            padding: 9px 10px;
+            border-radius: 9px;
+            background: rgb(255 104 120 / 7%);
+            counter-increment: cycle;
+        }
+
+        .cycle-list li::before {
+            display: block;
+            margin-bottom: 4px;
+            color: #ff9aa5;
+            font-weight: 700;
+            content: counter(cycle) ".";
+        }
+
+        .cycle-list code {
+            display: block;
+            line-height: 1.55;
+            white-space: pre-wrap;
+        }
+
+        .cycle-list small {
+            display: block;
+            margin-top: 5px;
+            color: var(--muted);
+        }
+
+        .tooltip {
+            position: fixed;
+            z-index: 20;
+            max-width: 360px;
+            padding: 9px 11px;
+            border: 1px solid #42607e;
+            border-radius: 8px;
+            background: #071321;
+            box-shadow: 0 10px 28px rgb(0 0 0 / 35%);
+            color: #eef6ff;
+            font-size: 12px;
+            line-height: 1.45;
+            pointer-events: none;
+            white-space: pre-line;
+        }
+
+        .tooltip[hidden] {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            header {
+                display: block;
+            }
+
+            .report-meta {
+                margin-top: 14px;
+                text-align: left;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-card.wide {
+                grid-column: auto;
+            }
+
+        }
+
+        @media (max-width: 620px) {
+            main {
+                width: min(100% - 20px, 1480px);
+                padding-top: 26px;
+            }
+
+            .summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .chart-header {
+                display: block;
+            }
+
+            .legend {
+                justify-content: start;
+                margin-top: 10px;
+            }
+
+            .gradient-legend {
+                max-width: 240px;
+                margin-top: 10px;
+            }
+
+            .ranking,
+            .cycle-list {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-guide summary {
+                display: block;
+            }
+
+            .metric-guide summary small {
+                display: block;
+                margin-top: 6px;
+            }
+
+            .glossary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-definition dl > div {
+                grid-template-columns: 1fr;
+                gap: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <div>
+            <p class="eyebrow">Quality metrics · offline report</p>
+            <h1>Карта поддерживаемости</h1>
+            <p class="subtitle">Размер, связанность, сложность и циклы зависимостей в одном автономном отчёте.</p>
+        </div>
+        <div class="report-meta" id="report-meta"></div>
+    </header>
+
+    <section class="summary" aria-label="Сводка анализируемого отчёта">
+        <div class="summary-card"><span>Модули в отчёте</span><strong id="summary-modules">0</strong></div>
+        <div class="summary-card"><span>Классы в модулях</span><strong id="summary-classes">0</strong></div>
+        <div class="summary-card"><span>Строки кода внутри классов модулей (LOC)</span><strong id="summary-loc">0</strong></div>
+        <div class="summary-card"><span>Все строки проекта (все файлы)</span><strong id="summary-project-lines">нет данных</strong></div>
+        <div class="summary-card"><span>Модули с циклическими зависимостями</span><strong id="summary-cycles">0</strong></div>
+    </section>
+
+    <details class="metric-guide" open>
+        <summary>
+            Как читать метрики
+            <small>Что измеряют числа, какой результат ожидаем и когда нужна проверка</small>
+        </summary>
+        <div class="metric-guide-content">
+            <p class="metric-guide-intro">
+                Дашборд помогает оценивать качество и поддерживаемость кода. Отдельная метрика показывает, куда смотреть;
+                вывод делается по сочетанию показателей и контексту анализируемой сущности: типу класса
+                (например, DTO, обработчик команды, обработчик запроса или сервис) либо виду модуля
+                (Common или модуль приложения Web, Console, Api). Значение сравнивается с классами того же типа
+                или модулями того же вида в текущем отчёте.
+            </p>
+            <div class="glossary-grid">
+                <article class="metric-definition">
+                    <h3>Недостаток связности методов (<code>LCOM4</code>)</h3>
+                    <dl>
+                        <div><dt>Расшифровка</dt><dd><em>Lack of Cohesion in Methods 4</em>: <em>Lack</em> — недостаток, <em>Cohesion</em> — связность, <em>Methods</em> — методы, <em>4</em> — четвёртый вариант расчёта.</dd></div>
+                        <div><dt>Измеряет</dt><dd>Число независимых групп нестатических методов, связанных общими свойствами или вызовами друг друга.</dd></div>
+                        <div><dt>Ожидаем</dt><dd><strong>1</strong> у класса с поведением: его методы образуют одну связную ответственность. <strong>0</strong> или отсутствие значения может означать, что метрика неприменима.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Значение больше 1 вместе с большим LOC или CC: класс может объединять несколько ответственностей.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3>Входящая и исходящая связанность (<code>Ca / Ce</code>)</h3>
+                    <dl>
+                        <div><dt>Расшифровка</dt><dd><code>Ca</code> — <em>Afferent Coupling</em>, входящая связанность; <code>Ce</code> — <em>Efferent Coupling</em>, исходящая связанность.</dd></div>
+                        <div><dt>Измеряет</dt><dd>Ca — сколько внутренних типов зависит от класса; Ce — от скольких внутренних типов зависит сам класс. Размер точки на scatter chart показывает Ce.</dd></div>
+                        <div><dt>Ожидаем</dt><dd>Универсальной нормы нет: DTO обычно имеет низкий Ce, обработчик команды, обработчик запроса или сервис — более высокий. Высокий Ca допустим у стабильного контракта.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Ce заметно выше классов с тем же назначением, особенно вместе с большим размером, частыми изменениями или высокой сложностью.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3>Цикломатическая сложность (<code>CC / max CC</code>)</h3>
+                    <dl>
+                        <div><dt>Расшифровка</dt><dd><code>CC</code> — <em>Cyclomatic Complexity</em>; <code>max CC</code> — <em>Maximum Cyclomatic Complexity</em>, максимальная цикломатическая сложность.</dd></div>
+                        <div><dt>Измеряет</dt><dd>Количество независимых путей выполнения метода. Значение 1 означает линейный код; max CC — самый сложный метод класса.</dd></div>
+                        <div><dt>Ожидаем</dt><dd>Чем меньше, тем проще проверка и тестирование. Значение около 10 и выше — распространённый повод для ревью, но не автоматическая ошибка.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Метод одновременно имеет высокий CC и LOC: разветвления могут скрывать несколько сценариев или правил.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3>Физический размер (<code>LOC</code>)</h3>
+                    <dl>
+                        <div><dt>Расшифровка</dt><dd><em>Lines of Code</em> — строки кода.</dd></div>
+                        <div><dt>Измеряет</dt><dd>Физические строки от начала объявления типа до закрывающей скобки, включая атрибуты класса, пустые строки и комментарии внутри него. Заголовок PHP-файла, <code>declare</code>, <code>namespace</code> и <code>use</code> перед объявлением не входят.</dd></div>
+                        <div><dt>Область</dt><dd>LOC в сводке суммирует только классы модулей из отчёта. Отдельный счётчик строк проекта суммирует все языки, попавшие в анализ кодовой базы.</dd></div>
+                        <div><dt>Ожидаем</dt><dd>LOC сам по себе не показывает плохой код. Сравнивайте классы с одинаковым назначением и перцентили проекта.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Большой класс одновременно имеет высокий LCOM4, CC, Ce или часто меняется.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3><code>External share / cohesion</code> — связи модуля</h3>
+                    <dl>
+                        <div><dt>Измеряет</dt><dd>External share — доля исходящих связей в другие модули; cohesion — доля связей внутри модуля среди внутренних и исходящих.</dd></div>
+                        <div><dt>Ожидаем</dt><dd>У доменного модуля внешняя доля обычно ниже. У Presentation или Integration-модуля высокая доля может быть естественной.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Доля растёт, модуль зависит от многих направлений или одновременно участвует в цикле.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3>Изменчивость кода (<code>Churn</code>)</h3>
+                    <dl>
+                        <div><dt>Измеряет</dt><dd>Сколько Git-коммитов затрагивало файл класса за период, охваченный отчётом. Размер пузыря модуля отражает сумму значений его классов.</dd></div>
+                        <div><dt>Ожидаем</dt><dd>Зависит от возраста и назначения кода; сравнивайте одинаковый период и классы с тем же назначением.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Часто меняющийся код одновременно крупный, сложный или сильно связанный — это зона повышенного внимания при рефакторинге.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3><code>Cycles</code> — циклические зависимости модулей</h3>
+                    <dl>
+                        <div><dt>Что это</dt><dd>Цепочка статических PHP-зависимостей возвращается в исходный модуль: например, <code>A → B → A</code> или <code>A → B → C → A</code>.</dd></div>
+                        <div><dt>Сводка</dt><dd>Верхний счётчик показывает количество модулей, которые входят хотя бы в одну такую цепочку.</dd></div>
+                        <div><dt>Ожидаем</dt><dd><strong>0</strong>: ни один модуль не зависит прямо или косвенно сам от себя.</dd></div>
+                        <div class="attention"><dt>Проверить</dt><dd>Цикл связывает изменения нескольких модулей и мешает тестировать или выделять их независимо.</dd></div>
+                    </dl>
+                </article>
+                <article class="metric-definition">
+                    <h3>Матрица зависимостей</h3>
+                    <dl>
+                        <div><dt>Измеряет</dt><dd>Количество уникальных статических связей «класс → класс» между исходным модулем в строке и целевым модулем в столбце.</dd></div>
+                        <div><dt>Пустая ячейка</dt><dd>Статическая PHP-связь между анализируемыми модулями не найдена. Это не означает, что модуль вообще ничего не использует.</dd></div>
+                        <div class="attention"><dt>Не включает</dt><dd>Исключённый shared-код, YAML/DI-конфигурацию, маршрутизацию через bus или events во время выполнения и логическую связь одноимённых модулей.</dd></div>
+                    </dl>
+                </article>
+            </div>
+        </div>
+    </details>
+
+    <div class="dashboard-grid">
+        <section class="chart-card wide" id="modules-bubble">
+            <div class="chart-header">
+                <div>
+                    <h2>Размер модулей и зависимости от других модулей</h2>
+                    <p class="chart-note">По горизонтали — количество строк кода внутри классов модуля (LOC); по вертикали — доля его связей, ведущих в другие модули. Размер круга показывает частоту изменений по Git. Красный круг означает, что модуль входит в циклическую зависимость.</p>
+                    <p class="chart-note"><strong>На что обратить внимание при рефакторинге:</strong> сначала проверьте красные круги в верхней правой части — это крупные модули с большой долей связей с другими модулями, входящие в цикл. Затем проверьте крупные круги: соответствующие модули часто меняются. Чем больше этих признаков совпало, тем выше приоритет модуля для рефакторинга.</p>
+                </div>
+                <div class="legend"><span><i></i>не входит в цикл</span><span><i class="hot"></i>входит в цикл</span></div>
+            </div>
+            <div class="quality-assessment" id="module-assessment"></div>
+            <div class="chart-frame"><svg id="bubble-chart" role="img" aria-label="Пузырьковая диаграмма модулей"></svg></div>
+            <h3 class="ranking-title">С чего начать рефакторинг модулей</h3>
+            <ol class="ranking" id="module-ranking" aria-label="Кандидаты на рефакторинг модулей"></ol>
+            <div class="cycle-examples">
+                <h3>10 примеров циклических зависимостей в коде</h3>
+                <p>Показаны реальные замкнутые цепочки «класс зависит от класса»: сначала самые короткие, среди равных — чаще изменяемые.</p>
+                <ol class="cycle-list" id="cycle-example-list"></ol>
+            </div>
+        </section>
+
+        <section class="chart-card wide" id="classes-scatter">
+            <div class="chart-header">
+                <div>
+                    <h2>Классы: размер и недостаток связности методов (LCOM4)</h2>
+                    <p class="chart-note">Каждая точка — класс. По горизонтали — количество строк кода (LOC); по вертикали — количество несвязанных групп методов (LCOM4); размер точки — число исходящих зависимостей (Ce); цвет — максимальная цикломатическая сложность метода (max CC). Показаны 600 крупнейших классов.</p>
+                    <p class="chart-note"><strong>На что обратить внимание при рефакторинге:</strong> сначала проверяйте крупные точки в верхней правой области. Чем точка больше и краснее, тем больше у класса одновременно размер, несвязность методов, количество зависимостей и сложность.</p>
+                </div>
+                <div class="gradient-legend" aria-label="Шкала максимальной цикломатической сложности">
+                    <strong>Цвет точки: max CC</strong>
+                    <div class="gradient-bar"></div>
+                    <div class="gradient-scale"><span>0 — низкая</span><span><span id="scatter-cc-max">max</span> — высокая</span></div>
+                </div>
+            </div>
+            <div class="quality-assessment" id="class-assessment"></div>
+            <div class="chart-frame"><svg id="scatter-chart" role="img" aria-label="Точечная диаграмма классов"></svg></div>
+            <h3 class="ranking-title">С чего начать рефакторинг классов</h3>
+            <ol class="ranking" id="class-ranking" aria-label="Кандидаты на рефакторинг классов"></ol>
+        </section>
+
+        <section class="chart-card wide" id="classes-treemap">
+            <div class="chart-header">
+                <div>
+                    <h2>Размер классов по модулям</h2>
+                    <p class="chart-note">Ширина полосы модуля показывает суммарное количество строк кода внутри его классов (LOC). Площадь прямоугольника класса соответствует количеству строк кода (LOC); цвет меняется от зелёного к красному при росте количества несвязанных групп методов (LCOM4). Мелкие классы агрегируются при большом отчёте.</p>
+                    <p class="chart-note"><strong>Метрики:</strong> физические строки кода внутри класса (LOC, <em>Lines of Code</em>); количество несвязанных групп методов (LCOM4, <em>Lack of Cohesion in Methods 4</em>) по четвёртому варианту расчёта.</p>
+                    <p class="chart-note"><strong>На что обратить внимание при рефакторинге:</strong> ищите крупные красные прямоугольники и широкие модули, в которых таких классов много. Это означает, что значительная часть модуля сосредоточена в крупных классах с несколькими несвязанными группами методов. Для оценки крупными считаются 10% классов с наибольшим LOC в проекте.</p>
+                </div>
+                <div class="gradient-legend" aria-label="Шкала недостатка связности методов">
+                    <strong>Цвет прямоугольника: LCOM4</strong>
+                    <div class="gradient-bar"></div>
+                    <div class="gradient-scale"><span>0–1 — низкий</span><span><span id="treemap-lcom-max">max</span> — высокий</span></div>
+                </div>
+            </div>
+            <div class="quality-assessment" id="treemap-assessment"></div>
+            <div class="chart-frame"><svg id="treemap-chart" role="img" aria-label="Карта классов и модулей"></svg></div>
+            <h3 class="ranking-title">Модули с крупными несвязными классами</h3>
+            <ol class="ranking" id="treemap-ranking" aria-label="Модули с крупными несвязными классами"></ol>
+        </section>
+
+        <section class="chart-card wide" id="modules-matrix">
+            <div class="chart-header">
+                <div>
+                    <h2>Матрица зависимостей модулей</h2>
+                    <p class="chart-note">Каждая ячейка показывает направленную связь между модулями: модуль в строке использует модуль в столбце. Число — количество уникальных статических PHP-связей «класс → класс»; чем насыщеннее цвет, тем больше связей. Красная рамка означает, что связь входит в циклическую зависимость.</p>
+                    <p class="chart-note"><strong>На что обратить внимание при рефакторинге:</strong> сначала проверяйте ячейки с красной рамкой и большим числом — через них одновременно проходит много связей и замыкается цикл. Затем проверяйте самые насыщенные ячейки без рамки: большое количество связей может означать слишком широкий контракт между двумя модулями. Конкретные пары классов для первых десяти связей перечислены под матрицей.</p>
+                </div>
+                <div class="gradient-legend" aria-label="Шкала количества зависимостей между модулями">
+                    <strong>Цвет ячейки: количество зависимостей</strong>
+                    <div class="gradient-bar"></div>
+                    <div class="gradient-scale"><span>0</span><span id="matrix-dependency-max">max</span></div>
+                    <span class="matrix-cycle-key"><i></i>красная рамка — цикл</span>
+                </div>
+            </div>
+            <div class="quality-assessment" id="matrix-assessment"></div>
+            <div class="chart-frame matrix-frame"><svg id="matrix-chart" role="img" aria-label="Матрица зависимостей модулей"></svg></div>
+            <h3 class="ranking-title">Связи модулей для проверки</h3>
+            <ol class="ranking" id="matrix-ranking" aria-label="Связи модулей для проверки"></ol>
+        </section>
+    </div>
+</main>
+
+<div class="tooltip" id="tooltip" hidden></div>
+<script type="application/json" id="dashboard-data">__METRICS_DASHBOARD_DATA__</script>
+<script>
+(() => {
+    'use strict';
+
+    const data = JSON.parse(document.getElementById('dashboard-data').textContent);
+    const namespace = 'http://www.w3.org/2000/svg';
+    const integer = new Intl.NumberFormat('ru-RU', {maximumFractionDigits: 0});
+    const decimal = new Intl.NumberFormat('ru-RU', {maximumFractionDigits: 2});
+    const percent = new Intl.NumberFormat('ru-RU', {style: 'percent', maximumFractionDigits: 1});
+
+    const number = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+    const formatInteger = value => integer.format(number(value));
+    const formatDecimal = value => value === null || value === undefined ? 'нет данных' : decimal.format(number(value));
+    const formatPercent = value => value === null || value === undefined ? 'нет данных' : percent.format(number(value));
+    const percentile = (values, ratio) => {
+        const sorted = values.map(value => number(value)).sort((left, right) => left - right);
+        if (sorted.length === 0) return null;
+        const index = (sorted.length - 1) * ratio;
+        const lower = Math.floor(index);
+        const upper = Math.ceil(index);
+        return sorted[lower] + (sorted[upper] - sorted[lower]) * (index - lower);
+    };
+    const median = values => percentile(values, 0.5) ?? 0;
+    const maximum = (values, fallback = 1) => Math.max(fallback, ...values.map(value => number(value)));
+    const scale = (value, domainMax, rangeMin, rangeMax) => {
+        if (domainMax <= 0) return rangeMin;
+        return rangeMin + Math.max(0, Math.min(1, number(value) / domainMax)) * (rangeMax - rangeMin);
+    };
+    const heatColor = (value, max, saturation = 78) => {
+        const ratio = max <= 0 ? 0 : Math.max(0, Math.min(1, number(value) / max));
+        return `hsl(${166 - ratio * 166} ${saturation}% ${55 + ratio * 7}%)`;
+    };
+    const svgElement = (name, attributes = {}, content = null) => {
+        const node = document.createElementNS(namespace, name);
+        Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, String(value)));
+        if (content !== null) node.textContent = String(content);
+        return node;
+    };
+    const addTooltip = (node, lines) => {
+        node.dataset.tooltip = lines.join('\n');
+        node.setAttribute('tabindex', '0');
+        return node;
+    };
+    const emptyChart = (svg, text, width, height) => {
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        svg.append(svgElement('text', {x: width / 2, y: height / 2, 'text-anchor': 'middle', class: 'empty-label'}, text));
+    };
+    const setAssessment = (id, tone, title, details) => {
+        const assessment = document.getElementById(id);
+        assessment.className = `quality-assessment ${tone}`;
+        const heading = document.createElement('strong');
+        heading.textContent = title;
+        const text = document.createElement('span');
+        text.textContent = details.join(' ');
+        assessment.replaceChildren(heading, text);
+    };
+    const appendAxes = (svg, options) => {
+        const {width, height, margin, xMax, yMax, xLabel, yLabel, yPercent = false} = options;
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
+        for (let index = 0; index <= 5; index++) {
+            const x = margin.left + chartWidth * index / 5;
+            const y = margin.top + chartHeight * index / 5;
+            svg.append(svgElement('line', {x1: x, y1: margin.top, x2: x, y2: height - margin.bottom, class: 'grid-line'}));
+            svg.append(svgElement('line', {x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: 'grid-line'}));
+            svg.append(svgElement('text', {x, y: height - margin.bottom + 18, 'text-anchor': 'middle', class: 'tick-label'}, formatInteger(xMax * index / 5)));
+            const yValue = yMax * (5 - index) / 5;
+            svg.append(svgElement('text', {x: margin.left - 9, y: y + 4, 'text-anchor': 'end', class: 'tick-label'}, yPercent ? formatPercent(yValue) : formatDecimal(yValue)));
+        }
+        svg.append(svgElement('line', {x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: 'axis'}));
+        svg.append(svgElement('line', {x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: 'axis'}));
+        svg.append(svgElement('text', {x: margin.left + chartWidth / 2, y: height - 8, 'text-anchor': 'middle', class: 'axis-label'}, xLabel));
+        svg.append(svgElement('text', {x: 15, y: margin.top + chartHeight / 2, transform: `rotate(-90 15 ${margin.top + chartHeight / 2})`, 'text-anchor': 'middle', class: 'axis-label'}, yLabel));
+    };
+
+    const renderSummary = () => {
+        const project = data.project || {};
+        document.getElementById('summary-modules').textContent = formatInteger(data.modules.length);
+        document.getElementById('summary-classes').textContent = formatInteger(data.classes.length);
+        document.getElementById('summary-loc').textContent = formatInteger(project.loc ?? data.classes.reduce((sum, item) => sum + number(item.loc), 0));
+        const languages = Object.values(data.codebase?.languages || {});
+        const projectLines = languages.length === 0 ? null : languages.reduce((sum, language) => sum + number(language.lines), 0);
+        document.getElementById('summary-project-lines').textContent = projectLines === null ? 'нет данных' : formatInteger(projectLines);
+        document.getElementById('summary-cycles').textContent = formatInteger(data.modules.filter(module => module.cycles > 0).length);
+        const generated = data.report?.generated_at ? new Date(data.report.generated_at).toLocaleString('ru-RU') : 'не указано';
+        const commit = data.report?.commit ? String(data.report.commit).slice(0, 12) : 'не указан';
+        document.getElementById('report-meta').textContent = `Отчёт: ${generated}\nCommit: ${commit}`;
+    };
+
+    const renderBubbleChart = () => {
+        const svg = document.getElementById('bubble-chart');
+        const width = 960;
+        const height = 460;
+        const margin = {top: 24, right: 30, bottom: 56, left: 72};
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        if (data.modules.length === 0) {
+            emptyChart(svg, 'Нет данных о модулях', width, height);
+            return;
+        }
+        const xMax = maximum(data.modules.map(module => module.loc));
+        const yMax = Math.max(1, maximum(data.modules.map(module => module.external_dependency_share), 0));
+        const churnMax = maximum(data.modules.map(module => module.churn), 0);
+        const cyclesMax = maximum(data.modules.map(module => module.cycles), 0);
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
+        const xPosition = value => margin.left + scale(value, xMax, 0, chartWidth);
+        const yPosition = value => height - margin.bottom - scale(value, yMax, 0, chartHeight);
+        const xRisk = median(data.modules.map(module => module.loc));
+        const yRisk = median(data.modules.map(module => module.external_dependency_share));
+        const churnValues = data.modules.filter(module => module.churn !== null).map(module => module.churn);
+        const highChurn = percentile(churnValues, 0.75);
+        const assessedModules = data.modules.map(module => {
+            const signs = [
+                module.loc >= xRisk,
+                module.external_dependency_share >= yRisk,
+                module.cycles > 0,
+                highChurn !== null && module.churn !== null && module.churn >= highChurn,
+            ].filter(Boolean).length;
+            return {...module, signs};
+        });
+        const cyclicModules = assessedModules.filter(module => module.cycles > 0);
+        const refactoringCandidates = assessedModules
+            .filter(module => module.signs >= 3)
+            .sort((left, right) => right.signs - left.signs
+                || number(right.churn) - number(left.churn)
+                || number(right.loc) - number(left.loc));
+        const cyclicShare = cyclicModules.length / data.modules.length;
+        const highRisk = cyclicShare >= 0.25 || refactoringCandidates.length >= Math.max(3, Math.ceil(data.modules.length * 0.1));
+        const needsAttention = cyclicModules.length > 0 || refactoringCandidates.length > 0;
+        const details = [
+            `${formatInteger(cyclicModules.length)} из ${formatInteger(data.modules.length)} модулей (${formatPercent(cyclicShare)}) входят в циклические зависимости.`,
+            `${formatInteger(refactoringCandidates.length)} модулей совмещают не менее трёх признаков: LOC в верхней половине, доля связей с другими модулями в верхней половине, участие в цикле, частота изменений в верхней четверти.`,
+        ];
+        if (refactoringCandidates.length > 0) details.push('Причины и конкретные классы для начала работы перечислены под графиком.');
+        setAssessment(
+            'module-assessment',
+            highRisk ? 'high' : (needsAttention ? 'attention' : 'good'),
+            `Оценка качества границ модулей: ${highRisk ? 'низкая' : (needsAttention ? 'требует внимания' : 'хорошая')}`,
+            details,
+        );
+        svg.append(svgElement('rect', {
+            x: xPosition(xRisk),
+            y: yPosition(yMax),
+            width: width - margin.right - xPosition(xRisk),
+            height: yPosition(yRisk) - yPosition(yMax),
+            class: 'risk-zone',
+        }));
+        appendAxes(svg, {width, height, margin, xMax, yMax, xLabel: 'Строки кода внутри классов модуля (LOC)', yLabel: 'Доля связей с другими модулями', yPercent: true});
+        [...data.modules]
+            .sort((left, right) => number(right.loc) - number(left.loc))
+            .forEach(module => {
+                const radius = churnMax > 0 ? 7 + Math.sqrt(number(module.churn) / churnMax) * 22 : 11;
+                const x = xPosition(module.loc);
+                const y = yPosition(module.external_dependency_share);
+                const circle = svgElement('circle', {
+                    cx: x,
+                    cy: y,
+                    r: radius,
+                    fill: heatColor(module.cycles, cyclesMax),
+                    'fill-opacity': 0.82,
+                    stroke: module.cycles > 0 ? '#ffd1d6' : '#b9fff2',
+                    'stroke-width': module.cycles > 0 ? 2 : 1,
+                });
+                addTooltip(circle, [
+                    module.id,
+                    `LOC: ${formatInteger(module.loc)} · классы: ${formatInteger(module.class_count)}`,
+                    `Доля связей с другими модулями: ${formatPercent(module.external_dependency_share)}`,
+                    `Доля связей внутри модуля: ${formatPercent(module.cohesion)}`,
+                    `Связей с классами других модулей: ${formatInteger(module.outgoing_dependencies)}`,
+                    `Изменчивость, коммитов: ${module.churn === null ? 'нет данных' : formatInteger(module.churn)}`,
+                    `Циклических групп: ${formatInteger(module.cycles)}`,
+                ]);
+                svg.append(circle);
+                if (radius >= 11 || data.modules.length < 18) {
+                    svg.append(svgElement('text', {x, y: y - radius - 5, 'text-anchor': 'middle', class: 'mark-label'}, module.id));
+                }
+            });
+
+        const ranking = document.getElementById('module-ranking');
+        refactoringCandidates
+            .slice(0, 10)
+            .forEach((module, index) => {
+                const item = document.createElement('li');
+                const name = document.createElement('strong');
+                name.textContent = `${index + 1}. ${module.id}`;
+                const reasons = [];
+                if (module.cycles > 0) reasons.push('входит в циклическую зависимость');
+                if (module.loc >= xRisk) reasons.push('LOC в верхней половине');
+                if (module.external_dependency_share >= yRisk) reasons.push('доля связей с другими модулями в верхней половине');
+                if (highChurn !== null && module.churn !== null && module.churn >= highChurn) reasons.push('частота изменений в верхней четверти');
+                const reason = document.createElement('span');
+                reason.textContent = `Причины: ${reasons.join('; ')}.`;
+                const moduleClasses = data.classes.filter(item => item.module === module.id);
+                const largestClass = [...moduleClasses].sort((left, right) => number(right.loc) - number(left.loc))[0];
+                const changingClass = moduleClasses
+                    .filter(item => item.churn !== null)
+                    .sort((left, right) => number(right.churn) - number(left.churn))[0];
+                const places = [];
+                if (largestClass) places.push(`крупнейший — ${largestClass.id} (${formatInteger(largestClass.loc)} LOC)`);
+                if (changingClass && changingClass.id !== largestClass?.id) places.push(`чаще меняется — ${changingClass.id} (${formatInteger(changingClass.churn)} коммитов)`);
+                const place = document.createElement('span');
+                place.append(document.createTextNode('Смотреть классы: '));
+                const code = document.createElement('code');
+                code.textContent = places.join('; ');
+                place.append(code, document.createTextNode('.'));
+                item.append(name, reason, document.createElement('br'), place);
+                ranking.append(item);
+            });
+    };
+
+    const renderCycleExamples = () => {
+        const list = document.getElementById('cycle-example-list');
+        const examples = Array.isArray(data.cycle_examples) ? data.cycle_examples : [];
+        if (examples.length === 0) {
+            const item = document.createElement('li');
+            item.textContent = 'Замкнутые цепочки классов не найдены.';
+            list.append(item);
+            return;
+        }
+        examples.forEach(example => {
+            const item = document.createElement('li');
+            const code = document.createElement('code');
+            code.textContent = example.classes.join('\n→ ');
+            const meta = document.createElement('small');
+            const churn = example.churn === null ? 'нет данных об изменениях' : `${formatInteger(example.churn)} коммитов`;
+            meta.textContent = `${formatInteger(example.edge_count)} зависимостей · ${formatInteger(example.loc)} LOC · ${churn}`;
+            item.append(code, meta);
+            list.append(item);
+        });
+    };
+
+    const renderScatterChart = () => {
+        const svg = document.getElementById('scatter-chart');
+        const width = 760;
+        const height = 500;
+        const margin = {top: 24, right: 24, bottom: 58, left: 68};
+        const allClasses = [...data.classes];
+        const classes = [...allClasses].sort((left, right) => number(right.loc) - number(left.loc)).slice(0, 600);
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        if (classes.length === 0) {
+            setAssessment('class-assessment', 'good', 'Оценка качества классов: нет данных', ['В отчёте нет классов для оценки.']);
+            emptyChart(svg, 'Нет данных о классах', width, height);
+            return;
+        }
+        const locRisk = percentile(allClasses.map(item => item.loc), 0.9) ?? 0;
+        const ceRisk = Math.max(1, percentile(allClasses.map(item => item.cbo), 0.9) ?? 0);
+        const churnValues = allClasses.filter(item => item.churn !== null).map(item => item.churn);
+        const churnRisk = percentile(churnValues, 0.9);
+        const assessedClasses = allClasses.map(item => {
+            const signs = [
+                item.loc >= locRisk,
+                item.lcom > 1,
+                item.cbo >= ceRisk,
+                item.cc >= 10,
+                churnRisk !== null && churnRisk > 0 && item.churn !== null && item.churn >= churnRisk,
+            ].filter(Boolean).length;
+            return {...item, signs};
+        });
+        const refactoringCandidates = assessedClasses
+            .filter(item => item.signs >= 4)
+            .sort((left, right) => right.signs - left.signs
+                || number(right.cc) - number(left.cc)
+                || number(right.churn) - number(left.churn)
+                || number(right.loc) - number(left.loc)
+                || left.id.localeCompare(right.id));
+        const criticalClasses = refactoringCandidates.filter(item => item.signs === 5);
+        const highRisk = criticalClasses.length >= 3
+            || refactoringCandidates.length >= Math.max(3, Math.ceil(allClasses.length * 0.02));
+        const needsAttention = refactoringCandidates.length > 0;
+        setAssessment(
+            'class-assessment',
+            highRisk ? 'high' : (needsAttention ? 'attention' : 'good'),
+            `Оценка качества классов: ${highRisk ? 'низкая' : (needsAttention ? 'требует внимания' : 'хорошая')}`,
+            [
+                `${formatInteger(refactoringCandidates.length)} из ${formatInteger(allClasses.length)} классов совмещают не менее четырёх признаков риска.`,
+                `${formatInteger(criticalClasses.length)} классов совмещают все пять: LOC, Ce и частота изменений входят в 10% наибольших значений проекта, LCOM4 больше 1 и max CC не меньше 10.`,
+                'Причины и файлы первых кандидатов перечислены под графиком.',
+            ],
+        );
+        const xMax = maximum(classes.map(item => item.loc));
+        const yMax = maximum(classes.map(item => item.lcom));
+        const cboMax = maximum(classes.map(item => item.cbo), 0);
+        const ccMax = maximum(classes.map(item => item.cc), 0);
+        document.getElementById('scatter-cc-max').textContent = formatInteger(ccMax);
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
+        const xPosition = value => margin.left + scale(value, xMax, 0, chartWidth);
+        const yPosition = value => height - margin.bottom - scale(value, yMax, 0, chartHeight);
+        if (yMax >= 2) {
+            svg.append(svgElement('rect', {
+                x: xPosition(locRisk),
+                y: yPosition(yMax),
+                width: width - margin.right - xPosition(locRisk),
+                height: yPosition(2) - yPosition(yMax),
+                class: 'risk-zone',
+            }));
+        }
+        appendAxes(svg, {width, height, margin, xMax, yMax, xLabel: 'Строки кода класса (LOC)', yLabel: 'Количество несвязанных групп методов (LCOM4)'});
+        classes
+            .sort((left, right) => number(right.cbo) - number(left.cbo))
+            .forEach(item => {
+                const x = xPosition(item.loc);
+                const y = yPosition(item.lcom);
+                const radius = cboMax > 0 ? 3.5 + Math.sqrt(number(item.cbo) / cboMax) * 10 : 4.5;
+                const circle = svgElement('circle', {
+                    cx: x,
+                    cy: y,
+                    r: radius,
+                    fill: heatColor(item.cc, ccMax, 82),
+                    'fill-opacity': 0.72,
+                    stroke: '#dce9f7',
+                    'stroke-opacity': 0.46,
+                });
+                addTooltip(circle, [
+                    item.id,
+                    `Модуль: ${item.module}`,
+                    `LOC: ${formatInteger(item.loc)} · LCOM4: ${formatInteger(item.lcom)}`,
+                    `Нормализованный LCOM4: ${formatDecimal(item.lcom_normalized)}`,
+                    `Ce: ${formatInteger(item.cbo)} · max CC: ${formatInteger(item.cc)}`,
+                    item.file,
+                ]);
+                svg.append(circle);
+            });
+
+        const ranking = document.getElementById('class-ranking');
+        refactoringCandidates.slice(0, 10).forEach((item, index) => {
+            const row = document.createElement('li');
+            const name = document.createElement('strong');
+            name.textContent = `${index + 1}. ${item.id}`;
+            const reasons = [];
+            if (item.loc >= locRisk) reasons.push(`LOC ${formatInteger(item.loc)} — среди 10% наибольших`);
+            if (item.lcom > 1) reasons.push(`LCOM4: ${formatInteger(item.lcom)}`);
+            if (item.cbo >= ceRisk) reasons.push(`Ce ${formatInteger(item.cbo)} — среди 10% наибольших`);
+            if (item.cc >= 10) reasons.push(`max CC: ${formatInteger(item.cc)}`);
+            if (churnRisk !== null && churnRisk > 0 && item.churn !== null && item.churn >= churnRisk) reasons.push(`${formatInteger(item.churn)} коммитов — среди 10% наибольших`);
+            const reason = document.createElement('span');
+            reason.textContent = `Причины: ${reasons.join('; ')}.`;
+            const place = document.createElement('span');
+            place.append(document.createTextNode('Смотреть файл: '));
+            const file = document.createElement('code');
+            file.textContent = item.file;
+            place.append(file, document.createTextNode('.'));
+            row.append(name, reason, document.createElement('br'), place);
+            ranking.append(row);
+        });
+    };
+
+    const renderTreemap = () => {
+        const svg = document.getElementById('treemap-chart');
+        const width = 760;
+        const height = 500;
+        const headerHeight = 25;
+        const gap = 3;
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        if (data.classes.length === 0) {
+            emptyChart(svg, 'Нет данных о классах', width, height);
+            return;
+        }
+        const classesByModule = new Map();
+        data.classes.forEach(item => {
+            if (!classesByModule.has(item.module)) classesByModule.set(item.module, []);
+            classesByModule.get(item.module).push(item);
+        });
+        const classLocRisk = percentile(data.classes.map(item => item.loc), 0.9) ?? 0;
+        const moduleGroups = [...classesByModule.entries()]
+            .map(([id, classes]) => {
+                const loc = classes.reduce((sum, item) => sum + Math.max(1, number(item.loc)), 0);
+                const problemClasses = classes.filter(item => item.loc >= classLocRisk && item.lcom > 1);
+                const problemLoc = problemClasses.reduce((sum, item) => sum + number(item.loc), 0);
+                return {id, classes, loc, problemClasses, problemLoc, problemShare: problemLoc / loc};
+            })
+            .sort((left, right) => right.loc - left.loc);
+        const totalLoc = moduleGroups.reduce((sum, module) => sum + module.loc, 0);
+        const affectedModules = moduleGroups
+            .filter(module => module.problemClasses.length > 0)
+            .sort((left, right) => right.problemLoc - left.problemLoc
+                || right.problemClasses.length - left.problemClasses.length
+                || right.loc - left.loc);
+        const problemClasses = affectedModules.flatMap(module => module.problemClasses);
+        const problemLoc = affectedModules.reduce((sum, module) => sum + module.problemLoc, 0);
+        const affectedShare = affectedModules.length / moduleGroups.length;
+        const problemLocShare = problemLoc / totalLoc;
+        const highRisk = affectedShare >= 0.25 || problemLocShare >= 0.1;
+        const needsAttention = affectedModules.length > 0;
+        setAssessment(
+            'treemap-assessment',
+            highRisk ? 'high' : (needsAttention ? 'attention' : 'good'),
+            `Оценка распределения классов по модулям: ${highRisk ? 'низкая' : (needsAttention ? 'требует внимания' : 'хорошая')}`,
+            [
+                `${formatInteger(problemClasses.length)} крупных классов с LCOM4 больше 1 занимают ${formatPercent(problemLocShare)} LOC анализируемых модулей.`,
+                `Такие классы есть в ${formatInteger(affectedModules.length)} из ${formatInteger(moduleGroups.length)} модулей (${formatPercent(affectedShare)}).`,
+                'Причины и конкретные классы первых модулей перечислены под картой.',
+            ],
+        );
+        const lcomMax = maximum(data.classes.map(item => item.lcom), 0);
+        document.getElementById('treemap-lcom-max').textContent = formatInteger(lcomMax);
+        let x = 0;
+        moduleGroups.forEach((module, moduleIndex) => {
+            const remaining = width - x;
+            const moduleWidth = moduleIndex === moduleGroups.length - 1
+                ? remaining
+                : Math.max(2, width * module.loc / totalLoc);
+            svg.append(svgElement('rect', {x: x + gap / 2, y: gap / 2, width: Math.max(0, moduleWidth - gap), height: headerHeight, fill: '#1b334c'}));
+            if (moduleWidth > 42) {
+                svg.append(svgElement('text', {x: x + 7, y: 18, class: 'mark-label'}, module.id));
+            }
+            const sorted = [...module.classes].sort((left, right) => number(right.loc) - number(left.loc));
+            const visible = sorted.slice(0, 80);
+            if (sorted.length > visible.length) {
+                const omitted = sorted.slice(visible.length);
+                visible.push({
+                    id: `Остальные классы (${omitted.length})`,
+                    name: `Остальные (${omitted.length})`,
+                    module: module.id,
+                    file: '',
+                    loc: omitted.reduce((sum, item) => sum + number(item.loc), 0),
+                    lcom: Math.max(...omitted.map(item => number(item.lcom))),
+                    lcom_normalized: null,
+                    cbo: omitted.reduce((sum, item) => sum + number(item.cbo), 0),
+                    cc: Math.max(...omitted.map(item => number(item.cc))),
+                });
+            }
+            const contentHeight = height - headerHeight - gap * 1.5;
+            const visibleLoc = visible.reduce((sum, item) => sum + Math.max(1, number(item.loc)), 0);
+            let y = headerHeight + gap;
+            visible.forEach((item, itemIndex) => {
+                const remainingHeight = height - gap / 2 - y;
+                const itemHeight = itemIndex === visible.length - 1
+                    ? remainingHeight
+                    : contentHeight * Math.max(1, number(item.loc)) / visibleLoc;
+                const rectangle = svgElement('rect', {
+                    x: x + gap / 2,
+                    y: y,
+                    width: Math.max(0, moduleWidth - gap),
+                    height: Math.max(0, itemHeight - 1),
+                    fill: heatColor(item.lcom, lcomMax, 70),
+                    'fill-opacity': 0.82,
+                    stroke: '#08111f',
+                });
+                addTooltip(rectangle, [
+                    item.id,
+                    `Модуль: ${module.id}`,
+                    `LOC: ${formatInteger(item.loc)} · LCOM4: ${formatInteger(item.lcom)}`,
+                    `Ce: ${formatInteger(item.cbo)} · max CC: ${formatInteger(item.cc)}`,
+                    item.file || '',
+                ]);
+                svg.append(rectangle);
+                if (moduleWidth > 72 && itemHeight > 18) {
+                    const label = item.name.length > 22 ? `${item.name.slice(0, 20)}…` : item.name;
+                    svg.append(svgElement('text', {x: x + 7, y: y + Math.min(15, itemHeight - 4), class: 'mark-label'}, label));
+                }
+                y += itemHeight;
+            });
+            x += moduleWidth;
+        });
+
+        const ranking = document.getElementById('treemap-ranking');
+        affectedModules.slice(0, 10).forEach((module, index) => {
+            const item = document.createElement('li');
+            const name = document.createElement('strong');
+            name.textContent = `${index + 1}. ${module.id}`;
+            const reason = document.createElement('span');
+            reason.textContent = `Причины: ${formatInteger(module.problemClasses.length)} крупных классов с LCOM4 больше 1; они занимают ${formatPercent(module.problemShare)} LOC модуля; общий LOC модуля — ${formatInteger(module.loc)}.`;
+            const classes = [...module.problemClasses]
+                .sort((left, right) => number(right.loc) - number(left.loc))
+                .slice(0, 2)
+                .map(problem => `${problem.id} (${formatInteger(problem.loc)} LOC, LCOM4: ${formatInteger(problem.lcom)})`);
+            const place = document.createElement('span');
+            place.append(document.createTextNode('Смотреть классы: '));
+            const code = document.createElement('code');
+            code.textContent = classes.join('; ');
+            place.append(code, document.createTextNode('.'));
+            item.append(name, reason, document.createElement('br'), place);
+            ranking.append(item);
+        });
+    };
+
+    const renderMatrix = () => {
+        const svg = document.getElementById('matrix-chart');
+        const modules = data.modules.map(module => module.id);
+        if (modules.length === 0) {
+            setAssessment('matrix-assessment', 'good', 'Оценка структуры зависимостей модулей: нет данных', ['В отчёте нет модулей для оценки.']);
+            emptyChart(svg, 'Нет данных о модулях', 960, 360);
+            return;
+        }
+        const dependencies = Array.isArray(data.dependencies) ? data.dependencies : [];
+        const totalDependencies = dependencies.reduce((sum, dependency) => sum + number(dependency.count), 0);
+        const cyclicRelations = dependencies.filter(dependency => dependency.cycle);
+        const cyclicDependencies = cyclicRelations.reduce((sum, dependency) => sum + number(dependency.count), 0);
+        const cyclicRelationShare = dependencies.length === 0 ? 0 : cyclicRelations.length / dependencies.length;
+        const cyclicDependencyShare = totalDependencies === 0 ? 0 : cyclicDependencies / totalDependencies;
+        const highRisk = cyclicRelations.length >= Math.max(3, Math.ceil(dependencies.length * 0.1));
+        const needsAttention = cyclicRelations.length > 0;
+        const maxCount = maximum(dependencies.map(dependency => dependency.count), 0);
+        const denseThreshold = percentile(dependencies.map(dependency => dependency.count), 0.9) ?? 0;
+        const candidates = [...dependencies]
+            .sort((left, right) => Number(Boolean(right.cycle)) - Number(Boolean(left.cycle))
+                || number(right.count) - number(left.count)
+                || left.source.localeCompare(right.source)
+                || left.target.localeCompare(right.target));
+        document.getElementById('matrix-dependency-max').textContent = formatInteger(maxCount);
+        const assessmentDetails = [
+            `${formatInteger(cyclicRelations.length)} из ${formatInteger(dependencies.length)} направленных связей между модулями (${formatPercent(cyclicRelationShare)}) входят в циклические зависимости.`,
+            `По ним проходят ${formatInteger(cyclicDependencies)} из ${formatInteger(totalDependencies)} связей между классами (${formatPercent(cyclicDependencyShare)}).`,
+        ];
+        if (candidates.length > 0) assessmentDetails.push('Причины и конкретные пары классов для первых десяти связей перечислены под матрицей.');
+        setAssessment(
+            'matrix-assessment',
+            highRisk ? 'high' : (needsAttention ? 'attention' : 'good'),
+            `Оценка структуры зависимостей модулей: ${highRisk ? 'низкая' : (needsAttention ? 'требует внимания' : 'хорошая')}`,
+            assessmentDetails,
+        );
+        const cellSize = Math.max(16, Math.min(38, Math.floor(680 / modules.length)));
+        const left = 145;
+        const top = 145;
+        const size = modules.length * cellSize;
+        const width = left + size + 34;
+        const height = top + size + 48;
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        svg.style.width = `${Math.max(900, width)}px`;
+        const dependencyMap = new Map(dependencies.map(item => [`${item.source}\u0000${item.target}`, item]));
+        modules.forEach((module, index) => {
+            const coordinate = index * cellSize;
+            svg.append(svgElement('text', {x: left - 8, y: top + coordinate + cellSize * 0.68, 'text-anchor': 'end', class: 'tick-label'}, module));
+            svg.append(svgElement('text', {
+                x: left + coordinate + cellSize * 0.64,
+                y: top - 9,
+                transform: `rotate(-45 ${left + coordinate + cellSize * 0.64} ${top - 9})`,
+                'text-anchor': 'start',
+                class: 'tick-label',
+            }, module));
+            modules.forEach((target, targetIndex) => {
+                const dependency = dependencyMap.get(`${module}\u0000${target}`);
+                const count = dependency ? number(dependency.count) : 0;
+                const diagonal = index === targetIndex;
+                const rectangle = svgElement('rect', {
+                    x: left + targetIndex * cellSize,
+                    y: top + coordinate,
+                    width: cellSize - 1,
+                    height: cellSize - 1,
+                    fill: diagonal ? '#26394e' : count > 0 ? heatColor(count, maxCount, 70) : '#0c1929',
+                    'fill-opacity': count > 0 ? 0.86 : 0.62,
+                    stroke: dependency?.cycle ? '#ff6878' : '#263b56',
+                    'stroke-width': dependency?.cycle ? 2.5 : 0.7,
+                });
+                addTooltip(rectangle, [
+                    `${module} → ${target}`,
+                    diagonal ? 'Тот же модуль' : `Зависимости: ${formatInteger(count)}`,
+                    dependency?.cycle ? 'Ребро входит в цикл' : 'Цикл не обнаружен',
+                ]);
+                svg.append(rectangle);
+                if (count > 0 && cellSize >= 24) {
+                    svg.append(svgElement('text', {
+                        x: left + targetIndex * cellSize + cellSize / 2,
+                        y: top + coordinate + cellSize / 2 + 4,
+                        'text-anchor': 'middle',
+                        class: 'mark-label',
+                    }, count));
+                }
+            });
+        });
+        svg.append(svgElement('text', {x: left + size / 2, y: height - 8, 'text-anchor': 'middle', class: 'axis-label'}, 'Получатель зависимости'));
+        svg.append(svgElement('text', {x: 15, y: top + size / 2, transform: `rotate(-90 15 ${top + size / 2})`, 'text-anchor': 'middle', class: 'axis-label'}, 'Источник зависимости'));
+
+        const ranking = document.getElementById('matrix-ranking');
+        if (candidates.length === 0) {
+            const item = document.createElement('li');
+            item.textContent = 'Статические зависимости между анализируемыми модулями не найдены.';
+            ranking.append(item);
+            return;
+        }
+        candidates.slice(0, 10).forEach((dependency, index) => {
+            const item = document.createElement('li');
+            const name = document.createElement('strong');
+            name.textContent = `${index + 1}. ${dependency.source} → ${dependency.target}`;
+            const reasons = [];
+            if (dependency.cycle) reasons.push('связь входит в циклическую зависимость');
+            if (number(dependency.count) >= denseThreshold) {
+                reasons.push(`${formatInteger(dependency.count)} связей между классами — среди 10% наиболее плотных`);
+            } else {
+                reasons.push(`${formatInteger(dependency.count)} связей между классами`);
+            }
+            const reason = document.createElement('span');
+            reason.textContent = `Причины: ${reasons.join('; ')}.`;
+            const examples = Array.isArray(dependency.examples) ? dependency.examples : [];
+            item.append(name, reason);
+            if (examples.length > 0) {
+                const place = document.createElement('span');
+                place.append(document.createTextNode('Смотреть связи: '));
+                const code = document.createElement('code');
+                code.textContent = examples.map(example => `${example.source} → ${example.target}`).join('; ');
+                place.append(code, document.createTextNode('.'));
+                item.append(document.createElement('br'), place);
+            }
+            ranking.append(item);
+        });
+    };
+
+    const setupTooltips = () => {
+        const tooltip = document.getElementById('tooltip');
+        let active = null;
+        const show = (node, event = null) => {
+            active = node;
+            tooltip.textContent = node.dataset.tooltip;
+            tooltip.hidden = false;
+            if (event) move(event);
+        };
+        const move = event => {
+            if (!active) return;
+            const left = Math.min(window.innerWidth - tooltip.offsetWidth - 12, event.clientX + 14);
+            const top = Math.min(window.innerHeight - tooltip.offsetHeight - 12, event.clientY + 14);
+            tooltip.style.left = `${Math.max(8, left)}px`;
+            tooltip.style.top = `${Math.max(8, top)}px`;
+        };
+        const hide = () => {
+            active = null;
+            tooltip.hidden = true;
+        };
+        document.addEventListener('pointerover', event => {
+            const node = event.target.closest?.('[data-tooltip]');
+            if (node) show(node, event);
+        });
+        document.addEventListener('pointermove', move);
+        document.addEventListener('pointerout', event => {
+            if (active && !event.relatedTarget?.closest?.('[data-tooltip]')) hide();
+        });
+        document.addEventListener('focusin', event => {
+            const node = event.target.closest?.('[data-tooltip]');
+            if (node) show(node);
+        });
+        document.addEventListener('focusout', hide);
+    };
+
+    renderSummary();
+    renderBubbleChart();
+    renderCycleExamples();
+    renderScatterChart();
+    renderTreemap();
+    renderMatrix();
+    setupTooltips();
+})();
+</script>
+</body>
+</html>

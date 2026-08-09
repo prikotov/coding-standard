@@ -7,10 +7,10 @@ priority: P3
 depends_on:
 epic: EPIC-metrics-ai-maintainability
 author: pi
-assignee:
-branch:
-pr:
-status: todo
+assignee: Разработчик (codex)
+branch: task/metrics-html-dashboard
+pr: https://github.com/prikotov/coding-standard/pull/93
+status: review
 ---
 
 # TASK-metrics-html-dashboard: Статический HTML-дашборд метрик
@@ -57,17 +57,17 @@ status: todo
 
 ### 🔴 Must Have (Обязательно)
 
-- [ ] Генератор index.html из report.json (данные встроены — file:// без fetch).
-- [ ] Bubble chart модулей: X=размер (LOC или классы), Y=доля внешних зависимостей, размер пузыря=churn, цвет=число циклов (или cohesion — по модели TASK-metrics-model-convention).
-- [ ] Scatter классов: X=LOC, Y=LCOM, размер=CBO/Ce, цвет=CC.
-- [ ] Treemap: модуль → класс, площадь=LOC, цвет=LCOM или churn.
-- [ ] Матрица зависимостей модулей (строки=источники, столбцы=получатели; подсветка циклов).
-- [ ] Открывается из file:// без консольных ошибок.
+- [x] Генератор index.html из report.json (данные встроены — file:// без fetch).
+- [x] Bubble chart модулей: X=размер (LOC или классы), Y=доля внешних зависимостей, размер пузыря=churn, цвет=число циклов (или cohesion — по модели TASK-metrics-model-convention).
+- [x] Scatter классов: X=LOC, Y=LCOM, размер=CBO/Ce, цвет=CC.
+- [x] Treemap: модуль → класс, площадь=LOC, цвет=LCOM или churn.
+- [x] Матрица зависимостей модулей (строки=источники, столбцы=получатели; подсветка циклов).
+- [x] Открывается из file:// без консольных ошибок.
 
 ### 🟡 Should Have (Желательно)
 
-- [ ] Подписи, легенды, тултипы; ранжирование модулей по метрикам.
-- [ ] Подсветка «правого верхнего угла» (крупные и сильно связанные модули).
+- [x] Подписи, легенды, тултипы; ранжирование модулей по метрикам.
+- [x] Подсветка «правого верхнего угла» (крупные и сильно связанные модули).
 
 ### ⚫ Won't Have (Не будем делать)
 
@@ -77,13 +77,15 @@ status: todo
 
 ## 4. Implementation Plan (План реализации)
 
-*Заполняется исполнителем перед стартом.*
+- [x] Реализовать генератор, который валидирует корневой отчёт и рекурсивно собирает данные модулей, классов и связей из зеркала `var/metrics/`.
+- [x] Сформировать автономный HTML с встроенными данными и четырьмя визуализациями на vanilla JS/SVG, легендами и тултипами.
+- [x] Покрыть загрузку отчётов и генерацию HTML PHPUnit-тестами; проверить CLI на реальных метриках пакета и выполнить `composer check`.
 
 ## 5. Definition of Done (Критерии приёмки)
 
-- [ ] bin/metrics-dashboard.php генерирует index.html из реального report.json пакета.
-- [ ] Все 4 чарта отображаются при открытии file:// (проверено в браузере).
-- [ ] `composer validate-todo` проходит; `composer test` не сломан.
+- [x] bin/metrics-dashboard.php генерирует index.html из реального report.json пакета.
+- [x] Все 4 чарта отображаются при открытии file:// (проверено в браузере).
+- [x] `composer validate-todo` проходит; `composer test` не сломан.
 
 ## 6. Verification (Самопроверка)
 
@@ -107,6 +109,8 @@ php bin/metrics-dashboard.php --input=var/metrics/report.json --output=var/metri
 ## 9. Comments (Комментарии)
 
 - Дашборд — для людей; ИИ-агенты читают report.json (TASK-metrics-aggregator). Поэтому задача помечена P3: не блокирует ценность эпика для агентов.
+- Генератор следует ссылкам `children` в зеркале отчётов: модульные агрегаты берёт из каталогов, классы и связи — из файловых отчётов.
+- На реальном отчёте пакета отрисованы 6 модулей, 39 классов и 4 межмодульные зависимости; автономный файл проверен в Google Chrome без ошибок консоли.
 
 ## `Change History` (История изменений)
 
@@ -114,3 +118,7 @@ php bin/metrics-dashboard.php --input=var/metrics/report.json --output=var/metri
 | :--- | :--- | :--- |
 | 2026-08-02 | pi (Pi Coding Agent) | Создание задачи. |
 | 2026-08-08 | Codex | Выполненная TASK-metrics-aggregator удалена из depends_on. |
+| 2026-08-09 | Codex | Задача взята в работу: создана ветка `task/metrics-html-dashboard`, добавлен план реализации. |
+| 2026-08-09 | Codex | Реализованы и проверены генератор, четыре SVG-визуализации и PHPUnit-тесты. |
+| 2026-08-09 | Codex | Создан черновик PR #93; задача переведена в review. |
+| 2026-08-09 | Codex | По обратной связи добавлена справка по смыслу и интерпретации метрик. |
