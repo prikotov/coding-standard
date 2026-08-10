@@ -74,7 +74,7 @@ pr:
 - [x] Модель метрик (class-level + module-level, определение модуля, интерпретация для агентов) в docs/conventions/ (TASK-metrics-model-convention).
 - [x] Границы модулей проекта и JSON-вывод зависимостей через Deptrac (TASK-metrics-module-boundaries-deptrac).
 - [x] Агрегатор: единый var/metrics/report.json по модели (TASK-metrics-aggregator).
-- [ ] `composer metrics` + документация запуска и чтения отчёта (README, AGENTS.md) (TASK-metrics-composer-integration).
+- [x] `composer metrics` + документация запуска и чтения отчёта (README и конвенция метрик) (TASK-metrics-composer-integration).
 - [ ] Канонические JSON `.coding-standard/metrics/` хранятся в Git и автоматически проверяются на актуальность (TASK-metrics-tracked-snapshot).
 - [ ] Детерминированное сравнение совместимых снимков с машиночитаемым отчётом об изменениях (TASK-metrics-report-diff).
 - [ ] Сценарий код-ревью ИИ-агентом: базовая ветка, текущие правки, артефакт PR и правило реакции на регрессию (TASK-metrics-pr-review-workflow).
@@ -130,7 +130,7 @@ flowchart LR
 - [x] [TASK-metrics-aggregator](done/TASK-metrics-aggregator.todo.md) — агрегатор и report.json
 - [x] [TASK-metrics-codebase-size](done/TASK-metrics-codebase-size.todo.md) — размер кодовой базы (scc), статистика тестов, покрытие
 - [x] [TASK-metrics-html-dashboard](done/TASK-metrics-html-dashboard.todo.md) — статический HTML-дашборд
-- [ ] [TASK-metrics-composer-integration](TASK-metrics-composer-integration.todo.md) — composer metrics и документация
+- [x] [TASK-metrics-composer-integration](done/TASK-metrics-composer-integration.todo.md) — composer metrics и документация
 - [ ] [TASK-metrics-tracked-snapshot](TASK-metrics-tracked-snapshot.todo.md) — актуальная зеркальная структура метрик в Git
 - [ ] [TASK-metrics-report-diff](TASK-metrics-report-diff.todo.md) — детерминированное сравнение снимков метрик
 - [ ] [TASK-metrics-pr-review-workflow](TASK-metrics-pr-review-workflow.todo.md) — использование изменения метрик ИИ-агентом и публикация артефакта PR
@@ -206,3 +206,4 @@ flowchart LR
 | 2026-08-10 | codex (Codex) | Финальная интеграция переориентирована с анализа самого `coding-standard` на анализ подключаемого проекта; проверочным проектом выбран TasK. |
 | 2026-08-10 | codex (Codex) | Цель эпика переориентирована со снимка и HTML-дашборда на детерминированное сравнение метрик базовой ветки и текущих правок для код-ревью ИИ-агентом; добавлены задачи сравнения и PR-интеграции. |
 | 2026-08-10 | codex (Codex) | Для единообразия в проектах-потребителях каноническая структура размещена в `.coding-standard/metrics/`; временные файлы и HTML остаются в `var/metrics/`. |
+| 2026-08-10 | codex (Codex) | TASK-metrics-composer-integration завершена и перенесена в архив. |
