@@ -118,7 +118,7 @@ services:
 непокрытыми зависимостями:
 
 ```bash
-vendor/bin/deptrac --formatter=metrics-json --output=var/metrics/deptrac.json
+vendor/bin/deptrac analyse --formatter=metrics-json --output=var/metrics/deptrac.json
 ```
 
 Список типов, включая типы без зависимостей, и маппинг «тип → модуль»
