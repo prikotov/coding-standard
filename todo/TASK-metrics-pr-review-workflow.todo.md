@@ -25,7 +25,7 @@ status: todo
 
 ### Варианты или путь решения (Solution Sketch)
 
-- Извлекать `baseline` как дерево `metrics/` на merge-base с целевой веткой, а `current` брать из проверяемого PR.
+- Извлекать `baseline` как дерево `.coding-standard/metrics/` на merge-base с целевой веткой, а `current` брать из проверяемого PR.
 - Проверять, что текущая JSON-структура заново получается из HEAD без изменений.
 - Передавать две версии структуры в команду сравнения и сохранять их вместе с `comparison.json` и `summary.md` одним артефактом PR.
 - Добавить инструкцию ИИ-агенту: изучить дельту до одобрения и потребовать исправление либо явное обоснование регрессии в изменённой области.
@@ -33,7 +33,7 @@ status: todo
 ### Ожидаемый результат (Expected Result)
 
 - Каждый PR может предоставить воспроизводимое изменение метрик относительно своей целевой ветки.
-- Raw diff `metrics/**/*.json` остаётся частью самого PR и доступен без скачивания CI-артефакта.
+- Raw diff `.coding-standard/metrics/**/*.json` остаётся частью самого PR и доступен без скачивания CI-артефакта.
 - ИИ-агент использует дельту как обязательный вход код-ревью наряду с diff кода и конвенциями.
 - Кодовая база получает направленность на улучшение: необъяснённые регрессии не проходят ревью незаметно.
 
@@ -50,7 +50,7 @@ status: todo
 ## 2. Context and Scope (Контекст и Границы)
 
 - **Где делаем:** публичный CLI-оркестратор или скрипт пакета, пример CI, README и копируемая конвенция для ИИ-агентов.
-- **Базовая ревизия:** дерево отслеживаемых JSON из `metrics/` на merge-base текущего HEAD и целевой ветки PR.
+- **Базовая ревизия:** дерево отслеживаемых JSON из `.coding-standard/metrics/` на merge-base текущего HEAD и целевой ветки PR.
 - **Текущая ревизия:** отслеживаемая структура проверяемого PR; для локального режима допускаются обновлённые незакоммиченные отчёты.
 - **Границы (Out of Scope):**
   - Не храним долговременную историю в БД.
@@ -67,7 +67,7 @@ status: todo
 - [ ] Baseline рекурсивно извлекается из Git на merge-base с сохранением зеркала путей, current читается из PR; повторный запуск анализаторов для базовой ревизии не требуется.
 - [ ] Совместимость схемы, конфигурации и версий измерителей проверяется по метаданным корневых отчётов; несовместимость блокирует сравнение.
 - [ ] В сравнение передаётся список файлов текущего Git diff для выделения изменённой области.
-- [ ] Артефакт PR содержит `baseline/metrics/`, `current/metrics/`, `comparison.json`, `summary.md` и метаданные воспроизведения.
+- [ ] Артефакт PR содержит `baseline/.coding-standard/metrics/`, `current/.coding-standard/metrics/`, `comparison.json`, `summary.md` и метаданные воспроизведения.
 - [ ] `summary.md` публикуется в доступном для ревью виде; полный JSON остаётся доступен ИИ-агенту.
 - [ ] Копируемая инструкция требует от ИИ-агента прочитать `comparison.json`, связать регрессии с diff кода и отразить вывод в ревью.
 - [ ] Необъяснённая регрессия в изменённой области является причиной не одобрять ревью; допустимое ухудшение должно быть явно обосновано в PR.
@@ -108,8 +108,8 @@ vendor/bin/coding-standard-metrics-review \
   --base=origin/master \
   --head=HEAD \
   --output=var/metrics-review
-test -s var/metrics-review/baseline/metrics/report.json
-test -s var/metrics-review/current/metrics/report.json
+test -s var/metrics-review/baseline/.coding-standard/metrics/report.json
+test -s var/metrics-review/current/.coding-standard/metrics/report.json
 test -s var/metrics-review/comparison.json
 test -s var/metrics-review/summary.md
 composer check
