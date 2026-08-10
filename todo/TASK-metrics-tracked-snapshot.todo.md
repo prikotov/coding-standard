@@ -9,8 +9,8 @@ epic: EPIC-metrics-ai-maintainability
 author: Аналитик (codex)
 assignee: Разработчик (codex)
 branch: task/metrics-tracked-snapshot
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/98
+status: review
 ---
 
 # TASK-metrics-tracked-snapshot: актуальная структура метрик в Git
@@ -149,3 +149,4 @@ composer check
 | 2026-08-10 | codex (Codex) | Выполненная TASK-metrics-composer-integration удалена из depends_on. |
 | 2026-08-10 | Разработчик (codex) | Задача взята в работу; подтверждён план реализации, создана рабочая ветка. |
 | 2026-08-10 | Разработчик (codex) | Реализованы update/check снимка, атомарная синхронизация, стабильные метаданные, Git future revision и потребительские тесты; pipeline проверен на TasK в отдельном worktree. |
+| 2026-08-10 | Разработчик (codex) | Создан draft PR #98, задача переведена в review. |
