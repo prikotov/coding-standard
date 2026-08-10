@@ -12,7 +12,28 @@ require $autoloadPath;
 use PrikotovCodingStandard\Metrics\MetricsPipeline;
 
 try {
-    (new MetricsPipeline(dirname(__DIR__), (string) getcwd()))->run();
+    $arguments = array_slice($argv, 1);
+    if (in_array('--help', $arguments, true)) {
+        fwrite(STDOUT, <<<'TEXT'
+Usage: coding-standard-metrics [--update-snapshot|--check-snapshot]
+
+  --update-snapshot  Update .coding-standard/metrics/ and build the HTML dashboard (default).
+  --check-snapshot   Rebuild without publishing and fail when the tracked snapshot is outdated.
+
+TEXT);
+        exit(0);
+    }
+    $unknown = array_values(array_diff($arguments, ['--update-snapshot', '--check-snapshot']));
+    if ($unknown !== []) {
+        throw new InvalidArgumentException('Unknown option: ' . $unknown[0]);
+    }
+    if (in_array('--update-snapshot', $arguments, true) && in_array('--check-snapshot', $arguments, true)) {
+        throw new InvalidArgumentException('--update-snapshot and --check-snapshot cannot be used together.');
+    }
+    $mode = in_array('--check-snapshot', $arguments, true)
+        ? MetricsPipeline::MODE_CHECK
+        : MetricsPipeline::MODE_UPDATE;
+    (new MetricsPipeline(dirname(__DIR__), (string) getcwd()))->run($mode);
 } catch (Throwable $exception) {
     fwrite(STDERR, "coding-standard-metrics: {$exception->getMessage()}\n");
     exit(1);

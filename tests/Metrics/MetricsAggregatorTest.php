@@ -17,7 +17,7 @@ final class MetricsAggregatorTest extends TestCase
             'functions' => [$this->method('App\\Alpha', 'run', 4, 2), $this->method('App\\Beta', 'run', 8, 4), $this->method('App\\Gamma', 'run', 12, 6)],
         ], ['schema_version' => '1.0', 'dependencies' => [
             ['source' => 'App\\Alpha', 'target' => 'App\\Beta'], ['source' => 'App\\Beta', 'target' => 'App\\Alpha'], ['source' => 'App\\Alpha', 'target' => 'App\\Gamma'],
-        ]], ['thresholds' => ['class' => ['loc' => 25], 'module' => ['cycles' => 0]]], 'abc', $this->scc(), $this->testStatistics(), $this->clover(), '3.7.0');
+        ]], ['thresholds' => ['class' => ['loc' => 25], 'module' => ['cycles' => 0]]], $this->scc(), $this->testStatistics(), $this->clover(), '3.7.0');
 
         self::assertSame('1.0', $report['schema_version']);
         self::assertSame(3, $report['metrics']['project']['class_count']);
@@ -38,7 +38,6 @@ final class MetricsAggregatorTest extends TestCase
             ['classes' => [], 'functions' => []],
             ['schema_version' => '1.0', 'dependencies' => []],
             [],
-            null,
             [[
                 'Name' => 'PHP', 'Count' => 2, 'Lines' => 30, 'Code' => 20, 'Comment' => 5, 'Blank' => 5,
                 'Files' => [
@@ -75,19 +74,19 @@ final class MetricsAggregatorTest extends TestCase
     public function testRejectsMissingSccStatistics(): void
     {
         $this->expectExceptionMessage('SCC statistics are required');
-        (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []], [], null, null, $this->testStatistics());
+        (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []], [], null, $this->testStatistics());
     }
 
     public function testRejectsMissingSccVersion(): void
     {
         $this->expectExceptionMessage('SCC version is required');
-        (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []], [], null, $this->scc(), $this->testStatistics());
+        (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []], [], $this->scc(), $this->testStatistics());
     }
 
     public function testRejectsMissingCoverage(): void
     {
         $this->expectExceptionMessage('Clover coverage is required');
-        (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []], [], null, $this->scc(), $this->testStatistics(), null, '3.7.0');
+        (new MetricsAggregator())->aggregate(['classes' => [], 'functions' => []], ['schema_version' => '1.0', 'dependencies' => []], [], $this->scc(), $this->testStatistics(), null, '3.7.0');
     }
 
     /** @return list<array<string, mixed>> */

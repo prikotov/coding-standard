@@ -8,15 +8,21 @@ use RuntimeException;
 
 final class MetricsPipeline
 {
+    public const MODE_UPDATE = 'update';
+    public const MODE_CHECK = 'check';
+
     public function __construct(
         private readonly string $packageRoot,
         private readonly string $projectRoot,
     ) {
     }
 
-    public function run(): void
+    public function run(string $mode = self::MODE_UPDATE): void
     {
         $previousDirectory = getcwd();
+        if (!in_array($mode, [self::MODE_UPDATE, self::MODE_CHECK], true)) {
+            throw new RuntimeException("Unsupported metrics snapshot mode: $mode");
+        }
         if (!is_file($this->projectRoot . '/composer.json')) {
             throw new RuntimeException('Run coding-standard-metrics from a project root containing composer.json.');
         }
@@ -29,7 +35,33 @@ final class MetricsPipeline
             throw new RuntimeException('Project configuration must return an array: .coding-standard.php');
         }
         $metrics = is_array($config['metrics'] ?? null) ? $config['metrics'] : [];
-        $reportDirectory = $this->projectPath((string) ($metrics['report_dir'] ?? 'var/metrics'));
+        if (array_key_exists('report_dir', $metrics)) {
+            throw new RuntimeException(
+                'metrics.report_dir is no longer supported; rename it to metrics.work_dir. '
+                . 'Canonical reports always use .coding-standard/metrics/.',
+            );
+        }
+        if (array_key_exists('snapshot_dir', $metrics)) {
+            throw new RuntimeException(
+                'metrics.snapshot_dir is not configurable; canonical reports always use .coding-standard/metrics/.',
+            );
+        }
+        $workDirectorySetting = $metrics['work_dir'] ?? 'var/metrics';
+        if (!is_string($workDirectorySetting)) {
+            throw new RuntimeException('metrics.work_dir must be a relative project path.');
+        }
+        $workDirectorySetting = $this->relativeDirectory($workDirectorySetting, 'metrics.work_dir');
+        if (
+            $workDirectorySetting === '.coding-standard'
+            || str_starts_with($workDirectorySetting, '.coding-standard/')
+        ) {
+            throw new RuntimeException(
+                'metrics.work_dir must not be inside the canonical .coding-standard/ directory.',
+            );
+        }
+        $workDirectory = $this->projectPath($workDirectorySetting);
+        $snapshotDirectory = $this->projectRoot . '/' . MetricsSnapshotManager::SNAPSHOT_PATH;
+        $candidateDirectory = $workDirectory . '/snapshot-' . bin2hex(random_bytes(8));
         $deptracConfig = $this->configurationPath(
             $metrics['deptrac_config'] ?? null,
             ['deptrac.yaml', 'depfile.yaml'],
@@ -59,10 +91,10 @@ final class MetricsPipeline
                 $this->packageRoot . '/bin/metrics-collect',
                 '--project-root=' . $this->projectRoot,
                 '--config=' . $configPath,
-                '--output=' . $reportDirectory . '/collector.json',
+                '--output=' . $workDirectory . '/collector.json',
             ]);
 
-            $deptracOutput = $reportDirectory . '/deptrac.json';
+            $deptracOutput = $workDirectory . '/deptrac.json';
             if (is_file($deptracOutput) && !unlink($deptracOutput)) {
                 throw new RuntimeException("Cannot replace dependency graph report: $deptracOutput");
             }
@@ -81,42 +113,66 @@ final class MetricsPipeline
 
             $this->stage('Codebase size', [
                 $this->packageRoot . '/bin/metrics-scc',
-                $reportDirectory . '/scc.json',
+                $workDirectory . '/scc.json',
+                $workDirectorySetting,
             ]);
             $this->stage('Test statistics', [
                 PHP_BINARY,
                 $this->packageRoot . '/bin/test-stats',
                 '--configuration=' . $phpunitConfig,
                 '--format=json',
-                '--output=' . $reportDirectory . '/test-stats.json',
+                '--output=' . $workDirectory . '/test-stats.json',
             ]);
             $this->stage('Test coverage', [
                 $this->packageRoot . '/bin/metrics-coverage',
-                $reportDirectory . '/clover.xml',
+                $workDirectory . '/clover.xml',
                 $phpunitConfig,
             ]);
             $this->stage('Report aggregation', [
                 PHP_BINARY,
                 $this->packageRoot . '/bin/metrics-aggregate.php',
+                '--project-root=' . $this->projectRoot,
                 '--config=' . $configPath,
-                '--analyzer=' . $reportDirectory . '/collector.json',
+                '--deptrac-config=' . $deptracConfig,
+                '--phpunit-config=' . $phpunitConfig,
+                '--analyzer=' . $workDirectory . '/collector.json',
                 '--deptrac=' . $deptracOutput,
-                '--scc=' . $reportDirectory . '/scc.json',
-                '--scc-version=' . $reportDirectory . '/scc-version.txt',
-                '--tests=' . $reportDirectory . '/test-stats.json',
-                '--clover=' . $reportDirectory . '/clover.xml',
-                '--output=' . $reportDirectory . '/report.json',
+                '--scc=' . $workDirectory . '/scc.json',
+                '--scc-version=' . $workDirectory . '/scc-version.txt',
+                '--tests=' . $workDirectory . '/test-stats.json',
+                '--clover=' . $workDirectory . '/clover.xml',
+                '--output=' . $candidateDirectory . '/report.json',
             ]);
+
+            $snapshots = new MetricsSnapshotManager();
+            $differences = $snapshots->differences($candidateDirectory, $snapshotDirectory);
+            if ($mode === self::MODE_CHECK) {
+                if ($differences !== ['created' => [], 'changed' => [], 'extra' => []]) {
+                    throw new RuntimeException(
+                        $snapshots->diagnostic($differences)
+                        . "\nRun vendor/bin/coding-standard-metrics --update-snapshot.",
+                    );
+                }
+                fwrite(STDOUT, "Metrics snapshot is current: .coding-standard/metrics/\n");
+
+                return;
+            }
+
+            $snapshots->update($candidateDirectory, $snapshotDirectory);
             $this->stage('HTML dashboard', [
                 PHP_BINARY,
                 $this->packageRoot . '/bin/metrics-dashboard.php',
-                '--input=' . $reportDirectory . '/report.json',
-                '--output=' . $reportDirectory . '/index.html',
+                '--input=' . $snapshotDirectory . '/report.json',
+                '--output=' . $workDirectory . '/index.html',
             ]);
 
-            fwrite(STDOUT, "Metrics report: " . $this->relativePath($reportDirectory . '/report.json') . "\n");
-            fwrite(STDOUT, "Metrics dashboard: " . $this->relativePath($reportDirectory . '/index.html') . "\n");
+            $count = count($differences['created']) + count($differences['changed']) + count($differences['extra']);
+            fwrite(STDOUT, "Metrics snapshot: .coding-standard/metrics/ ($count reports synchronized)\n");
+            fwrite(STDOUT, "Metrics dashboard: " . $this->relativePath($workDirectory . '/index.html') . "\n");
         } finally {
+            if (isset($candidateDirectory)) {
+                (new MetricsSnapshotManager())->removeDirectory($candidateDirectory);
+            }
             if ($previousDirectory !== false) {
                 chdir($previousDirectory);
             }
@@ -165,6 +221,16 @@ final class MetricsPipeline
         }
 
         return $this->projectRoot . '/' . ltrim($path, '/');
+    }
+
+    private function relativeDirectory(string $path, string $name): string
+    {
+        $path = str_replace('\\', '/', trim($path));
+        if ($path === '' || str_starts_with($path, '/') || preg_match('#(^|/)\.\.(/|$)#', $path) === 1) {
+            throw new RuntimeException("$name must be a non-empty relative project path.");
+        }
+
+        return rtrim($path, '/');
     }
 
     private function validDeptracReport(string $path): bool

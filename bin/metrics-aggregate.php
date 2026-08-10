@@ -11,11 +11,16 @@ require $autoloadPath;
 
 use PrikotovCodingStandard\Metrics\MetricsAggregator;
 use PrikotovCodingStandard\Metrics\MetricsReportWriter;
+use PrikotovCodingStandard\Metrics\MetricsSnapshotMetadata;
 
 $options = getopt('', [
-    'config::', 'analyzer::', 'deptrac::', 'scc::', 'scc-version::', 'tests::', 'clover::', 'output::',
+    'project-root::', 'config::', 'deptrac-config::', 'phpunit-config::', 'analyzer::', 'deptrac::',
+    'scc::', 'scc-version::', 'tests::', 'clover::', 'output::',
 ]);
+$projectRoot = $options['project-root'] ?? getcwd();
 $configPath = $options['config'] ?? '.coding-standard.php';
+$deptracConfig = $options['deptrac-config'] ?? 'depfile.yaml';
+$phpunitConfig = $options['phpunit-config'] ?? 'phpunit.xml.dist';
 $analyzer = $options['analyzer'] ?? 'var/metrics/collector.json';
 $deptrac = $options['deptrac'] ?? 'var/metrics/deptrac.json';
 $output = $options['output'] ?? 'var/metrics/report.json';
@@ -46,16 +51,27 @@ try {
     if (!is_array($config)) {
         throw new RuntimeException("Project configuration must return an array: $configPath");
     }
-    $commit = trim((string) shell_exec('git rev-parse HEAD 2>/dev/null')) ?: null;
+    $analyzerData = json_decode((string) file_get_contents($analyzer), true, flags: JSON_THROW_ON_ERROR);
+    $sccData = json_decode((string) file_get_contents($scc), true, flags: JSON_THROW_ON_ERROR);
     $full = (new MetricsAggregator())->aggregate(
-        json_decode((string) file_get_contents($analyzer), true, flags: JSON_THROW_ON_ERROR),
+        $analyzerData,
         json_decode((string) file_get_contents($deptrac), true, flags: JSON_THROW_ON_ERROR),
         $config['metrics'] ?? [],
-        $commit,
-        json_decode((string) file_get_contents($scc), true, flags: JSON_THROW_ON_ERROR),
+        $sccData,
         json_decode((string) file_get_contents($tests), true, flags: JSON_THROW_ON_ERROR),
         (string) file_get_contents($clover),
         $version,
+    );
+    if (!is_string($projectRoot) || !is_string($deptracConfig) || !is_string($phpunitConfig)) {
+        throw new RuntimeException('Fingerprint paths must be strings.');
+    }
+    $full = (new MetricsSnapshotMetadata($projectRoot))->addFingerprints(
+        $full,
+        $analyzerData,
+        $sccData,
+        $config,
+        $deptracConfig,
+        $phpunitConfig,
     );
     (new MetricsReportWriter())->writeMirror($output, $full);
     fwrite(STDOUT, "Metrics reports written to " . dirname($output) . "\n");
