@@ -132,7 +132,7 @@ Full test suite (28 cases) is included in the package (`tests/Deptrac/ServiceCon
 Directly:
 
 ```bash
-vendor/bin/deptrac
+vendor/bin/deptrac analyse
 ```
 
 Via Makefile:
@@ -140,13 +140,13 @@ Via Makefile:
 ```makefile
 .PHONY: deptrac
 deptrac:
-	vendor/bin/deptrac
+	vendor/bin/deptrac analyse --no-progress
 ```
 
 In CI:
 
 ```yaml
-- run: vendor/bin/deptrac
+- run: vendor/bin/deptrac analyse --no-progress
 ```
 
 As part of `make check`:

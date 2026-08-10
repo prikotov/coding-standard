@@ -158,7 +158,7 @@ services:
 Напрямую:
 
 ```bash
-vendor/bin/deptrac
+vendor/bin/deptrac analyse
 ```
 
 Через Makefile:
@@ -166,13 +166,13 @@ vendor/bin/deptrac
 ```makefile
 .PHONY: deptrac
 deptrac:
-	vendor/bin/deptrac
+	vendor/bin/deptrac analyse --no-progress
 ```
 
 В CI:
 
 ```yaml
-- run: vendor/bin/deptrac
+- run: vendor/bin/deptrac analyse --no-progress
 ```
 
 В составе `make check`:
