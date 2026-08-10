@@ -1,23 +1,121 @@
 # Стандарт кодирования и обеспечения качества для PHP-проектов
 
-Главная цель стандарта кодирования — поддержание высокой скорости разработки и удобной поддержки кода в долгосрочной перспективе. Скорость достигается за счёт единообразия: разработчик и AI-агент сразу знают, где лежит DTO, как устроен хендлер, какие зависимости допустимы между слоями. Поддержка — за счёт архитектурных подходов, зафиксированных в конвенциях: изоляция слоёв, чистые доменные модели, строгие границы модулей.
+**`prikotov/coding-standard`** — PHP-пакет с тремя частями:
 
-AI-агенты склонны отклоняться от конвенций. Поэтому соблюдение конвенций проверяется автоматически: сниффы PHP CodeSniffer и правила Deptrac ловят нарушения до кодревью. 
+1. **Конвенции** — документация DDD-конвенций (`docs/conventions/`), копируемая в проект-потребитель через `bin/coding-standard-init`.
+2. **`PHPCS`-сниффы** — автоматические проверки соблюдения конвенций через PHP CodeSniffer 4.x (`src/`).
+3. **Метрики качества** — дают ИИ-агенту воспроизводимые данные для оценки изменений структуры и связанности подключаемого проекта при код-ревью; результат также может формироваться в виде автономного HTML-дашборда.
+
+Конвенции — основа пакета и источник правил для команды и ИИ-агентов.
+Автоматические проверки и метрики помогают применять эти правила, но не
+заменяют сами конвенции и анализ кода при ревью.
+
+---
+
+## Вектор развития
+
+Конвенции остаются основой пакета. Развитие направлено на то, чтобы:
+
+- расширять и уточнять DDD-конвенции как единый источник правил для разработчиков и ИИ-агентов;
+- переносить формализуемые правила в автоматические проверки `PHPCS`, PHPStan и Deptrac, чтобы нарушения обнаруживались до код-ревью;
+- дополнять код-ревью отслеживаемым снимком метрик: хранить состояние проекта в Git, показывать изменение метрик в PR и давать ИИ-агенту данные для оценки влияния правок на качество кода.
+
+HTML-дашборд останется дополнительным представлением метрик для человека, а не
+основным результатом работы пакета.
+
+---
+
+## Конвенции
+
+Документация описывает принципы, паттерны, слои, модули, тестирование и структуру Symfony-приложения. Служит справочником для команды и ИИ-агентов.
+
+Полное содержание — в [индексе конвенций](docs/conventions/index.md).
+
+---
+
+## Автоматические проверки
+
+Соблюдение формализуемых конвенций проверяется через PHP CodeSniffer, PHPStan
+и Deptrac до ручного код-ревью.
+
+### Markdown-валидация
+
+Проверка документации ведётся тремя инструментами:
+
+- **`composer validate-docs`** — проверяет конвенции внутри каталога `docs/conventions/`: структуру front matter, именование файлов (kebab-case), обязательные секции и ссылки между документами каталога.
+- **`composer validate-md-links`** — проверяет ссылки между Markdown-файлами всего проекта (пути и якоря). Область проверки настраивается через файл конфигурации `.md-links.php`. [Подробнее](docs/conventions/ops/validate-md-links.md).
+- **`composer validate-language`** — ищет английские фразы в русскоязычном тексте Markdown/text-файлов (англицизмы вида «persisted rows»). Техническая терминология и code blocks исключаются. Настраивается через секцию `language` в `.coding-standard.php`. [Подробнее](docs/conventions/ops/validate-language.ru.md).
+
+
+### PHP CodeSniffer-сниффы
+
+| Снифф | Что проверяет |
+|---|---|
+| `DtoStructureSniff` | DTO — `final readonly`, только promoted-параметры в конструкторе, без методов и свойств |
+| `EnumStructureSniff` | Enum — чистый (без методов, констант, трейтов), case'ы в `camelCase` |
+| `ValueObjectStructureSniff` | Value Object — `final readonly`, неизменяемый, приватный конструктор, статические фабрики |
+| `CommandQueryStructureSniff` | Command/Query — конструктор только с promoted-параметрами, без свойств и методов |
+| `CommandHandlerStructureSniff` | `CommandHandler` — только `__invoke`, без публичных свойств |
+| `QueryHandlerReturnTypeSniff` | `QueryHandler` — должен возвращать `Result` или `ResultDto` |
+| `CommandHandlerReturnTypeSniff` | `CommandHandler` — должен возвращать `void` или `Result` |
+| `UseCaseNamingSniff` | UseCase — обязательный суффикс; имя файла и неймспейс совпадают с путём |
+| `GlobalFunctionCallStyleSniff` | Глобальные функции вызываются без обратного слеша и без `use function` |
+
+### Deptrac-правила
+
+| Правило | Что проверяет |
+|---|---|
+| `ServiceContractDependencyRule` | Infrastructure зависит только от Domain-интерфейсов, не от конкретных классов |
+| `CrossModuleDomainRule` | Домен одного модуля не зависит от домена другого — только через Application DTO |
+
+Готовый `depfile.yaml` с правилами для DDD-слоёв и модульных границ: [`config/deptrac/`](config/deptrac/). Копируется в проект через `coding-standard-init` или вручную.
+
+### PHPStan-правила
+
+Пользовательское PHPStan-расширение (Collector + Rule) для межфайловых проверок:
+
+| Правило | Что проверяет |
+|---|---|
+| `DtoReuseRule` | Находит DTO в общей папке модуля (`Module\{ModuleName}\Application\Dto`), которые по факту использует только один use case, и предлагает переложить их рядом с владельцем. |
+| `MessageContractDtoLocationRule` | Проверяет расположение DTO, используемых в контрактах Command и Query. |
+| `ForbiddenInvokableHandlerCallRule` | Запрещает прямой вызов Command Handler и Query Handler как вызываемого объекта. |
+| `ForbiddenExplicitHandlerInvokeRule` | Запрещает прямой вызов метода `__invoke()` у Command Handler и Query Handler. |
+
+Потребитель добавляет `phpstan/phpstan` в `require-dev` и подключает правила пакета в конфигурации PHPStan:
+
+```neon
+includes:
+    - vendor/prikotov/coding-standard/phpstan-rules.neon
+```
+
+Подробные варианты подключения описаны в разделе [«Подключение PHPStan»](#подключение-phpstan).
+
+Конвенция размещения DTO: [`docs/conventions/core-patterns/dto.md`](docs/conventions/core-patterns/dto.md).
+
+Примеры конфигураций: [`docs/conventions/examples/`](docs/conventions/examples/)
+
+| Файл | Назначение |
+|---|---|
+| `phpcs.xml.dist` | PHP CodeSniffer |
+| `phpunit.xml.dist` | PHPUnit |
+| `phpmd.xml` | PHPMD |
+| `phpstan.neon.dist` | PHPStan |
+| `psalm.xml` | `Psalm` |
+| `Makefile` | Команды проверки (`make check`) |
 
 ---
 
 ## Метрики качества подключаемого проекта
 
-Пакет собирает метрики **проекта-потребителя**, из корня которого запущена
-команда. Репозиторий `coding-standard` для получения отчёта анализировать не
-нужно. Модель и расшифровка показателей описаны в
+Инструменты метрик анализируют PHP-проект, из корня которого они запущены. В
+проекте-потребителе они дают ИИ-агенту воспроизводимые данные о структуре,
+связанности, размере, тестах и покрытии для использования при код-ревью.
+Модель и расшифровка показателей описаны в
 [конвенции метрик качества](docs/conventions/ops/quality-metrics.md).
 
-Главный артефакт — машиночитаемая структура из корневого, каталоговых и
-файловых JSON-отчётов по зеркалу production-путей. ИИ-агент использует версии
-этой структуры из базовой ветки и текущих правок для оценки изменения качества
-при код-ревью. Автономный HTML-дашборд является дополнительным представлением
-тех же данных для человека.
+Машиночитаемый JSON-отчёт предназначен для автоматической обработки и работы
+ИИ-агента. Автономный HTML-дашборд — дополнительное представление тех же данных
+для человека.
 
 ### Требования
 
@@ -180,7 +278,9 @@ vendor/bin/coding-standard-metrics
 
 ![Матрица зависимостей модулей](docs/images/metrics-dashboard/module-dependency-matrix.webp)
 
-### CLI-утилиты
+---
+
+## CLI-утилиты
 
 Публичные команды пакета доступны через `vendor/bin/`.
 
@@ -197,85 +297,6 @@ vendor/bin/coding-standard-metrics
 
 ---
 
-## Конвенции
-
-Документация описывает принципы, паттерны, слои, модули, тестирование и структуру Symfony-приложения. Служит справочником для команды и AI-агентов.
-
-Полное содержание — в [индексе конвенций](docs/conventions/index.md).
-
----
-
-## Автоматические проверки
-
-Соблюдение конвенций проверяется через PHP CodeSniffer и Deptrac — без ручного кодревью структуры.
-
-### Markdown-валидация
-
-Проверка документации ведётся двумя инструментами:
-
-- **`composer validate-docs`** — проверяет конвенции внутри каталога `docs/conventions/`: структуру front matter, именование файлов (kebab-case), обязательные секции и ссылки между документами каталога.
-- **`composer validate-md-links`** — проверяет ссылки между Markdown-файлами всего проекта (пути и якоря). Область проверки настраивается через файл конфигурации `.md-links.php`. [Подробнее](docs/conventions/ops/validate-md-links.md).
-- **`composer validate-language`** — ищет английские фразы в русскоязычном тексте Markdown/text-файлов (англицизмы вида «persisted rows»). Техническая терминология и code blocks исключаются. Настраивается через секцию `language` в `.coding-standard.php`. [Подробнее](docs/conventions/ops/validate-language.ru.md).
-
-
-### PHP CodeSniffer-сниффы
-
-| Снифф | Что проверяет |
-|---|---|
-| `DtoStructureSniff` | DTO — `final readonly`, только promoted-параметры в конструкторе, без методов и свойств |
-| `EnumStructureSniff` | Enum — чистый (без методов, констант, трейтов), case'ы в `camelCase` |
-| `ValueObjectStructureSniff` | Value Object — `final readonly`, неизменяемый, приватный конструктор, статические фабрики |
-| `CommandQueryStructureSniff` | Command/Query — конструктор только с promoted-параметрами, без свойств и методов |
-| `CommandHandlerStructureSniff` | `CommandHandler` — только `__invoke`, без публичных свойств |
-| `QueryHandlerReturnTypeSniff` | `QueryHandler` — должен возвращать `Result` или `ResultDto` |
-| `CommandHandlerReturnTypeSniff` | `CommandHandler` — должен возвращать `void` или `Result` |
-| `UseCaseNamingSniff` | UseCase — обязательный суффикс; имя файла и неймспейс совпадают с путём |
-| `GlobalFunctionCallStyleSniff` | Глобальные функции вызываются без обратного слеша и без `use function` |
-
-### Deptrac-правила
-
-| Правило | Что проверяет |
-|---|---|
-| `ServiceContractDependencyRule` | Infrastructure зависит только от Domain-интерфейсов, не от конкретных классов |
-| `CrossModuleDomainRule` | Домен одного модуля не зависит от домена другого — только через Application DTO |
-
-Готовый `depfile.yaml` с правилами для DDD-слоёв и модульных границ: [`config/deptrac/`](config/deptrac/). Копируется в проект через `coding-standard-init` или вручную.
-
-### PHPStan-правила
-
-Пользовательское PHPStan-расширение (Collector + Rule) для межфайловых проверок:
-
-| Правило | Что проверяет |
-|---|---|
-| `DtoReuseRule` | Находит DTO в общей папке модуля (`Module\{ModuleName}\Application\Dto`), которые по факту использует только один use case, и предлагает переложить их рядом с владельцем. |
-| `MessageContractDtoLocationRule` | Проверяет расположение DTO, используемых в контрактах Command и Query. |
-| `ForbiddenInvokableHandlerCallRule` | Запрещает прямой вызов Command Handler и Query Handler как вызываемого объекта. |
-| `ForbiddenExplicitHandlerInvokeRule` | Запрещает прямой вызов метода `__invoke()` у Command Handler и Query Handler. |
-
-Потребитель добавляет `phpstan/phpstan` в `require-dev` и подключает правила пакета в конфигурации PHPStan:
-
-```neon
-includes:
-    - vendor/prikotov/coding-standard/phpstan-rules.neon
-```
-
-Подробные варианты подключения описаны в разделе [«Подключение PHPStan»](#подключение-phpstan).
-
-Конвенция размещения DTO: [`docs/conventions/core-patterns/dto.md`](docs/conventions/core-patterns/dto.md).
-
-Примеры конфигураций: [`docs/conventions/examples/`](docs/conventions/examples/)
-
-| Файл | Назначение |
-|---|---|
-| `phpcs.xml.dist` | PHP CodeSniffer |
-| `phpunit.xml.dist` | PHPUnit |
-| `phpmd.xml` | PHPMD |
-| `phpstan.neon.dist` | PHPStan |
-| `psalm.xml` | `Psalm` |
-| `Makefile` | Команды проверки (`make check`) |
-
----
-
 ## Установка
 
 ```bash
@@ -288,15 +309,9 @@ composer require --dev prikotov/coding-standard
 php vendor/bin/coding-standard-init --project-name=ProjectName
 ```
 
-В состав пакета входят:
-
-- **Сниффы** — PHP CodeSniffer-правила, работают сразу из `vendor/`
-- **Метрики качества** — машиночитаемый снимок подключаемого проекта для код-ревью ИИ-агентом и дополнительный автономный HTML-дашборд
-- **Deptrac-правила** — пользовательские правила для deptrac
-- **PHPStan-правила** — пользовательские правила для phpstan
-- **Конфигурации** — `depfile.yaml` для Deptrac, `phpcs.xml.dist` для `PHPCS`, `phpstan.neon.dist` для PHPStan
-- **Шаблоны исключений** — типовые классы и интерфейсы, копируются с подстановкой namespace проекта
-- **Конвенции** — документация, копируется командой `coding-standard-init`
+Команда `coding-standard-init` копирует конвенции, конфигурации и шаблоны
+типовых исключений с подстановкой пространства имён проекта. Сниффы и другие
+инструменты пакета запускаются из `vendor/`.
 
 ### Подключение `PHPCS`
 
