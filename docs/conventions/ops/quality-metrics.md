@@ -166,7 +166,8 @@ github.com/boyter/scc/v3@latest` или используют готовый би
 ## Автоматизация и конфигурация
 
 - Команда запускается из корня проекта-потребителя: `vendor/bin/coding-standard-metrics`. Если проект добавил `"metrics": "vendor/bin/coding-standard-metrics"` в собственный `composer.json`, используется `composer metrics`. Scripts установленного пакета Composer не наследует.
-- Команда читает `composer.json`, `.coding-standard.php`, конфигурации Deptrac и PHPUnit текущего проекта; она не предназначена для анализа репозитория пакета `coding-standard`.
+- Команда анализирует проект, из корня которого запущена: читает его `composer.json`, `.coding-standard.php`, конфигурации Deptrac и PHPUnit.
+- Для полного отчёта проект предоставляет Deptrac и PHPUnit, а окружение — `scc` и PCOV. Начальную конфигурацию создаёт `vendor/bin/coding-standard-init --project-name=ProjectName`.
 - Канонические JSON создаются в фиксированном `.coding-standard/metrics/`. Их нужно хранить в Git и обновлять вместе с изменениями входов анализа.
 - Рабочие файлы и HTML создаются в `metrics.work_dir`: по умолчанию `var/metrics/`. Этот каталог остаётся в `.gitignore` проекта.
 - Сборщик и агрегатор формируют отчёт детерминированно по исходникам, полному графу зависимостей и `.coding-standard.php`. Агент только запускает команду и читает результат; вручную изменять JSON-артефакты нельзя.
