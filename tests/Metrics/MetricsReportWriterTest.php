@@ -32,8 +32,16 @@ final class MetricsReportWriterTest extends TestCase
         ]);
 
         $root = json_decode((string) file_get_contents($output), true, flags: JSON_THROW_ON_ERROR);
-        $file = json_decode((string) file_get_contents($directory . '/src/Metrics/Collector.php.json'), true, flags: JSON_THROW_ON_ERROR);
-        $module = json_decode((string) file_get_contents($directory . '/src/Metrics/report.json'), true, flags: JSON_THROW_ON_ERROR);
+        $file = json_decode(
+            (string) file_get_contents($directory . '/src/Metrics/Collector.php.json'),
+            true,
+            flags: JSON_THROW_ON_ERROR,
+        );
+        $module = json_decode(
+            (string) file_get_contents($directory . '/src/Metrics/report.json'),
+            true,
+            flags: JSON_THROW_ON_ERROR,
+        );
         unlink($directory . '/src/Metrics/Collector.php.json');
         unlink($directory . '/src/Metrics/report.json');
         unlink($directory . '/src/report.json');
@@ -48,5 +56,49 @@ final class MetricsReportWriterTest extends TestCase
         self::assertSame('file', $file['scope']['kind']);
         self::assertSame(['App\\Metrics\\Collector::collect'], array_column($file['metrics']['methods'], 'id'));
         self::assertSame('Metrics', $module['metrics']['module']['id']);
+    }
+
+    public function testWritesApplicationModuleReportAtItsModuleDirectory(): void
+    {
+        $directory = sys_get_temp_dir() . '/metrics-writer-module-' . uniqid();
+        $output = $directory . '/report.json';
+        (new MetricsReportWriter())->writeMirror($output, [
+            'metadata' => [],
+            'findings' => [],
+            'metrics' => [
+                'project' => ['class_count' => 1],
+                'modules' => [['id' => 'Web:Billing', 'class_count' => 1]],
+                'classes' => [[
+                    'id' => 'Task\\Web\\Module\\Billing\\Controller',
+                    'file' => 'apps/web/src/Module/Billing/Controller.php',
+                    'module' => 'Web:Billing',
+                ]],
+                'methods' => [],
+            ],
+        ]);
+
+        try {
+            $module = json_decode(
+                (string) file_get_contents($directory . '/apps/web/src/Module/Billing/report.json'),
+                true,
+                flags: JSON_THROW_ON_ERROR,
+            );
+            self::assertSame('Web:Billing', $module['scope']['module']);
+            self::assertSame('Web:Billing', $module['metrics']['module']['id']);
+        } finally {
+            $this->removeDirectory($directory);
+        }
+    }
+
+    private function removeDirectory(string $directory): void
+    {
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST,
+        );
+        foreach ($iterator as $item) {
+            $item->isDir() ? rmdir($item->getPathname()) : unlink($item->getPathname());
+        }
+        rmdir($directory);
     }
 }

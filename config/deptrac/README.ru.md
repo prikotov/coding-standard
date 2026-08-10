@@ -104,13 +104,14 @@ Namespace-паттерны в `collectors` следуют конвенциям �
 агрегатора метрик. Он не задаёт модули, пути или правила зависимостей:
 всё это остаётся в конфигурации конкретного проекта.
 
-Добавьте сервис в `depfile.yaml`:
+Общий `config/deptrac/depfile.yaml` пакета уже регистрирует форматтер. Если
+проект не импортирует этот файл, добавьте сервис в свой `depfile.yaml`:
 
 ```yaml
 services:
   - class: PrikotovCodingStandard\Deptrac\MetricsJsonOutputFormatter
     tags:
-      - output_formatter
+      - { name: output_formatter }
 ```
 
 Запуск создаёт JSON со всеми разрешёнными, запрещёнными, пропущенными и

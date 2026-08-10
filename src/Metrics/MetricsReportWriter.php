@@ -50,6 +50,14 @@ final class MetricsReportWriter
         foreach ($full['metrics']['modules'] as $module) {
             $modules[$module['id']] = $module;
         }
+        $moduleDirectories = [];
+        foreach ($classes as $class) {
+            $segments = explode('/', $class['file']);
+            $moduleIndex = array_search('Module', $segments, true);
+            if (is_int($moduleIndex) && isset($segments[$moduleIndex + 1])) {
+                $moduleDirectories[implode('/', array_slice($segments, 0, $moduleIndex + 2))] = $class['module'];
+            }
+        }
         foreach ($directories as $directory) {
             $children = [];
             foreach ($directories as $candidate) {
@@ -64,7 +72,9 @@ final class MetricsReportWriter
             }
             usort($children, static fn (array $left, array $right): int => $left['path'] <=> $right['path']);
             $module = null;
-            if (preg_match('#^src/([^/]+)$#', $directory, $match)) {
+            if (isset($moduleDirectories[$directory])) {
+                $module = $modules[$moduleDirectories[$directory]] ?? null;
+            } elseif (preg_match('#^src/([^/]+)$#', $directory, $match)) {
                 $module = $modules[$match[1]] ?? null;
             }
             $this->writeJson($root . '/' . $directory . '/report.json', [

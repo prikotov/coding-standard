@@ -58,10 +58,9 @@ final class MetricsAggregator
             $m = $item['metrics'];
             $id = $item['name'];
             $file = $this->relativePath((string) ($m['filePath'] ?? ''));
-            if (!str_contains($file, '/') || !str_starts_with($file, 'src/')) {
-                $file = 'src/' . $file;
-            }
-            $module = $this->module($file, $config);
+            $module = is_string($m['module'] ?? null) && $m['module'] !== ''
+                ? $m['module']
+                : $this->module($file, $config);
             $methods = $methodsByClass[$id] ?? [];
             usort($methods, static fn ($a, $b) => $a['id'] <=> $b['id']);
             $cc = array_column($methods, 'cc');
