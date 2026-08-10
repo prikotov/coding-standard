@@ -129,8 +129,32 @@ JSON-отчёт даёт ИИ-агентам и автоматизации ст�
 
 ```bash
 vendor/bin/coding-standard-init --project-name=ProjectName
-vendor/bin/coding-standard-metrics
+vendor/bin/coding-standard-metrics --update-snapshot
+git add .coding-standard/metrics/
 ```
+
+Команда обновляет отслеживаемое зеркало `.coding-standard/metrics/` и строит
+неотслеживаемый HTML в `var/metrics/index.html`. Временные входы анализаторов
+остаются в `var/metrics/`. В CI снимок проверяется без записи:
+
+```bash
+vendor/bin/coding-standard-metrics --check-snapshot
+```
+
+Рекомендуемые команды проекта-потребителя:
+
+```json
+{
+  "scripts": {
+    "metrics": "vendor/bin/coding-standard-metrics --update-snapshot",
+    "metrics:check": "vendor/bin/coding-standard-metrics --check-snapshot"
+  }
+}
+```
+
+Устаревший параметр `metrics.report_dir` нужно переименовать в
+`metrics.work_dir`. Канонический путь не настраивается. Корневой `.gitignore`
+должен исключать `/var/`, но не `.coding-standard/metrics/`.
 
 Для полного отчёта нужны Deptrac, PHPUnit, `scc` и PCOV. Модель данных,
 настройка и правила интерпретации описаны в
@@ -164,7 +188,7 @@ vendor/bin/coding-standard-metrics
 | `coding-standard-init` | Копирует конвенции и конфигурации в проект |
 | `validate-md-links` | Проверяет ссылки и якоря Markdown |
 | `validate-language` | Проверяет англицизмы в русскоязычной документации |
-| `coding-standard-metrics` | Собирает полный отчёт и HTML-дашборд подключаемого проекта |
+| `coding-standard-metrics` | Обновляет или проверяет JSON-снимок и строит HTML-дашборд подключаемого проекта |
 | `metrics-collect` | Собирает структурные метрики PHP-кода |
 | `metrics-scc` | Собирает размер кодовой базы и версию `scc` |
 | `metrics-coverage` | Создаёт Clover-отчёт покрытия через PHPUnit и PCOV |

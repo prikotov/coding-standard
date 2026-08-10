@@ -13,9 +13,9 @@ return [
     // Корни исходников определяются из Composer autoload; пути ниже исключаются
     // даже при их попадании в область автозагрузки.
     'metrics' => [
-        // Корень артефактов. Структура каталогов повторяет пути исходников.
-        'report_dir' => 'var/metrics',
-        'report_layout' => 'mirror',
+        // Временные входы анализаторов и HTML; канонический JSON всегда
+        // публикуется в .coding-standard/metrics/.
+        'work_dir' => 'var/metrics',
         'deptrac_config' => 'depfile.yaml',
         'phpunit_config' => 'phpunit.xml.dist',
         'exclude' => [

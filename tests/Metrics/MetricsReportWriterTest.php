@@ -51,10 +51,13 @@ final class MetricsReportWriterTest extends TestCase
         rmdir($directory);
 
         self::assertSame(['project', 'codebase', 'tests', 'coverage'], array_keys($root['metrics']));
+        self::assertArrayNotHasKey('commit', $root['metadata']);
         self::assertSame(80, $root['metrics']['coverage']['lines']['percent']);
         self::assertSame([['path' => 'src/report.json', 'kind' => 'directory']], $root['children']);
         self::assertSame('file', $file['scope']['kind']);
+        self::assertArrayNotHasKey('metadata', $file);
         self::assertSame(['App\\Metrics\\Collector::collect'], array_column($file['metrics']['methods'], 'id'));
+        self::assertSame(1, $module['metrics']['directory']['class_count']);
         self::assertSame('Metrics', $module['metrics']['module']['id']);
     }
 

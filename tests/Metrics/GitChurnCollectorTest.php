@@ -34,6 +34,42 @@ final class GitChurnCollectorTest extends TestCase
         }
     }
 
+    public function testTreatsStagedAndWorkingChangesAsOneFutureRevision(): void
+    {
+        $directory = sys_get_temp_dir() . '/git-churn-future-' . uniqid();
+        mkdir($directory);
+
+        try {
+            $this->git($directory, 'init');
+            $this->git($directory, 'config user.email metrics@example.com');
+            $this->git($directory, 'config user.name Metrics');
+            file_put_contents($directory . '/Existing.php', "<?php\n");
+            $this->git($directory, 'add Existing.php');
+            $this->git($directory, 'commit -m first');
+
+            file_put_contents($directory . '/Existing.php', "<?php\n// staged\n");
+            $this->git($directory, 'add Existing.php');
+            file_put_contents($directory . '/Existing.php', "<?php\n// working\n");
+            file_put_contents($directory . '/Added.php', "<?php\n");
+            $beforeCommit = (new GitChurnCollector())->collect(
+                $directory,
+                ['Existing.php', 'Added.php'],
+            );
+
+            $this->git($directory, 'add Existing.php Added.php');
+            $this->git($directory, 'commit -m future');
+            $afterCommit = (new GitChurnCollector())->collect(
+                $directory,
+                ['Existing.php', 'Added.php'],
+            );
+
+            self::assertSame(['Existing.php' => 2, 'Added.php' => 1], $beforeCommit);
+            self::assertSame($beforeCommit, $afterCommit);
+        } finally {
+            $this->removeDirectory($directory);
+        }
+    }
+
     private function git(string $directory, string $arguments): void
     {
         exec("git -C " . escapeshellarg($directory) . " $arguments 2>&1", $output, $code);
