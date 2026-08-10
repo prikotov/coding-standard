@@ -4,7 +4,7 @@ created: 2026-08-10
 value: V4
 complexity: C3
 priority: P1
-depends_on: TASK-metrics-tracked-snapshot
+depends_on:
 epic: EPIC-metrics-ai-maintainability
 author: Аналитик (codex)
 assignee: Разработчик (codex)
@@ -135,3 +135,4 @@ composer check
 | :--- | :--- | :--- |
 | 2026-08-10 | Аналитик (codex) | Создание задачи по итогам уточнения главной цели эпика пользователем. |
 | 2026-08-10 | Аналитик (codex) | Источником baseline/current выбраны версии отслеживаемой в Git зеркальной структуры метрик. |
+| 2026-08-10 | Разработчик (codex) | Выполненная TASK-metrics-tracked-snapshot удалена из depends_on. |

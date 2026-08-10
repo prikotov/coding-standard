@@ -10,7 +10,7 @@ author: Аналитик (codex)
 assignee: Разработчик (codex)
 branch: task/metrics-tracked-snapshot
 pr: https://github.com/prikotov/coding-standard/pull/98
-status: review
+status: done
 ---
 
 # TASK-metrics-tracked-snapshot: актуальная структура метрик в Git
@@ -127,7 +127,7 @@ composer check
 
 - `docs/conventions/ops/quality-metrics.md` — каноническое зеркало отчётов.
 - `var/metrics/` — текущая временная структура, из которой публикуется каноническое зеркало.
-- [`TASK-metrics-composer-integration`](done/TASK-metrics-composer-integration.todo.md) — сбор метрик проекта-потребителя.
+- [`TASK-metrics-composer-integration`](TASK-metrics-composer-integration.todo.md) — сбор метрик проекта-потребителя.
 - [PHPStan: baseline](https://phpstan.org/user-guide/baseline) — отслеживаемое состояние анализатора хранится рядом с проектом.
 - [Psalm: baseline](https://psalm.dev/docs/running_psalm/dealing_with_code_issues/) — сгенерированный baseline рекомендуется коммитить для CI.
 - [Qodana: baseline](https://www.jetbrains.com/help/qodana/baseline.html) — снимок проекта используется для классификации новых, неизменённых и устранённых проблем.
@@ -150,3 +150,4 @@ composer check
 | 2026-08-10 | Разработчик (codex) | Задача взята в работу; подтверждён план реализации, создана рабочая ветка. |
 | 2026-08-10 | Разработчик (codex) | Реализованы update/check снимка, атомарная синхронизация, стабильные метаданные, Git future revision и потребительские тесты; pipeline проверен на TasK в отдельном worktree. |
 | 2026-08-10 | Разработчик (codex) | Создан draft PR #98, задача переведена в review. |
+| 2026-08-10 | Разработчик (codex) | PR принят пользователем; задача завершена и перенесена в todo/done перед merge. |
