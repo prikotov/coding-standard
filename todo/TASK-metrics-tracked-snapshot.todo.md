@@ -4,7 +4,7 @@ created: 2026-08-10
 value: V4
 complexity: C3
 priority: P1
-depends_on: TASK-metrics-composer-integration
+depends_on:
 epic: EPIC-metrics-ai-maintainability
 author: Аналитик (codex)
 assignee: Разработчик (codex)
@@ -127,7 +127,7 @@ composer check
 
 - `docs/conventions/ops/quality-metrics.md` — каноническое зеркало отчётов.
 - `var/metrics/` — текущая временная структура, из которой публикуется каноническое зеркало.
-- `TASK-metrics-composer-integration` — сбор метрик проекта-потребителя.
+- [`TASK-metrics-composer-integration`](done/TASK-metrics-composer-integration.todo.md) — сбор метрик проекта-потребителя.
 - [PHPStan: baseline](https://phpstan.org/user-guide/baseline) — отслеживаемое состояние анализатора хранится рядом с проектом.
 - [Psalm: baseline](https://psalm.dev/docs/running_psalm/dealing_with_code_issues/) — сгенерированный baseline рекомендуется коммитить для CI.
 - [Qodana: baseline](https://www.jetbrains.com/help/qodana/baseline.html) — снимок проекта используется для классификации новых, неизменённых и устранённых проблем.
@@ -146,3 +146,4 @@ composer check
 | 2026-08-10 | Аналитик (codex) | Один lock-файл заменён на каноническую зеркальную структуру из конвенции метрик. |
 | 2026-08-10 | Аналитик (codex) | Для однотипного подключения в разных проектах постоянная структура размещена в `.coding-standard/metrics/`; временные файлы остаются в `var/metrics/`. |
 | 2026-08-10 | Аналитик (codex) | Конвенция метрик обновлена; постоянный путь сделан ненастраиваемым, в задачу добавлена миграция `report_dir` на `work_dir`. |
+| 2026-08-10 | codex (Codex) | Выполненная TASK-metrics-composer-integration удалена из depends_on. |
