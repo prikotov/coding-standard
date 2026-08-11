@@ -141,6 +141,21 @@ git add .coding-standard/metrics/
 vendor/bin/coding-standard-metrics --check-snapshot
 ```
 
+Две совместимые версии снимка сравниваются без повторного анализа базовой
+ревизии:
+
+```bash
+vendor/bin/coding-standard-metrics-compare \
+  --baseline=/tmp/metrics-baseline \
+  --current=.coding-standard/metrics \
+  --output=var/metrics-review
+```
+
+Команда создаёт детерминированные `comparison.json` для ИИ-агента и
+`summary.md` для разработчика. Опция `--changed-paths=/tmp/changed-paths.txt`
+помечает объекты из текущего Git diff. Несовпадение проекта, схемы, версии
+определений, конфигурации или версий источников завершает сравнение ошибкой.
+
 Рекомендуемые команды проекта-потребителя:
 
 ```json
@@ -189,6 +204,7 @@ vendor/bin/coding-standard-metrics --check-snapshot
 | `validate-md-links` | Проверяет ссылки и якоря Markdown |
 | `validate-language` | Проверяет англицизмы в русскоязычной документации |
 | `coding-standard-metrics` | Обновляет или проверяет JSON-снимок и строит HTML-дашборд подключаемого проекта |
+| `coding-standard-metrics-compare` | Сравнивает совместимые снимки и создаёт JSON/Markdown с дельтами |
 | `metrics-collect` | Собирает структурные метрики PHP-кода |
 | `metrics-scc` | Собирает размер кодовой базы и версию `scc` |
 | `metrics-coverage` | Создаёт Clover-отчёт покрытия через PHPUnit и PCOV |

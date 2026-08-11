@@ -48,6 +48,7 @@ final class MetricsSnapshotMetadataTest extends TestCase
                 $directory . '/phpunit.xml',
             );
             self::assertSame($first['metadata'], $second['metadata']);
+            self::assertSame(basename($directory), $first['metadata']['project']);
             self::assertStringStartsWith('sha256:', $first['metadata']['configuration_hash']);
             self::assertStringStartsWith('sha256:', $first['metadata']['input_hash']);
 
