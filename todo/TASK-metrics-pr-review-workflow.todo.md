@@ -9,8 +9,8 @@ epic: EPIC-metrics-ai-maintainability
 author: Аналитик (codex)
 assignee: Разработчик (codex)
 branch: task/metrics-pr-review-workflow
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/100
+status: review
 ---
 
 # TASK-metrics-pr-review-workflow: изменение метрик как артефакт код-ревью
@@ -142,3 +142,4 @@ composer check
 | 2026-08-11 | Разработчик (codex) | Задача взята в работу; план реализации подтверждён, создана ветка поверх TASK-metrics-report-diff. |
 | 2026-08-11 | Разработчик (codex) | Реализован оркестратор артефакта, пример GitHub Actions и обязательная инструкция ИИ-агенту; добавлен потребительский интеграционный тест. |
 | 2026-08-11 | Разработчик (codex) | Сквозной сценарий дважды проверен на изолированном клоне TasK для ревизии `829b36cd4` с детерминированной Clover-фикстурой; получен идентичный артефакт, исходная рабочая копия TasK не изменялась. |
+| 2026-08-11 | Разработчик (codex) | Создан stacked draft PR #100 поверх PR #99; задача переведена в review. |
