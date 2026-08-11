@@ -231,6 +231,18 @@ vendor/bin/coding-standard-metrics-compare \
   --changed-paths=/tmp/changed-paths.txt
 ```
 
+### Артефакт код-ревью
+
+- Команда `vendor/bin/coding-standard-metrics-review --base=<target> --head=HEAD` запускается из корня проекта с полной историей Git.
+- `--head` обязан указывать на текущую рабочую копию. Merge-base вычисляется между коммитами `base` и `head`; базовая структура извлекается через Git без переключения исходников на прошлую ревизию.
+- Перед извлечением команда запускает `coding-standard-metrics --check-snapshot`. Устаревшая текущая структура завершает сценарий до сравнения и не изменяет `.coding-standard/metrics/`.
+- Список изменённых путей строится между merge-base и текущей рабочей копией. Подготовленные, неподготовленные и новые неигнорируемые файлы локального режима входят в изменённую область.
+- Каталог результата содержит `baseline/.coding-standard/metrics/`, `current/.coding-standard/metrics/`, `comparison.json`, `summary.md` и `reproduction.json`.
+- `reproduction.json` фиксирует исходные ссылки, коммиты целевой ветки и HEAD, merge-base, состояние рабочей копии, отпечатки входов и отсортированный список изменённых путей. Времени запуска и абсолютных путей нет.
+- Для первого PR без снимка на merge-base команда завершается явной ошибкой. Такой PR добавляет исходную линию отдельно; пустое сравнение не создаётся.
+- В GitHub Actions репозиторий извлекается с `fetch-depth: 0`, текущая структура проверяется на коммите PR, каталог публикуется как артефакт, а `summary.md` добавляется в сводку задания.
+- Готовый пример: [`../examples/github-actions-metrics-review.yml`](../examples/github-actions-metrics-review.yml). Для fork PR ему достаточно разрешения `contents: read`.
+
 Метрики дополняют конвенции для [сервисов](../core-patterns/service.md), [DTO](../core-patterns/dto.md), [сценариев использования](../layers/application/use-case.md) и [модулей](../modules/index.md), но не отменяют их правила ответственности и зависимостей.
 
 ## Пример

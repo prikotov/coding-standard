@@ -1,0 +1,45 @@
+name: Quality metrics review
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  metrics-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pcov
+          coverage: pcov
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - run: go install github.com/boyter/scc/v3@v3.7.0
+      - run: composer install --no-interaction --prefer-dist
+
+      - name: Build metrics review artifact
+        run: >-
+          vendor/bin/coding-standard-metrics-review
+          --base=${{ github.event.pull_request.base.sha }}
+          --head=HEAD
+          --output=var/metrics-review
+
+      - name: Publish metrics summary
+        run: cat var/metrics-review/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quality-metrics-review
+          path: var/metrics-review/
+          if-no-files-found: error
