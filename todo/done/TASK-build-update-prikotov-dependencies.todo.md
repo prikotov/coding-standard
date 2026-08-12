@@ -3,7 +3,7 @@ type: build
 created: 2026-08-12 05:07:49 (1786511269)
 due:
 started: 2026-08-12 05:07:49 (1786511269)
-completed:
+completed: 2026-08-12 05:53:35 (1786514015)
 cancelled:
 value: V2
 complexity: C2
@@ -16,7 +16,7 @@ author: Разработчик (codex)
 assignee: Разработчик (codex)
 branch: agent/update-prikotov-dependencies
 pr: https://github.com/prikotov/coding-standard/pull/102
-status: review
+status: done
 ---
 
 # TASK-build-update-prikotov-dependencies: Обновление зависимостей prikotov/*
@@ -105,3 +105,4 @@ composer check
 | 2026-08-12 | Разработчик (codex) | Подтверждён план обновления зависимости, повторной инициализации и интеграции проверки. |
 | 2026-08-12 | Разработчик (codex) | `todo-md` обновлён до v0.0.10, init-артефакты синхронизированы, проектный конфиг и исключение генерируемых справочников интегрированы; `composer check` зелёный. |
 | 2026-08-12 | Разработчик (codex) | Создан draft PR #102; задача переведена в review. |
+| 2026-08-12 05:53:35 (1786514015) | Разработчик (codex) | PR #102 принят пользователем; задача завершена и перенесена в `todo/done/` перед merge. |
