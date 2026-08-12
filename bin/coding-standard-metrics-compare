@@ -1,0 +1,63 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+$autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . '/vendor/autoload.php';
+if (!is_file($autoloadPath)) {
+    $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
+}
+require $autoloadPath;
+
+use PrikotovCodingStandard\Metrics\MetricsComparison;
+use PrikotovCodingStandard\Metrics\MetricsComparisonWriter;
+use PrikotovCodingStandard\Metrics\MetricsSnapshotReader;
+
+try {
+    $options = [];
+    foreach (array_slice($argv, 1) as $argument) {
+        if ($argument === '--help') {
+            fwrite(STDOUT, <<<'TEXT'
+Usage: coding-standard-metrics-compare --baseline=<dir> --current=<dir> --output=<dir> [--changed-paths=<file>]
+
+  --baseline       Canonical .coding-standard/metrics/ tree from the base revision.
+  --current        Canonical .coding-standard/metrics/ tree from the current revision.
+  --output         Directory for deterministic comparison.json and summary.md.
+  --changed-paths  Optional text file with one current Git diff path per line.
+
+TEXT);
+            exit(0);
+        }
+        if (preg_match('/^--(baseline|current|output|changed-paths)=(.+)$/', $argument, $match) !== 1) {
+            throw new InvalidArgumentException("Unknown or incomplete option: $argument");
+        }
+        $options[$match[1]] = $match[2];
+    }
+    foreach (['baseline', 'current', 'output'] as $required) {
+        if (!isset($options[$required])) {
+            throw new InvalidArgumentException("Required option is missing: --$required");
+        }
+    }
+    $changedPaths = [];
+    if (isset($options['changed-paths'])) {
+        if (!is_file($options['changed-paths'])) {
+            throw new RuntimeException("Changed paths file does not exist: {$options['changed-paths']}");
+        }
+        $changedPaths = file($options['changed-paths'], FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if ($changedPaths === false) {
+            throw new RuntimeException("Cannot read changed paths file: {$options['changed-paths']}");
+        }
+    }
+
+    $reader = new MetricsSnapshotReader();
+    $comparison = (new MetricsComparison())->compare(
+        $reader->read($options['baseline']),
+        $reader->read($options['current']),
+        $changedPaths,
+    );
+    (new MetricsComparisonWriter())->write($options['output'], $comparison);
+    fwrite(STDOUT, "Metrics comparison written to {$options['output']}\n");
+} catch (Throwable $exception) {
+    fwrite(STDERR, "coding-standard-metrics-compare: {$exception->getMessage()}\n");
+    exit(1);
+}

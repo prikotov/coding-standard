@@ -114,6 +114,14 @@ final class MetricsAggregator
         return [
             'schema_version' => '1.0', 'scope' => ['kind' => 'project', 'source_path' => '.'],
             'metadata' => array_filter([
+                'metric_definitions_version' => '1.0',
+                'source_versions' => [
+                    'analyzer' => $analyzer['toolVersion'] ?? null,
+                    'coverage' => 'clover',
+                    'deptrac' => '1.0',
+                    'scc' => $sccVersion,
+                    'test_statistics' => '1.0',
+                ],
                 'analyzer_version' => $analyzer['toolVersion'] ?? null,
                 'deptrac_schema_version' => '1.0',
                 'scc_version' => $sccVersion,

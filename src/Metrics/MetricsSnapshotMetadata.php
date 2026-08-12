@@ -41,6 +41,11 @@ final class MetricsSnapshotMetadata
             'findings' => is_array($report['findings'] ?? null) ? $report['findings'] : [],
         ];
         $metadata = is_array($report['metadata'] ?? null) ? $report['metadata'] : [];
+        $project = $this->projectIdentifier($composer);
+        if ($project === '') {
+            throw new RuntimeException('Cannot determine the metrics snapshot project identifier.');
+        }
+        $metadata['project'] = $project;
         $metadata['configuration_hash'] = $this->hash($configuration);
         $metadata['input_hash'] = $this->hash($inputs);
         $report['metadata'] = $metadata;
@@ -160,5 +165,67 @@ final class MetricsSnapshotMetadata
         unset($item);
 
         return $value;
+    }
+
+    /** @param array<string, mixed> $composer */
+    private function projectIdentifier(array $composer): string
+    {
+        $name = $composer['name'] ?? null;
+        if (is_string($name) && $name !== '') {
+            return $name;
+        }
+
+        $remote = $this->gitValue(['config', '--get', 'remote.origin.url']);
+        if ($remote !== null) {
+            return $this->remoteIdentifier($remote);
+        }
+        $rootCommits = $this->gitValue(['rev-list', '--max-parents=0', 'HEAD']);
+        if ($rootCommits !== null) {
+            return 'git-root:sha256:' . hash('sha256', $rootCommits);
+        }
+
+        return basename(rtrim(str_replace('\\', '/', $this->projectRoot), '/'));
+    }
+
+    /** @param list<string> $arguments */
+    private function gitValue(array $arguments): ?string
+    {
+        $process = proc_open(
+            ['git', '-C', $this->projectRoot, ...$arguments],
+            [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
+            $pipes,
+        );
+        if (is_resource($process)) {
+            fclose($pipes[0]);
+            $value = trim((string) stream_get_contents($pipes[1]));
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            $code = proc_close($process);
+            if ($code === 0 && $value !== '') {
+                return $value;
+            }
+        }
+
+        return null;
+    }
+
+    private function remoteIdentifier(string $remote): string
+    {
+        if (preg_match('#^(?:[^@]+@)?([^:/]+):(?!//)(.+)$#', $remote, $matches) === 1) {
+            $host = strtolower($matches[1]);
+            $path = $matches[2];
+        } else {
+            $parts = parse_url($remote);
+            $host = is_array($parts) && is_string($parts['host'] ?? null)
+                ? strtolower($parts['host'])
+                : '';
+            $path = is_array($parts) && is_string($parts['path'] ?? null) ? $parts['path'] : '';
+        }
+        $path = preg_replace('#\.git$#', '', trim($path, '/')) ?? $path;
+        if ($host !== '' && $path !== '') {
+            return "git:$host/$path";
+        }
+
+        return 'git:sha256:' . hash('sha256', $remote);
     }
 }

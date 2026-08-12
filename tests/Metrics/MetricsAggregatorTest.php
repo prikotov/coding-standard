@@ -20,6 +20,8 @@ final class MetricsAggregatorTest extends TestCase
         ]], ['thresholds' => ['class' => ['loc' => 25], 'module' => ['cycles' => 0]]], $this->scc(), $this->testStatistics(), $this->clover(), '3.7.0');
 
         self::assertSame('1.0', $report['schema_version']);
+        self::assertSame('1.0', $report['metadata']['metric_definitions_version']);
+        self::assertSame('2.11.3', $report['metadata']['source_versions']['analyzer']);
         self::assertSame(3, $report['metrics']['project']['class_count']);
         self::assertSame(20.0, $report['metrics']['project']['class_loc']['median']);
         self::assertSame(28.0, $report['metrics']['project']['class_loc']['p90']);
