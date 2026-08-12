@@ -156,13 +156,37 @@ vendor/bin/coding-standard-metrics-compare \
 помечает объекты из текущего Git diff. Несовпадение проекта, схемы, версии
 определений, конфигурации или версий источников завершает сравнение ошибкой.
 
+Для код-ревью полный артефакт строится из корня проекта одной командой:
+
+```bash
+vendor/bin/coding-standard-metrics-review \
+  --base=origin/master \
+  --head=HEAD \
+  --output=var/metrics-review
+```
+
+Команда сначала запускает `--check-snapshot`, затем извлекает снимок merge-base
+из Git без checkout и сохраняет:
+
+- `baseline/.coding-standard/metrics/` и `current/.coding-standard/metrics/`;
+- `comparison.json` и `summary.md`;
+- `reproduction.json` с commit базовой ветки, merge-base, HEAD и отпечатками входов.
+
+Пример job для GitHub Actions находится в
+[`examples/github-actions/metrics-review.yml`](examples/github-actions/metrics-review.yml).
+Он публикует весь каталог как artifact, а Markdown — в job summary. В ревью
+агент обязан связать регрессии из `comparison.json` с текущим diff. Необъяснённая
+регрессия в изменённой области блокирует одобрение; допустимое ухудшение явно
+обосновывается в PR.
+
 Рекомендуемые команды проекта-потребителя:
 
 ```json
 {
   "scripts": {
     "metrics": "vendor/bin/coding-standard-metrics --update-snapshot",
-    "metrics:check": "vendor/bin/coding-standard-metrics --check-snapshot"
+    "metrics:check": "vendor/bin/coding-standard-metrics --check-snapshot",
+    "metrics:review": "vendor/bin/coding-standard-metrics-review"
   }
 }
 ```
@@ -205,6 +229,7 @@ vendor/bin/coding-standard-metrics-compare \
 | `validate-language` | Проверяет англицизмы в русскоязычной документации |
 | `coding-standard-metrics` | Обновляет или проверяет JSON-снимок и строит HTML-дашборд подключаемого проекта |
 | `coding-standard-metrics-compare` | Сравнивает совместимые снимки и создаёт JSON/Markdown с дельтами |
+| `coding-standard-metrics-review` | Проверяет current, извлекает baseline из Git и собирает артефакт PR |
 | `metrics-collect` | Собирает структурные метрики PHP-кода |
 | `metrics-scc` | Собирает размер кодовой базы и версию `scc` |
 | `metrics-coverage` | Создаёт Clover-отчёт покрытия через PHPUnit и PCOV |

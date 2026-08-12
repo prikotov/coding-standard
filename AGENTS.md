@@ -58,6 +58,8 @@ tests/                        # Тесты сниффов
 bin/
   coding-standard-init        # CLI-команда для копирования доков в проект
   coding-standard-metrics     # Сбор метрик подключаемого проекта
+  coding-standard-metrics-compare # Сравнение двух снимков метрик
+  coding-standard-metrics-review  # Сбор артефакта код-ревью
   run-sniff-tests.php         # Запуск тестов сниффов
 docs/
   conventions/                # DDD-конвенции (копируются в проект-потребитель)

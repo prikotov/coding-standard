@@ -6,8 +6,8 @@ complexity: C4
 priority: P1
 author: Автор эпика (pi)
 assignee: Разработчик (codex)
-status: todo
-pr:
+status: done
+pr: https://github.com/prikotov/coding-standard/pull/101
 ---
 
 # EPIC-metrics-ai-maintainability: Метрики качества проекта для ИИ-агентов
@@ -77,7 +77,7 @@ pr:
 - [x] `composer metrics` + документация запуска и чтения отчёта (README и конвенция метрик) (TASK-metrics-composer-integration).
 - [x] Канонические JSON `.coding-standard/metrics/` хранятся в Git и автоматически проверяются на актуальность (TASK-metrics-tracked-snapshot).
 - [x] Детерминированное сравнение совместимых снимков с машиночитаемым отчётом об изменениях (TASK-metrics-report-diff).
-- [ ] Сценарий код-ревью ИИ-агентом: базовая ветка, текущие правки, артефакт PR и правило реакции на регрессию (TASK-metrics-pr-review-workflow).
+- [x] Сценарий код-ревью ИИ-агентом: базовая ветка, текущие правки, артефакт PR и правило реакции на регрессию (TASK-metrics-pr-review-workflow).
 
 ### 🟡 Should Have (Желательно)
 
@@ -124,36 +124,36 @@ flowchart LR
 
 ## 5. Implementation Plan (План реализации)
 
-- [x] [TASK-metrics-tools-evaluation](done/TASK-metrics-tools-evaluation.todo.md) — оценка анализаторов и выбор основы
-- [x] [TASK-metrics-model-convention](done/TASK-metrics-model-convention.todo.md) — модель метрик в docs/conventions/
-- [x] [TASK-metrics-module-boundaries-deptrac](done/TASK-metrics-module-boundaries-deptrac.todo.md) — полный граф зависимостей проекта через Deptrac
-- [x] [TASK-metrics-aggregator](done/TASK-metrics-aggregator.todo.md) — агрегатор и report.json
-- [x] [TASK-metrics-codebase-size](done/TASK-metrics-codebase-size.todo.md) — размер кодовой базы (scc), статистика тестов, покрытие
-- [x] [TASK-metrics-html-dashboard](done/TASK-metrics-html-dashboard.todo.md) — статический HTML-дашборд
-- [x] [TASK-metrics-composer-integration](done/TASK-metrics-composer-integration.todo.md) — composer metrics и документация
-- [x] [TASK-metrics-tracked-snapshot](done/TASK-metrics-tracked-snapshot.todo.md) — актуальная зеркальная структура метрик в Git
-- [x] [TASK-metrics-report-diff](done/TASK-metrics-report-diff.todo.md) — детерминированное сравнение снимков метрик
-- [ ] [TASK-metrics-pr-review-workflow](TASK-metrics-pr-review-workflow.todo.md) — использование изменения метрик ИИ-агентом и публикация артефакта PR
+- [x] [TASK-metrics-tools-evaluation](TASK-metrics-tools-evaluation.todo.md) — оценка анализаторов и выбор основы
+- [x] [TASK-metrics-model-convention](TASK-metrics-model-convention.todo.md) — модель метрик в docs/conventions/
+- [x] [TASK-metrics-module-boundaries-deptrac](TASK-metrics-module-boundaries-deptrac.todo.md) — полный граф зависимостей проекта через Deptrac
+- [x] [TASK-metrics-aggregator](TASK-metrics-aggregator.todo.md) — агрегатор и report.json
+- [x] [TASK-metrics-codebase-size](TASK-metrics-codebase-size.todo.md) — размер кодовой базы (scc), статистика тестов, покрытие
+- [x] [TASK-metrics-html-dashboard](TASK-metrics-html-dashboard.todo.md) — статический HTML-дашборд
+- [x] [TASK-metrics-composer-integration](TASK-metrics-composer-integration.todo.md) — composer metrics и документация
+- [x] [TASK-metrics-tracked-snapshot](TASK-metrics-tracked-snapshot.todo.md) — актуальная зеркальная структура метрик в Git
+- [x] [TASK-metrics-report-diff](TASK-metrics-report-diff.todo.md) — детерминированное сравнение снимков метрик
+- [x] [TASK-metrics-pr-review-workflow](TASK-metrics-pr-review-workflow.todo.md) — использование изменения метрик ИИ-агентом и публикация артефакта PR
 
 ## 6. Definition of Done (Критерии приёмки эпика)
 
-- [ ] Все Must-задачи выполнены: отслеживаемая структура отчётов покрывает модель метрик.
-- [ ] `composer metrics` работает end-to-end одной командой в проекте-потребителе.
-- [ ] Канонические JSON `.coding-standard/metrics/` содержат все метрики, хранятся в Git и проверяются на соответствие текущим входам.
-- [ ] Для одного PR воспроизводимо сравниваются версии структуры на merge-base и HEAD.
-- [ ] Артефакт PR содержит исходные снимки, детерминированную дельту и краткое резюме для ИИ-агента.
-- [ ] Инструкция код-ревью требует проверить изменение метрик и не одобрять необъяснённую регрессию в изменённой области.
+- [x] Все Must-задачи выполнены: отслеживаемая структура отчётов покрывает модель метрик.
+- [x] `composer metrics` работает end-to-end одной командой в проекте-потребителе.
+- [x] Канонические JSON `.coding-standard/metrics/` содержат все метрики, хранятся в Git и проверяются на соответствие текущим входам.
+- [x] Для одного PR воспроизводимо сравниваются версии структуры на merge-base и HEAD.
+- [x] Артефакт PR содержит исходные снимки, детерминированную дельту и краткое резюме для ИИ-агента.
+- [x] Инструкция код-ревью требует проверить изменение метрик и не одобрять необъяснённую регрессию в изменённой области.
 - [x] HTML-дашборд отображает реальные данные проекта TasK.
-- [ ] docs/conventions/, README, AGENTS.md обновлены; `composer check` зелёный.
+- [x] docs/conventions/, README, AGENTS.md обновлены; `composer check` зелёный.
 
 ## 7. Release Notes and Deployment (Инструкция по релизу)
 
-- [ ] Публичная команда метрик и её зависимости поставляются пакетом через Packagist.
-- [ ] Инструкция показывает script `metrics` в `composer.json` проекта-потребителя.
-- [ ] Инструкция требует коммитить канонические JSON `.coding-standard/metrics/` и проверять их актуальность в CI.
-- [ ] Инструкция показывает извлечение baseline из Git, сравнение с current и сохранение артефакта PR.
-- [ ] Инструкция разделяет отслеживаемые JSON из `.coding-standard/metrics/` и временные HTML/промежуточные файлы из `var/metrics/`.
-- [ ] README содержит раздел «Метрики качества».
+- [x] Публичная команда метрик и её зависимости поставляются пакетом через Packagist.
+- [x] Инструкция показывает script `metrics` в `composer.json` проекта-потребителя.
+- [x] Инструкция требует коммитить канонические JSON `.coding-standard/metrics/` и проверять их актуальность в CI.
+- [x] Инструкция показывает извлечение baseline из Git, сравнение с current и сохранение артефакта PR.
+- [x] Инструкция разделяет отслеживаемые JSON из `.coding-standard/metrics/` и временные HTML/промежуточные файлы из `var/metrics/`.
+- [x] README содержит раздел «Метрики качества».
 
 ## 8. Risks and Dependencies (Риски и зависимости)
 
@@ -183,7 +183,7 @@ flowchart LR
 - Для ИИ-агентов источник истины — отслеживаемая JSON-структура `.coding-standard/metrics/`; HTML-дашборд в `var/metrics/` — временное представление для людей.
 - Главный результат код-ревью — не абсолютное значение отдельной метрики, а её изменение относительно базовой ветки при неизменных правилах измерения.
 - Git уже хранит историю структуры: её версии на merge-base и HEAD являются входами сравнения, а артефакт PR содержит их детерминированную дельту.
-- По результатам TASK-metrics-tools-evaluation PhpCodeArcheology 2.11.x выбран внешним эталоном. Узкий собственный сборщик на `nikic/php-parser` вместе с Deptrac предварительно предпочтительнее как конечная архитектура, но должен пройти прототипирование, сверку формул и нагрузочный прогон. Подробности: [сравнение PHP-анализаторов метрик](../docs/research/metrics-tools-evaluation.md).
+- По результатам TASK-metrics-tools-evaluation PhpCodeArcheology 2.11.x выбран внешним эталоном. Узкий собственный сборщик на `nikic/php-parser` вместе с Deptrac предварительно предпочтительнее как конечная архитектура, но должен пройти прототипирование, сверку формул и нагрузочный прогон. Подробности: [сравнение PHP-анализаторов метрик](../../docs/research/metrics-tools-evaluation.md).
 
 ## `Change History` (История изменений)
 
@@ -209,3 +209,4 @@ flowchart LR
 | 2026-08-10 | codex (Codex) | TASK-metrics-composer-integration завершена и перенесена в архив. |
 | 2026-08-10 | Разработчик (codex) | TASK-metrics-tracked-snapshot завершена и перенесена в архив. |
 | 2026-08-12 | Разработчик (codex) | TASK-metrics-report-diff завершена и перенесена в архив. |
+| 2026-08-12 | Разработчик (codex) | TASK-metrics-pr-review-workflow завершена; все Must-требования и критерии готовности эпика выполнены, эпик перенесён в архив. |
