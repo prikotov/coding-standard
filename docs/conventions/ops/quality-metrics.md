@@ -241,7 +241,7 @@ vendor/bin/coding-standard-metrics-compare \
 - `reproduction.json` фиксирует исходные ссылки, коммиты целевой ветки и HEAD, merge-base, состояние рабочей копии, отпечатки входов и отсортированный список изменённых путей. Времени запуска и абсолютных путей нет.
 - Для первого PR без снимка на merge-base команда завершается явной ошибкой. Такой PR добавляет исходную линию отдельно; пустое сравнение не создаётся.
 - В GitHub Actions репозиторий извлекается с `fetch-depth: 0`, текущая структура проверяется на коммите PR, каталог публикуется как артефакт, а `summary.md` добавляется в сводку задания.
-- Готовый пример: [`../examples/github-actions-metrics-review.yml`](../examples/github-actions-metrics-review.yml). Для fork PR ему достаточно разрешения `contents: read`.
+- Готовый пример: [`../../../examples/github-actions/metrics-review.yml`](../../../examples/github-actions/metrics-review.yml). Для fork PR ему достаточно разрешения `contents: read`.
 
 Метрики дополняют конвенции для [сервисов](../core-patterns/service.md), [DTO](../core-patterns/dto.md), [сценариев использования](../layers/application/use-case.md) и [модулей](../modules/index.md), но не отменяют их правила ответственности и зависимостей.
 

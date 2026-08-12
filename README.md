@@ -173,7 +173,7 @@ vendor/bin/coding-standard-metrics-review \
 - `reproduction.json` с commit базовой ветки, merge-base, HEAD и отпечатками входов.
 
 Пример job для GitHub Actions находится в
-[`docs/conventions/examples/github-actions-metrics-review.yml`](docs/conventions/examples/github-actions-metrics-review.yml).
+[`examples/github-actions/metrics-review.yml`](examples/github-actions/metrics-review.yml).
 Он публикует весь каталог как artifact, а Markdown — в job summary. В ревью
 агент обязан связать регрессии из `comparison.json` с текущим diff. Необъяснённая
 регрессия в изменённой области блокирует одобрение; допустимое ухудшение явно
