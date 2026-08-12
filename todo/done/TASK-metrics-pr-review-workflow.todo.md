@@ -10,7 +10,7 @@ author: Аналитик (codex)
 assignee: Разработчик (codex)
 branch: task/metrics-pr-review-workflow
 pr: https://github.com/prikotov/coding-standard/pull/101
-status: review
+status: done
 ---
 
 # TASK-metrics-pr-review-workflow: изменение метрик как артефакт код-ревью
@@ -146,3 +146,4 @@ composer check
 | 2026-08-11 | Разработчик (codex) | Создан stacked draft PR #100 поверх PR #99; задача переведена в review. |
 | 2026-08-12 | Разработчик (codex) | После merge PR #99 GitHub закрыл stacked PR #100 вместе с удалением базовой ветки; создан draft PR #101 в master. |
 | 2026-08-12 | Разработчик (codex) | По обратной связи пример GitHub Actions перенесён из копируемых конвенций в `examples/github-actions/`. |
+| 2026-08-12 | Разработчик (codex) | PR #101 принят пользователем; задача завершена и перенесена в `todo/done/` перед merge. |
