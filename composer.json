@@ -29,7 +29,7 @@
         "php-code-archeology/php-code-archeology": "^2.11",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^10.5",
-        "prikotov/todo-md": "^0.0.8"
+        "prikotov/todo-md": "^0.0.10"
     },
     "autoload": {
         "psr-4": {
@@ -59,10 +59,7 @@
         "validate-docs": "php bin/validate-docs.php",
         "validate-md-links": "php bin/validate-md-links",
         "validate-language": "php bin/validate-language --strict",
-        "validate-todo": [
-            "php vendor/bin/todo-md validate todo/*.todo.md",
-            "php vendor/bin/todo-md validate todo/backlog/"
-        ],
+        "validate-todo": "php vendor/bin/todo-md validate todo/*.todo.md todo/backlog/",
         "check": [
             "@test",
             "@sniff-test",
