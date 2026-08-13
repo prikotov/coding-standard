@@ -29,7 +29,7 @@ return [
             'apps/*/src/Module/*',
             'apps/*/src/**/Module/*',
         ],
-        // Допустимые границы project-level правил. Сборщик преобразует
+        // Допустимые границы правил уровня проекта. Сборщик преобразует
         // превышения в findings; значения пересматриваются по распределениям.
         'thresholds' => [
             'method' => [
@@ -97,8 +97,7 @@ return [
             'User Story', 'Job Story',
             'Requirements', 'Verification', 'Sources', 'Comments',
             'Goal', 'Story', 'MoSCoW', 'SMART', 'INVEST',
-            'commit', 'remote', 'Clover', 'project-level', 'PhpCodeArcheology', 'scc',
-            'class-level', 'module-level', 'method-level', 'worktree',
+            'commit', 'PhpCodeArcheology', 'scc', 'worktree',
         ],
         // Стандартные переводы ЖАРГОНА/проектно-специфичных терминов с неоднозначным
         // переводом (НЕ обычных слов с очевидным переводом). validate-language подсказывает
