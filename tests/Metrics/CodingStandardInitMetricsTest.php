@@ -8,11 +8,11 @@ use PHPUnit\Framework\TestCase;
 
 final class CodingStandardInitMetricsTest extends TestCase
 {
-    public function testCreatesWorkDirectoryConfigAndTracksCanonicalSnapshot(): void
+    public function testCreatesWorkDirectoryConfigWithoutChangingRootGitignore(): void
     {
         $directory = sys_get_temp_dir() . '/coding-standard-init-' . uniqid();
         mkdir($directory);
-        file_put_contents($directory . '/.gitignore', "/.coding-standard/\n");
+        file_put_contents($directory . '/.gitignore', "node_modules/\n");
         $command = [
             PHP_BINARY,
             dirname(__DIR__, 2) . '/bin/coding-standard-init',
@@ -38,8 +38,8 @@ final class CodingStandardInitMetricsTest extends TestCase
             self::assertSame('var/metrics', $config['metrics']['work_dir']);
             self::assertArrayNotHasKey('report_dir', $config['metrics']);
             $gitignore = (string) file_get_contents($directory . '/.gitignore');
-            self::assertStringContainsString("/var/\n", $gitignore);
-            self::assertStringContainsString("!/.coding-standard/metrics/**\n", $gitignore);
+            self::assertSame("node_modules/\n", $gitignore);
+            self::assertStringNotContainsString('.coding-standard', $gitignore);
         } finally {
             $this->removeDirectory($directory);
         }

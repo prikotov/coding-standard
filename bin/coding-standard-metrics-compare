@@ -20,8 +20,8 @@ try {
             fwrite(STDOUT, <<<'TEXT'
 Usage: coding-standard-metrics-compare --baseline=<dir> --current=<dir> --output=<dir> [--changed-paths=<file>]
 
-  --baseline       Canonical .coding-standard/metrics/ tree from the base revision.
-  --current        Canonical .coding-standard/metrics/ tree from the current revision.
+  --baseline       Compact metrics snapshot from the base revision.
+  --current        Compact metrics snapshot from the current revision.
   --output         Directory for deterministic comparison.json and summary.md.
   --changed-paths  Optional text file with one current Git diff path per line.
 

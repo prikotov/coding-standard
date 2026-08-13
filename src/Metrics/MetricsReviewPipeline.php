@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace PrikotovCodingStandard\Metrics;
 
-use FilesystemIterator;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use RuntimeException;
 
 final class MetricsReviewPipeline
@@ -24,40 +21,31 @@ final class MetricsReviewPipeline
                 'Run coding-standard-metrics-review from a project root containing composer.json.',
             );
         }
-        $output = $this->reviewOutputPath($output);
-        $snapshot = $this->projectRoot . '/' . MetricsSnapshotManager::SNAPSHOT_PATH;
-        $this->checkSnapshot();
-        (new MetricsSnapshotReader())->read($snapshot);
-
+        $output = $this->projectPath($output);
         $baseCommit = $this->commit($base);
         $headCommit = $this->commit($head);
-        $checkedOutCommit = $this->commit('HEAD');
-        if ($headCommit !== $checkedOutCommit) {
+        if ($headCommit !== $this->commit('HEAD')) {
             throw new RuntimeException('--head must resolve to the currently checked out HEAD.');
         }
         $mergeBase = trim($this->git(['merge-base', $baseCommit, $headCommit]));
-        if (!preg_match('/^[0-9a-f]{40}$/', $mergeBase)) {
-            throw new RuntimeException('Cannot determine a unique merge-base for metrics review.');
-        }
         $changedPaths = $this->changedPaths($mergeBase, $output);
-        $workingTreeClean = $this->workingTreeClean($output);
-        $parent = dirname($output);
-        if (!is_dir($parent) && !mkdir($parent, 0777, true) && !is_dir($parent)) {
-            throw new RuntimeException("Cannot create metrics review parent directory: $parent");
-        }
-        $staging = $parent . '/.metrics-review-staging-' . bin2hex(random_bytes(8));
-        $baseline = $staging . '/baseline/' . MetricsSnapshotManager::SNAPSHOT_PATH;
-        $current = $staging . '/current/' . MetricsSnapshotManager::SNAPSHOT_PATH;
+        $worktree = $this->projectRoot . '/var/metrics-worktree-' . bin2hex(random_bytes(8));
 
         try {
-            $this->extractSnapshot($mergeBase, $baseline);
-            $this->copySnapshot($snapshot, $current);
-            $reader = new MetricsSnapshotReader();
-            $baselineData = $reader->read($baseline);
-            $currentData = $reader->read($current);
-            $comparison = (new MetricsComparison())->compare($baselineData, $currentData, $changedPaths);
-            (new MetricsComparisonWriter())->write($staging, $comparison);
-            $this->writeJson($staging . '/reproduction.json', [
+            $this->buildSnapshot($this->projectRoot);
+            $current = $this->snapshotPath($this->projectRoot);
+            $this->git(['worktree', 'add', '--detach', $worktree, $mergeBase]);
+            $this->copyMetricsConfiguration($worktree);
+            $this->installDependencies($worktree);
+            $this->buildSnapshot($worktree);
+            $baseline = $this->snapshotPath($worktree);
+            $comparison = (new MetricsComparison())->compare(
+                (new MetricsSnapshotReader())->read($baseline),
+                (new MetricsSnapshotReader())->read($current),
+                $changedPaths,
+            );
+            (new MetricsComparisonWriter())->write($output, $comparison);
+            $this->writeJson($output . '/reproduction.json', [
                 'schema_version' => '1.0',
                 'base_ref' => $base,
                 'base_commit' => $baseCommit,
@@ -65,41 +53,77 @@ final class MetricsReviewPipeline
                 'head_ref' => $head,
                 'current_commit' => $headCommit,
                 'merge_base' => $mergeBase,
-                'working_tree_clean' => $workingTreeClean,
-                'baseline_input_hash' => $baselineData['metadata']['input_hash'],
-                'current_input_hash' => $currentData['metadata']['input_hash'],
                 'changed_paths' => $changedPaths,
             ]);
-
-            $snapshots = new MetricsSnapshotManager();
-            if (is_dir($output)) {
-                $snapshots->removeDirectory($output);
-            } elseif (file_exists($output)) {
-                throw new RuntimeException("Metrics review output exists and is not a directory: $output");
-            }
-            if (!rename($staging, $output)) {
-                throw new RuntimeException("Cannot publish metrics review artifact: $output");
-            }
         } finally {
-            if (is_dir($staging)) {
-                (new MetricsSnapshotManager())->removeDirectory($staging);
+            if (is_dir($worktree)) {
+                $this->git(['worktree', 'remove', '--force', $worktree]);
             }
         }
 
-        fwrite(STDOUT, "Metrics review artifact: " . $this->relativePath($output) . "\n");
+        fwrite(STDOUT, 'Metrics delta: ' . $this->relativePath($output . '/comparison.json') . "\n");
     }
 
-    private function checkSnapshot(): void
+    private function copyMetricsConfiguration(string $worktree): void
     {
-        $command = [PHP_BINARY, $this->packageRoot . '/bin/coding-standard-metrics', '--check-snapshot'];
-        $process = proc_open($command, [STDIN, STDOUT, STDERR], $pipes, $this->projectRoot);
+        $source = $this->projectRoot . '/.coding-standard.php';
+        $target = $worktree . '/.coding-standard.php';
+        if (!copy($source, $target)) {
+            throw new RuntimeException('Cannot copy the current metrics configuration to the baseline worktree.');
+        }
+    }
+
+    private function installDependencies(string $worktree): void
+    {
+        [$code, $stdout, $stderr] = $this->process(
+            ['composer', 'install', '--no-interaction', '--prefer-dist', '--no-progress'],
+            $worktree,
+        );
+        if ($code !== 0) {
+            throw new RuntimeException('Cannot install baseline dependencies: ' . trim($stderr ?: $stdout));
+        }
+        $installedPackage = $worktree . '/vendor/prikotov/coding-standard';
+        if (is_dir($installedPackage)) {
+            (new DirectoryRemover())->remove($installedPackage);
+        }
+        $parent = dirname($installedPackage);
+        if (!is_dir($parent) && !mkdir($parent, 0777, true) && !is_dir($parent)) {
+            throw new RuntimeException('Cannot create the baseline package directory.');
+        }
+        if (!symlink($this->packageRoot, $installedPackage)) {
+            throw new RuntimeException('Cannot expose the current coding-standard package to the baseline worktree.');
+        }
+    }
+
+    private function buildSnapshot(string $projectRoot): void
+    {
+        $process = proc_open(
+            [PHP_BINARY, $this->packageRoot . '/bin/coding-standard-metrics'],
+            [STDIN, STDOUT, STDERR],
+            $pipes,
+            $projectRoot,
+            [...getenv(), 'CODING_STANDARD_METRICS_PROJECT_ROOT' => $projectRoot],
+        );
         if (!is_resource($process)) {
-            throw new RuntimeException('Cannot start the current metrics snapshot check.');
+            throw new RuntimeException('Cannot start metrics snapshot generation.');
         }
         $code = proc_close($process);
         if ($code !== 0) {
-            throw new RuntimeException("Current metrics snapshot check failed with exit code $code.");
+            throw new RuntimeException("Metrics snapshot generation failed with exit code $code.");
         }
+    }
+
+    private function snapshotPath(string $projectRoot): string
+    {
+        $config = require $projectRoot . '/.coding-standard.php';
+        $workDirectory = is_array($config) && is_array($config['metrics'] ?? null)
+            ? ($config['metrics']['work_dir'] ?? 'var/metrics')
+            : 'var/metrics';
+        if (!is_string($workDirectory)) {
+            throw new RuntimeException('metrics.work_dir must be a string.');
+        }
+
+        return $projectRoot . '/' . trim($workDirectory, '/') . '/snapshot.json';
     }
 
     private function commit(string $revision): string
@@ -116,106 +140,11 @@ final class MetricsReviewPipeline
     private function changedPaths(string $mergeBase, string $output): array
     {
         $paths = $this->nullSeparated($this->git(['diff', '--name-only', '-z', $mergeBase, '--']));
-        $paths = [...$paths, ...$this->nullSeparated($this->git([
-            'ls-files',
-            '--others',
-            '--exclude-standard',
-            '-z',
-        ]))];
-        $ignoredOutput = $this->projectRelativePath($output);
-        $unique = [];
-        foreach ($paths as $path) {
-            $path = str_replace('\\', '/', $path);
-            if (
-                $path === ''
-                || ($ignoredOutput !== null
-                    && ($path === $ignoredOutput || str_starts_with($path, $ignoredOutput . '/')))
-            ) {
-                continue;
-            }
-            $unique[$path] = true;
-        }
-        $paths = array_keys($unique);
+        $ignoredOutput = $this->relativePath($output);
+        $paths = array_values(array_filter($paths, static fn (string $path): bool => $path !== $ignoredOutput));
         sort($paths);
 
         return $paths;
-    }
-
-    private function extractSnapshot(string $commit, string $destination): void
-    {
-        $prefix = MetricsSnapshotManager::SNAPSHOT_PATH . '/';
-        $files = $this->nullSeparated($this->git([
-            'ls-tree',
-            '-r',
-            '-z',
-            '--name-only',
-            $commit,
-            '--',
-            MetricsSnapshotManager::SNAPSHOT_PATH,
-        ]));
-        $files = array_values(array_filter($files, $this->canonicalReport(...)));
-        sort($files);
-        if (!in_array($prefix . 'report.json', $files, true)) {
-            throw new RuntimeException("Baseline commit has no canonical metrics snapshot: $commit");
-        }
-        foreach ($files as $file) {
-            if (!str_starts_with($file, $prefix)) {
-                throw new RuntimeException("Baseline metrics path is outside the canonical snapshot: $file");
-            }
-            $relative = substr($file, strlen($prefix));
-            $target = $destination . '/' . $relative;
-            $this->ensureDirectory(dirname($target));
-            $this->put($target, $this->git(['show', $commit . ':' . $file]));
-        }
-    }
-
-    private function copySnapshot(string $source, string $destination): void
-    {
-        $files = [];
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($source, FilesystemIterator::SKIP_DOTS),
-        );
-        foreach ($iterator as $file) {
-            if (!$file->isFile() || $file->isLink()) {
-                continue;
-            }
-            $relative = str_replace('\\', '/', substr($file->getPathname(), strlen($source) + 1));
-            if ($this->canonicalReport($relative)) {
-                $files[$relative] = $file->getPathname();
-            }
-        }
-        ksort($files);
-        foreach ($files as $relative => $path) {
-            $target = $destination . '/' . $relative;
-            $this->ensureDirectory(dirname($target));
-            if (!copy($path, $target)) {
-                throw new RuntimeException("Cannot copy current metrics report: $relative");
-            }
-        }
-    }
-
-    private function canonicalReport(string $path): bool
-    {
-        return basename($path) === 'report.json' || str_ends_with($path, '.php.json');
-    }
-
-    private function workingTreeClean(string $output): bool
-    {
-        if (trim($this->git(['status', '--porcelain', '--untracked-files=no'])) !== '') {
-            return false;
-        }
-        $ignoredOutput = $this->projectRelativePath($output);
-        $untracked = $this->nullSeparated($this->git(['ls-files', '--others', '--exclude-standard', '-z']));
-        foreach ($untracked as $path) {
-            if (
-                $ignoredOutput === null
-                || ($path !== $ignoredOutput && !str_starts_with($path, $ignoredOutput . '/'))
-            ) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /** @param list<string> $arguments */
@@ -223,29 +152,28 @@ final class MetricsReviewPipeline
     {
         [$code, $stdout, $stderr] = $this->process(['git', '-C', $this->projectRoot, ...$arguments]);
         if ($code !== 0) {
-            $diagnostic = trim($stderr) !== '' ? trim($stderr) : trim($stdout);
-            throw new RuntimeException('Git command failed: ' . $diagnostic);
+            throw new RuntimeException('Git command failed: ' . trim($stderr ?: $stdout));
         }
 
         return $stdout;
     }
 
     /** @param list<string> $command @return array{int, string, string} */
-    private function process(array $command): array
+    private function process(array $command, ?string $workingDirectory = null): array
     {
         $process = proc_open(
             $command,
             [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
             $pipes,
-            $this->projectRoot,
+            $workingDirectory ?? $this->projectRoot,
         );
         if (!is_resource($process)) {
-            throw new RuntimeException('Cannot start metrics review command.');
+            throw new RuntimeException('Cannot start process.');
         }
         fclose($pipes[0]);
-        $stdout = (string) stream_get_contents($pipes[1]);
+        $stdout = stream_get_contents($pipes[1]);
+        $stderr = stream_get_contents($pipes[2]);
         fclose($pipes[1]);
-        $stderr = (string) stream_get_contents($pipes[2]);
         fclose($pipes[2]);
 
         return [proc_close($process), $stdout, $stderr];
@@ -254,10 +182,6 @@ final class MetricsReviewPipeline
     /** @return list<string> */
     private function nullSeparated(string $output): array
     {
-        if ($output === '') {
-            return [];
-        }
-
         return array_values(array_filter(
             explode("\0", rtrim($output, "\0")),
             static fn (string $path): bool => $path !== '',
@@ -267,60 +191,22 @@ final class MetricsReviewPipeline
     /** @param array<string, mixed> $data */
     private function writeJson(string $path, array $data): void
     {
-        $json = json_encode(
-            $data,
-            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR,
-        );
-        $this->put($path, $json . "\n");
+        if (!is_dir(dirname($path)) && !mkdir(dirname($path), 0777, true) && !is_dir(dirname($path))) {
+            throw new RuntimeException("Cannot create metrics delta directory: " . dirname($path));
+        }
+        $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+        file_put_contents($path, $json . "\n");
     }
 
-    private function put(string $path, string $contents): void
+    private function projectPath(string $path): string
     {
-        if (file_put_contents($path, $contents) === false) {
-            throw new RuntimeException("Cannot write metrics review artifact: $path");
-        }
-    }
-
-    private function ensureDirectory(string $directory): void
-    {
-        if (!is_dir($directory) && !mkdir($directory, 0777, true) && !is_dir($directory)) {
-            throw new RuntimeException("Cannot create metrics review directory: $directory");
-        }
-    }
-
-    private function projectRelativePath(string $path): ?string
-    {
-        $absolute = str_starts_with($path, '/') ? $path : $this->projectRoot . '/' . $path;
-        $root = rtrim(str_replace('\\', '/', $this->projectRoot), '/') . '/';
-        $absolute = str_replace('\\', '/', $absolute);
-
-        return str_starts_with($absolute, $root) ? rtrim(substr($absolute, strlen($root)), '/') : null;
-    }
-
-    private function reviewOutputPath(string $path): string
-    {
-        $path = str_replace('\\', '/', trim($path));
-        $path = preg_replace('#^(?:\./)+#', '', $path) ?? $path;
-        $segments = explode('/', $path);
-        if (
-            $path === ''
-            || str_starts_with($path, '/')
-            || preg_match('#^[A-Za-z]:/#', $path) === 1
-            || in_array('', $segments, true)
-            || in_array('.', $segments, true)
-            || in_array('..', $segments, true)
-        ) {
-            throw new RuntimeException('Metrics review output must be a safe relative project path.');
-        }
-        if ($path === '.coding-standard' || str_starts_with($path, '.coding-standard/')) {
-            throw new RuntimeException('Metrics review output must not overwrite the canonical snapshot.');
-        }
-
-        return $this->projectRoot . '/' . $path;
+        return str_starts_with($path, '/') ? $path : $this->projectRoot . '/' . trim($path, '/');
     }
 
     private function relativePath(string $path): string
     {
-        return $this->projectRelativePath($path) ?? $path;
+        $prefix = rtrim($this->projectRoot, '/') . '/';
+
+        return str_starts_with($path, $prefix) ? substr($path, strlen($prefix)) : $path;
     }
 }

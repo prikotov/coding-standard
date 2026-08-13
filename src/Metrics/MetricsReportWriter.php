@@ -9,6 +9,71 @@ use RuntimeException;
 final class MetricsReportWriter
 {
     /** @param array<string, mixed> $full */
+    public function writeSnapshot(string $output, array $full): void
+    {
+        $metrics = $this->map($full, 'metrics');
+        $classes = $this->records($metrics, 'classes');
+        $methods = $this->records($metrics, 'methods');
+        $modules = $this->modules($this->records($metrics, 'modules'));
+        $objects = ['project' => [], 'module' => [], 'class' => [], 'method' => []];
+        $metadata = $this->metadata($full);
+        $project = (string) ($metadata['project'] ?? '');
+
+        $objects['project'][$project] = [
+            'id' => $project,
+            'source_path' => '.',
+            'metrics' => array_filter([
+                'project' => $metrics['project'] ?? null,
+                'codebase' => $metrics['codebase'] ?? null,
+                'tests' => $metrics['tests'] ?? null,
+                'coverage' => $metrics['coverage'] ?? null,
+            ], static fn (mixed $value): bool => $value !== null),
+            'attributes' => [],
+        ];
+        foreach ($modules as $identifier => $module) {
+            $objects['module'][$identifier] = [
+                'id' => $identifier,
+                'source_path' => (string) ($module['path'] ?? ''),
+                'metrics' => array_diff_key($module, ['id' => true, 'path' => true]),
+                'attributes' => [],
+            ];
+        }
+        foreach ($classes as $class) {
+            $identifier = (string) ($class['id'] ?? '');
+            $objects['class'][$identifier] = [
+                'id' => $identifier,
+                'source_path' => $this->sourcePath($class['file'] ?? null),
+                'metrics' => array_diff_key($class, ['id' => true, 'kind' => true, 'file' => true, 'module' => true]),
+                'attributes' => array_intersect_key($class, ['kind' => true, 'module' => true]),
+            ];
+        }
+        $classPaths = [];
+        foreach ($classes as $class) {
+            $classPaths[(string) ($class['id'] ?? '')] = $this->sourcePath($class['file'] ?? null);
+        }
+        foreach ($methods as $method) {
+            $identifier = (string) ($method['id'] ?? '');
+            $class = substr($identifier, 0, (int) strrpos($identifier, '::'));
+            $objects['method'][$identifier] = [
+                'id' => $identifier,
+                'source_path' => $classPaths[$class] ?? '',
+                'metrics' => array_diff_key($method, ['id' => true]),
+                'attributes' => [],
+            ];
+        }
+        foreach ($objects as &$items) {
+            ksort($items);
+        }
+        unset($items);
+
+        $this->writeJson($output, [
+            'schema_version' => '1.0',
+            'metadata' => $metadata,
+            'objects' => $objects,
+        ]);
+    }
+
+    /** @param array<string, mixed> $full */
     public function writeMirror(string $output, array $full): void
     {
         $root = dirname($output);

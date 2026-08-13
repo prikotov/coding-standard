@@ -21,6 +21,9 @@ final class MetricsSnapshotReader
     public function read(string $directory): array
     {
         $directory = rtrim($directory, '/');
+        if (is_file($directory)) {
+            return $this->compactSnapshot($directory);
+        }
         if (!is_dir($directory)) {
             throw new RuntimeException("Metrics snapshot directory does not exist: $directory");
         }
@@ -139,6 +142,31 @@ final class MetricsSnapshotReader
         return [
             'schema_version' => (string) $root['schema_version'],
             'metadata' => $this->rootMetadata($root, 'report.json'),
+            'objects' => $objects,
+        ];
+    }
+
+    /**
+     * @return array{schema_version: string, metadata: array<string, mixed>,
+     *     objects: array<string, array<string, array<string, mixed>>>}
+     */
+    private function compactSnapshot(string $path): array
+    {
+        $snapshot = $this->report($path);
+        if (($snapshot['schema_version'] ?? null) !== '1.0') {
+            throw new RuntimeException("Metrics snapshot must use schema_version 1.0: $path");
+        }
+        $objects = $this->map($snapshot, 'objects', $path);
+        foreach (['project', 'module', 'class', 'method'] as $kind) {
+            if (!is_array($objects[$kind] ?? null) || ($objects[$kind] !== [] && array_is_list($objects[$kind]))) {
+                throw new RuntimeException("Metrics compact snapshot has invalid $kind objects: $path");
+            }
+            ksort($objects[$kind]);
+        }
+
+        return [
+            'schema_version' => '1.0',
+            'metadata' => $this->rootMetadata($snapshot, $path),
             'objects' => $objects,
         ];
     }

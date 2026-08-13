@@ -13,11 +13,12 @@ return [
     // Корни исходников определяются из Composer autoload; пути ниже исключаются
     // даже при их попадании в область автозагрузки.
     'metrics' => [
-        // Временные входы анализаторов и HTML; канонический JSON всегда
-        // публикуется в .coding-standard/metrics/.
+        // Локальные входы анализаторов, снимок и HTML.
         'work_dir' => 'var/metrics',
         'deptrac_config' => 'depfile.yaml',
         'phpunit_config' => 'phpunit.xml.dist',
+        // Метрики покрытия запускают только этот PHPUnit-suite, без интеграций.
+        'phpunit_suite' => 'unit',
         'exclude' => [
             'vendor/', '.git/', 'var/', 'tmp/', 'packages/',
             'migrations/', 'config/', 'docs/',
@@ -28,7 +29,7 @@ return [
             'apps/*/src/Module/*',
             'apps/*/src/**/Module/*',
         ],
-        // Допустимые границы project-level правил. Сборщик преобразует
+        // Допустимые границы правил уровня проекта. Сборщик преобразует
         // превышения в findings; значения пересматриваются по распределениям.
         'thresholds' => [
             'method' => [
@@ -96,6 +97,7 @@ return [
             'User Story', 'Job Story',
             'Requirements', 'Verification', 'Sources', 'Comments',
             'Goal', 'Story', 'MoSCoW', 'SMART', 'INVEST',
+            'commit', 'PhpCodeArcheology', 'scc', 'worktree',
         ],
         // Стандартные переводы ЖАРГОНА/проектно-специфичных терминов с неоднозначным
         // переводом (НЕ обычных слов с очевидным переводом). validate-language подсказывает

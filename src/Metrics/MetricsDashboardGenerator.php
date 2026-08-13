@@ -55,6 +55,10 @@ final class MetricsDashboardGenerator
         }
 
         $reportsRoot = dirname($inputPath);
+        $snapshot = $this->readReport($inputPath);
+        if (is_array($snapshot['objects'] ?? null)) {
+            return $this->compactDashboardData($snapshot);
+        }
         $reports = $this->readReportTree($inputPath, $reportsRoot);
         $root = $reports[$inputPath];
         $scope = is_array($root['scope'] ?? null) ? $root['scope'] : [];
@@ -105,6 +109,49 @@ final class MetricsDashboardGenerator
             'classes' => $classData,
             'dependencies' => $dependencies,
             'cycle_examples' => $cycleExamples,
+        ];
+    }
+
+    /** @param array<string, mixed> $snapshot @return array<string, mixed> */
+    private function compactDashboardData(array $snapshot): array
+    {
+        $objects = is_array($snapshot['objects'] ?? null) ? $snapshot['objects'] : [];
+        $project = is_array($objects['project'] ?? null) ? reset($objects['project']) : [];
+        $projectMetrics = is_array($project['metrics'] ?? null) ? $project['metrics'] : [];
+        $modules = [];
+        foreach ($objects['module'] ?? [] as $module) {
+            if (!is_array($module)) {
+                continue;
+            }
+            $modules[(string) ($module['id'] ?? '')] = ['id' => $module['id'] ?? '', ...($module['metrics'] ?? [])];
+        }
+        $classes = [];
+        foreach ($objects['class'] ?? [] as $class) {
+            if (!is_array($class)) {
+                continue;
+            }
+            $classes[(string) ($class['id'] ?? '')] = $this->normalizeClass([
+                'id' => $class['id'] ?? '',
+                'file' => $class['source_path'] ?? '',
+                ...((array) ($class['attributes'] ?? [])),
+                ...((array) ($class['metrics'] ?? [])),
+            ]);
+        }
+        ksort($classes);
+        $dependencies = $this->dependencies($classes, $modules);
+
+        return [
+            'schema_version' => '1.0',
+            'report' => ['generated_at' => null, 'commit' => null],
+            'project' => is_array($projectMetrics['project'] ?? null) ? $projectMetrics['project'] : [],
+            'codebase' => is_array($projectMetrics['codebase'] ?? null) ? $projectMetrics['codebase'] : [],
+            'modules' => $this->normalizeModules($modules, $classes, $dependencies),
+            'classes' => array_values(array_map(
+                static fn (array $class): array => array_diff_key($class, ['_dependencies' => true]),
+                $classes,
+            )),
+            'dependencies' => $dependencies,
+            'cycle_examples' => $this->cycleExamples($classes, $modules),
         ];
     }
 

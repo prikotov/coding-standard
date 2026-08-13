@@ -3,9 +3,9 @@
 
 declare(strict_types=1);
 
-$autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . '/vendor/autoload.php';
+$autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
 if (!is_file($autoloadPath)) {
-    $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
+    $autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . '/vendor/autoload.php';
 }
 require $autoloadPath;
 
@@ -17,8 +17,8 @@ try {
         fwrite(STDOUT, <<<'TEXT'
 Usage: coding-standard-metrics [--update-snapshot|--check-snapshot]
 
-  --update-snapshot  Update .coding-standard/metrics/ and build the HTML dashboard (default).
-  --check-snapshot   Rebuild without publishing and fail when the tracked snapshot is outdated.
+  --update-snapshot  Update metrics.work_dir/snapshot.json and build the HTML dashboard (default).
+  --check-snapshot   Rebuild without publishing and fail when the local snapshot is outdated.
 
 TEXT);
         exit(0);
