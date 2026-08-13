@@ -84,7 +84,7 @@ final class MetricsReviewPipeline
         }
         $installedPackage = $worktree . '/vendor/prikotov/coding-standard';
         if (is_dir($installedPackage)) {
-            (new MetricsSnapshotManager())->removeDirectory($installedPackage);
+            (new DirectoryRemover())->remove($installedPackage);
         }
         $parent = dirname($installedPackage);
         if (!is_dir($parent) && !mkdir($parent, 0777, true) && !is_dir($parent)) {

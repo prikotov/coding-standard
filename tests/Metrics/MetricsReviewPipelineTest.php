@@ -6,7 +6,7 @@ namespace PrikotovCodingStandard\Tests\Metrics;
 
 use PHPUnit\Framework\TestCase;
 use PrikotovCodingStandard\Metrics\MetricsReviewPipeline;
-use PrikotovCodingStandard\Metrics\MetricsSnapshotManager;
+use PrikotovCodingStandard\Metrics\DirectoryRemover;
 use RuntimeException;
 
 final class MetricsReviewPipelineTest extends TestCase
@@ -53,7 +53,7 @@ PHP);
 
     protected function tearDown(): void
     {
-        (new MetricsSnapshotManager())->removeDirectory($this->directory);
+        (new DirectoryRemover())->remove($this->directory);
     }
 
     public function testBuildsAReproducibleReviewArtifactFromMergeBaseAndCurrentSnapshot(): void

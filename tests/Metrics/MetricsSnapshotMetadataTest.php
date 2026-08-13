@@ -16,7 +16,7 @@ final class MetricsSnapshotMetadataTest extends TestCase
         $this->write($directory . '/depfile.yaml', 'deptrac: {}');
         $this->write($directory . '/phpunit.xml', '<phpunit/>');
         $this->write($directory . '/src/Example.php', '<?php final class Example {}');
-        $this->write($directory . '/.coding-standard/metrics/report.json', 'old snapshot');
+        $this->write($directory . '/var/metrics/snapshot.json', 'old snapshot');
         $metadata = new MetricsSnapshotMetadata($directory);
         $report = ['metadata' => ['analyzer_version' => '1.0'], 'metrics' => ['project' => []], 'findings' => []];
         $analyzer = ['classes' => [[
@@ -25,7 +25,7 @@ final class MetricsSnapshotMetadataTest extends TestCase
         $scc = [[
             'Files' => [
                 ['Location' => './src/Example.php'],
-                ['Location' => './.coding-standard/metrics/report.json'],
+                ['Location' => './var/metrics/snapshot.json'],
             ],
         ]];
         $config = ['metrics' => ['work_dir' => 'var/metrics']];
@@ -52,7 +52,7 @@ final class MetricsSnapshotMetadataTest extends TestCase
             self::assertStringStartsWith('sha256:', $first['metadata']['configuration_hash']);
             self::assertStringStartsWith('sha256:', $first['metadata']['input_hash']);
 
-            $this->write($directory . '/.coding-standard/metrics/report.json', 'manual snapshot change');
+            $this->write($directory . '/var/metrics/snapshot.json', 'manual snapshot change');
             $snapshotChanged = $metadata->addFingerprints(
                 $report,
                 $analyzer,

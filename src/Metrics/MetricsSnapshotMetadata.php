@@ -79,7 +79,6 @@ final class MetricsSnapshotMetadata
 
         $excluded = [
             rtrim(str_replace('\\', '/', $workDirectory), '/'),
-            MetricsSnapshotManager::SNAPSHOT_PATH,
         ];
         $files = [];
         foreach (array_keys($paths) as $path) {

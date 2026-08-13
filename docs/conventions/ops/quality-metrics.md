@@ -34,69 +34,18 @@ description: Единая модель метрик поддерживаемос
 
 ## Расположение
 
-- **Рабочие артефакты:** отчёт анализатора, полный граф Deptrac, необязательные данные Git, scc, Clover и HTML создаются в `var/metrics/`. Это временные файлы, они не входят в Git.
-- **Канонические артефакты:** `.coding-standard/metrics/` — отслеживаемое зеркало включённых путей исходников. Корневой `.coding-standard/metrics/report.json` агрегирует весь проект.
-- **Отчёт каталога:** для каждого включённого каталога `X/` создаётся `.coding-standard/metrics/X/report.json`; он агрегирует все включённые исходники своего поддерева.
-- **Отчёт файла:** для исходника `X/Foo.php` создаётся `.coding-standard/metrics/X/Foo.php.json`; он содержит метрики типов и методов этого файла.
-- **Модули:** не имеют отдельного хранилища. Например, отчёт `src/Module/Billing/` хранится в `.coding-standard/metrics/src/Module/Billing/report.json`, а часть модуля в веб-приложении — в `.coding-standard/metrics/apps/web/src/Module/Billing/report.json`.
-- **Модуль:** предметный компонент проекта, а не технический слой. В DDD-проекте это `{ProjectName}\Common\Module\{ModuleName}`; Domain, Application, Infrastructure и Presentation остаются внутренними слоями модуля. В этом пакете модули задаются согласованными группами `src/`.
-- **Название модуля:** общий модуль получает префикс `Common`, модуль приложения — префикс его PSR-4-корня. Например, `Project\Common\Module\Billing` → `Common:Billing`, `Project\Web\Module\Billing` → `Web:Billing`, `Project\Api\v1\Module\Chat` → `Api/v1:Chat`.
-
-Пример зеркала для структуры из [конвенции папок Symfony](../symfony-folder-structure.md):
-
-```text
-.coding-standard/metrics/
-├── report.json
-├── src/
-│   ├── report.json
-│   ├── Application/
-│   │   └── report.json
-│   └── Module/
-│       └── Billing/
-│           ├── report.json
-│           ├── Application/
-│           │   ├── report.json
-│           │   └── Service/
-│           │       └── TBusinessPayment/
-│           │           ├── report.json
-│           │           └── SetPaymentStatusService.php.json
-│           ├── Domain/
-│           │   ├── report.json
-│           │   └── Entity/
-│           │       └── report.json
-│           ├── Infrastructure/
-│           │   └── report.json
-│           └── Integration/
-│               └── report.json
-└── apps/
-    └── web/
-        └── src/
-            ├── report.json
-            └── Module/
-                └── Billing/
-                    ├── report.json
-                    ├── BillingModule.php.json
-                    └── Controller/
-                        └── Payment/
-                            ├── report.json
-                            └── CancelController.php.json
-```
-
-Каждый путь после `.coding-standard/metrics/` повторяет путь production-исходника от
-корня проекта. Например, `src/Module/Billing/BillingModule.php` создаёт
-`.coding-standard/metrics/src/Module/Billing/BillingModule.php.json`, а отчёт папки
-`src/Module/Billing/` — `.coding-standard/metrics/src/Module/Billing/report.json`.
+- Снимок, входы анализаторов и HTML создаются в `metrics.work_dir`; по умолчанию — `var/metrics/`.
+- Локальная дельта создаётся в `var/metrics-review/`.
+- Эти артефакты не добавляются в Git.
 
 ## Область анализа
 
 - Корни production-кода определяются из секции `autoload` в `composer.json`; `autoload-dev` не входит в структурные метрики.
-- Канонический путь `.coding-standard/metrics/` фиксирован конвенцией и не настраивается: ИИ-агент должен находить снимок одинаково в каждом проекте-потребителе.
-- `.coding-standard.php` содержит секцию `metrics`: `work_dir: var/metrics` задаёт временные файлы и HTML, `exclude` — список исключаемых путей, `module_patterns` — шаблоны расположения предметных модулей, `thresholds` — допустимые границы метрик. Зеркальная структура и её постоянный путь не настраиваются.
+- `.coding-standard.php` содержит секцию `metrics`: `work_dir: var/metrics` задаёт локальные метрики и HTML, `exclude` — список исключаемых путей, `module_patterns` — шаблоны расположения предметных модулей, `thresholds` — допустимые границы метрик.
 - `exclude` применяется поверх корней Composer. В нём явно перечисляются `vendor/`, `.git/`, `var/`, `tmp/`, `packages/`, `migrations/`, `config/`, `docs/`, `public/`, `templates/` и `translations/`; проект дополняет список сгенерированным кодом внутри корня автозагрузки.
 - `packages/` содержит самостоятельные пакеты, а не модули основного проекта. Их class-level и module-level метрики собираются отдельно из корня соответствующего пакета, если к нему подключён `coding-standard`.
 - PHP-скрипты из `bin/` не входят в class-level, method-level и module-level модель, если Composer явно не объявляет их как production-исходники.
 - `tests/` и `apps/*/tests/` не входят в распределения, `findings` и агрегаты качества production-кода. Их расположение и сьюты определяются конфигурацией PHPUnit и командами Composer; отдельно собираются только статистика тестов и покрытие.
-- В зеркале сохраняется относительный путь от корня проекта, включая `apps/` и `src/`; исключённые каталоги не получают `report.json` и не создают пустые узлы.
 
 ## Модель отчёта
 
@@ -119,8 +68,8 @@ description: Единая модель метрик поддерживаемос
 ## Чек-лист для проведения ревью кода
 
 - [ ] В `.coding-standard.php` заданы и обоснованы `metrics.thresholds`; изменение границы проверено отдельно от изменения production-кода.
-- [ ] Структура `.coding-standard/metrics/` обновлена командой сборщика для текущих правок; JSON-артефакты не редактировались вручную.
-- [ ] В артефакте PR есть совместимые снимки merge-base и текущего HEAD, а также их машиночитаемое сравнение.
+- [ ] Локальный снимок пересобран командой сборщика для текущих правок; JSON-артефакты не редактировались вручную.
+- [ ] Локальная дельта для merge-base и текущего HEAD сформирована и изучена.
 - [ ] Новые `findings`, превышения границ и изменения метрик сопоставлены с файлами текущего diff.
 - [ ] Для каждого принятого риска есть решение: исправить код, обосновать исключение или изменить проектную границу отдельным изменением конфигурации.
 - [ ] Рост сложности, несвязности или внешней связанности, снижение покрытия и появление цикла объяснены задачей и не скрыты ослаблением границы.

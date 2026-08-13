@@ -352,15 +352,6 @@ final class MetricsComparison
             if ($path === '') {
                 continue;
             }
-            if (str_starts_with($path, MetricsSnapshotManager::SNAPSHOT_PATH . '/')) {
-                $path = substr($path, strlen(MetricsSnapshotManager::SNAPSHOT_PATH) + 1);
-                if ($path === 'report.json' || str_ends_with($path, '/report.json')) {
-                    continue;
-                }
-                if (str_ends_with($path, '.json')) {
-                    $path = substr($path, 0, -5);
-                }
-            }
             $normalized[$path] = true;
         }
         $paths = array_keys($normalized);
