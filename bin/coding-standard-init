@@ -359,29 +359,6 @@ if (file_exists($gitignore)) {
     echo "  Updated docs/.gitignore (+ $entry)" . PHP_EOL;
 }
 
-// 6b. Root .gitignore — exclude temporary metrics inputs, not the snapshot
-
-$rootGitignore = $targetDir . '/.gitignore';
-$rootGitignoreContent = file_exists($rootGitignore) ? (string) file_get_contents($rootGitignore) : '';
-$rootGitignoreEntries = [
-    '/var/',
-    '!/.coding-standard/',
-    '!/.coding-standard/metrics/',
-    '!/.coding-standard/metrics/**',
-];
-$addedGitignoreEntries = [];
-foreach ($rootGitignoreEntries as $rootGitignoreEntry) {
-    if (preg_match('/^' . preg_quote($rootGitignoreEntry, '/') . '$/m', $rootGitignoreContent) === 1) {
-        continue;
-    }
-    $rootGitignoreContent = rtrim($rootGitignoreContent) . PHP_EOL . $rootGitignoreEntry . PHP_EOL;
-    $addedGitignoreEntries[] = $rootGitignoreEntry;
-}
-if ($addedGitignoreEntries !== []) {
-    file_put_contents($rootGitignore, ltrim($rootGitignoreContent, PHP_EOL));
-    echo '  Updated .gitignore (+ ' . implode(', ', $addedGitignoreEntries) . ')' . PHP_EOL;
-}
-
 // ── Summary ────────────────────────────────────────────────────────────────
 
 echo PHP_EOL;
