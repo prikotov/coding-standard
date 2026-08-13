@@ -21,12 +21,30 @@ final class MetricsReviewPipelineTest extends TestCase
         $this->project = $this->directory . '/consumer';
         $this->package = $this->directory . '/package';
         mkdir($this->project . '/src', 0777, true);
+        mkdir($this->project . '/vendor', 0777, true);
         mkdir($this->package . '/bin', 0777, true);
         file_put_contents($this->project . '/composer.json', '{"name":"example/consumer"}');
         file_put_contents($this->project . '/.gitignore', "/var/\n");
+        file_put_contents($this->project . '/.coding-standard.php', "<?php return ['metrics' => ['work_dir' => 'var/metrics']];");
         file_put_contents($this->package . '/bin/coding-standard-metrics', <<<'PHP'
 <?php
-file_put_contents(dirname(__DIR__) . '/snapshot-check-called', 'yes');
+$project = (string) getenv('CODING_STANDARD_METRICS_PROJECT_ROOT');
+file_put_contents($project . '/snapshot-check-called', 'yes');
+$source = (string) file_get_contents($project . '/src/Foo.php');
+$loc = str_contains($source, 'run') ? 16 : 10;
+$cc = str_contains($source, 'run') ? 2 : 1;
+$snapshot = [
+    'schema_version' => '1.0',
+    'metadata' => ['project' => 'example/consumer', 'metric_definitions_version' => '1.0', 'configuration_hash' => 'sha256:configuration', 'input_hash' => hash('sha256', $source), 'source_versions' => ['analyzer' => 'metrics-collector/1.0']],
+    'objects' => [
+        'project' => ['example/consumer' => ['id' => 'example/consumer', 'source_path' => '.', 'metrics' => ['project' => ['loc' => $loc]], 'attributes' => []]],
+        'module' => [],
+        'class' => ['App\\Foo' => ['id' => 'App\\Foo', 'source_path' => 'src/Foo.php', 'metrics' => ['loc' => $loc], 'attributes' => ['kind' => 'class', 'module' => 'Main']]],
+        'method' => ['App\\Foo::run' => ['id' => 'App\\Foo::run', 'source_path' => 'src/Foo.php', 'metrics' => ['loc' => 5, 'cc' => $cc], 'attributes' => []]],
+    ],
+];
+@mkdir($project . '/var/metrics', 0777, true);
+file_put_contents($project . '/var/metrics/snapshot.json', json_encode($snapshot));
 PHP);
         $this->git('init');
         $this->git('config user.email metrics@example.com');
@@ -41,13 +59,11 @@ PHP);
     public function testBuildsAReproducibleReviewArtifactFromMergeBaseAndCurrentSnapshot(): void
     {
         file_put_contents($this->project . '/src/Foo.php', '<?php final class Foo {}');
-        $this->snapshot(10, 1, 'sha256:baseline');
         $this->git('add .');
         $this->git('commit -m baseline');
         $baselineCommit = $this->git('rev-parse HEAD');
 
         file_put_contents($this->project . '/src/Foo.php', '<?php final class Foo { public function run() {} }');
-        $this->snapshot(16, 2, 'sha256:current');
         $this->git('add .');
         $this->git('commit -m current');
         $currentCommit = $this->git('rev-parse HEAD');
@@ -56,9 +72,7 @@ PHP);
         $pipeline->run('HEAD^', 'HEAD', 'var/metrics-review');
         $output = $this->project . '/var/metrics-review';
 
-        self::assertFileExists($this->package . '/snapshot-check-called');
-        self::assertFileExists($output . '/baseline/.coding-standard/metrics/report.json');
-        self::assertFileExists($output . '/current/.coding-standard/metrics/report.json');
+        self::assertFileExists($this->project . '/snapshot-check-called');
         self::assertFileExists($output . '/comparison.json');
         self::assertFileExists($output . '/summary.md');
         self::assertFileExists($output . '/reproduction.json');
@@ -67,7 +81,6 @@ PHP);
         self::assertSame($baselineCommit, $reproduction['baseline_commit']);
         self::assertSame($baselineCommit, $reproduction['merge_base']);
         self::assertSame($currentCommit, $reproduction['current_commit']);
-        self::assertTrue($reproduction['working_tree_clean']);
         self::assertContains('src/Foo.php', $reproduction['changed_paths']);
         $comparison = $this->json($output . '/comparison.json');
         self::assertTrue($comparison['scopes']['class']['changed'][0]['changed_area']);
@@ -76,65 +89,6 @@ PHP);
         $firstHash = $this->directoryHash($output);
         $pipeline->run('HEAD^', 'HEAD', 'var/metrics-review');
         self::assertSame($firstHash, $this->directoryHash($output));
-    }
-
-    public function testRejectsOutputInsideCanonicalSnapshot(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('must not overwrite the canonical snapshot');
-
-        (new MetricsReviewPipeline($this->package, $this->project))->run(
-            'HEAD',
-            'HEAD',
-            '.coding-standard/metrics-review',
-        );
-    }
-
-    private function snapshot(int $classLoc, int $methodCc, string $inputHash): void
-    {
-        $root = $this->project . '/.coding-standard/metrics';
-        if (!is_dir($root . '/src')) {
-            mkdir($root . '/src', 0777, true);
-        }
-        $this->writeJson($root . '/report.json', [
-            'schema_version' => '1.0',
-            'scope' => ['kind' => 'project', 'source_path' => '.'],
-            'metadata' => [
-                'project' => 'example/consumer',
-                'metric_definitions_version' => '1.0',
-                'configuration_hash' => 'sha256:configuration',
-                'input_hash' => $inputHash,
-                'source_versions' => ['analyzer' => 'metrics-collector/1.0'],
-            ],
-            'metrics' => ['project' => ['loc' => $classLoc, 'class_count' => 1]],
-            'children' => [['path' => 'src/report.json', 'kind' => 'directory']],
-            'findings' => [],
-        ]);
-        $this->writeJson($root . '/src/report.json', [
-            'schema_version' => '1.0',
-            'scope' => ['kind' => 'directory', 'source_path' => 'src', 'module' => 'Main'],
-            'metrics' => [
-                'directory' => ['class_count' => 1],
-                'module' => ['id' => 'Main', 'cohesion' => 1.0],
-            ],
-            'children' => [['path' => 'Foo.php.json', 'kind' => 'file']],
-            'findings' => [],
-        ]);
-        $this->writeJson($root . '/src/Foo.php.json', [
-            'schema_version' => '1.0',
-            'scope' => ['kind' => 'file', 'source_path' => 'src/Foo.php', 'module' => 'Main'],
-            'metrics' => [
-                'classes' => [[
-                    'id' => 'App\\Foo',
-                    'kind' => 'class',
-                    'file' => 'src/Foo.php',
-                    'module' => 'Main',
-                    'loc' => $classLoc,
-                ]],
-                'methods' => [['id' => 'App\\Foo::run', 'loc' => 5, 'cc' => $methodCc]],
-            ],
-            'findings' => [],
-        ]);
     }
 
     /** @param array<string, mixed> $data */

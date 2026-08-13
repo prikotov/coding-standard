@@ -38,12 +38,12 @@ final class MetricsPipeline
         if (array_key_exists('report_dir', $metrics)) {
             throw new RuntimeException(
                 'metrics.report_dir is no longer supported; rename it to metrics.work_dir. '
-                . 'Canonical reports always use .coding-standard/metrics/.',
+                . 'Use metrics.work_dir for local metrics files.',
             );
         }
         if (array_key_exists('snapshot_dir', $metrics)) {
             throw new RuntimeException(
-                'metrics.snapshot_dir is not configurable; canonical reports always use .coding-standard/metrics/.',
+                'metrics.snapshot_dir is no longer supported; the snapshot is always stored in metrics.work_dir.',
             );
         }
         $workDirectorySetting = $metrics['work_dir'] ?? 'var/metrics';
@@ -51,17 +51,9 @@ final class MetricsPipeline
             throw new RuntimeException('metrics.work_dir must be a relative project path.');
         }
         $workDirectorySetting = $this->relativeDirectory($workDirectorySetting, 'metrics.work_dir');
-        if (
-            $workDirectorySetting === '.coding-standard'
-            || str_starts_with($workDirectorySetting, '.coding-standard/')
-        ) {
-            throw new RuntimeException(
-                'metrics.work_dir must not be inside the canonical .coding-standard/ directory.',
-            );
-        }
         $workDirectory = $this->projectPath($workDirectorySetting);
-        $snapshotDirectory = $this->projectRoot . '/' . MetricsSnapshotManager::SNAPSHOT_PATH;
-        $candidateDirectory = $workDirectory . '/snapshot-' . bin2hex(random_bytes(8));
+        $snapshot = $workDirectory . '/snapshot.json';
+        $candidateSnapshot = $workDirectory . '/.snapshot-' . bin2hex(random_bytes(8)) . '.json';
         $deptracConfig = $this->configurationPath(
             $metrics['deptrac_config'] ?? null,
             ['deptrac.yaml', 'depfile.yaml'],
@@ -72,6 +64,10 @@ final class MetricsPipeline
             ['phpunit.xml', 'phpunit.xml.dist'],
             'PHPUnit',
         );
+        $phpunitSuite = $metrics['phpunit_suite'] ?? 'unit';
+        if (!is_string($phpunitSuite) || $phpunitSuite === '') {
+            throw new RuntimeException('metrics.phpunit_suite must be a non-empty PHPUnit suite name.');
+        }
         $vendorBin = $this->projectRoot . '/vendor/bin';
         $deptrac = $vendorBin . '/deptrac';
         $phpunit = $vendorBin . '/phpunit';
@@ -127,6 +123,7 @@ final class MetricsPipeline
                 $this->packageRoot . '/bin/metrics-coverage',
                 $workDirectory . '/clover.xml',
                 $phpunitConfig,
+                $phpunitSuite,
             ]);
             $this->stage('Report aggregation', [
                 PHP_BINARY,
@@ -141,37 +138,41 @@ final class MetricsPipeline
                 '--scc-version=' . $workDirectory . '/scc-version.txt',
                 '--tests=' . $workDirectory . '/test-stats.json',
                 '--clover=' . $workDirectory . '/clover.xml',
-                '--output=' . $candidateDirectory . '/report.json',
+                '--output=' . $candidateSnapshot,
             ]);
 
-            $snapshots = new MetricsSnapshotManager();
-            $differences = $snapshots->differences($candidateDirectory, $snapshotDirectory);
+            $currentHash = is_file($snapshot) ? hash_file('sha256', $snapshot) : null;
+            $candidateHash = hash_file('sha256', $candidateSnapshot);
             if ($mode === self::MODE_CHECK) {
-                if ($differences !== ['created' => [], 'changed' => [], 'extra' => []]) {
+                if ($currentHash !== $candidateHash) {
                     throw new RuntimeException(
-                        $snapshots->diagnostic($differences)
+                        "Metrics snapshot is outdated: $workDirectorySetting/snapshot.json"
                         . "\nRun vendor/bin/coding-standard-metrics --update-snapshot.",
                     );
                 }
-                fwrite(STDOUT, "Metrics snapshot is current: .coding-standard/metrics/\n");
+                fwrite(STDOUT, "Metrics snapshot is current: $workDirectorySetting/snapshot.json\n");
 
                 return;
             }
 
-            $snapshots->update($candidateDirectory, $snapshotDirectory);
+            if (!is_dir(dirname($snapshot)) && !mkdir(dirname($snapshot), 0777, true) && !is_dir(dirname($snapshot))) {
+                throw new RuntimeException('Cannot create metrics work directory.');
+            }
+            if (!rename($candidateSnapshot, $snapshot)) {
+                throw new RuntimeException("Cannot publish metrics snapshot: $snapshot");
+            }
             $this->stage('HTML dashboard', [
                 PHP_BINARY,
                 $this->packageRoot . '/bin/metrics-dashboard.php',
-                '--input=' . $snapshotDirectory . '/report.json',
+                '--input=' . $snapshot,
                 '--output=' . $workDirectory . '/index.html',
             ]);
 
-            $count = count($differences['created']) + count($differences['changed']) + count($differences['extra']);
-            fwrite(STDOUT, "Metrics snapshot: .coding-standard/metrics/ ($count reports synchronized)\n");
+            fwrite(STDOUT, "Metrics snapshot: " . $this->relativePath($snapshot) . "\n");
             fwrite(STDOUT, "Metrics dashboard: " . $this->relativePath($workDirectory . '/index.html') . "\n");
         } finally {
-            if (isset($candidateDirectory)) {
-                (new MetricsSnapshotManager())->removeDirectory($candidateDirectory);
+            if (isset($candidateSnapshot) && is_file($candidateSnapshot)) {
+                unlink($candidateSnapshot);
             }
             if ($previousDirectory !== false) {
                 chdir($previousDirectory);

@@ -112,91 +112,28 @@ includes:
 
 ## Метрики качества подключаемого проекта
 
-Инструмент собирает воспроизводимый снимок продуктового PHP-кода и показывает:
-
-- размер и сложность методов и классов;
-- классы с несколькими несвязанными группами методов;
-- входящие и исходящие зависимости классов;
-- размер, внешнюю связанность и циклические зависимости модулей;
-- размер кодовой базы, объём тестов и покрытие.
-
-JSON-отчёт даёт ИИ-агентам и автоматизации структурированные данные для анализа
-изменений. Автономный HTML-дашборд помогает разработчику увидеть проблемные
-области и выбрать кандидатов для рефакторинга.
-
-После установки пакета и подготовки конфигурации отчёт собирается из корня
-анализируемого проекта:
+Метрики собираются локально из корня анализируемого проекта. Снимок, HTML-дашборд и дельта остаются в `metrics.work_dir` (по умолчанию `var/metrics/`) и не добавляются в Git.
 
 ```bash
 vendor/bin/coding-standard-init --project-name=ProjectName
-vendor/bin/coding-standard-metrics --update-snapshot
-git add .coding-standard/metrics/
+vendor/bin/coding-standard-metrics
+vendor/bin/coding-standard-metrics-review --base=origin/master
 ```
 
-Команда обновляет отслеживаемое зеркало `.coding-standard/metrics/` и строит
-неотслеживаемый HTML в `var/metrics/index.html`. Временные входы анализаторов
-остаются в `var/metrics/`. В CI снимок проверяется без записи:
-
-```bash
-vendor/bin/coding-standard-metrics --check-snapshot
-```
-
-Две совместимые версии снимка сравниваются без повторного анализа базовой
-ревизии:
-
-```bash
-vendor/bin/coding-standard-metrics-compare \
-  --baseline=/tmp/metrics-baseline \
-  --current=.coding-standard/metrics \
-  --output=var/metrics-review
-```
-
-Команда создаёт детерминированные `comparison.json` для ИИ-агента и
-`summary.md` для разработчика. Опция `--changed-paths=/tmp/changed-paths.txt`
-помечает объекты из текущего Git diff. Несовпадение проекта, схемы, версии
-определений, конфигурации или версий источников завершает сравнение ошибкой.
-
-Для код-ревью полный артефакт строится из корня проекта одной командой:
-
-```bash
-vendor/bin/coding-standard-metrics-review \
-  --base=origin/master \
-  --head=HEAD \
-  --output=var/metrics-review
-```
-
-Команда сначала запускает `--check-snapshot`, затем извлекает снимок merge-base
-из Git без checkout и сохраняет:
-
-- `baseline/.coding-standard/metrics/` и `current/.coding-standard/metrics/`;
-- `comparison.json` и `summary.md`;
-- `reproduction.json` с commit базовой ветки, merge-base, HEAD и отпечатками входов.
-
-Пример job для GitHub Actions находится в
-[`examples/github-actions/metrics-review.yml`](examples/github-actions/metrics-review.yml).
-Он публикует весь каталог как artifact, а Markdown — в job summary. В ревью
-агент обязан связать регрессии из `comparison.json` с текущим diff. Необъяснённая
-регрессия в изменённой области блокирует одобрение; допустимое ухудшение явно
-обосновывается в PR.
+`coding-standard-metrics` создаёт компактный `var/metrics/snapshot.json` и `var/metrics/index.html`. Команда review создаёт временный Git worktree на merge-base, повторно собирает baseline и записывает дельту в `var/metrics-review/comparison.json` и краткое резюме в `summary.md`. Агент читает дельту до создания PR; GitHub Actions может воспроизвести ту же команду, но не является источником результата.
 
 Рекомендуемые команды проекта-потребителя:
 
 ```json
 {
   "scripts": {
-    "metrics": "vendor/bin/coding-standard-metrics --update-snapshot",
-    "metrics:check": "vendor/bin/coding-standard-metrics --check-snapshot",
-    "metrics:review": "vendor/bin/coding-standard-metrics-review"
+    "metrics": "vendor/bin/coding-standard-metrics",
+    "metrics:review": "vendor/bin/coding-standard-metrics-review --base=origin/master"
   }
 }
 ```
 
-Устаревший параметр `metrics.report_dir` нужно переименовать в
-`metrics.work_dir`. Канонический путь не настраивается.
-
-Для полного отчёта нужны Deptrac, PHPUnit, `scc` и PCOV. Модель данных,
-настройка и правила интерпретации описаны в
-[конвенции метрик качества](docs/conventions/ops/quality-metrics.md).
+Для полного отчёта нужны Deptrac, PHPUnit, `scc` и PCOV. Покрытие запускает только PHPUnit-suite `metrics.phpunit_suite` (по умолчанию `unit`); проект задаёт этот suite в `.coding-standard.php`. Модель данных, настройка и правила интерпретации описаны в [конвенции метрик качества](docs/conventions/ops/quality-metrics.md).
 
 ### Пример HTML-дашборда
 

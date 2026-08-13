@@ -3,6 +3,7 @@ set -euo pipefail
 
 output=${1:-var/metrics/clover.xml}
 configuration=${2:-}
+suite=${3:-unit}
 
 if ! php -m | grep -qi '^pcov$'; then
     rm -f "$output"
@@ -18,8 +19,19 @@ arguments=()
 if [[ -n "$configuration" ]]; then
     arguments+=(--configuration "$configuration")
 fi
-exec php -d pcov.enabled=1 vendor/bin/phpunit "${arguments[@]}" \
+arguments+=(--testsuite "$suite")
+set +e
+php -d pcov.enabled=1 vendor/bin/phpunit "${arguments[@]}" \
     --coverage-clover "$output" \
     --coverage-text=php://stdout \
     --only-summary-for-coverage-text \
     --no-progress
+code=$?
+set -e
+if [[ ! -s "$output" ]]; then
+    printf 'metrics-coverage: PHPUnit did not produce Clover coverage\n' >&2
+    exit "$code"
+fi
+if [[ "$code" -ne 0 ]]; then
+    printf 'metrics-coverage: PHPUnit failed, using coverage from completed tests\n' >&2
+fi

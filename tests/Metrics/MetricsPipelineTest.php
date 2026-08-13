@@ -59,7 +59,7 @@ PHP));
         try {
             (new MetricsPipeline($package, $project))->run();
 
-            self::assertFileExists($project . '/.coding-standard/metrics/report.json');
+            self::assertFileExists($project . '/var/quality/snapshot.json');
             self::assertFileExists($project . '/var/quality/index.html');
             self::assertSame('<!doctype html>', file_get_contents($project . '/var/quality/index.html'));
         } finally {
@@ -67,7 +67,7 @@ PHP));
         }
     }
 
-    public function testChecksAdditionModificationMoveDeletionAndManualSnapshotEdit(): void
+    public function testChecksLocalSnapshot(): void
     {
         [$directory, $package, $project] = $this->sourceMirrorPipeline();
         $pipeline = new MetricsPipeline($package, $project);
@@ -76,39 +76,24 @@ PHP));
 
         try {
             $pipeline->run();
-            $snapshotFile = $project . '/.coding-standard/metrics/src/Module/Billing/Example.php.json';
+            $snapshotFile = $project . '/var/metrics/snapshot.json';
             self::assertFileExists($snapshotFile);
-            $snapshotHash = $this->directoryHash($project . '/.coding-standard/metrics');
+            $snapshotHash = hash_file('sha256', $snapshotFile);
             $pipeline->run(MetricsPipeline::MODE_CHECK);
-            self::assertSame($snapshotHash, $this->directoryHash($project . '/.coding-standard/metrics'));
+            self::assertSame($snapshotHash, hash_file('sha256', $snapshotFile));
 
             file_put_contents($snapshotFile, "manual edit\n");
-            $this->assertOutdated($pipeline, 'changed: src/Module/Billing/Example.php.json');
+            $this->assertOutdated($pipeline, 'var/metrics/snapshot.json');
             $pipeline->run();
 
             $added = $project . '/src/Module/Billing/Added.php';
             $this->write($added, "<?php\nfinal class Added {}\n");
-            $this->assertOutdated($pipeline, 'created: src/Module/Billing/Added.php.json');
+            $this->assertOutdated($pipeline, 'var/metrics/snapshot.json');
             $pipeline->run();
-            $unrelatedHash = hash_file('sha256', $snapshotFile);
 
             file_put_contents($added, "<?php\nfinal class Added { public int \$value = 1; }\n");
-            $this->assertOutdated($pipeline, 'changed: src/Module/Billing/Added.php.json');
+            $this->assertOutdated($pipeline, 'var/metrics/snapshot.json');
             $pipeline->run();
-            self::assertSame($unrelatedHash, hash_file('sha256', $snapshotFile));
-
-            $moved = $project . '/src/Module/Billing/Moved.php';
-            rename($added, $moved);
-            $this->assertOutdated($pipeline, 'created: src/Module/Billing/Moved.php.json');
-            $this->assertOutdated($pipeline, 'extra: src/Module/Billing/Added.php.json');
-            $pipeline->run();
-
-            unlink($moved);
-            $this->assertOutdated($pipeline, 'extra: src/Module/Billing/Moved.php.json');
-            $pipeline->run();
-            self::assertFileDoesNotExist(
-                $project . '/.coding-standard/metrics/src/Module/Billing/Moved.php.json',
-            );
         } finally {
             $this->removeDirectory($directory);
         }

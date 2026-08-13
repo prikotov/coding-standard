@@ -3,9 +3,9 @@
 
 declare(strict_types=1);
 
-$autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . '/vendor/autoload.php';
+$autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
 if (!is_file($autoloadPath)) {
-    $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
+    $autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . '/vendor/autoload.php';
 }
 require $autoloadPath;
 
@@ -73,8 +73,8 @@ try {
         $deptracConfig,
         $phpunitConfig,
     );
-    (new MetricsReportWriter())->writeMirror($output, $full);
-    fwrite(STDOUT, "Metrics reports written to " . dirname($output) . "\n");
+    (new MetricsReportWriter())->writeSnapshot($output, $full);
+    fwrite(STDOUT, "Metrics snapshot written to $output\n");
 } catch (Throwable $exception) {
     fwrite(STDERR, "metrics-aggregate: {$exception->getMessage()}\n");
     exit(1);

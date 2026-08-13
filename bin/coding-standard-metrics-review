@@ -3,9 +3,9 @@
 
 declare(strict_types=1);
 
-$autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . '/vendor/autoload.php';
+$autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
 if (!is_file($autoloadPath)) {
-    $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
+    $autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . '/vendor/autoload.php';
 }
 require $autoloadPath;
 
