@@ -135,6 +135,8 @@ vendor/bin/coding-standard-metrics-review --base=origin/master
 
 Для полного отчёта нужны Deptrac, PHPUnit, `scc` и PCOV. Покрытие запускает только PHPUnit-suite `metrics.phpunit_suite` (по умолчанию `unit`); проект задаёт этот suite в `.coding-standard.php`. Модель данных, настройка и правила интерпретации описаны в [конвенции метрик качества](docs/conventions/ops/quality-metrics.md).
 
+Полный граф статических связей внутренних PHP-типов строит AST-сборщик; Deptrac дополняет его результатами архитектурного анализа. В матрице запись `A → B` означает, что код модуля A использует тип из модуля B и поэтому A зависит от B.
+
 ### Пример HTML-дашборда
 
 Пример автономного HTML-дашборда на данных проекта TasK:

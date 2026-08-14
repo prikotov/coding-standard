@@ -22,10 +22,16 @@ final class ProjectMetricsCollector
     {
         $classes = [];
         $functions = [];
+        $dependencies = [];
 
         foreach ($this->autoloadRoots() as $namespace => $sources) {
             foreach ($sources as $source) {
                 $report = (new AstMetricsCollector($this->parser, $source))->collect();
+                foreach ($report['dependencies'] ?? [] as $dependency) {
+                    if (is_string($dependency['source'] ?? null) && is_string($dependency['target'] ?? null)) {
+                        $dependencies[$dependency['source'] . "\0" . $dependency['target']] = $dependency;
+                    }
+                }
                 foreach ($report['classes'] as $class) {
                     $name = $class['name'] ?? null;
                     $metrics = $class['metrics'] ?? null;
@@ -77,12 +83,25 @@ final class ProjectMetricsCollector
         }
         ksort($classes);
         ksort($functions);
+        $dependencies = array_values(array_filter(
+            $dependencies,
+            static fn (array $dependency): bool => isset(
+                $classes[$dependency['source']],
+                $classes[$dependency['target']],
+            ),
+        ));
+        usort(
+            $dependencies,
+            static fn (array $left, array $right): int => [$left['source'], $left['target']]
+                <=> [$right['source'], $right['target']],
+        );
 
         return [
             'schema_version' => '1.0',
-            'toolVersion' => 'metrics-collector/1.1',
+            'toolVersion' => 'metrics-collector/1.2',
             'classes' => array_values($classes),
             'functions' => array_values($functions),
+            'dependencies' => $dependencies,
         ];
     }
 

@@ -80,6 +80,17 @@ final class MetricsAggregator
         ksort($classes);
 
         $edges = [];
+        foreach ($analyzer['dependencies'] ?? [] as $dependency) {
+            if (!is_array($dependency)) {
+                continue;
+            }
+            $source = $dependency['source'] ?? null;
+            $target = $dependency['target'] ?? null;
+            if (!isset($classes[$source], $classes[$target]) || $source === $target) {
+                continue;
+            }
+            $edges[$source . "\0" . $target] = [$source, $target];
+        }
         foreach ($deptrac['dependencies'] as $dependency) {
             if (!is_array($dependency)) {
                 continue;
