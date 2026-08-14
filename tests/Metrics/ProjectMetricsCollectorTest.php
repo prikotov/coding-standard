@@ -82,6 +82,66 @@ final class ProjectMetricsCollectorTest extends TestCase
         self::assertCount(3, $report['functions']);
     }
 
+    public function testCollectsInternalAndCrossModuleTypeDependencies(): void
+    {
+        $directory = sys_get_temp_dir() . '/project-metrics-dependencies-' . uniqid();
+        $this->write($directory . '/composer.json', json_encode([
+            'autoload' => ['psr-4' => ['App\\' => 'src/']],
+        ], JSON_THROW_ON_ERROR));
+        $this->write($directory . '/src/Module/Alpha/Helper.php', <<<'PHP'
+<?php
+
+namespace App\Module\Alpha;
+
+final class Helper
+{
+}
+PHP);
+        $this->write($directory . '/src/Module/Beta/Target.php', <<<'PHP'
+<?php
+
+namespace App\Module\Beta;
+
+final class Target
+{
+}
+PHP);
+        $this->write($directory . '/src/Module/Alpha/Service.php', <<<'PHP'
+<?php
+
+namespace App\Module\Alpha;
+
+use App\Module\Beta\Target as BetaTarget;
+
+final class Service
+{
+    public function __construct(private Helper $helper)
+    {
+    }
+
+    public function target(): BetaTarget
+    {
+        return new BetaTarget();
+    }
+}
+PHP);
+
+        try {
+            $report = (new ProjectMetricsCollector(
+                (new ParserFactory())->createForNewestSupportedVersion(),
+                $directory,
+                ['module_patterns' => ['src/Module/*']],
+            ))->collect();
+        } finally {
+            $this->removeDirectory($directory);
+        }
+
+        self::assertSame([
+            ['source' => 'App\\Module\\Alpha\\Service', 'target' => 'App\\Module\\Alpha\\Helper'],
+            ['source' => 'App\\Module\\Alpha\\Service', 'target' => 'App\\Module\\Beta\\Target'],
+        ], $report['dependencies']);
+    }
+
     private function php(string $path, string $namespace, string $class): void
     {
         $this->write($path, <<<PHP

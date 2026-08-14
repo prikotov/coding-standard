@@ -10,6 +10,7 @@ use PhpParser\Node;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
+use PhpParser\NodeVisitor\NameResolver;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -24,35 +25,40 @@ final class AstMetricsCollector
     {
         $classes = [];
         $functions = [];
+        $dependencies = [];
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->source));
         foreach ($iterator as $file) {
             if (!$file->isFile() || $file->getExtension() !== 'php') {
                 continue;
             }
-            [$fileClasses, $fileFunctions] = $this->collectFile($file->getPathname());
+            [$fileClasses, $fileFunctions, $fileDependencies] = $this->collectFile($file->getPathname());
             array_push($classes, ...$fileClasses);
             array_push($functions, ...$fileFunctions);
+            array_push($dependencies, ...$fileDependencies);
         }
         usort($classes, static fn (array $left, array $right): int => $left['name'] <=> $right['name']);
         usort($functions, static fn (array $left, array $right): int => $left['metrics']['classInfo'] <=> $right['metrics']['classInfo']);
+        usort($dependencies, static fn (array $left, array $right): int => [$left['source'], $left['target']] <=> [$right['source'], $right['target']]);
 
-        return ['schema_version' => '1.0', 'toolVersion' => 'metrics-collector/1.0', 'classes' => $classes, 'functions' => $functions];
+        return ['schema_version' => '1.0', 'toolVersion' => 'metrics-collector/1.2', 'classes' => $classes, 'functions' => $functions, 'dependencies' => $dependencies];
     }
 
-    /** @return array{list<array<string,mixed>>,list<array<string,mixed>>} */
+    /** @return array{list<array<string,mixed>>,list<array<string,mixed>>,list<array{source:string,target:string}>} */
     private function collectFile(string $path): array
     {
         $ast = $this->parser->parse((string) file_get_contents($path));
         if ($ast === null) {
-            return [[], []];
+            return [[], [], []];
         }
         $traverser = new NodeTraverser();
+        $traverser->addVisitor(new NameResolver());
         $visitor = new AstNamespaceVisitor();
         $traverser->addVisitor($visitor);
         $ast = $traverser->traverse($ast);
         $finder = new NodeFinder();
         $classes = [];
         $functions = [];
+        $dependencies = [];
         foreach ($finder->findInstanceOf($ast, Node\Stmt\ClassLike::class) as $class) {
             if ($class instanceof Node\Stmt\Class_ && $class->isAnonymous()) {
                 continue;
@@ -62,6 +68,13 @@ final class AstMetricsCollector
                 continue;
             }
             $methods = $class->getMethods();
+            foreach ($finder->findInstanceOf($class, Node\Name::class) as $target) {
+                $targetName = $target->toString();
+                if ($target->isSpecialClassName() || $targetName === $name) {
+                    continue;
+                }
+                $dependencies[$name . "\0" . $targetName] = ['source' => $name, 'target' => $targetName];
+            }
             $classes[] = ['name' => $name, 'metrics' => [
                 'filePath' => $this->relativePath($path),
                 'loc' => $class->getEndLine() - $class->getStartLine() + 1,
@@ -81,7 +94,7 @@ final class AstMetricsCollector
             }
         }
 
-        return [$classes, $functions];
+        return [$classes, $functions, array_values($dependencies)];
     }
 
     /** @param list<Node\Stmt\ClassMethod> $methods */

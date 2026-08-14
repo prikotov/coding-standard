@@ -540,6 +540,9 @@ final class MetricsDashboardGenerator
                     $module['external_dependency_share'] ?? null,
                 ),
                 'cohesion' => $this->nullableFloat($module['cohesion'] ?? null),
+                'internal_dependencies' => $this->integer(
+                    $module['internal_dependencies'] ?? null,
+                ),
                 'outgoing_dependencies' => $this->integer(
                     $module['outgoing_dependencies'] ?? ($stats['outgoing'] ?? 0),
                 ),

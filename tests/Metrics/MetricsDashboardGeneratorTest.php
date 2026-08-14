@@ -98,6 +98,9 @@ final class MetricsDashboardGeneratorTest extends TestCase
             self::assertStringContainsString('Цвет ячейки: количество зависимостей', $html);
             self::assertStringContainsString('id="matrix-dependency-max"', $html);
             self::assertStringContainsString('Связи модулей для проверки', $html);
+            self::assertStringContainsString('Использующий модуль', $html);
+            self::assertStringContainsString('Используемый модуль', $html);
+            self::assertStringContainsString('A использует B', $html);
             self::assertStringContainsString('Смотреть связи:', $html);
             self::assertStringContainsString('Причины: ${reasons.join', $html);
             self::assertStringContainsString('Смотреть классы:', $html);

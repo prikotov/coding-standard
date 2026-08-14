@@ -61,6 +61,28 @@ final class MetricsAggregatorTest extends TestCase
         self::assertSame(75.0, $report['metrics']['coverage']['methods']['percent']);
     }
 
+    public function testAddsAstDependenciesMissingFromDeptracLayerResults(): void
+    {
+        $report = (new MetricsAggregator())->aggregate([
+            'classes' => [
+                $this->class('App\\Alpha\\Service', 'src/Alpha/Service.php', 10, 1),
+                $this->class('App\\Alpha\\Helper', 'src/Alpha/Helper.php', 10, 1),
+                $this->class('App\\Beta\\Target', 'src/Beta/Target.php', 10, 1),
+            ],
+            'functions' => [],
+            'dependencies' => [
+                ['source' => 'App\\Alpha\\Service', 'target' => 'App\\Alpha\\Helper'],
+                ['source' => 'App\\Alpha\\Service', 'target' => 'App\\Beta\\Target'],
+            ],
+        ], ['schema_version' => '1.0', 'dependencies' => []], [], $this->scc(), $this->testStatistics(), $this->clover(), '3.7.0');
+
+        $alpha = $report['metrics']['modules'][0];
+        self::assertSame(1, $alpha['internal_dependencies']);
+        self::assertSame(1, $alpha['outgoing_dependencies']);
+        self::assertSame(0.5, $alpha['external_dependency_share']);
+        self::assertSame(0.5, $alpha['cohesion']);
+    }
+
     public function testRejectsIncompatibleInputs(): void
     {
         $this->expectExceptionMessage('Analyzer JSON');
