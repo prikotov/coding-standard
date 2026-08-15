@@ -3,7 +3,7 @@ type: fix
 created: 2026-08-15 16:31:47 (1786811507)
 due: 
 started: 2026-08-15 16:32:12 (1786811532)
-completed: 
+completed: 2026-08-15 16:43:43 (1786812223)
 cancelled: 
 value: V2
 complexity: C2
@@ -16,7 +16,7 @@ author: Бэкендер (pi)
 assignee: Бэкендер (pi)
 branch: task/fix-deptrac-root-namespace-digit-regex
 pr: https://github.com/prikotov/coding-standard/pull/105
-status: review
+status: done
 ---
 
 # TASK-fix-deptrac-root-namespace-digit-regex: Deptrac: префикс корневого namespace не матчит имена с цифрами (Stocks2)
