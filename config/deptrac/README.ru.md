@@ -79,7 +79,7 @@ exclude_files:
 
 ### `layers`
 
-Namespace-паттерны в `collectors` следуют конвенциям из `docs/conventions/`. Пример использует опциональный универсальный префикс `(?:[A-Za-z_]+\\)?`, который ловит любой корневой namespace — поэтому один и тот же конфиг работает и для `Common\Module\...`, и для `TaskOrchestrator\Common\Module\...` без модификации.
+Namespace-паттерны в `collectors` следуют конвенциям из `docs/conventions/`. Пример использует опциональный универсальный префикс `(?:[A-Za-z_][A-Za-z0-9_]*\\)?`, который ловит любой корневой namespace, включая имена с цифрами (`Stocks2\...`) — поэтому один и тот же конфиг работает и для `Common\Module\...`, и для `Stocks2\Common\Module\...`, и для `TaskOrchestrator\Common\Module\...` без модификации.
 
 ### `ruleset`
 
@@ -91,10 +91,10 @@ Namespace-паттерны в `collectors` следуют конвенциям �
 
 ```yaml
 - type: classLike
-  value: ^(?:[A-Za-z_]+\\)?(?:Api|Console|Web|Blog|Docs)\\Module\\.*
+  value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?(?:Api|Console|Web|Blog|Docs)\\Module\\.*
 ```
 
-Опциональный префикс `(?:[A-Za-z_]+\\)?` поддерживает и `Console\Module\...`, и `TaskOrchestrator\Console\Module\...`. При необходимости добавьте свои app-namespace в альтернативу.
+Опциональный префикс `(?:[A-Za-z_][A-Za-z0-9_]*\\)?` поддерживает `Console\Module\...`, `Stocks2\Console\Module\...` и `TaskOrchestrator\Console\Module\...`. При необходимости добавьте свои app-namespace в альтернативу.
 
 ## Пользовательские правила
 

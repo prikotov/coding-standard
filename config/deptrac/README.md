@@ -79,7 +79,7 @@ exclude_files:
 
 ### `layers`
 
-Namespace patterns in `collectors` follow the conventions from `docs/conventions/`. The example uses an optional universal prefix `(?:[A-Za-z_]+\\)?` that matches any root namespace — so the same config works for both `Common\Module\...` and `TaskOrchestrator\Common\Module\...` without modification.
+Namespace patterns in `collectors` follow the conventions from `docs/conventions/`. The example uses an optional universal prefix `(?:[A-Za-z_][A-Za-z0-9_]*\\)?` that matches any root namespace, including ones with digits (`Stocks2\...`) — so the same config works for `Common\Module\...`, `Stocks2\Common\Module\...` and `TaskOrchestrator\Common\Module\...` without modification.
 
 ### `ruleset`
 
@@ -91,10 +91,10 @@ The Presentation layer uses a single regex that matches any application-level na
 
 ```yaml
 - type: classLike
-  value: ^(?:[A-Za-z_]+\\)?(?:Api|Console|Web|Blog|Docs)\\Module\\.*
+  value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?(?:Api|Console|Web|Blog|Docs)\\Module\\.*
 ```
 
-The optional prefix `(?:[A-Za-z_]+\\)?` handles both `Console\Module\...` and `TaskOrchestrator\Console\Module\...`. Add your app namespaces to the alternation if needed.
+The optional prefix `(?:[A-Za-z_][A-Za-z0-9_]*\\)?` handles `Console\Module\...`, `Stocks2\Console\Module\...` and `TaskOrchestrator\Console\Module\...`. Add your app namespaces to the alternation if needed.
 
 ## Custom rules
 
