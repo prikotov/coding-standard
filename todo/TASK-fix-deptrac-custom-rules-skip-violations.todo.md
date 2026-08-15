@@ -1,8 +1,8 @@
 ---
 type: fix
-created: 2026-08-16 00:05:00 (1786812300)
+created: 2026-08-16 00:05:00 (1786813500)
 due: 
-started: 2026-08-16 00:05:00 (1786812300)
+started: 2026-08-16 00:05:00 (1786813500)
 completed: 
 cancelled: 
 value: V2
@@ -49,7 +49,7 @@ status: in_progress
 *   **Где делаем:** `src/Deptrac/CrossModuleDomainRule.php`, `src/Deptrac/ServiceContractDependencyRule.php`, `config/deptrac/depfile.yaml`, `tests/Deptrac/*Test.php`.
 *   **Границы (Out of Scope):** семантика правил, формат метрик, README-примеры (механика skip уже описана в документации deptrac).
 
-## 3. Требования (MoSCoW)
+## 3. Требования, MoSCoW (Requirements)
 ### 🔴 Must Have (Обязательно)
 - [x] Оба правила уважают `skip_violations` (через `EventHelper`).
 - [x] Общий depfile пакета корректно резолвит `EventHelper` в правилах (`autowire: true`).
@@ -65,7 +65,7 @@ status: in_progress
 ### ⚫ Won't Have (не будем делать)
 - [ ] Не меняем логику правил и состав допустимых путей.
 
-## 4. План реализации
+## 4. План реализации (Implementation Plan)
 1. [x] Ветка `task/fix-deptrac-custom-rules-skip-violations`.
 2. [x] `EventHelper` в конструкторы, `addSkippableViolation` вместо прямого `Violation`.
 3. [x] `autowire: true` для обоих правил в `config/deptrac/depfile.yaml`.
@@ -73,11 +73,11 @@ status: in_progress
 5. [x] `composer check` пакета.
 6. [x] Ручная проверка на `prikotov/stocks2` (подмена vendor, прогон deptrac).
 
-## 5. Критерии приёмки
+## 5. Критерии приёмки (Definition of Done)
 - [x] `composer check` зелёный.
 - [x] На потребителе skip-записи кастомных правил гасятся без ошибок `was not matched`.
 
-## 6. Проверка
+## 6. Самопроверка (Verification)
 ```bash
 composer check
 ```
