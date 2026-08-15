@@ -15,8 +15,8 @@ epic:
 author: Бэкендер Левша (pi)
 assignee: Бэкендер Левша (pi)
 branch: task/fix-deptrac-custom-rules-skip-violations
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/107
+status: review
 ---
 
 # TASK-fix-deptrac-custom-rules-skip-violations: Кастомные правила Deptrac игнорируют skip_violations потребителя
@@ -96,3 +96,4 @@ composer check
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-08-16 | Бэкендер Левша (pi) | Создание задачи |
+| 2026-08-16 | Бэкендер Левша (pi) | Переведена в review, создан PR #107 |
