@@ -79,7 +79,7 @@ exclude_files:
 
 ### `layers`
 
-`collectors` 中的命名空间模式遵循 `docs/conventions/` 中的约定。示例使用可选的通用前缀 `(?:[A-Za-z_]+\\)?`，匹配任何根命名空间——因此同一配置无需修改即可用于 `Common\Module\...` 和 `TaskOrchestrator\Common\Module\...`。
+`collectors` 中的命名空间模式遵循 `docs/conventions/` 中的约定。示例使用可选的通用前缀 `(?:[A-Za-z_][A-Za-z0-9_]*\\)?`，匹配任何根命名空间，包括含数字的名称（`Stocks2\...`）——因此同一配置无需修改即可用于 `Common\Module\...`、`Stocks2\Common\Module\...` 和 `TaskOrchestrator\Common\Module\...`。
 
 ### `ruleset`
 
@@ -91,10 +91,10 @@ Presentation 层使用一个正则表达式，匹配任何应用级命名空间�
 
 ```yaml
 - type: classLike
-  value: ^(?:[A-Za-z_]+\\)?(?:Api|Console|Web|Blog|Docs)\\Module\\.*
+  value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?(?:Api|Console|Web|Blog|Docs)\\Module\\.*
 ```
 
-可选前缀 `(?:[A-Za-z_]+\\)?` 同时支持 `Console\Module\...` 和 `TaskOrchestrator\Console\Module\...`。如需添加你的应用命名空间，请修改交替项。
+可选前缀 `(?:[A-Za-z_][A-Za-z0-9_]*\\)?` 同时支持 `Console\Module\...`、`Stocks2\Console\Module\...` 和 `TaskOrchestrator\Console\Module\...`。如需添加你的应用命名空间，请修改交替项。
 
 ## 自定义规则
 

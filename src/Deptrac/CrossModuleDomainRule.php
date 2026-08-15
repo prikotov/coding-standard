@@ -122,7 +122,7 @@ final class CrossModuleDomainRule implements ViolationCreatingInterface
     {
         if (
             1 !== preg_match(
-                '/^(?:[A-Za-z_]+\\\\)?Common\\\\Module\\\\'
+                '/^(?:[A-Za-z_][A-Za-z0-9_]*\\\\)?Common\\\\Module\\\\'
                 . '(?P<module>[A-Za-z][A-Za-z0-9]*)\\\\'
                 . '(?P<layer>Domain|Application|Infrastructure|Integration)\\\\'
                 . '(?P<path>.+)$/',

@@ -460,6 +460,14 @@ final class CrossModuleDomainRuleTest extends TestCase
         );
     }
 
+    public function testDigitRootNamespaceCrossModuleWithViolation(): void
+    {
+        $this->assertViolation(
+            'Stocks2\Common\Module\DynamicLoop\Infrastructure\Service\RunAgentService',
+            'Stocks2\Common\Module\ChainExecution\Domain\Contract\Agent\RunAgentServiceInterface',
+        );
+    }
+
     // ─── ruleName / ruleDescription ───────────────────────────────────
 
     public function testRuleName(): void
@@ -546,7 +554,7 @@ final class CrossModuleDomainRuleTest extends TestCase
     {
         if (
             1 !== preg_match(
-                '/^(?:[A-Za-z_]+\\\\)?Common\\\\Module\\\\[A-Za-z][A-Za-z0-9]*\\\\(?P<layer>Domain|Application|Infrastructure|Integration)\\\\/',
+                '/^(?:[A-Za-z_][A-Za-z0-9_]*\\\\)?Common\\\\Module\\\\[A-Za-z][A-Za-z0-9]*\\\\(?P<layer>Domain|Application|Infrastructure|Integration)\\\\/',
                 $className,
                 $matches,
             )

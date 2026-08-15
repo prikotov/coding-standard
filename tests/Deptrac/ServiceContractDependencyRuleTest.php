@@ -456,6 +456,34 @@ final class ServiceContractDependencyRuleTest extends TestCase
         self::assertCount(1, $this->violations($event));
     }
 
+    public function testDigitRootNamespaceSameModuleWithoutViolation(): void
+    {
+        $event = $this->createProcessEvent(
+            'Stocks2\Common\Module\Billing\Domain\Service\Invoice\CreateInvoiceService',
+            'Stocks2\Common\Module\Billing\Domain\Service\Invoice\CalculateInvoiceServiceInterface',
+            DependencyType::PARAMETER,
+        );
+        $rule = new ServiceContractDependencyRule();
+
+        $rule->onProcessEvent($event);
+
+        self::assertSame([], $this->violations($event));
+    }
+
+    public function testDigitRootNamespaceCrossModuleWithViolation(): void
+    {
+        $event = $this->createProcessEvent(
+            'Stocks2\Common\Module\Billing\Domain\Service\Invoice\CreateInvoiceService',
+            'Stocks2\Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
+            DependencyType::PARAMETER,
+        );
+        $rule = new ServiceContractDependencyRule();
+
+        $rule->onProcessEvent($event);
+
+        self::assertCount(1, $this->violations($event));
+    }
+
     // --- Non-standard interface naming (no ServiceInterface suffix) ---
 
     public function testIntegrationImplementsApplicationInterfaceWithoutServiceSuffixWithViolation(): void
@@ -567,7 +595,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
     {
         if (
             1 !== preg_match(
-                '/^(?:[A-Za-z_]+\\\\)?Common\\\\Module\\\\[A-Za-z][A-Za-z0-9]*\\\\(?P<layer>Domain|Application|Infrastructure|Integration)\\\\/',
+                '/^(?:[A-Za-z_][A-Za-z0-9_]*\\\\)?Common\\\\Module\\\\[A-Za-z][A-Za-z0-9]*\\\\(?P<layer>Domain|Application|Infrastructure|Integration)\\\\/',
                 $className,
                 $matches,
             )

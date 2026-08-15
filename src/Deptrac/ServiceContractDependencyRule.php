@@ -94,7 +94,7 @@ final class ServiceContractDependencyRule implements ViolationCreatingInterface
      */
     private function parseModuleClass(string $className): ?array
     {
-        $moduleClassPattern = '/^(?:[A-Za-z_]+\\\\)?Common\\\\Module\\\\'
+        $moduleClassPattern = '/^(?:[A-Za-z_][A-Za-z0-9_]*\\\\)?Common\\\\Module\\\\'
             . '(?P<module>[A-Za-z][A-Za-z0-9]*)\\\\'
             . '(?P<layer>Domain|Application|Infrastructure|Integration)\\\\'
             . '(?P<path>.+)$/';
