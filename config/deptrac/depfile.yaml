@@ -300,13 +300,18 @@ deptrac:
 
 # Custom Deptrac event subscriber for service contract rules.
 # Provided by prikotov/coding-standard — no need to copy, works out of the box.
+# The rules honor deptrac `skip_violations`: EventHelper converts matched
+# violations into SkippedViolation (the depfile `services:` section is loaded
+# without container-wide autowire defaults, so the helper is wired explicitly).
 services:
   - class: PrikotovCodingStandard\Deptrac\MetricsJsonOutputFormatter
     tags:
       - { name: output_formatter }
   - class: PrikotovCodingStandard\Deptrac\ServiceContractDependencyRule
+    autowire: true
     tags:
       - { name: kernel.event_subscriber }
   - class: PrikotovCodingStandard\Deptrac\CrossModuleDomainRule
+    autowire: true
     tags:
       - { name: kernel.event_subscriber }

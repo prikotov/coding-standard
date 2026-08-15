@@ -7,11 +7,14 @@ namespace PrikotovCodingStandard\Tests\Deptrac;
 use PHPUnit\Framework\TestCase;
 use PrikotovCodingStandard\Deptrac\CrossModuleDomainRule;
 use Qossmic\Deptrac\Contract\Analyser\AnalysisResult;
+use Qossmic\Deptrac\Contract\Analyser\EventHelper;
 use Qossmic\Deptrac\Contract\Analyser\ProcessEvent;
 use Qossmic\Deptrac\Contract\Ast\DependencyContext;
 use Qossmic\Deptrac\Contract\Ast\DependencyType;
 use Qossmic\Deptrac\Contract\Ast\FileOccurrence;
+use Qossmic\Deptrac\Contract\Layer\LayerProvider;
 use Qossmic\Deptrac\Contract\Result\RuleInterface;
+use Qossmic\Deptrac\Contract\Result\SkippedViolation;
 use Qossmic\Deptrac\Contract\Result\Violation;
 use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeReference;
 use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeToken;
@@ -472,14 +475,14 @@ final class CrossModuleDomainRuleTest extends TestCase
 
     public function testRuleName(): void
     {
-        $rule = new CrossModuleDomainRule();
+        $rule = $this->createRule();
 
         self::assertSame('CrossModuleDomainRule', $rule->ruleName());
     }
 
     public function testRuleDescription(): void
     {
-        $rule = new CrossModuleDomainRule();
+        $rule = $this->createRule();
 
         self::assertSame(
             'Cross-module dependencies are forbidden. '
@@ -496,7 +499,7 @@ final class CrossModuleDomainRuleTest extends TestCase
         DependencyType $dependencyType = DependencyType::PARAMETER,
     ): void {
         $event = $this->createProcessEvent($depender, $dependent, $dependencyType);
-        $rule = new CrossModuleDomainRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -513,7 +516,7 @@ final class CrossModuleDomainRuleTest extends TestCase
         DependencyType $dependencyType = DependencyType::PARAMETER,
     ): void {
         $event = $this->createProcessEvent($depender, $dependent, $dependencyType);
-        $rule = new CrossModuleDomainRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -522,6 +525,33 @@ final class CrossModuleDomainRuleTest extends TestCase
             $depender,
             $dependent,
         ));
+    }
+
+    // ─── skip_violations: violation becomes SkippedViolation ────────
+
+    public function testCrossModuleDependencyHonorsSkipViolations(): void
+    {
+        $event = $this->createProcessEvent(
+            'App\Common\Module\Billing\Domain\Service\Invoice\CreateInvoiceService',
+            'App\Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
+            DependencyType::PARAMETER,
+        );
+        $rule = new CrossModuleDomainRule(new EventHelper([
+            'App\Common\Module\Billing\Domain\Service\Invoice\CreateInvoiceService' => [
+                'App\Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
+            ],
+        ], new LayerProvider([])));
+
+        $rule->onProcessEvent($event);
+
+        self::assertSame([], $this->violations($event), 'Expected no violation for skipped pair.');
+        self::assertCount(1, $event->getResult()->rules()[SkippedViolation::class] ?? []);
+    }
+
+    /** @param array<string, list<string>> $skippedViolations */
+    private function createRule(array $skippedViolations = []): CrossModuleDomainRule
+    {
+        return new CrossModuleDomainRule(new EventHelper($skippedViolations, new LayerProvider([])));
     }
 
     private function createProcessEvent(

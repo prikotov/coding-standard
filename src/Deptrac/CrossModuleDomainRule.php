@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace PrikotovCodingStandard\Deptrac;
 
+use Qossmic\Deptrac\Contract\Analyser\EventHelper;
 use Qossmic\Deptrac\Contract\Analyser\ProcessEvent;
 use Qossmic\Deptrac\Contract\Analyser\ViolationCreatingInterface;
 use Qossmic\Deptrac\Contract\Ast\DependencyType;
-use Qossmic\Deptrac\Contract\Result\Violation;
 
 /**
  * Custom Deptrac rule that forbids cross-module access entirely,
@@ -24,6 +24,7 @@ use Qossmic\Deptrac\Contract\Result\Violation;
  *
  * This rule cannot be bypassed by renaming directories (Contract, Port, Gateway, etc.)
  * because it checks the entire module namespace regardless of subdirectory naming.
+ * Violations honor deptrac `skip_violations` via EventHelper.
  *
  * Register in depfile.yaml:
  *   services:
@@ -34,6 +35,10 @@ use Qossmic\Deptrac\Contract\Result\Violation;
 final class CrossModuleDomainRule implements ViolationCreatingInterface
 {
     private const int EVENT_PRIORITY = 3;
+
+    public function __construct(private readonly EventHelper $eventHelper)
+    {
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -96,12 +101,12 @@ final class CrossModuleDomainRule implements ViolationCreatingInterface
             return;
         }
 
-        $event->getResult()->addRule(new Violation(
-            $event->dependency,
-            $event->dependerLayer,
+        $this->eventHelper->addSkippableViolation(
+            $event,
+            $event->getResult(),
             $this->dependentLayerName($event),
             $this,
-        ));
+        );
     }
 
     public function ruleName(): string

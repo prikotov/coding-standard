@@ -7,11 +7,14 @@ namespace PrikotovCodingStandard\Tests\Deptrac;
 use PHPUnit\Framework\TestCase;
 use PrikotovCodingStandard\Deptrac\ServiceContractDependencyRule;
 use Qossmic\Deptrac\Contract\Analyser\AnalysisResult;
+use Qossmic\Deptrac\Contract\Analyser\EventHelper;
 use Qossmic\Deptrac\Contract\Analyser\ProcessEvent;
 use Qossmic\Deptrac\Contract\Ast\DependencyContext;
 use Qossmic\Deptrac\Contract\Ast\DependencyType;
 use Qossmic\Deptrac\Contract\Ast\FileOccurrence;
+use Qossmic\Deptrac\Contract\Layer\LayerProvider;
 use Qossmic\Deptrac\Contract\Result\RuleInterface;
+use Qossmic\Deptrac\Contract\Result\SkippedViolation;
 use Qossmic\Deptrac\Contract\Result\Violation;
 use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeReference;
 use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeToken;
@@ -31,7 +34,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Domain\Service\Invoice\CalculateInvoiceServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -45,7 +48,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Domain\Service\Invoice\CalculateInvoiceServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -59,7 +62,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Application\Service\Invoice\PrepareInvoiceServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -73,7 +76,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Application\Service\Invoice\PrepareInvoiceServiceInterface',
             DependencyType::INHERIT,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -87,7 +90,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Domain\Service\Invoice\PrepareInvoiceServiceInterface',
             DependencyType::INHERIT,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -101,7 +104,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Domain\Service\Invoice\BuildInvoiceServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -115,7 +118,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Infrastructure\Service\Lock\InvoiceLockServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -129,7 +132,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Domain\Service\ExchangeRate\FetchExchangeRateServiceInterface',
             DependencyType::INHERIT,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -143,7 +146,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Domain\Service\ExchangeRate\FetchExchangeRateServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -157,7 +160,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Application\Service\Invoice\PublishInvoiceServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -171,7 +174,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Application\Service\Invoice\PublishInvoiceService',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -185,7 +188,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Integration\Service\ExchangeRate\FetchExchangeRateServiceInterface',
             DependencyType::INHERIT,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -199,7 +202,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Integration\Service\ExchangeRate\FetchExchangeRateServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -215,7 +218,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -229,7 +232,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -243,7 +246,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\User\Application\Service\Account\FindAccountServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -257,7 +260,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\User\Infrastructure\Service\Lock\UserLockServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -271,7 +274,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
             DependencyType::INHERIT,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -285,7 +288,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Project\Domain\Service\OwnerChecker\OwnerCheckerServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -299,7 +302,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\User\Application\Service\Account\FindAccountServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -313,7 +316,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Application\Service\UserBilling\InitializeRegistrationBillingService',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -329,7 +332,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Application\Service\Invoice\PrepareInvoiceServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -343,7 +346,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Integration\Service\ExchangeRate\FetchExchangeRateServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -357,7 +360,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Application\Service\Invoice\PublishInvoiceServiceInterface',
             DependencyType::INHERIT,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -373,7 +376,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\User\Application\Service\Account\FindAccountServiceInterface',
             DependencyType::USE,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -387,7 +390,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Application\Service\UserBilling\InitializeRegistrationBillingService',
             DependencyType::USE,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -403,7 +406,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\User\Domain\Entity\User',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -419,7 +422,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\SomeOther\User\Domain\Service\UserServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -435,7 +438,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'Common\Module\Billing\Domain\Service\Invoice\CalculateInvoiceServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -449,7 +452,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -463,7 +466,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'Stocks2\Common\Module\Billing\Domain\Service\Invoice\CalculateInvoiceServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -477,7 +480,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'Stocks2\Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -493,7 +496,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Application\Service\Payment\PaymentNotificationUrlGeneratorInterface',
             DependencyType::INHERIT,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -507,7 +510,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Domain\Service\Payment\PaymentUrlGeneratorInterface',
             DependencyType::INHERIT,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -521,7 +524,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\Billing\Domain\Service\Payment\PaymentUrlGeneratorInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -537,7 +540,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\\Common\\Module\\User\\Domain\\Service\\Email\\UserEmailUrlGeneratorInterface',
             DependencyType::INHERIT,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -551,7 +554,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\\Common\\Module\\User\\Domain\\Service\\Email\\UserEmailUrlGeneratorInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -565,7 +568,7 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\\Common\\Module\\User\\Domain\\Entity\\User',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         $rule->onProcessEvent($event);
 
@@ -576,14 +579,14 @@ final class ServiceContractDependencyRuleTest extends TestCase
 
     public function testRuleName(): void
     {
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         self::assertSame('ServiceContractDependencyRule', $rule->ruleName());
     }
 
     public function testRuleDescription(): void
     {
-        $rule = new ServiceContractDependencyRule();
+        $rule = $this->createRule();
 
         self::assertSame(
             'Service dependencies must stay inside the module; service interfaces must only be referenced or implemented by allowed layers; classes outside the module must not depend on module services.',
@@ -604,6 +607,33 @@ final class ServiceContractDependencyRuleTest extends TestCase
         }
 
         return $matches['layer'];
+    }
+
+    // ─── skip_violations: violation becomes SkippedViolation ────────
+
+    public function testServiceContractDependencyHonorsSkipViolations(): void
+    {
+        $event = $this->createProcessEvent(
+            'App\Common\Module\Billing\Integration\Service\User\FindUserService',
+            'App\Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
+            DependencyType::PARAMETER,
+        );
+        $rule = new ServiceContractDependencyRule(new EventHelper([
+            'App\Common\Module\Billing\Integration\Service\User\FindUserService' => [
+                'App\Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
+            ],
+        ], new LayerProvider([])));
+
+        $rule->onProcessEvent($event);
+
+        self::assertSame([], $this->violations($event), 'Expected no violation for skipped pair.');
+        self::assertCount(1, $event->getResult()->rules()[SkippedViolation::class] ?? []);
+    }
+
+    /** @param array<string, list<string>> $skippedViolations */
+    private function createRule(array $skippedViolations = []): ServiceContractDependencyRule
+    {
+        return new ServiceContractDependencyRule(new EventHelper($skippedViolations, new LayerProvider([])));
     }
 
     private function createProcessEvent(
