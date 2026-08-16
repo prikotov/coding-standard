@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace PrikotovCodingStandard\Deptrac;
 
+use Qossmic\Deptrac\Contract\Analyser\EventHelper;
 use Qossmic\Deptrac\Contract\Analyser\ProcessEvent;
 use Qossmic\Deptrac\Contract\Analyser\ViolationCreatingInterface;
 use Qossmic\Deptrac\Contract\Ast\DependencyType;
-use Qossmic\Deptrac\Contract\Result\Violation;
 
 /**
  * Custom Deptrac rule that enforces service contract boundaries.
@@ -25,6 +25,7 @@ use Qossmic\Deptrac\Contract\Result\Violation;
  *                  |   Integration               |
  *
  * 3. `use` imports (DependencyType::USE) are ignored — only actual dependencies are checked.
+ * 4. Violations honor deptrac `skip_violations` via EventHelper.
  *
  * Register in depfile.yaml:
  *   services:
@@ -41,6 +42,10 @@ final class ServiceContractDependencyRule implements ViolationCreatingInterface
     private const string LAYER_INTEGRATION = 'Integration';
     private const string SERVICE_DIRECTORY_PREFIX = 'Service\\';
     private const string INTERFACE_SUFFIX = 'Interface';
+
+    public function __construct(private readonly EventHelper $eventHelper)
+    {
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -184,12 +189,12 @@ final class ServiceContractDependencyRule implements ViolationCreatingInterface
      */
     private function addViolation(ProcessEvent $event, array $dependent): void
     {
-        $event->getResult()->addRule(new Violation(
-            $event->dependency,
-            $event->dependerLayer,
+        $this->eventHelper->addSkippableViolation(
+            $event,
+            $event->getResult(),
             $this->dependentLayerName($event, $dependent),
             $this,
-        ));
+        );
     }
 
     /**
