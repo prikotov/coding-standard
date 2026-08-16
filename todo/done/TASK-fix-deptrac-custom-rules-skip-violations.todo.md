@@ -3,7 +3,7 @@ type: fix
 created: 2026-08-16 00:05:00 (1786813500)
 due: 
 started: 2026-08-16 00:05:00 (1786813500)
-completed: 
+completed: 2026-08-16 09:12:38 (1786846358)
 cancelled: 
 value: V2
 complexity: C2
@@ -16,7 +16,7 @@ author: Бэкендер Левша (pi)
 assignee: Бэкендер Левша (pi)
 branch: task/fix-deptrac-custom-rules-skip-violations
 pr: https://github.com/prikotov/coding-standard/pull/107
-status: review
+status: done
 ---
 
 # TASK-fix-deptrac-custom-rules-skip-violations: Кастомные правила Deptrac игнорируют skip_violations потребителя
