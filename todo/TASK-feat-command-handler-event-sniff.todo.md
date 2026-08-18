@@ -14,7 +14,7 @@ depends_on:
 epic: 
 author: Бэкендер (pi)
 assignee: 
-branch: task/session-analysis-todo-backlog
+branch: 
 pr: 
 status: todo
 ---
