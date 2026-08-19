@@ -2,7 +2,7 @@
 type: feat
 created: 2026-08-18 15:05:52 (1787065552)
 due: 
-started: 
+started: 2026-08-19 15:01:13 (1787151673)
 completed: 
 cancelled: 
 value: V2
@@ -13,10 +13,10 @@ cost_fact:
 depends_on: 
 epic: 
 author: Бэкендер (pi)
-assignee: 
-branch: 
+assignee: Бэкендер (pi)
+branch: task/verify-wired-checks
 pr: 
-status: todo
+status: in_progress
 ---
 
 # TASK-feat-verify-wired-checks: Проверка подключения правил пакета в проекте-потребителе
@@ -55,24 +55,34 @@ status: todo
 
 ## 3. Требования, MoSCoW (Requirements)
 ### 🔴 Обязательно (Must Have)
-- [ ] Проверка версии в `composer.lock` против последнего релиза с понятным сообщением об ошибке.
-- [ ] Проверка регистрации phpstan-extension и phpcs-ruleset в конфигах потребителя.
-- [ ] Тесты команды на фикстурах (подключено/не подключено/устаревшая версия).
+- [x] Проверка версии в `composer.lock` против последнего релиза с понятным сообщением об ошибке.
+- [x] Проверка регистрации phpstan-extension и phpcs-ruleset в конфигах потребителя.
+- [x] Тесты команды на фикстурах (подключено/не подключено/устаревшая версия).
 ### 🟡 Желательно (Should Have)
-- [ ] Обновление `bin/coding-standard-init` — добавление вызова проверки в `make check` потребителя.
+- [x] Обновление `bin/coding-standard-init` — добавление вызова проверки в `make check` потребителя.
 ### ⚫ Won't Have (Не будем делать)
 - Автоматический `composer update` в потребителе.
 
 ## 4. План реализации (Implementation Plan)
-1. [ ] Спроектировать вывод команды (три проверки, exit code, человекочитаемые формулировки).
-2. [ ] Реализовать `bin/coding-standard-verify` (PHP, без новых зависимостей).
-3. [ ] Тесты + фикстуры; `composer check`.
-4. [ ] Проверить на трёх потребителях без правки их отслеживаемых файлов; обновить README и конвенции.
+
+Уточнено исполнителем (pi) при старте:
+
+1. [x] Спроектировать вывод команды (три проверки, exit code, человекочитаемые формулировки).
+   - Новая команда `bin/coding-standard-verify` (PHP, без новых зависимостей), логика — в `src/Verify/WiringVerifier`.
+   - Проверка 1 (версия): `composer.lock` потребителя против последнего GitHub-релиза (`releases/latest`, пакет на Packagist отсутствует — проверено). Источник последней версии переопределяется флагом `--latest=x.y.z`, пропуск — `--offline`; ответ API кэшируется в temp на 1 час (rate limit).
+   - Проверка 2 (phpstan): резолв `includes` из `phpstan.neon`/`phpstan.neon.dist` до `vendor/prikotov/coding-standard/phpstan-rules.neon`, либо `phpstan/extension-installer` в lock + наш пакет в `GeneratedConfig.php`.
+   - Проверка 3 (phpcs): ruleset (`.phpcs.xml|phpcs.xml|.phpcs.xml.dist|phpcs.xml.dist`) ссылается на пакет (`installed_paths`/`rule ref`), либо `dealerdirect/phpcodesniffer-composer-installer` в lock.
+   - Осознанный пин старой версии — файл `.coding-standard-verify-allow.json` (`version`, `until`, `reason`): до даты — предупреждение, после — ошибка.
+2. [x] Реализовать `bin/coding-standard-verify` + классы в `src/Verify/`; зарегистрировать в `composer.json` (`bin`).
+3. [x] Тесты + фикстуры (команда запускается на временных проектах: подключено/не подключено/устаревшая версия/allowlist/офлайн); `composer check`.
+4. [x] `bin/coding-standard-init`: добавление `coding-standard-verify` в цель `check` Makefile потребителя (если цель есть; иначе подсказка в Next steps).
+5. [x] Проверить на потребителях (TasK, stocks2, task-orchestrator) без правки их отслеживаемых файлов; обновить README и `docs/conventions/ops/quality-metrics.md`.
+   - TasK: lock 0.29.1 < 0.29.3; stocks2: phpstan/phpstan отсутствует; task-orchestrator: `phpstan-rules.neon` не в `includes` — все три находки подтверждены вручную, отслеживаемые файлы потребителей не менялись.
 
 ## 5. Критерии приёмки (Definition of Done)
-- [ ] `composer check` зелёный.
-- [ ] На потребителе с устаревшей версией команда падает с сообщением; с актуальной — зелёная.
-- [ ] README и `docs/conventions/ops/quality-metrics.md` описывают команду.
+- [x] `composer check` зелёный.
+- [x] На потребителе с устаревшей версией команда падает с сообщением; с актуальной — зелёная.
+- [x] README и `docs/conventions/ops/quality-metrics.md` описывают команду.
 
 ## 6. Самопроверка (Verification)
 ```bash
@@ -93,3 +103,4 @@ composer check
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-08-18 15:05:52 (1787065552) | Бэкендер (pi) | Создание задачи |
+| 2026-08-19 | Бэкендер (pi) | Реализация: `bin/coding-standard-verify`, `src/Verify/`, хук в init для `make check`, тесты, документация |
