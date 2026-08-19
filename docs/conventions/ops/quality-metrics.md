@@ -57,6 +57,7 @@ description: Единая модель метрик поддерживаемос
 
 ## Как используем
 
+- Перед PR из корня проекта запускается `vendor/bin/coding-standard-verify`: команда подтверждает, что версия пакета в `composer.lock` не отстаёт от последнего релиза, а его PHPStan- и PHPCS-правила подключены (подробности — в README пакета, раздел «Проверка подключения»). `coding-standard-init` встраивает её в `make check`.
 - Перед PR агент запускает `vendor/bin/coding-standard-metrics-review --base=<target>` из корня проекта.
 - Команда создаёт временный Git worktree на merge-base, собирает baseline и current одинаковым пайплайном, затем удаляет временный worktree.
 - Результат — локальная дельта `var/metrics-review/comparison.json`, `summary.md` и `reproduction.json`; она не коммитится и не зависит от GitHub Actions.
@@ -68,6 +69,7 @@ description: Единая модель метрик поддерживаемос
 
 ## Чек-лист для проведения ревью кода
 
+- [ ] `vendor/bin/coding-standard-verify` зелёная: версия пакета актуальна, PHPStan- и PHPCS-правила подключены.
 - [ ] В `.coding-standard.php` заданы и обоснованы `metrics.thresholds`; изменение границы проверено отдельно от изменения production-кода.
 - [ ] Локальный снимок пересобран командой сборщика для текущих правок; JSON-артефакты не редактировались вручную.
 - [ ] Локальная дельта для merge-base и текущего HEAD сформирована и изучена.

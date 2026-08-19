@@ -170,6 +170,7 @@ vendor/bin/coding-standard-metrics-review --base=origin/master
 | `coding-standard-metrics` | Обновляет или проверяет JSON-снимок и строит HTML-дашборд подключаемого проекта |
 | `coding-standard-metrics-compare` | Сравнивает совместимые снимки и создаёт JSON/Markdown с дельтами |
 | `coding-standard-metrics-review` | Проверяет current, извлекает baseline из Git и собирает артефакт PR |
+| `coding-standard-verify` | Проверяет подключение правил пакета и актуальность версии в проекте-потребителе |
 | `metrics-collect` | Собирает структурные метрики PHP-кода |
 | `metrics-scc` | Собирает размер кодовой базы и версию `scc` |
 | `metrics-coverage` | Создаёт Clover-отчёт покрытия через PHPUnit и PCOV |
@@ -225,7 +226,8 @@ composer require --dev phpstan/extension-installer
 ```
 
 При автоматическом подключении добавлять `phpstan-rules.neon` в `includes` не нужно. Без одного из этих двух вариантов
-пользовательские PHPStan-правила пакета не выполняются.
+пользовательские PHPStan-правила пакета не выполняются. Проверить фактическое подключение можно командой
+[`vendor/bin/coding-standard-verify`](#проверка-подключения-verify).
 
 ### Копирование конвенций в проект
 
@@ -289,7 +291,42 @@ php vendor/bin/coding-standard-init --force
 ```bash
 vendor/bin/phpstan analyse
 composer check
+vendor/bin/coding-standard-verify
 ```
+
+## Проверка подключения
+
+Правила живут в пакете, но в проекте работают только при правильном подключении: актуальная версия в `composer.lock`,
+регистрация PHPStan-правил и ссылка на стандарт в ruleset PHPCS. Команда `coding-standard-verify` проверяет это из корня
+проекта и падает с инструкцией, если пакет отстал от последнего релиза или правила отключились:
+
+```bash
+vendor/bin/coding-standard-verify
+```
+
+| Проверка | Что считается подключённым |
+|---|---|
+| Версия | `composer.lock` не ниже последнего релиза в GitHub-репозитории пакета |
+| PHPStan | `includes` ведёт к `phpstan-rules.neon`, либо правила зарегистрированы через `phpstan/extension-installer` |
+| PHPCS | ruleset ссылается на стандарт (`installed_paths` или `rule ref`), либо стандарт зарегистрирован через `dealerdirect/phpcodesniffer-composer-installer` |
+
+Флаги: `--latest=x.y.z` — считать версией последнего релиза явно заданную (для CI и офлайн-сред), `--offline` — пропустить
+проверку версии без сети (подключение правил проверяется всё равно). Ответ GitHub API кэшируется на час.
+
+Осознанный пин старой версии — файл `.coding-standard-verify-allow.json` в корне проекта:
+
+```json
+{
+    "version": "0.29.2",
+    "until": "2026-09-30",
+    "reason": "ждём совместимости с Symfony 8.1"
+}
+```
+
+До даты `until` устаревшая версия даёт предупреждение, после — ошибку.
+
+`coding-standard-init` добавляет вызов `vendor/bin/coding-standard-verify` в цель `check` Makefile проекта (если она есть),
+поэтому рассинхрон версий ловится в CI того же PR, а не на ревью.
 
 ---
 
