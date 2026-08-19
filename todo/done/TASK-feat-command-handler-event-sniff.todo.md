@@ -3,7 +3,7 @@ type: feat
 created: 2026-08-18 15:05:52 (1787065552)
 due: 
 started: 2026-08-19 04:34:40 (1787114080)
-completed: 
+completed: 2026-08-19 14:52:01 (1787151121)
 cancelled: 
 value: V2
 complexity: C2
@@ -16,7 +16,7 @@ author: Бэкендер (pi)
 assignee: Бэкендер (pi)
 branch: task/command-handler-event-sniff
 pr: https://github.com/prikotov/coding-standard/pull/114
-status: review
+status: done
 ---
 
 # TASK-feat-command-handler-event-sniff: Событие в write-хендлере: кодификация + warning-проверка
