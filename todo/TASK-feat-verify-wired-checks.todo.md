@@ -15,8 +15,8 @@ epic:
 author: Бэкендер (pi)
 assignee: Бэкендер (pi)
 branch: task/verify-wired-checks
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/115
+status: review
 ---
 
 # TASK-feat-verify-wired-checks: Проверка подключения правил пакета в проекте-потребителе
