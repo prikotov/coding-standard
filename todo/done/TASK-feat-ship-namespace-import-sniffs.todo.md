@@ -3,7 +3,7 @@ type: feat
 created: 2026-08-18 14:03:11 (1787061791)
 due: 
 started: 2026-08-19 03:53:00 (1787111580)
-completed: 
+completed: 2026-08-19 04:05:13 (1787112313)
 cancelled: 
 value: V2
 complexity: C1
@@ -16,7 +16,7 @@ author: Бэкендер (pi)
 assignee: Бэкендер (pi)
 branch: task/ship-namespace-import-sniffs
 pr: https://github.com/prikotov/coding-standard/pull/112
-status: review
+status: done
 ---
 
 # TASK-feat-ship-namespace-import-sniffs: PHPCS: включить ReferenceUsedNamesOnly и DisallowGroupUse в ruleset
