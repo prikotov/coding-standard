@@ -41,6 +41,7 @@ description: Стандарты оформления кода в проекте
 - Запрещено писать FQCN (fully qualified class name) с ведущим `\` в теле кода вместо импорта.
 - Допустимые исключения из запрета FQCN: глобальные классы без неймспейса (`\DateTimeImmutable`) и исключения (`\Throwable`, `\RuntimeException`).
 - Группировка импортов `use Foo\{Bar, Baz};` запрещена — каждый импорт на отдельной строке.
+- Каталоги конфигурации (`config/`) и миграций (`migrations/`) исключены из проверки: Symfony-конфиги конвенционально ссылаются на классы FQCN-ключами без `use`.
 - Проверяется сниффами `SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly` и `SlevomatCodingStandard.Namespaces.DisallowGroupUse` из `ruleset.xml` пакета.
 
 **Пример:**
