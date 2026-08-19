@@ -3,7 +3,7 @@ type: fix
 created: 2026-08-18 13:58:26 (1787061506)
 due: 
 started: 2026-08-19 03:08:35 (1787108915)
-completed: 
+completed: 2026-08-19 03:27:43 (1787110063)
 cancelled: 
 value: V2
 complexity: C1
@@ -16,7 +16,7 @@ author: Бэкендер (pi)
 assignee: Бэкендер (pi)
 branch: task/fix-deptrac-versioned-namespace-regex
 pr: https://github.com/prikotov/coding-standard/pull/111
-status: review
+status: done
 ---
 
 # TASK-fix-deptrac-versioned-namespace-regex: Deptrac: Presentation-коллектор не матчит версии namespace (Api\v1)
