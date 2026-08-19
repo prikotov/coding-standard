@@ -1,0 +1,118 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * coding-standard-verify — verify that the consumer project actually uses
+ * prikotov/coding-standard: the locked version is the latest release, the
+ * PHPStan extension is registered and the PHPCS ruleset references the package.
+ *
+ * Usage:
+ *   php vendor/bin/coding-standard-verify [project-dir] [--latest=x.y.z] [--offline]
+ *
+ *   project-dir  — project root (default: current working directory).
+ *   --latest     — treat x.y.z as the latest release instead of the GitHub API.
+ *   --offline    — skip the version check (no network); wiring checks still run.
+ *
+ * Exit codes: 0 — wired and up to date; 1 — problems found (see output).
+ */
+
+$autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
+if (!is_file($autoloadPath)) {
+    $autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . '/vendor/autoload.php';
+}
+require $autoloadPath;
+
+use PrikotovCodingStandard\Verify\FixedLatestReleaseProvider;
+use PrikotovCodingStandard\Verify\GitHubLatestReleaseProvider;
+use PrikotovCodingStandard\Verify\VerificationResult;
+use PrikotovCodingStandard\Verify\WiringVerifier;
+
+try {
+    $arguments = array_slice($argv, 1);
+    if (in_array('--help', $arguments, true) || in_array('-h', $arguments, true)) {
+        fwrite(STDOUT, <<<'TEXT'
+Usage: coding-standard-verify [project-dir] [--latest=x.y.z] [--offline]
+
+  project-dir  — project root (default: current working directory).
+  --latest     — treat x.y.z as the latest release instead of the GitHub API.
+  --offline    — skip the version check (no network); wiring checks still run.
+
+Checks:
+  1. composer.lock version of prikotov/coding-standard against the latest release.
+  2. Registration of the package PHPStan rules (includes or extension-installer).
+  3. Reference to the package standard in the project PHPCS ruleset.
+
+TEXT);
+        exit(0);
+    }
+
+    $offline = false;
+    $latest = null;
+    $projectDir = null;
+    foreach ($arguments as $argument) {
+        if ($argument === '--offline') {
+            $offline = true;
+        } elseif (str_starts_with($argument, '--latest=')) {
+            $latest = ltrim(substr($argument, strlen('--latest=')), 'v');
+            if ($latest === '') {
+                throw new InvalidArgumentException('--latest requires a version, e.g. --latest=0.29.3');
+            }
+        } elseif (str_starts_with($argument, '--')) {
+            throw new InvalidArgumentException('Unknown option: ' . $argument);
+        } elseif ($projectDir === null) {
+            $projectDir = $argument;
+        } else {
+            throw new InvalidArgumentException('Unexpected argument: ' . $argument);
+        }
+    }
+
+    $projectDir = $projectDir !== null ? realpath($projectDir) : getcwd();
+    if ($projectDir === false || !is_dir($projectDir)) {
+        fwrite(STDERR, "coding-standard-verify: project directory does not exist\n");
+        exit(1);
+    }
+
+    $provider = match (true) {
+        $latest !== null => new FixedLatestReleaseProvider($latest),
+        $offline => null,
+        default => new GitHubLatestReleaseProvider(),
+    };
+
+    $result = (new WiringVerifier($provider))->verify($projectDir);
+    fwrite(STDOUT, 'coding-standard-verify: ' . $projectDir . PHP_EOL . PHP_EOL);
+    foreach ($result->entries() as $entry) {
+        fwrite(STDOUT, renderEntry($entry) . PHP_EOL);
+    }
+
+    fwrite(STDOUT, PHP_EOL);
+    if ($result->hasFailed()) {
+        fwrite(STDOUT, 'FAIL: the package is not fully wired into the project — see above.' . PHP_EOL);
+        exit(1);
+    }
+    fwrite(STDOUT, 'OK: prikotov/coding-standard is wired and up to date.' . PHP_EOL);
+} catch (Throwable $exception) {
+    fwrite(STDERR, 'coding-standard-verify: ' . $exception->getMessage() . PHP_EOL);
+    exit(1);
+}
+
+/**
+ * @param array{level: 'ok'|'warn'|'fail', message: string, hint: string|null} $entry
+ */
+function renderEntry(array $entry): string
+{
+    $marker = match ($entry['level']) {
+        'ok' => '  [OK]  ',
+        'warn' => '  [WARN]',
+        'fail' => '  [FAIL]',
+    };
+    $rendered = $marker . ' ' . $entry['message'];
+    if (($entry['hint'] ?? null) !== null) {
+        foreach (explode("\n", (string) $entry['hint']) as $line) {
+            $rendered .= PHP_EOL . '         ' . $line;
+        }
+    }
+
+    return $rendered;
+}
