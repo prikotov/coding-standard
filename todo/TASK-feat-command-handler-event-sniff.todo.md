@@ -15,8 +15,8 @@ epic:
 author: Бэкендер (pi)
 assignee: Бэкендер (pi)
 branch: task/command-handler-event-sniff
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/114
+status: review
 ---
 
 # TASK-feat-command-handler-event-sniff: Событие в write-хендлере: кодификация + warning-проверка
