@@ -3,7 +3,7 @@ type: feat
 created: 2026-08-18 15:05:52 (1787065552)
 due: 
 started: 2026-08-19 15:01:13 (1787151673)
-completed: 
+completed: 2026-08-19 15:21:40 (1787152900)
 cancelled: 
 value: V2
 complexity: C2
@@ -16,7 +16,7 @@ author: Бэкендер (pi)
 assignee: Бэкендер (pi)
 branch: task/verify-wired-checks
 pr: https://github.com/prikotov/coding-standard/pull/115
-status: review
+status: done
 ---
 
 # TASK-feat-verify-wired-checks: Проверка подключения правил пакета в проекте-потребителе
