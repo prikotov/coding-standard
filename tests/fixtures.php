@@ -186,6 +186,34 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // CommandHandlerEventDispatchSniff — mutating handlers without event dispatch
+    [
+        'file' => __DIR__ . '/Application/CommandHandlerEventDispatchUnitTest.inc',
+        'errors' => [],
+        'warnings' => [
+            5  => 1, // MissingEventDispatch — save() without dispatch
+            14 => 1, // MissingEventDispatch — persist() + flush() without dispatch (historical FailIncomplete case)
+            26 => 1, // MissingEventDispatch — remove() + flush() without dispatch
+        ],
+    ],
+    // CommandHandlerEventDispatchSniff — dispatch / read-only / QueryHandler / phpcs:ignore suppression
+    [
+        'file' => __DIR__ . '/Application/CommandHandlerEventDispatchUnitTestValid.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // CommandHandlerEventDispatchSniff — mutating handler with dispatch in real Command path
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Application/UseCase/Command/Publish/PublishCommandHandler.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // CommandHandlerEventDispatchSniff — Query path handler must not trigger the sniff
+    [
+        'file' => __DIR__ . '/fixtures/src/Module/Example/Application/UseCase/Query/MarkUsed/MarkUsedQueryHandler.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
     // CommandHandlerReturnTypeSniff — returns forbidden type (Model)
     [
         'file' => __DIR__ . '/Application/CommandHandlerReturnTypeUnitTest.inc',

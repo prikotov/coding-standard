@@ -1,6 +1,78 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
+			message: '#^Cannot access offset ''content'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
+			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
+			message: '#^Parameter \#1 \$string of function strtolower expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerEventDispatchSniff\:\:belongsToClass\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_key_exists expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerEventDispatchSniff\:\:dispatchesEvent\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
+			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerEventDispatchSniff\:\:findStateMutationCall\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerEventDispatchSniff\:\:dispatchesEvent\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
+			message: '#^Parameter \#4 \$scopeEnd of method PrikotovCodingStandard\\Sniffs\\Application\\CommandHandlerEventDispatchSniff\:\:findStateMutationCall\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Application/CommandHandlerEventDispatchSniff.php
+
+		-
 			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -531,7 +603,7 @@ parameters:
 		-
 			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 2
+			count: 1
 			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
 
 		-
@@ -543,19 +615,19 @@ parameters:
 		-
 			message: '#^Cannot access offset ''content'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
+			count: 2
 			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
 
 		-
 			message: '#^Cannot access offset ''scope_closer'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
 
 		-
 			message: '#^Cannot access offset ''scope_opener'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
 
 		-
@@ -567,7 +639,7 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
-			count: 11
+			count: 10
 			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
 
 		-
@@ -591,7 +663,7 @@ parameters:
 		-
 			message: '#^Parameter \#3 \$end of method PHP_CodeSniffer\\Files\\File\:\:findNext\(\) expects int\|null, mixed given\.$#'
 			identifier: argument.type
-			count: 3
+			count: 1
 			path: src/Sniffs/Structure/RepositoryMethodSignatureSniff.php
 
 		-
@@ -639,7 +711,7 @@ parameters:
 		-
 			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 2
+			count: 1
 			path: src/Sniffs/Structure/RepositoryStructureSniff.php
 
 		-
@@ -649,9 +721,21 @@ parameters:
 			path: src/Sniffs/Structure/RepositoryStructureSniff.php
 
 		-
+			message: '#^Cannot access offset ''conditions'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
 			message: '#^Cannot access offset ''content'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 4
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
+			message: '#^Cannot access offset ''nested_parenthesis'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
 			path: src/Sniffs/Structure/RepositoryStructureSniff.php
 
 		-
@@ -673,27 +757,15 @@ parameters:
 			path: src/Sniffs/Structure/RepositoryStructureSniff.php
 
 		-
-			message: '#^Cannot cast mixed to string\.$#'
-			identifier: cast.string
-			count: 5
-			path: src/Sniffs/Structure/RepositoryStructureSniff.php
-
-		-
-			message: '#^Cannot access offset ''conditions'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Sniffs/Structure/RepositoryStructureSniff.php
-
-		-
-			message: '#^Cannot access offset ''nested_parenthesis'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Sniffs/Structure/RepositoryStructureSniff.php
-
-		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
 			count: 2
+			path: src/Sniffs/Structure/RepositoryStructureSniff.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 5
 			path: src/Sniffs/Structure/RepositoryStructureSniff.php
 
 		-
@@ -717,7 +789,7 @@ parameters:
 		-
 			message: '#^Parameter \#3 \$end of method PHP_CodeSniffer\\Files\\File\:\:findNext\(\) expects int\|null, mixed given\.$#'
 			identifier: argument.type
-			count: 4
+			count: 3
 			path: src/Sniffs/Structure/RepositoryStructureSniff.php
 
 		-
