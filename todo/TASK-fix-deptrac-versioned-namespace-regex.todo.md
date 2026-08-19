@@ -2,7 +2,7 @@
 type: fix
 created: 2026-08-18 13:58:26 (1787061506)
 due: 
-started: 
+started: 2026-08-19 03:08:35 (1787108915)
 completed: 
 cancelled: 
 value: V2
@@ -13,10 +13,10 @@ cost_fact:
 depends_on: 
 epic: 
 author: Бэкендер (pi)
-assignee: 
-branch: 
+assignee: Бэкендер (pi)
+branch: task/fix-deptrac-versioned-namespace-regex
 pr: 
-status: todo
+status: in_progress
 ---
 
 # TASK-fix-deptrac-versioned-namespace-regex: Deptrac: Presentation-коллектор не матчит версии namespace (Api\v1)
@@ -55,23 +55,23 @@ status: todo
 
 ## 3. Требования, MoSCoW (Requirements)
 ### 🔴 Обязательно (Must Have)
-- [ ] `\\v\\d+` → `\\v\d+` в Presentation-коллекторе `config/deptrac/depfile.yaml`.
-- [ ] Регрессионный тест на depfile: версионированные namespace (`v1`, `v2`, с корневым префиксом и без) матчатся Presentation-слоем, неверсионированные — тоже, чужие — нет.
+- [x] `\\v\\d+` → `\\v\d+` в Presentation-коллекторе `config/deptrac/depfile.yaml`.
+- [x] Регрессионный тест на depfile: версионированные namespace (`v1`, `v2`, с корневым префиксом и без) матчатся Presentation-слоем, неверсионированные — тоже, чужие — нет.
 ### 🟡 Желательно (Should Have)
-- [ ] Проверка на живом TasK: `debug:layer Presentation` включает `Task\Api\v1\…`; зонд-контроллер с Domain-репозиторием ловится как violation.
+- [x] Проверка на живом TasK: `debug:layer Presentation` включает `Task\Api\v1\…`; зонд-контроллер с Domain-репозиторием ловится как violation.
 ### ⚫ Won't Have (Не будем делать)
 - Правка violation'ов проекта-потребителя.
 
 ## 4. План реализации (Implementation Plan)
-1. [ ] Фикс regex в `config/deptrac/depfile.yaml`.
-2. [ ] Регрессионный тест (YAML-парсинг + `preg_match` по значению коллектора).
-3. [ ] `composer check` в пакете.
-4. [ ] Проверка на TasK через временный depfile + файл-зонд (удалить после), отчитаться цифрами `debug:layer`/violations.
+1. [x] Фикс regex в `config/deptrac/depfile.yaml`.
+2. [x] Регрессионный тест (YAML-парсинг + `preg_match` по значению коллектора) — `tests/Deptrac/DepfileVersionedNamespaceRegexTest.php`.
+3. [x] `composer check` в пакете.
+4. [x] Проверка на TasK через временный depfile + файл-зонд (удалить после), отчитаться цифрами `debug:layer`/violations — см. Комментарии.
 
 ## 5. Критерии приёмки (Definition of Done)
-- [ ] `composer check` зелёный.
-- [ ] Новый тест красный на старом regex (проверить git stash), зелёный на новом.
-- [ ] На TasK: слой Presentation собирает классы `Api\v1`; зонд ловит `DependsOnDisallowedLayer`; рабочее дерево потребителя чистое.
+- [x] `composer check` зелёный.
+- [x] Новый тест красный на старом regex (проверить git stash), зелёный на новом. — 5 падений на старом (4 версионированных кейса + guard на двойное экранирование), 13 зелёных на новом.
+- [x] На TasK: слой Presentation собирает классы `Api\v1`; зонд ловит `DependsOnDisallowedLayer`; рабочее дерево потребителя чистое.
 
 ## 6. Самопроверка (Verification)
 ```bash
@@ -91,7 +91,26 @@ composer check
 
 ## 9. Комментарии (Comments)
 
+### Результаты проверки на живом TasK (Development, coding-standard v0.29.1, 2026-08-18)
+
+Метод: временные untracked-конфиги в корне потребителя (текущий depfile + sed-фикс вендорного), `--no-cache`, после — удаление.
+
+| Метрика | До фикса | После фикса |
+| :--- | :--- | :--- |
+| `debug:layer Presentation` — всего | 671 | 861 |
+| — из них `Task\Api\v1\` | **0** | **190** |
+| — Web / Console / Blog | 593 / 72 / 6 | 593 / 72 / 6 (без изменений) |
+| `analyse` Violations | 0 | 0 |
+| `analyse` Allowed | 12536 | 12686 |
+| `analyse` Uncovered | 14653 | 16089 |
+
+- Зонд `DeptracProbeController` (constructor injection `SourceRepositoryInterface`, Domain): пойман — `DependsOnDisallowedLayer … (Domain)`, exit 1. Удалён.
+- Всплеска реальных violations по API-контроллерам нет: весь `apps/api` укладывается в правила Presentation → Application (+Command/Query). Рост Uncovered (+1436) — зависимости API-классов на токены вне слоёв (Symfony и др.), которые до фикса не учитывались вовсе.
+- Особенность deptrac 2.0.6: `debug:layer` игнорирует `--config-file`, ищет `deptrac.yaml` в cwd — обход через временный `deptrac.yaml`.
+- Замечание для потребителя: вендорный v0.29.1 также содержит старый префикс корневого namespace `[A-Za-z_]+` (не влияет на TasK — корень `Task` без цифр); исправлен в v0.29+ фикс-релизе задачи TASK-fix-deptrac-root-namespace-digit-regex, нужен update пакета (см. риски).
+
 ## История изменений (Change History)
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-08-18 13:58:26 (1787061506) | Бэкендер (pi) | Создание задачи |
+| 2026-08-19 10:15:29 (1787109329) | Бэкендер (pi) | Фикс regex, регрессионный тест, проверка на TasK — см. Комментарии |
