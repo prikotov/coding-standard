@@ -47,6 +47,45 @@ final class MetricsComparisonTest extends TestCase
         self::assertSame(1, $result['summary']['neutral_metric_count']);
     }
 
+    public function testMarksGrowthOfCommandHandlersWithoutEventAsRegression(): void
+    {
+        $baseline = $this->snapshot([
+            'App\CreateCommandHandler' => $this->object('App\CreateCommandHandler', 'src/Command/CreateCommandHandler.php', [
+                'missing_event_dispatch' => 0,
+            ]),
+            'App\DeleteCommandHandler' => $this->object('App\DeleteCommandHandler', 'src/Command/DeleteCommandHandler.php', [
+                'missing_event_dispatch' => 1,
+            ]),
+        ]);
+        $baseline['objects']['project']['example/project']['metrics'] = [
+            'project' => ['command_handlers' => 2, 'command_handlers_without_event' => 1],
+        ];
+        $current = $this->snapshot([
+            'App\CreateCommandHandler' => $this->object('App\CreateCommandHandler', 'src/Command/CreateCommandHandler.php', [
+                'missing_event_dispatch' => 1,
+            ]),
+            'App\DeleteCommandHandler' => $this->object('App\DeleteCommandHandler', 'src/Command/DeleteCommandHandler.php', [
+                'missing_event_dispatch' => 1,
+            ]),
+        ]);
+        $current['objects']['project']['example/project']['metrics'] = [
+            'project' => ['command_handlers' => 3, 'command_handlers_without_event' => 2],
+        ];
+
+        $result = (new MetricsComparison())->compare($baseline, $current, ['src/Command/CreateCommandHandler.php']);
+
+        $class = $result['scopes']['class']['changed'][0];
+        self::assertSame('App\CreateCommandHandler', $class['id']);
+        self::assertTrue($class['changed_area']);
+        self::assertSame('regressed', $this->metric($class, 'missing_event_dispatch')['direction']);
+        $project = $result['scopes']['project']['changed'][0];
+        self::assertSame('regressed', $this->metric($project, 'project.command_handlers_without_event')['direction']);
+        self::assertSame(1, $this->metric($project, 'project.command_handlers_without_event')['delta']);
+        self::assertSame('neutral', $this->metric($project, 'project.command_handlers')['direction']);
+        self::assertSame(2, $result['summary']['regressed_metric_count']);
+        self::assertSame(1, $result['summary']['neutral_metric_count']);
+    }
+
     #[DataProvider('incompatibleSnapshots')]
     public function testRejectsIncompatibleSnapshots(string $field, mixed $value): void
     {

@@ -232,7 +232,7 @@ final class MetricsComparison
         }
         if (
             $kind === 'class' && preg_match(
-                '/^(loc|wmc|max_cc|lcom4\.(components|normalized)|ca\.count|ce\.count)$/',
+                '/^(loc|wmc|max_cc|lcom4\.(components|normalized)|ca\.count|ce\.count|missing_event_dispatch)$/',
                 $metric,
             ) === 1
         ) {
@@ -257,6 +257,7 @@ final class MetricsComparison
             }
             if (
                 $metric === 'project.inter_module_dependencies'
+                || $metric === 'project.command_handlers_without_event'
                 || $metric === 'project.cycles.count'
                 || preg_match('/^project\.(class_loc|wmc|max_cc)\.(median|max|p90|p95)$/', $metric) === 1
             ) {

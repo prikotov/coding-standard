@@ -71,6 +71,7 @@ final class MetricsAggregator
                 'lcom4' => ['components' => (int) ($m['lcom'] ?? 0), 'normalized' => null, 'method_count' => count($methods), 'definition_version' => '1.0'],
                 'ca' => ['count' => 0, 'types' => []], 'ce' => ['count' => 0, 'types' => []],
                 'churn' => isset($m['gitChurnCount']) ? ['commits' => (int) $m['gitChurnCount'], 'changed_lines' => null] : null,
+                'missing_event_dispatch' => $this->missingEventDispatch($m),
                 '_methods' => $methods,
             ];
             if (count($methods) > 1) {
@@ -288,6 +289,22 @@ final class MetricsAggregator
         $b = (int) ceil($i);
         return $values[$a] + ($values[$b] - $values[$a]) * ($i - $a);
     }
+    /**
+     * 1 — CommandHandler без диспетчеризации события,
+     * 0 — хендлер диспетчеризует событие,
+     * null — класс не CommandHandler (метрика неприменима).
+     * @param array<string, mixed> $metrics
+     */
+    private function missingEventDispatch(array $metrics): ?int
+    {
+        $dispatchesEvent = $metrics['commandHandlerDispatchesEvent'] ?? null;
+        if (!is_bool($dispatchesEvent)) {
+            return null;
+        }
+
+        return $dispatchesEvent ? 0 : 1;
+    }
+
     /** @param array<string,array<string,mixed>> $classes @param array<string,array<string,mixed>> $modules @param array<string,array{string,string}> $edges @return array<string,mixed> */
     private function project(array $classes, array $modules, array $edges): array
     {
@@ -296,7 +313,7 @@ final class MetricsAggregator
             foreach ($m['cycles']['components'] as $c) {
                 $cycles[$c] = true;
             }
-        } return ['class_count' => count($classes),'file_count' => count(array_unique(array_column($classes, 'file'))),'loc' => array_sum(array_column($classes, 'loc')),'module_count' => count($modules),'class_loc' => $this->distribution(array_column($classes, 'loc')),'wmc' => $this->distribution(array_column($classes, 'wmc')),'max_cc' => $this->distribution(array_column($classes, 'max_cc')),'inter_module_dependencies' => count(array_filter($edges, fn($e)=>$classes[$e[0]]['module'] !== $classes[$e[1]]['module'])),'cycles' => ['count' => count($cycles),'components' => array_keys($cycles)]];
+        } return ['class_count' => count($classes),'file_count' => count(array_unique(array_column($classes, 'file'))),'loc' => array_sum(array_column($classes, 'loc')),'module_count' => count($modules),'class_loc' => $this->distribution(array_column($classes, 'loc')),'wmc' => $this->distribution(array_column($classes, 'wmc')),'max_cc' => $this->distribution(array_column($classes, 'max_cc')),'command_handlers' => count(array_filter($classes, static fn (array $class): bool => ($class['missing_event_dispatch'] ?? null) !== null)),'command_handlers_without_event' => count(array_filter($classes, static fn (array $class): bool => ($class['missing_event_dispatch'] ?? 0) === 1)),'inter_module_dependencies' => count(array_filter($edges, fn($e)=>$classes[$e[0]]['module'] !== $classes[$e[1]]['module'])),'cycles' => ['count' => count($cycles),'components' => array_keys($cycles)]];
     }
     /** @param list<string> $nodes @param list<array{string,string}> $edges @param array<string,array<string,mixed>> $classes @return list<list<string>> */
     private function components(array $nodes, array $edges, array $classes): array

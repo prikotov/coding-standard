@@ -33,13 +33,18 @@ file_put_contents($project . '/snapshot-check-called', 'yes');
 $source = (string) file_get_contents($project . '/src/Foo.php');
 $loc = str_contains($source, 'run') ? 16 : 10;
 $cc = str_contains($source, 'run') ? 2 : 1;
+$handlerSource = (string) @file_get_contents($project . '/src/Handler.php');
+$handlerMissing = $handlerSource !== '' && !str_contains($handlerSource, 'dispatch') ? 1 : 0;
 $snapshot = [
     'schema_version' => '1.0',
-    'metadata' => ['project' => 'example/consumer', 'metric_definitions_version' => '1.0', 'configuration_hash' => 'sha256:configuration', 'input_hash' => hash('sha256', $source), 'source_versions' => ['analyzer' => 'metrics-collector/1.0']],
+    'metadata' => ['project' => 'example/consumer', 'metric_definitions_version' => '1.0', 'configuration_hash' => 'sha256:configuration', 'input_hash' => hash('sha256', $source . $handlerSource), 'source_versions' => ['analyzer' => 'metrics-collector/1.0']],
     'objects' => [
-        'project' => ['example/consumer' => ['id' => 'example/consumer', 'source_path' => '.', 'metrics' => ['project' => ['loc' => $loc]], 'attributes' => []]],
+        'project' => ['example/consumer' => ['id' => 'example/consumer', 'source_path' => '.', 'metrics' => ['project' => ['loc' => $loc, 'command_handlers' => 1, 'command_handlers_without_event' => $handlerMissing]], 'attributes' => []]],
         'module' => [],
-        'class' => ['App\\Foo' => ['id' => 'App\\Foo', 'source_path' => 'src/Foo.php', 'metrics' => ['loc' => $loc], 'attributes' => ['kind' => 'class', 'module' => 'Main']]],
+        'class' => [
+            'App\\Foo' => ['id' => 'App\\Foo', 'source_path' => 'src/Foo.php', 'metrics' => ['loc' => $loc], 'attributes' => ['kind' => 'class', 'module' => 'Main']],
+            'App\\Handler' => ['id' => 'App\\Handler', 'source_path' => 'src/Handler.php', 'metrics' => ['missing_event_dispatch' => $handlerMissing], 'attributes' => ['kind' => 'class', 'module' => 'Main']],
+        ],
         'method' => ['App\\Foo::run' => ['id' => 'App\\Foo::run', 'source_path' => 'src/Foo.php', 'metrics' => ['loc' => 5, 'cc' => $cc], 'attributes' => []]],
     ],
 ];
@@ -59,11 +64,13 @@ PHP);
     public function testBuildsAReproducibleReviewArtifactFromMergeBaseAndCurrentSnapshot(): void
     {
         file_put_contents($this->project . '/src/Foo.php', '<?php final class Foo {}');
+        file_put_contents($this->project . '/src/Handler.php', '<?php final class Handler { public function __invoke() { $this->eventBus->dispatch(new Event()); } }');
         $this->git('add .');
         $this->git('commit -m baseline');
         $baselineCommit = $this->git('rev-parse HEAD');
 
         file_put_contents($this->project . '/src/Foo.php', '<?php final class Foo { public function run() {} }');
+        file_put_contents($this->project . '/src/Handler.php', '<?php final class Handler { public function __invoke() { $this->repository->save($this->model); } }');
         $this->git('add .');
         $this->git('commit -m current');
         $currentCommit = $this->git('rev-parse HEAD');
@@ -85,6 +92,25 @@ PHP);
         $comparison = $this->json($output . '/comparison.json');
         self::assertTrue($comparison['scopes']['class']['changed'][0]['changed_area']);
         self::assertSame('regressed', $comparison['scopes']['method']['changed'][0]['metric_changes'][0]['direction']);
+        $handler = null;
+        foreach ($comparison['scopes']['class']['changed'] as $changed) {
+            if ($changed['id'] === 'App\\Handler') {
+                $handler = $changed;
+            }
+        }
+        self::assertNotNull($handler);
+        self::assertSame('regressed', $handler['metric_changes'][0]['direction']);
+        self::assertSame('missing_event_dispatch', $handler['metric_changes'][0]['metric']);
+        $projectMetric = null;
+        foreach ($comparison['scopes']['project']['changed'][0]['metric_changes'] as $change) {
+            if ($change['metric'] === 'project.command_handlers_without_event') {
+                $projectMetric = $change;
+            }
+        }
+        self::assertNotNull($projectMetric);
+        self::assertSame('regressed', $projectMetric['direction']);
+        self::assertSame(1, $projectMetric['delta']);
+        self::assertStringContainsString('command_handlers_without_event', (string) file_get_contents($output . '/summary.md'));
 
         $firstHash = $this->directoryHash($output);
         $pipeline->run('HEAD^', 'HEAD', 'var/metrics-review');

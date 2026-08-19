@@ -84,6 +84,7 @@ final class AstMetricsCollector
                 'interface' => $class instanceof Node\Stmt\Interface_,
                 'trait' => $class instanceof Node\Stmt\Trait_,
                 'enum' => $class instanceof Node\Stmt\Enum_,
+                'commandHandlerDispatchesEvent' => $class instanceof Node\Stmt\Class_ ? $this->commandHandlerDispatchesEvent($class, $this->relativePath($path)) : null,
             ]];
             foreach ($methods as $method) {
                 $functions[] = ['name' => $method->name->toString(), 'type' => 'method', 'metrics' => [
@@ -95,6 +96,32 @@ final class AstMetricsCollector
         }
 
         return [$classes, $functions, array_values($dependencies)];
+    }
+
+    /**
+     * Маркер CommandHandler'а из конвенции command-handler.md: класс *CommandHandler
+     * в Application/UseCase/Command/. Детектор фиксирует факт наличия вызова dispatch
+     * (диспетчеризация события). null — класс не является CommandHandler'ом.
+     */
+    private function commandHandlerDispatchesEvent(Node\Stmt\Class_ $class, string $filePath): ?bool
+    {
+        $name = $class->name->name;
+        if (!str_ends_with($name, 'CommandHandler')) {
+            return null;
+        }
+        if (!str_contains($filePath, 'Application/UseCase/Command/')) {
+            return null;
+        }
+
+        foreach ([Node\Expr\MethodCall::class, Node\Expr\NullsafeMethodCall::class] as $callType) {
+            foreach ((new NodeFinder())->findInstanceOf($class, $callType) as $call) {
+                if ($call->name instanceof Node\Identifier && strtolower($call->name->toString()) === 'dispatch') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /** @param list<Node\Stmt\ClassMethod> $methods */
