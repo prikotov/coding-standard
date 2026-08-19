@@ -15,8 +15,8 @@ epic:
 author: Бэкендер (pi)
 assignee: Бэкендер (pi)
 branch: task/ship-namespace-import-sniffs
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/112
+status: review
 ---
 
 # TASK-feat-ship-namespace-import-sniffs: PHPCS: включить ReferenceUsedNamesOnly и DisallowGroupUse в ruleset
