@@ -80,8 +80,8 @@ PHP_SOURCE);
         }
 
         self::assertSame(0, $code);
-        self::assertSame(['mutates_state' => true, 'dispatches_event' => false], $handlers['CreateCommandHandler']);
-        self::assertSame(['mutates_state' => true, 'dispatches_event' => true], $handlers['NotifyCommandHandler']);
+        self::assertSame(['hasPersistenceCalls' => true, 'hasEventDispatchCalls' => false], $handlers['CreateCommandHandler']);
+        self::assertSame(['hasPersistenceCalls' => true, 'hasEventDispatchCalls' => true], $handlers['NotifyCommandHandler']);
         self::assertNull($handlers['PlainService']);
     }
 }

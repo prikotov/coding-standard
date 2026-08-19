@@ -120,7 +120,7 @@ composer check
 ### Реализация
 - **Итоговое решение (после ревью)** — проверка на этапе код-ревью, не в PHPCS:
   - AST-коллектор (`AstMetricsCollector`) помечает классы `*CommandHandler` в `Application/UseCase/Command/`
-    флагами `mutates_state` / `dispatches_event` (эвристика: `save`/`delete`/`persist`/`remove`/`flush` и `dispatch`).
+    флагами `hasPersistenceCalls` / `hasEventDispatchCalls` (эвристика: `save`/`delete`/`persist`/`remove`/`flush` и `dispatch`).
   - Агрегатор: класс-метрика `missing_event_dispatch` (0/1/null), проектные счётчики
     `project.command_handlers` и `project.command_handlers_without_event`.
   - Сравнение: рост `command_handlers_without_event` и флаг 0→1 помечаются `regressed` —

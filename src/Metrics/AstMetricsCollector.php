@@ -99,11 +99,12 @@ final class AstMetricsCollector
     }
 
     /**
-     * Признаки CommandHandler'а из конвенции command-handler.md: класс *CommandHandler
-     * в Application/UseCase/Command/, меняющий состояние (save/delete/persist/remove/flush)
-     * без диспетчеризации события (dispatch). null — класс не является CommandHandler'ом.
+     * Маркеры CommandHandler'а из конвенции command-handler.md: класс *CommandHandler
+     * в Application/UseCase/Command/. Детектор фиксирует только факты вызовов:
+     * hasPersistenceCalls — есть вызов метода-маркера персистентности (save/delete/persist/remove/flush),
+     * hasEventDispatchCalls — есть вызов dispatch. null — класс не является CommandHandler'ом.
      *
-     * @return array{mutates_state: bool, dispatches_event: bool}|null
+     * @return array{hasPersistenceCalls: bool, hasEventDispatchCalls: bool}|null
      */
     private function commandHandler(Node\Stmt\Class_ $class, string $filePath): ?array
     {
@@ -115,20 +116,20 @@ final class AstMetricsCollector
             return null;
         }
 
-        $mutatesState = false;
-        $dispatchesEvent = false;
+        $hasPersistenceCalls = false;
+        $hasEventDispatchCalls = false;
         foreach ([Node\Expr\MethodCall::class, Node\Expr\NullsafeMethodCall::class] as $callType) {
             foreach ((new NodeFinder())->findInstanceOf($class, $callType) as $call) {
                 if (!$call->name instanceof Node\Identifier) {
                     continue;
                 }
                 $method = strtolower($call->name->toString());
-                $mutatesState = $mutatesState || in_array($method, ['save', 'delete', 'persist', 'remove', 'flush'], true);
-                $dispatchesEvent = $dispatchesEvent || $method === 'dispatch';
+                $hasPersistenceCalls = $hasPersistenceCalls || in_array($method, ['save', 'delete', 'persist', 'remove', 'flush'], true);
+                $hasEventDispatchCalls = $hasEventDispatchCalls || $method === 'dispatch';
             }
         }
 
-        return ['mutates_state' => $mutatesState, 'dispatches_event' => $dispatchesEvent];
+        return ['hasPersistenceCalls' => $hasPersistenceCalls, 'hasEventDispatchCalls' => $hasEventDispatchCalls];
     }
 
     /** @param list<Node\Stmt\ClassMethod> $methods */

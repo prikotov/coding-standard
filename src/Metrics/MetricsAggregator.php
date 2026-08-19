@@ -291,7 +291,7 @@ final class MetricsAggregator
     }
     /**
      * 1 — CommandHandler меняет состояние без диспетчеризации события,
-     * 0 — хендлер диспетчеризует событие или ничего не мутирует,
+     * 0 — у хендлера есть вызов dispatch либо нет вызовов персистентности,
      * null — класс не CommandHandler (метрика неприменима).
      * @param array<string, mixed> $metrics
      */
@@ -302,7 +302,7 @@ final class MetricsAggregator
             return null;
         }
 
-        return ($handler['mutates_state'] ?? false) === true && ($handler['dispatches_event'] ?? false) === false ? 1 : 0;
+        return ($handler['hasPersistenceCalls'] ?? false) === true && ($handler['hasEventDispatchCalls'] ?? false) === false ? 1 : 0;
     }
 
     /** @param array<string,array<string,mixed>> $classes @param array<string,array<string,mixed>> $modules @param array<string,array{string,string}> $edges @return array<string,mixed> */

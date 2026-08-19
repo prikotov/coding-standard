@@ -158,9 +158,9 @@ final class MetricsAggregatorTest extends TestCase
     }
 
     /** @return array<string, mixed> */
-    private function handler(string $name, string $file, bool $mutatesState, bool $dispatchesEvent): array
+    private function handler(string $name, string $file, bool $hasPersistenceCalls, bool $hasEventDispatchCalls): array
     {
-        return ['name' => $name, 'metrics' => ['filePath' => $file, 'loc' => 10, 'methodCount' => 1, 'propertyCount' => 0, 'lcom' => 1, 'commandHandler' => ['mutates_state' => $mutatesState, 'dispatches_event' => $dispatchesEvent]]];
+        return ['name' => $name, 'metrics' => ['filePath' => $file, 'loc' => 10, 'methodCount' => 1, 'propertyCount' => 0, 'lcom' => 1, 'commandHandler' => ['hasPersistenceCalls' => $hasPersistenceCalls, 'hasEventDispatchCalls' => $hasEventDispatchCalls]]];
     }
 
     /** @return array<string, mixed> */
