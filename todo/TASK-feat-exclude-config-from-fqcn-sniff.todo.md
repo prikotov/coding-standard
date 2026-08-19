@@ -15,8 +15,8 @@ epic:
 author: Бэкендер (pi)
 assignee: Бэкендер (pi)
 branch: task/exclude-config-from-fqcn-sniff
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/113
+status: review
 ---
 
 # TASK-feat-exclude-config-from-fqcn-sniff: PHPCS: exclude config and migrations from ReferenceUsedNamesOnly
