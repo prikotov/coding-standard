@@ -15,8 +15,8 @@ epic:
 author: Бэкендер (pi)
 assignee: Бэкендер (pi)
 branch: task/fix-deptrac-versioned-namespace-regex
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/111
+status: review
 ---
 
 # TASK-fix-deptrac-versioned-namespace-regex: Deptrac: Presentation-коллектор не матчит версии namespace (Api\v1)
