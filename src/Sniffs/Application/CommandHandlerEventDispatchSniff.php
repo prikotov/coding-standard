@@ -8,12 +8,13 @@ use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
 /**
- * Мутирующий CommandHandler (save/delete/persist/remove/flush) должен
+ * CommandHandler, изменяющий состояние (save/delete/persist/remove/flush), должен
  * диспетчеризовать хотя бы одно событие (*Event).
  *
- * Проверка — warning, а не error: не всякий мутирующий хендлер обязан
- * публиковать событие (исключения — см. конвенцию). Осознанное исключение
- * подавляется комментарием `phpcs:ignore` с указанием причины.
+ * Проверка — warning, а не error: снифф не различает задокументированные
+ * исключения конвенции (служебные команды без внешних наблюдателей, побочные
+ * эффекты без записи состояния). Осознанное исключение подавляется
+ * комментарием `phpcs:ignore` с указанием причины.
  */
 final class CommandHandlerEventDispatchSniff implements Sniff
 {

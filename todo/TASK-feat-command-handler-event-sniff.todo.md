@@ -120,9 +120,13 @@ composer check
 - Фикстуры: `tests/Application/CommandHandlerEventDispatchUnitTest{,Valid}.inc` + 2 fixtures/src (реальный путь Command + Query-путь).
 - Подавление исключения: `// phpcs:ignore PrikotovCodingStandard.Application.CommandHandlerEventDispatch.MissingEventDispatch` (строкой выше класса) — семантика PHPCS 4.x.
 - Дока: правило + исключения + чек-лист в `docs/conventions/layers/application/command-handler.md`; строка в README.
+- Правка по ревью: термин «мутирующий Command Handler» убран — правило сформулировано для любого Command Handler,
+  упоминание Query-хендлеров убрано (дока про Command Handler), исключения — простым списком;
+  модель валидации исключений: снифф их не различает, осознанное исключение подавляется `phpcs:ignore` с причиной и видно на ревью.
 
 ## История изменений (Change History)
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-08-18 15:05:52 (1787065552) | Бэкендер (pi) | Создание задачи |
 | 2026-08-18 | Бэкендер (pi) | Выполнение: правило в конвенции, снифф `CommandHandlerEventDispatch`, тесты, прогон на TasK |
+| 2026-08-18 | Бэкендер (pi) | Ревью: упрощена формулировка правила в конвенции (без термина «мутирующий»), исключения списком |

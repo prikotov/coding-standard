@@ -63,7 +63,7 @@
 | `CommandHandlerStructureSniff` | `CommandHandler` — только `__invoke`, без публичных свойств |
 | `QueryHandlerReturnTypeSniff` | `QueryHandler` — должен возвращать `Result` или `ResultDto` |
 | `CommandHandlerReturnTypeSniff` | `CommandHandler` — должен возвращать `void` или `Result` |
-| `CommandHandlerEventDispatchSniff` | Мутирующий `CommandHandler` (`save`/`persist`/`remove`/`delete`/`flush`) обязан диспетчеризовать событие `*Event` — иначе warning |
+| `CommandHandlerEventDispatchSniff` | `CommandHandler`, вызывающий `save`/`persist`/`remove`/`delete`/`flush`, без `dispatch()` события `*Event` — warning |
 | `UseCaseNamingSniff` | UseCase — обязательный суффикс; имя файла и неймспейс совпадают с путём |
 | `GlobalFunctionCallStyleSniff` | Глобальные функции вызываются без обратного слеша и без `use function` |
 
