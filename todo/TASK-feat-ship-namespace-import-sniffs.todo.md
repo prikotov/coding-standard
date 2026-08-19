@@ -2,7 +2,7 @@
 type: feat
 created: 2026-08-18 14:03:11 (1787061791)
 due: 
-started: 
+started: 2026-08-19 03:53:00 (1787111580)
 completed: 
 cancelled: 
 value: V2
@@ -13,10 +13,10 @@ cost_fact:
 depends_on: 
 epic: 
 author: Бэкендер (pi)
-assignee: 
-branch: 
+assignee: Бэкендер (pi)
+branch: task/ship-namespace-import-sniffs
 pr: 
-status: todo
+status: in_progress
 ---
 
 # TASK-feat-ship-namespace-import-sniffs: PHPCS: включить ReferenceUsedNamesOnly и DisallowGroupUse в ruleset
@@ -55,24 +55,24 @@ status: todo
 
 ## 3. Требования, MoSCoW (Requirements)
 ### 🔴 Обязательно (Must Have)
-- [ ] `ReferenceUsedNamesOnly` в `ruleset.xml` с тремя свойствами-разрешениями (эталон — TasK `10f33abcc`).
-- [ ] `DisallowGroupUse` в `ruleset.xml`.
-- [ ] Тест сниффов: кейс FQCN-в-теле ловится, `use`-импорт — нет; group-use ловится.
+- [x] `ReferenceUsedNamesOnly` в `ruleset.xml` с тремя свойствами-разрешениями (эталон — TasK `10f33abcc`).
+- [x] `DisallowGroupUse` в `ruleset.xml`.
+- [x] Тест сниффов: кейс FQCN-в-теле ловится, `use`-импорт — нет; group-use ловится.
 ### 🟡 Желательно (Should Have)
-- [ ] Пункт в `docs/conventions/principles/code-style.md` (импорты: `use` вместо ведущего `\`, без группировки).
+- [x] Пункт в `docs/conventions/principles/code-style.md` (импорты: `use` вместо ведущего `\`, без группировки).
 ### ⚫ Won't Have (Не будем делать)
 - Массовый фикс существующих нарушений в потребителях.
 
 ## 4. План реализации (Implementation Plan)
-1. [ ] Добавить оба правила в `ruleset.xml`.
-2. [ ] Добавить кейсы в тесты сниффов (`bin/run-sniff-tests.php`), запустить `composer check`.
-3. [ ] Проверить на потребителях без правок их файлов: phpcs с новым ruleset — снять счётчики нарушений (TasK — ожидаемо 0 новых, т.к. правило уже включено; stocks2, task-orchestrator — зафиксировать цифры).
-4. [ ] Обновить доку по импортам (если пункт про импорты в конвенциях отсутствует).
+1. [x] Добавить оба правила в `ruleset.xml`.
+2. [x] Добавить кейсы в тесты сниффов (`bin/run-sniff-tests.php`), запустить `composer check`.
+3. [x] Проверить на потребителях без правок их файлов: phpcs с новым ruleset — снять счётчики нарушений (TasK — ожидаемо 0 новых, т.к. правило уже включено; stocks2, task-orchestrator — зафиксировать цифры).
+4. [x] Обновить доку по импортам (если пункт про импорты в конвенциях отсутствовал — добавлен в `code-style.md`).
 
 ## 5. Критерии приёмки (Definition of Done)
-- [ ] `composer check` зелёный.
-- [ ] Тест сниффов красный без правил / зелёный с ними.
-- [ ] Счётчики по потребителям зафиксированы в комментариях задачи; рабочие деревья потребителей чистые.
+- [x] `composer check` зелёный.
+- [x] Тест сниффов красный без правил / зелёный с ними.
+- [x] Счётчики по потребителям зафиксированы в комментариях задачи; рабочие деревья потребителей чистые.
 
 ## 6. Самопроверка (Verification)
 ```bash
@@ -92,7 +92,23 @@ composer check
 
 ## 9. Комментарии (Comments)
 
+### Реализация
+
+- `ruleset.xml`: `SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly` (3 свойства-разрешения, эталон TasK `10f33abcc`) + `SlevomatCodingStandard.Namespaces.DisallowGroupUse`.
+- `bin/run-sniff-tests.php`: тесты разделены на сьюты (кастомные сниффы / правила импортов) — фикстуры каждого сниффа не «шумят» чужими ожиданиями; новые фикстуры в `tests/Namespaces/` + `tests/namespaces-import-fixtures.php`.
+- `docs/conventions/principles/code-style.md`: секция «Импорт классов (use imports)» + пункт чек-листа.
+- Проверка «красный без правил»: при удалении обоих правил из `ruleset.xml` снит-тест падает (ReferenceUsedNamesOnly-фикстура / отсутствие зарегистрированных сниффов), с правилами — зелёный.
+
+### Замеры по потребителям (phpcs с новым ruleset, только два новых правила; файлы потребителей не менялись)
+
+- **stocks2** (master, дерево чистое): `ReferenceUsedNamesOnly` — 15 (12 в `apps/*/config/*`, 3 в `tests/Integration/Module/TInvest/*`); `DisallowGroupUse` — 0.
+- **task-orchestrator** (`task/fix-run-subagent-false-agent-end`, 3 грязных файла существовали до замера — из другой задачи): `ReferenceUsedNamesOnly` — 13; `DisallowGroupUse` — 7 (все в `src/Module/AgentRunner/**`); итого 20.
+- **TasK/Development** (master, дерево чистое): `ReferenceUsedNamesOnly` — 0 в текущем конфиге проекта (регрессии нет); с ruleset пакета без excludes — 71, все в `*/config/*` (у TasK исключены `exclude-pattern`); новых от `DisallowGroupUse` — 1 (`tests/Unit/EventSubscriber/AttributionRequestSubscriberTest.php:15`).
+
+Устранение существующих нарушений — отдельными задачами потребителей (см. раздел 7).
+
 ## История изменений (Change History)
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-08-18 14:03:11 (1787061791) | Бэкендер (pi) | Создание задачи |
+| 2026-08-19 | Бэкендер (pi) | Реализация: правила в `ruleset.xml`, тесты, доку; замеры по потребителям |
