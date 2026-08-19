@@ -3,7 +3,7 @@ type: feat
 created: 2026-08-19 04:16:39 (1787112999)
 due: 
 started: 2026-08-19 04:17:25 (1787113045)
-completed: 
+completed: 2026-08-19 04:20:18 (1787113218)
 cancelled: 
 value: V2
 complexity: C2
@@ -16,7 +16,7 @@ author: Бэкендер (pi)
 assignee: Бэкендер (pi)
 branch: task/exclude-config-from-fqcn-sniff
 pr: https://github.com/prikotov/coding-standard/pull/113
-status: review
+status: done
 ---
 
 # TASK-feat-exclude-config-from-fqcn-sniff: PHPCS: exclude config and migrations from ReferenceUsedNamesOnly
