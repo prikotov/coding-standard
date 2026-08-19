@@ -360,19 +360,54 @@ if (file_exists($gitignore)) {
     echo "  Updated docs/.gitignore (+ $entry)" . PHP_EOL;
 }
 
+// ── 7. Wire coding-standard-verify into `make check` ───────────────────────
+
+$verifyWired = false;
+$makefile    = $targetDir . '/Makefile';
+if (is_file($makefile)) {
+    $makefileContent = (string) file_get_contents($makefile);
+    if (str_contains($makefileContent, 'coding-standard-verify')) {
+        echo "  Skip     Makefile (coding-standard-verify already wired)" . PHP_EOL;
+        $verifyWired = true;
+    } else {
+        $lines = explode("\n", $makefileContent);
+        $checkLine = null;
+        foreach ($lines as $index => $line) {
+            if (preg_match('/^check\s*:/', $line)) {
+                $checkLine = $index;
+                break;
+            }
+        }
+        if ($checkLine === null) {
+            echo "  Skip     Makefile (no `check` target found)" . PHP_EOL;
+        } else {
+            array_splice($lines, $checkLine + 1, 0, ["\tvendor/bin/coding-standard-verify"]);
+            file_put_contents($makefile, implode("\n", $lines));
+            echo "  Updated  Makefile (check: + coding-standard-verify)" . PHP_EOL;
+            $updated++;
+            $verifyWired = true;
+        }
+    }
+}
+
 // ── Summary ────────────────────────────────────────────────────────────────
 
 echo PHP_EOL;
 echo "Done. $copied copied, $updated updated, $skipped skipped." . PHP_EOL;
 echo PHP_EOL;
 echo "Next steps:" . PHP_EOL;
-echo "  1. Add this line to your project's AGENTS.md:" . PHP_EOL;
+$step = 1;
+echo "  {$step}. Add this line to your project's AGENTS.md:" . PHP_EOL;
 echo "     * \`Конвенции\` — [$docsPath/index.md]($docsPath/index.md)." . PHP_EOL;
-echo "  2. Run \`vendor/bin/phpcs\` to check coding style." . PHP_EOL;
-if ($deptracPath !== '') {
-    echo "  3. Run \`vendor/bin/deptrac analyse\` to verify architectural rules." . PHP_EOL;
+echo "  " . ++$step . ". Run \`vendor/bin/phpcs\` to check coding style." . PHP_EOL;
+if (!$verifyWired) {
+    echo "  " . ++$step . ". Add \`vendor/bin/coding-standard-verify\` to your \`make check\` target — it fails when" . PHP_EOL;
+    echo "     the package is outdated or its PHPStan/PHPCS rules are not wired." . PHP_EOL;
 }
-echo "  4. Run \`vendor/bin/phpstan analyse\` to run static analysis." . PHP_EOL;
+if ($deptracPath !== '') {
+    echo "  " . ++$step . ". Run \`vendor/bin/deptrac analyse\` to verify architectural rules." . PHP_EOL;
+}
+echo "  " . ++$step . ". Run \`vendor/bin/phpstan analyse\` to run static analysis." . PHP_EOL;
 if (!$noExceptions && $projectName !== null) {
-    echo "  5. Review copied exceptions in $exceptionsPath/ and adjust if needed." . PHP_EOL;
+    echo "  " . ++$step . ". Review copied exceptions in $exceptionsPath/ and adjust if needed." . PHP_EOL;
 }
