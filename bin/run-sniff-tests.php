@@ -21,7 +21,6 @@ $suites = [
     // Custom package sniffs (src/Sniffs)
     [
         'sniffs'   => [
-            'PrikotovCodingStandard.Application.CommandHandlerEventDispatch',
             'PrikotovCodingStandard.Application.CommandHandlerReturnType',
             'PrikotovCodingStandard.Application.CommandHandlerStructure',
             'PrikotovCodingStandard.Application.CommandQueryStructure',

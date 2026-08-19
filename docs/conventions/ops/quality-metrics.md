@@ -63,6 +63,7 @@ description: Единая модель метрик поддерживаемос
 - Для каждого уровня `project`, `module`, `class` и `method` дельта содержит `added`, `removed`, `changed` и `unchanged_count`. Изменённая метрика содержит `before`, `after`, `delta`, `direction` и `informational`.
 - `improved` означает уменьшение `CC`, `WMC`, `LCOM4`, `Ca`, `Ce`, внешней связанности или циклов либо рост связности модуля и покрытия. Обратное изменение получает `regressed`.
 - Общий размер, количество объектов, тестов и строк, churn, входящие зависимости модуля и изменения списков имеют направление `neutral`.
+- `project.command_handlers_without_event` — количество CommandHandler'ов, меняющих состояние (`save`/`delete`/`persist`/`remove`/`flush`) без диспетчеризации события; рост помечается `regressed`, класс-флаг — `missing_event_dispatch` (см. [Command Handler](../layers/application/command-handler.md)). Общее число хендлеров `project.command_handlers` — `neutral`.
 - Агент связывает регрессии с файлами текущего diff; необъяснённая регрессия в изменённой области блокирует одобрение.
 
 ## Чек-лист для проведения ревью кода

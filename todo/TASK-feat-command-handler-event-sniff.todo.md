@@ -73,6 +73,8 @@ status: review
       из них 39 подпадают под задокументированные исключения (служебные/агрегатные команды),
       остальные 20 — реальные кандидаты на событие: воспроизводят тот самый класс замечаний ревью 04.08.
       Чистка TasK — отдельная задача потребителя, не этого пакета.
+- [x] По ревью: шум 59 warning'ов на весь проект признан вредным для агентов (сигнал/шум 1:3, alert fatigue);
+      проверка перенесена с PHPCS-ruleset на этап код-ревью в метрики — см. «Результаты».
 
 ## 6. Самопроверка (Verification)
 ```bash
@@ -116,10 +118,19 @@ composer check
 `vendor/bin/phpcs --standard=ruleset.xml --sniffs=PrikotovCodingStandard.Application.CommandHandlerEventDispatch` по 205 хендлерам TasK.
 
 ### Реализация
-- Снифф: `src/Sniffs/Application/CommandHandlerEventDispatchSniff.php` — warning `MissingEventDispatch`, указатель на класс хендлера.
-- Фикстуры: `tests/Application/CommandHandlerEventDispatchUnitTest{,Valid}.inc` + 2 fixtures/src (реальный путь Command + Query-путь).
-- Подавление исключения: `// phpcs:ignore PrikotovCodingStandard.Application.CommandHandlerEventDispatch.MissingEventDispatch` (строкой выше класса) — семантика PHPCS 4.x.
-- Дока: правило + исключения + чек-лист в `docs/conventions/layers/application/command-handler.md`; строка в README.
+- **Итоговое решение (после ревью)** — проверка на этапе код-ревью, не в PHPCS:
+  - AST-коллектор (`AstMetricsCollector`) помечает классы `*CommandHandler` в `Application/UseCase/Command/`
+    флагами `mutates_state` / `dispatches_event` (эвристика: `save`/`delete`/`persist`/`remove`/`flush` и `dispatch`).
+  - Агрегатор: класс-метрика `missing_event_dispatch` (0/1/null), проектные счётчики
+    `project.command_handlers` и `project.command_handlers_without_event`.
+  - Сравнение: рост `command_handlers_without_event` и флаг 0→1 помечаются `regressed` —
+    попадают в «Регрессии в изменённой области» `summary.md`; решение «событие или обоснование» принимает автор PR.
+  - PHPCS-снифф `CommandHandlerEventDispatch` удалён (шум на весь проект); конвенция ссылается на метрику.
+- Тесты: детектор в коллекторе, счётчики в агрегаторе, направления в сравнении, сценарий потребителя
+  в `MetricsReviewPipelineTest` (дельта по merge-base с `src/Handler.php` без события → регрессия).
+- Проверка на TasK (без правки отслеживаемых файлов): `bin/metrics-collect --source=.../TasK/src` —
+  205 хендлеров, 59 без события; список побайтово совпадает с первоначальным прогоном сниффа.
+- Дока: `command-handler.md` (правило + исключения + ссылка на метрику), `quality-metrics.md` (метрика и направление), README.
 - Правка по ревью: термин «мутирующий Command Handler» убран — правило сформулировано для любого Command Handler,
   упоминание Query-хендлеров убрано (дока про Command Handler), исключения — простым списком;
   модель валидации исключений: снифф их не различает, осознанное исключение подавляется `phpcs:ignore` с причиной и видно на ревью.
@@ -130,3 +141,4 @@ composer check
 | 2026-08-18 15:05:52 (1787065552) | Бэкендер (pi) | Создание задачи |
 | 2026-08-18 | Бэкендер (pi) | Выполнение: правило в конвенции, снифф `CommandHandlerEventDispatch`, тесты, прогон на TasK |
 | 2026-08-18 | Бэкендер (pi) | Ревью: упрощена формулировка правила в конвенции (без термина «мутирующий»), исключения списком |
+| 2026-08-18 | Бэкендер (pi) | Ревью: проверка перенесена из PHPCS-ruleset в метрики код-ревью (`command_handlers_without_event`), снифф удалён |

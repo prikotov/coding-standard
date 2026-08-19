@@ -83,6 +83,27 @@ final class MetricsAggregatorTest extends TestCase
         self::assertSame(0.5, $alpha['cohesion']);
     }
 
+    public function testCountsCommandHandlersWithoutEventDispatch(): void
+    {
+        $report = (new MetricsAggregator())->aggregate([
+            'toolVersion' => '2.11.3',
+            'classes' => [
+                $this->handler('App\\CreateHandler', 'src/CreateHandler.php', true, false),
+                $this->handler('App\\DeleteHandler', 'src/DeleteHandler.php', true, true),
+                $this->handler('App\\EnqueueHandler', 'src/EnqueueHandler.php', false, false),
+                $this->class('App\\Plain', 'src/Plain.php', 10, 1),
+            ],
+            'functions' => [],
+        ], ['schema_version' => '1.0', 'dependencies' => []], [], $this->scc(), $this->testStatistics(), $this->clover(), '3.7.0');
+
+        self::assertSame(3, $report['metrics']['project']['command_handlers']);
+        self::assertSame(1, $report['metrics']['project']['command_handlers_without_event']);
+        self::assertSame(1, $report['metrics']['classes'][0]['missing_event_dispatch']);
+        self::assertSame(0, $report['metrics']['classes'][1]['missing_event_dispatch']);
+        self::assertSame(0, $report['metrics']['classes'][2]['missing_event_dispatch']);
+        self::assertNull($report['metrics']['classes'][3]['missing_event_dispatch']);
+    }
+
     public function testRejectsIncompatibleInputs(): void
     {
         $this->expectExceptionMessage('Analyzer JSON');
@@ -134,6 +155,12 @@ final class MetricsAggregatorTest extends TestCase
     private function class(string $name, string $file, int $loc, int $lcom): array
     {
         return ['name' => $name, 'metrics' => ['filePath' => $file, 'loc' => $loc, 'methodCount' => 1, 'propertyCount' => 2, 'lcom' => $lcom]];
+    }
+
+    /** @return array<string, mixed> */
+    private function handler(string $name, string $file, bool $mutatesState, bool $dispatchesEvent): array
+    {
+        return ['name' => $name, 'metrics' => ['filePath' => $file, 'loc' => 10, 'methodCount' => 1, 'propertyCount' => 0, 'lcom' => 1, 'commandHandler' => ['mutates_state' => $mutatesState, 'dispatches_event' => $dispatchesEvent]]];
     }
 
     /** @return array<string, mixed> */
