@@ -120,7 +120,7 @@ composer check
 ### Реализация
 - **Итоговое решение (после ревью)** — проверка на этапе код-ревью, не в PHPCS:
   - AST-коллектор (`AstMetricsCollector`) помечает классы `*CommandHandler` в `Application/UseCase/Command/`
-    флагами `hasPersistenceCalls` / `hasEventDispatchCalls` (эвристика: `save`/`delete`/`persist`/`remove`/`flush` и `dispatch`).
+    флагом `commandHandlerDispatchesEvent` (есть ли вызов `dispatch`).
   - Агрегатор: класс-метрика `missing_event_dispatch` (0/1/null), проектные счётчики
     `project.command_handlers` и `project.command_handlers_without_event`.
   - Сравнение: рост `command_handlers_without_event` и флаг 0→1 помечаются `regressed` —
@@ -142,3 +142,4 @@ composer check
 | 2026-08-18 | Бэкендер (pi) | Выполнение: правило в конвенции, снифф `CommandHandlerEventDispatch`, тесты, прогон на TasK |
 | 2026-08-18 | Бэкендер (pi) | Ревью: упрощена формулировка правила в конвенции (без термина «мутирующий»), исключения списком |
 | 2026-08-18 | Бэкендер (pi) | Ревью: проверка перенесена из PHPCS-ruleset в метрики код-ревью (`command_handlers_without_event`), снифф удалён |
+| 2026-08-18 | Бэкендер (pi) | Ревью: правило стало универсальным — «хендлер диспетчеризует событие всегда, слушатели решают»; список исключений удалён; детектор упрощён до флага «нет dispatch» |

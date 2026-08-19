@@ -84,7 +84,7 @@ final class AstMetricsCollector
                 'interface' => $class instanceof Node\Stmt\Interface_,
                 'trait' => $class instanceof Node\Stmt\Trait_,
                 'enum' => $class instanceof Node\Stmt\Enum_,
-                'commandHandler' => $class instanceof Node\Stmt\Class_ ? $this->commandHandler($class, $this->relativePath($path)) : null,
+                'commandHandlerDispatchesEvent' => $class instanceof Node\Stmt\Class_ ? $this->commandHandlerDispatchesEvent($class, $this->relativePath($path)) : null,
             ]];
             foreach ($methods as $method) {
                 $functions[] = ['name' => $method->name->toString(), 'type' => 'method', 'metrics' => [
@@ -99,14 +99,11 @@ final class AstMetricsCollector
     }
 
     /**
-     * Маркеры CommandHandler'а из конвенции command-handler.md: класс *CommandHandler
-     * в Application/UseCase/Command/. Детектор фиксирует только факты вызовов:
-     * hasPersistenceCalls — есть вызов метода-маркера персистентности (save/delete/persist/remove/flush),
-     * hasEventDispatchCalls — есть вызов dispatch. null — класс не является CommandHandler'ом.
-     *
-     * @return array{hasPersistenceCalls: bool, hasEventDispatchCalls: bool}|null
+     * Маркер CommandHandler'а из конвенции command-handler.md: класс *CommandHandler
+     * в Application/UseCase/Command/. Детектор фиксирует факт наличия вызова dispatch
+     * (диспетчеризация события). null — класс не является CommandHandler'ом.
      */
-    private function commandHandler(Node\Stmt\Class_ $class, string $filePath): ?array
+    private function commandHandlerDispatchesEvent(Node\Stmt\Class_ $class, string $filePath): ?bool
     {
         $name = $class->name->name;
         if (!str_ends_with($name, 'CommandHandler')) {
@@ -116,20 +113,15 @@ final class AstMetricsCollector
             return null;
         }
 
-        $hasPersistenceCalls = false;
-        $hasEventDispatchCalls = false;
         foreach ([Node\Expr\MethodCall::class, Node\Expr\NullsafeMethodCall::class] as $callType) {
             foreach ((new NodeFinder())->findInstanceOf($class, $callType) as $call) {
-                if (!$call->name instanceof Node\Identifier) {
-                    continue;
+                if ($call->name instanceof Node\Identifier && strtolower($call->name->toString()) === 'dispatch') {
+                    return true;
                 }
-                $method = strtolower($call->name->toString());
-                $hasPersistenceCalls = $hasPersistenceCalls || in_array($method, ['save', 'delete', 'persist', 'remove', 'flush'], true);
-                $hasEventDispatchCalls = $hasEventDispatchCalls || $method === 'dispatch';
             }
         }
 
-        return ['hasPersistenceCalls' => $hasPersistenceCalls, 'hasEventDispatchCalls' => $hasEventDispatchCalls];
+        return false;
     }
 
     /** @param list<Node\Stmt\ClassMethod> $methods */

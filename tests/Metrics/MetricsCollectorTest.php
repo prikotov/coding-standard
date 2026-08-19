@@ -39,12 +39,13 @@ PHP_SOURCE);
         self::assertSame(2, $report['functions'][0]['metrics']['cc']);
     }
 
-    public function testDetectsCommandHandlerEventDispatchFlags(): void
+    public function testDetectsCommandHandlerEventDispatchFlag(): void
     {
         $directory = sys_get_temp_dir() . '/metrics-collector-' . uniqid();
         $output = $directory . '/report.json';
         mkdir($directory . '/Application/UseCase/Command/Create', 0777, true);
         mkdir($directory . '/Application/UseCase/Command/Notify', 0777, true);
+        mkdir($directory . '/Application/UseCase/Command/Forward', 0777, true);
         file_put_contents($directory . '/Application/UseCase/Command/Create/CreateCommandHandler.php', <<<'PHP_SOURCE'
 <?php
 final class CreateCommandHandler {
@@ -63,6 +64,14 @@ final class NotifyCommandHandler {
     }
 }
 PHP_SOURCE);
+        file_put_contents($directory . '/Application/UseCase/Command/Forward/ForwardCommandHandler.php', <<<'PHP_SOURCE'
+<?php
+final class ForwardCommandHandler {
+    public function __invoke(): void {
+        $this->gateway->send($this->request);
+    }
+}
+PHP_SOURCE);
         file_put_contents($directory . '/PlainService.php', <<<'PHP_SOURCE'
 <?php
 final class PlainService {
@@ -76,12 +85,13 @@ PHP_SOURCE);
 
         $handlers = [];
         foreach ($report['classes'] as $class) {
-            $handlers[$class['name']] = $class['metrics']['commandHandler'];
+            $handlers[$class['name']] = $class['metrics']['commandHandlerDispatchesEvent'];
         }
 
         self::assertSame(0, $code);
-        self::assertSame(['hasPersistenceCalls' => true, 'hasEventDispatchCalls' => false], $handlers['CreateCommandHandler']);
-        self::assertSame(['hasPersistenceCalls' => true, 'hasEventDispatchCalls' => true], $handlers['NotifyCommandHandler']);
+        self::assertFalse($handlers['CreateCommandHandler']);
+        self::assertTrue($handlers['NotifyCommandHandler']);
+        self::assertFalse($handlers['ForwardCommandHandler']);
         self::assertNull($handlers['PlainService']);
     }
 }

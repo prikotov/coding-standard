@@ -290,19 +290,19 @@ final class MetricsAggregator
         return $values[$a] + ($values[$b] - $values[$a]) * ($i - $a);
     }
     /**
-     * 1 — CommandHandler меняет состояние без диспетчеризации события,
-     * 0 — у хендлера есть вызов dispatch либо нет вызовов персистентности,
+     * 1 — CommandHandler без диспетчеризации события,
+     * 0 — хендлер диспетчеризует событие,
      * null — класс не CommandHandler (метрика неприменима).
      * @param array<string, mixed> $metrics
      */
     private function missingEventDispatch(array $metrics): ?int
     {
-        $handler = $metrics['commandHandler'] ?? null;
-        if (!is_array($handler)) {
+        $dispatchesEvent = $metrics['commandHandlerDispatchesEvent'] ?? null;
+        if (!is_bool($dispatchesEvent)) {
             return null;
         }
 
-        return ($handler['hasPersistenceCalls'] ?? false) === true && ($handler['hasEventDispatchCalls'] ?? false) === false ? 1 : 0;
+        return $dispatchesEvent ? 0 : 1;
     }
 
     /** @param array<string,array<string,mixed>> $classes @param array<string,array<string,mixed>> $modules @param array<string,array{string,string}> $edges @return array<string,mixed> */
