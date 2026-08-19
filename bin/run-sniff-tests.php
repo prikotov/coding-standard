@@ -17,49 +17,42 @@ use PHP_CodeSniffer\Config;
 use PHP_CodeSniffer\Files\LocalFile;
 use PHP_CodeSniffer\Ruleset;
 
-$config = new Config(['--standard=' . $packageRoot . '/ruleset.xml']);
-$config->cache    = false;
-$config->sniffs   = [
-    'PrikotovCodingStandard.Application.CommandHandlerReturnType',
-    'PrikotovCodingStandard.Application.CommandHandlerStructure',
-    'PrikotovCodingStandard.Application.CommandQueryStructure',
-    'PrikotovCodingStandard.Application.QueryHandlerReturnType',
-    'PrikotovCodingStandard.Application.UseCaseNaming',
-    'PrikotovCodingStandard.Namespaces.GlobalFunctionCallStyle',
-    'PrikotovCodingStandard.Structure.ComponentStructure',
-    'PrikotovCodingStandard.Structure.DtoStructure',
-    'PrikotovCodingStandard.Structure.EnumStructure',
-    'PrikotovCodingStandard.Structure.RepositoryStructure',
-    'PrikotovCodingStandard.Structure.RepositoryMethodSignature',
-    'PrikotovCodingStandard.Structure.RepositoryInterfaceContract',
-    'PrikotovCodingStandard.Config.ConfigRequired',
-    'PrikotovCodingStandard.Structure.ServiceStructure',
-    'PrikotovCodingStandard.Structure.ValueObjectStructure',
-    'PrikotovCodingStandard.Namespaces.PresentationLayerNamespace',
+$suites = [
+    // Custom package sniffs (src/Sniffs)
+    [
+        'sniffs'   => [
+            'PrikotovCodingStandard.Application.CommandHandlerReturnType',
+            'PrikotovCodingStandard.Application.CommandHandlerStructure',
+            'PrikotovCodingStandard.Application.CommandQueryStructure',
+            'PrikotovCodingStandard.Application.QueryHandlerReturnType',
+            'PrikotovCodingStandard.Application.UseCaseNaming',
+            'PrikotovCodingStandard.Namespaces.GlobalFunctionCallStyle',
+            'PrikotovCodingStandard.Structure.ComponentStructure',
+            'PrikotovCodingStandard.Structure.DtoStructure',
+            'PrikotovCodingStandard.Structure.EnumStructure',
+            'PrikotovCodingStandard.Structure.RepositoryStructure',
+            'PrikotovCodingStandard.Structure.RepositoryMethodSignature',
+            'PrikotovCodingStandard.Structure.RepositoryInterfaceContract',
+            'PrikotovCodingStandard.Config.ConfigRequired',
+            'PrikotovCodingStandard.Structure.ServiceStructure',
+            'PrikotovCodingStandard.Structure.ValueObjectStructure',
+            'PrikotovCodingStandard.Namespaces.PresentationLayerNamespace',
+        ],
+        'fixtures' => require $packageRoot . '/tests/fixtures.php',
+    ],
+    // Third-party namespace import rules enabled in ruleset.xml
+    [
+        'sniffs'   => [
+            'SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly',
+            'SlevomatCodingStandard.Namespaces.DisallowGroupUse',
+        ],
+        'fixtures' => require $packageRoot . '/tests/namespaces-import-fixtures.php',
+    ],
 ];
-$config->tabWidth = 4;
-
-$ruleset  = new Ruleset($config);
-$fixtures = require $packageRoot . '/tests/fixtures.php';
 
 $failed = false;
-foreach ($fixtures as $fixture) {
-    $phpcsFile = new LocalFile($fixture['file'], $ruleset, $config);
-    $phpcsFile->process();
-
-    $errors   = normalizeMessages($phpcsFile->getErrors());
-    $warnings = normalizeMessages($phpcsFile->getWarnings());
-
-    $expectedErrors   = $fixture['errors'] ?? [];
-    $expectedWarnings = $fixture['warnings'] ?? [];
-
-    $errorDiffs   = diffMessages($fixture['file'], 'error', $expectedErrors, $errors);
-    $warningDiffs = diffMessages($fixture['file'], 'warning', $expectedWarnings, $warnings);
-
-    foreach (array_merge($errorDiffs, $warningDiffs) as $message) {
-        fwrite(STDERR, $message . PHP_EOL);
-        $failed = true;
-    }
+foreach ($suites as $suite) {
+    $failed = runSniffSuite($packageRoot, $suite['sniffs'], $suite['fixtures']) || $failed;
 }
 
 if ($failed) {
@@ -67,6 +60,42 @@ if ($failed) {
 }
 
 fwrite(STDOUT, "PHPCS sniff tests passed.\n");
+
+/**
+ * @param list<string> $sniffs
+ * @param list<array{file: string, errors: array<int, int>, warnings: array<int, int>}> $fixtures
+ */
+function runSniffSuite(string $packageRoot, array $sniffs, array $fixtures): bool
+{
+    $config = new Config(['--standard=' . $packageRoot . '/ruleset.xml']);
+    $config->cache    = false;
+    $config->sniffs   = $sniffs;
+    $config->tabWidth = 4;
+
+    $ruleset = new Ruleset($config);
+
+    $failed = false;
+    foreach ($fixtures as $fixture) {
+        $phpcsFile = new LocalFile($fixture['file'], $ruleset, $config);
+        $phpcsFile->process();
+
+        $errors   = normalizeMessages($phpcsFile->getErrors());
+        $warnings = normalizeMessages($phpcsFile->getWarnings());
+
+        $expectedErrors   = $fixture['errors'] ?? [];
+        $expectedWarnings = $fixture['warnings'] ?? [];
+
+        $errorDiffs   = diffMessages($fixture['file'], 'error', $expectedErrors, $errors);
+        $warningDiffs = diffMessages($fixture['file'], 'warning', $expectedWarnings, $warnings);
+
+        foreach (array_merge($errorDiffs, $warningDiffs) as $message) {
+            fwrite(STDERR, $message . PHP_EOL);
+            $failed = true;
+        }
+    }
+
+    return $failed;
+}
 
 /**
  * @param array<int, array<int, array<int, array{message:string, source:string, severity:int, fixable:bool, type:string}>>> $messages

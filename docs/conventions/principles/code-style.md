@@ -35,6 +35,45 @@ description: Стандарты оформления кода в проекте
 - Использование `use` для импорта классов
 - Правильное форматирование массивов и аргументов функций
 
+### Импорт классов (use imports)
+
+- Классы из неймспейсов импортируются через `use` и используются по короткому имени.
+- Запрещено писать FQCN (fully qualified class name) с ведущим `\` в теле кода вместо импорта.
+- Допустимые исключения из запрета FQCN: глобальные классы без неймспейса (`\DateTimeImmutable`) и исключения (`\Throwable`, `\RuntimeException`).
+- Группировка импортов `use Foo\{Bar, Baz};` запрещена — каждый импорт на отдельной строке.
+- Проверяется сниффами `SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly` и `SlevomatCodingStandard.Namespaces.DisallowGroupUse` из `ruleset.xml` пакета.
+
+**Пример:**
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace ProjectName\Common\Module\Billing\Application\Service;
+
+use ProjectName\Common\Module\Billing\Domain\Entity\PaymentModel;
+use ProjectName\Common\Module\Billing\Domain\Enum\PaymentStatusEnum;
+
+final readonly class PaymentService
+{
+    public function create(): PaymentModel
+    {
+        // ✅ Хорошо: короткое имя через use
+        $payment = new PaymentModel(status: PaymentStatusEnum::initialized);
+
+        // ✅ Допустимо: глобальный класс и исключение через FQCN
+        $createdAt = new \DateTimeImmutable();
+        if ($payment->status === PaymentStatusEnum::failed) {
+            throw new \RuntimeException('Payment failed');
+        }
+
+        // ❌ Плохо: FQCN вместо use — new \ProjectName\Common\Module\Billing\Domain\Entity\PaymentModel();
+        return $payment;
+    }
+}
+```
+
 ### Длина строки
 
 - **Максимум 120 символов** для строки кода
@@ -652,6 +691,7 @@ public function createPayment(User $user, string $amount): PaymentModel
 ## Чек-лист для ревью
 
 - [ ] Файл начинается с `declare(strict_types=1);`
+- [ ] Классы из неймспейсов импортируются через `use`; FQCN с ведущим `\` в теле кода и группировка `use Foo\{...};` не используются
 - [ ] Соблюдается PSR-12 (форматирование, отступы, скобки)
 - [ ] Длина строки не превышает 120 символов
 - [ ] Классы названы в PascalCase с описательными именами

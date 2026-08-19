@@ -6,4 +6,13 @@
 
     <rule ref="PSR12"/>
     <rule ref="./src/Sniffs"/>
+
+    <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">
+        <properties>
+            <property name="allowFullyQualifiedGlobalClasses" value="true"/>
+            <property name="allowFullyQualifiedExceptions" value="true"/>
+            <property name="allowFullyQualifiedNameForCollidingClasses" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.DisallowGroupUse"/>
 </ruleset>
