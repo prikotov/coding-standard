@@ -25,4 +25,10 @@ return [
         ],
         'warnings' => [],
     ],
+    // ReferenceUsedNamesOnly — files under */config/* are excluded: Symfony configs use FQCN keys
+    [
+        'file' => __DIR__ . '/Namespaces/config/ReferenceUsedNamesOnlyConfigExcludedUnitTest.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
 ];

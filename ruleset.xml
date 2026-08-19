@@ -8,6 +8,9 @@
     <rule ref="./src/Sniffs"/>
 
     <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">
+        <!-- Symfony configs and migrations conventionally reference classes by FQCN keys -->
+        <exclude-pattern>*/config/*</exclude-pattern>
+        <exclude-pattern>*/migrations/*</exclude-pattern>
         <properties>
             <property name="allowFullyQualifiedGlobalClasses" value="true"/>
             <property name="allowFullyQualifiedExceptions" value="true"/>
