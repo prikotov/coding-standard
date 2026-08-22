@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: View
 type: rule
 description: Правила создания представлений через Twig-шаблоны

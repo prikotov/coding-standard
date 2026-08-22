@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Twig Extension
 type: rule
 description: Правила создания Twig-расширений

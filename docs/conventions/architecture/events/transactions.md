@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Events and DB Transactions
 type: rule
 description: Правила работы с доменными событиями и транзакциями базы данных

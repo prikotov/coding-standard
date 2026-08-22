@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Rate Limiter
 type: rule
 description: Правила ограничения частоты запросов

@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: List Controller
 type: rule
 description: Правила создания контроллеров списка

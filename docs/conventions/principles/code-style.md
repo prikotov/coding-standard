@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Code Style
 type: rule
 description: Стандарты оформления кода в проекте

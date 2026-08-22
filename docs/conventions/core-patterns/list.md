@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: List
 type: rule
 description: Правила создания и использования списков для инкапсуляции наборов значений

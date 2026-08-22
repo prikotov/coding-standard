@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Form
 type: rule
 description: Правила создания форм презентационного слоя

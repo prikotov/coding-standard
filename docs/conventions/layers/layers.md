@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Layer Interaction
 type: rule
 description: Правила зависимостей между слоями архитектуры на основе Clean Architecture

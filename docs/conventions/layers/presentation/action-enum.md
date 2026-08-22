@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Action Enum
 type: rule
 description: Правила создания перечислений действий

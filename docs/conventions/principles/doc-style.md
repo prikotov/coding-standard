@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Documentation Style
 type: rule
 description: Правила оформления Markdown-документации конвенций: расстановка обратных кавычек и употребление англоязычных терминов

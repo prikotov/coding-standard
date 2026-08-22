@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: External Service
 type: rule
 description: Правила работы с внешними сервисами, API и SDK

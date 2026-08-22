@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Use Case
 type: rule
 description: Правила реализации сценариев использования

@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Criteria
 type: rule
 description: Правила создания критериев для фильтрации и выборки сущностей

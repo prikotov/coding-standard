@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Access Rule
 type: rule
 description: Правила создания правил доступа

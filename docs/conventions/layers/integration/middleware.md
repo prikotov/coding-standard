@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Middleware
 type: rule
 description: Правила создания и использования middleware в pipeline

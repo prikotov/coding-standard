@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Fixes
 type: rule
 description: Правила создания временных консольных скриптов для исправления данных

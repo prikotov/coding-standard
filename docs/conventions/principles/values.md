@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Values
 type: meta
 description: Базовые ценности и принципы разработки в проекте

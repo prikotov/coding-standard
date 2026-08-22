@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Voter
 type: rule
 description: Правила создания голосующих объектов для авторизации

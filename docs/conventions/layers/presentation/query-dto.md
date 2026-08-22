@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Query DTO
 type: rule
 description: Правила создания Query DTO презентационного слоя

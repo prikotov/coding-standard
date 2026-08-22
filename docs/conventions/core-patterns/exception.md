@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Exception
 type: rule
 description: Правила проектирования и использования исключений

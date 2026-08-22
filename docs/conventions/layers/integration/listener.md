@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Listener
 type: rule
 description: Правила создания и использования слушателей событий

@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Trait
 type: rule
 description: Правила использования трейтов для горизонтального повторного использования кода

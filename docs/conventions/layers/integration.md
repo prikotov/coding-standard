@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Integration Layer
 type: rule
 description: Слой интеграций: межмодульное взаимодействие, события и middleware

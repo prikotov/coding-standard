@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: PHPMD Suppressions
 type: rule
 description: Правила обоснованного подавления предупреждений PHP Mess Detector

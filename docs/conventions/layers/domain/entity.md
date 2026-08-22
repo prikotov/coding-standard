@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Entity
 type: rule
 description: Правила проектирования доменных сущностей

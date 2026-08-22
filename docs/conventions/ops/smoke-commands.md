@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Smoke Commands
 type: rule
 description: Правила создания смоук-команд для проверки работоспособности

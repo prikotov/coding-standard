@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Factory
 type: rule
 description: Правила создания и использования фабрик

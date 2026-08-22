@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Helper
 type: rule
 description: Правила создания и использования хелперов со статическими методами

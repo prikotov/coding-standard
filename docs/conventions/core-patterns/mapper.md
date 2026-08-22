@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Mapper
 type: rule
 description: Правила создания мапперов для преобразования структур данных

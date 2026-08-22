@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Request DTO
 type: rule
 description: Правила создания Request DTO презентационного слоя

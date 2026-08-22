@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Permission Enum
 type: rule
 description: Правила создания перечислений прав

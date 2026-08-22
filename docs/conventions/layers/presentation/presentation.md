@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Presentation Layer
 type: rule
 description: Детальное описание слоя представления и его взаимодействий

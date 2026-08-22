@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Domain Layer
 type: rule
 description: Доменный слой: бизнес-логика, сущности и контракты
