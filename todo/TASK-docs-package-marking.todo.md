@@ -15,8 +15,8 @@ epic:
 author: Тимлид (pi)
 assignee: Разработчик (pi)
 branch: task/docs-package-marking
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/116
+status: review
 ---
 
 # TASK-docs-package-marking: Маркировка package распределяемых документов конвенций
