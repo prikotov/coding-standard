@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Валидация внутренних ссылок в Markdown (validate-md-links)
 type: rule
 description: Настройка и использование валидатора внутренних ссылок в Markdown-файлах проекта

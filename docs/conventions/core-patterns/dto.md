@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: DTO
 type: rule
 description: Правила создания и использования объектов передачи данных

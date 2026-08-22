@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Console Command
 type: rule
 description: Правила создания консольных команд презентационного слоя

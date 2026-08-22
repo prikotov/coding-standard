@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Domain Repository
 type: rule
 description: Правила создания доменных контрактов репозиториев

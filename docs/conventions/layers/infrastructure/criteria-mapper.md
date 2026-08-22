@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: CriteriaMapper
 type: rule
 description: Правила создания мапперов критериев для Doctrine QueryBuilder

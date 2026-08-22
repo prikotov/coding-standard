@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Symfony Configuration
 type: rule
 description: Принципы конфигурирования в Symfony: пакеты, окружения, переменные окружения и сервисы

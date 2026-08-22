@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Wrapper
 type: rule
 description: Правила создания врапперов для инкапсуляции доступа к данным

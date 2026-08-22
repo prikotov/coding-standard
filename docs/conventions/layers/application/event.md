@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Event
 type: rule
 description: Правила создания и использования доменных событий

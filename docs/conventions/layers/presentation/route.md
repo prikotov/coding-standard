@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Route
 type: rule
 description: Правила создания маршрутов и генерации URL

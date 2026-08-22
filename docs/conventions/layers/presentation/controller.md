@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Controller
 type: rule
 description: Правила создания контроллеров презентационного слоя

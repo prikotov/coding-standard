@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Module Configuration
 type: rule
 description: Шаги по подключению модуля к общему ядру и конфигурации

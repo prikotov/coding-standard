@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Symfony Applications
 type: rule
 description: Правила организации изолированных Symfony-приложений

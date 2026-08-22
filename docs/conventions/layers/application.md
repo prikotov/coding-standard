@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Application Layer
 type: rule
 description: Слой приложения: оркестрация бизнес-операций и сценарии использования

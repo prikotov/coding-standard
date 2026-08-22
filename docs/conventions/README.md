@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Code Conventions
 type: meta
 description: Введение в конвенции проекта

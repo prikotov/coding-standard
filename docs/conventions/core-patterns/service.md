@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Service
 type: rule
 description: Правила создания и использования сервисов

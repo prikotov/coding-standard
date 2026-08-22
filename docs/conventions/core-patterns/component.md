@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Component
 type: rule
 description: Правила создания и использования компонентов инфраструктуры

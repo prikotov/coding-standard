@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Метрики качества
 type: rule
 description: Единая модель метрик поддерживаемости кода и правила интерпретации отчёта

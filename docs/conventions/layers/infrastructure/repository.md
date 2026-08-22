@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Repository
 type: rule
 description: Правила реализации репозиториев

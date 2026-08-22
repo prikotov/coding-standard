@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Infrastructure Layer
 type: rule
 description: Инфраструктурный слой: технические детали реализации

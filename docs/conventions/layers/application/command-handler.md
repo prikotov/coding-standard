@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Command Handler
 type: rule
 description: Правила создания и использования обработчиков команд

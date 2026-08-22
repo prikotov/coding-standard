@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Валидация англицизмов в Markdown (validate-language)
 type: rule
 lang: ru

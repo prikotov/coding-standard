@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Twig Component
 type: rule
 description: Правила создания Twig-компонентов

@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Symfony Folder Structure
 type: rule
 description: Организация директорий проекта на основе модульной DDD-архитектуры

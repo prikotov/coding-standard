@@ -1,3 +1,7 @@
+---
+package: prikotov/coding-standard
+---
+
 # Правила для AI-агентов по работе с конвенциями (Conventions Guidelines for AI Agents)
 
 ## Назначение

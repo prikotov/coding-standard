@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: E2E Tests
 type: rule
 description: Правила написания E2E-тестов с Symfony Panther

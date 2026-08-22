@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Validator
 type: rule
 description: Правила создания валидаторов презентационного слоя

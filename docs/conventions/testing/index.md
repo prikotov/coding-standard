@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Testing
 type: index
 description: Система тестирования: виды тестов, инструменты, правила написания

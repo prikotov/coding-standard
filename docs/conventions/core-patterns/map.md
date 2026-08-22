@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Map
 type: rule
 description: Правила создания map-классов для сопоставления значений

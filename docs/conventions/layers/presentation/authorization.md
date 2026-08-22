@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Authorization
 type: rule
 description: Правила проверки прав презентационного слоя

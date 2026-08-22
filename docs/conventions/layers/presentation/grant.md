@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Grant
 type: rule
 description: Правила создания грант-сервисов для проверки доступа

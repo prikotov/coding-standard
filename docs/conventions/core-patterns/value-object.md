@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Value Object
 type: rule
 description: Правила создания и использования объектов-значений

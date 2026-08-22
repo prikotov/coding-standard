@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Architecture
 type: index
 description: Архитектурные документы: кросс-слойные паттерны и взаимодействие компонентов

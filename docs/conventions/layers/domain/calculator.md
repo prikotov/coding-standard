@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Calculator
 type: rule
 description: Правила создания калькуляторов для математических и временных вычислений

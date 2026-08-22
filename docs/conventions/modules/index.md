@@ -1,4 +1,5 @@
 ---
+package: prikotov/coding-standard
 name: Module Structure
 type: index
 description: Собрание правил устройства модулей и их конфигурации
