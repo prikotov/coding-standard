@@ -3,7 +3,7 @@ type: docs
 created: 2026-08-21 14:01:04 (1787320864)
 due:
 started: 2026-08-22 15:48:56 (1787413736)
-completed:
+completed: 2026-08-22 16:06:35 (1787414795)
 cancelled:
 value: V2
 complexity: C1
@@ -16,7 +16,7 @@ author: Тимлид (pi)
 assignee: Разработчик (pi)
 branch: task/docs-package-marking
 pr: https://github.com/prikotov/coding-standard/pull/116
-status: review
+status: done
 ---
 
 # TASK-docs-package-marking: Маркировка package распределяемых документов конвенций
