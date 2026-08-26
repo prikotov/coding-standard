@@ -170,6 +170,7 @@ vendor/bin/coding-standard-metrics-review --base=origin/master
 | `coding-standard-metrics` | Обновляет или проверяет JSON-снимок и строит HTML-дашборд подключаемого проекта |
 | `coding-standard-metrics-compare` | Сравнивает совместимые снимки и создаёт JSON/Markdown с дельтами |
 | `coding-standard-metrics-review` | Проверяет current, извлекает baseline из Git и собирает артефакт PR |
+| `coding-standard-di-check` | Проверяет исключение несервисных классов из Symfony DI проекта-потребителя |
 | `coding-standard-verify` | Проверяет подключение правил пакета и актуальность версии в проекте-потребителе |
 | `metrics-collect` | Собирает структурные метрики PHP-кода |
 | `metrics-scc` | Собирает размер кодовой базы и версию `scc` |
@@ -291,6 +292,7 @@ php vendor/bin/coding-standard-init --force
 ```bash
 vendor/bin/phpstan analyse
 composer check
+vendor/bin/coding-standard-di-check
 vendor/bin/coding-standard-verify
 ```
 
@@ -325,8 +327,29 @@ vendor/bin/coding-standard-verify
 
 До даты `until` устаревшая версия даёт предупреждение, после — ошибку.
 
-`coding-standard-init` добавляет вызов `vendor/bin/coding-standard-verify` в цель `check` Makefile проекта (если она есть),
-поэтому рассинхрон версий ловится в CI того же PR, а не на ревью.
+`coding-standard-init` добавляет вызовы `vendor/bin/coding-standard-verify` и `vendor/bin/coding-standard-di-check`
+в цель `check` Makefile проекта (если она есть), поэтому рассинхрон версий и утечки несервисных классов в DI
+ловятся в CI того же PR, а не на ревью.
+
+---
+
+## Проверка несервисных классов в DI
+
+Конвенция конфигурирования модулей требует исключать сообщения и объекты данных из Symfony DI.
+Команда `coding-standard-di-check` проверяет это из корня проекта и падает с инструкцией,
+если конфигурация модуля или конструктор сервиса нарушают конвенцию:
+
+```bash
+vendor/bin/coding-standard-di-check
+```
+
+| Проверка | Что считается нарушением |
+|---|---|
+| `services.yaml` | Авто-импорт `resource` не исключает несервисные классы общими суффиксными масками: `*Dto.php`, `*Event.php`, `*Exception.php`, `*Enum.php`, `*Vo.php`, а также Application `*Command.php` и `*Query.php`. Перечисление отдельных файлов или отдельных каталогов отклоняется — покрытие должно работать для любого вложенного каталога |
+| Конструкторы | Сервис внедряет несервисный класс (Application `Command`/`Query`, DTO, event, exception, enum, value object) через конструктор вместо передачи аргументом в метод |
+
+Symfony console-команды живут в Presentation-слое и не совпадают с Application-командами
+(`Application\UseCase\Command\...`), поэтому ложных срабатываний не дают.
 
 ---
 
