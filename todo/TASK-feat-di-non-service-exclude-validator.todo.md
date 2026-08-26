@@ -15,8 +15,8 @@ epic:
 author: Team Lead (pi)
 assignee: Developer (pi)
 branch: task/di-non-service-exclude-validator
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/119
+status: review
 ---
 
 # TASK-feat-di-non-service-exclude-validator: Проверка исключений несервисных классов из Symfony DI
