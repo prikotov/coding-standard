@@ -352,6 +352,68 @@ final class CodingStandardDiCheckCommandTest extends TestCase
         self::assertStringContainsString('no module services.yaml with a resource import found', $result['output']);
     }
 
+    public function testFailsWhenCommonModuleContainsFormModel(): void
+    {
+        $this->createModule();
+        $this->writeClass(
+            'Task\\Common\\Module\\Billing\\Presentation\\Form',
+            'EditFormModel',
+            "final class EditFormModel\n{\n}\n",
+        );
+
+        $result = $this->execute();
+
+        self::assertSame(1, $result['code']);
+        self::assertStringContainsString(
+            'is Common and must not contain presentation-layer classes — found 1 *FormModel.php',
+            $result['output'],
+        );
+        self::assertStringContainsString('Move the class to the apps/* module', $result['output']);
+        self::assertStringNotContainsString("Add '%module.billing.module_dir%/**/*FormModel.php' to exclude.", $result['output']);
+    }
+
+    public function testRootImportDoesNotRequireMasksForExcludedSubtree(): void
+    {
+        $this->createAppModule([
+            'exclude' => [
+                '%web.module.source.module_dir%/Resource/',
+                '%web.module.source.module_dir%/**/*Dto.php',
+                '%web.module.source.module_dir%/**/*Enum.php',
+                '%web.module.source.module_dir%/**/*Vo.php',
+                '%web.module.source.module_dir%/SourceModule.php',
+            ],
+            'withFormModel' => true,
+        ]);
+        $this->writeFile(
+            'apps/web/config/services.yaml',
+            <<<YAML
+            services:
+              _defaults:
+                autowire: true
+                autoconfigure: true
+
+              Task\\Web\\:
+                resource: '../src/'
+                exclude:
+                  - '../src/Module/'
+            YAML,
+        );
+
+        $result = $this->execute();
+
+        self::assertSame(1, $result['code']);
+        $formModelFails = substr_count($result['output'], 'exclude does not fully cover *FormModel.php');
+        self::assertSame(1, $formModelFails, $result['output']);
+        self::assertStringContainsString(
+            'apps/web/src/Module/Source/Resource/config/services.yaml: exclude does not fully cover *FormModel.php',
+            $result['output'],
+        );
+        self::assertStringNotContainsString(
+            'apps/web/config/services.yaml: exclude does not fully cover *FormModel.php',
+            $result['output'],
+        );
+    }
+
     public function testWarnsWhenNoModuleConfigExists(): void
     {
         $result = $this->execute();

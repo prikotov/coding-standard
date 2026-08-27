@@ -56,6 +56,16 @@ enum NonServiceClass: string
     }
 
     /**
+     * @return self[] presentation-layer suffix categories: such classes belong
+     * to `apps/*` modules, so only application imports require masks for them;
+     * in a Common module their presence is itself a layering violation
+     */
+    public static function presentationCategories(): array
+    {
+        return [self::FormModel, self::Constraint];
+    }
+
+    /**
      * @return self[] suffix categories proven by existing classes — a mask
      * becomes required for any module kind once such a class appears in it
      */

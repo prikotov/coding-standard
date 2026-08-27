@@ -46,6 +46,7 @@ final class NonServiceDiChecker
 
         foreach ($configs as $config) {
             $this->checkExcludeCoverage($result, $config, $classes, $projectDir);
+            $this->checkCommonPresentationClasses($result, $config, $classes, $projectDir);
         }
 
         $this->checkConstructorDependencies($result, $classes, $configs, $projectDir);
@@ -125,6 +126,12 @@ final class NonServiceDiChecker
     {
         $present = $this->presentContentCategories($config, $classes);
         if ($config->isCommon) {
+            // Presentation-layer types must not live in Common modules at all —
+            // masking them there would legitimize the layering violation.
+            foreach (NonServiceClass::presentationCategories() as $category) {
+                unset($present[$category->value]);
+            }
+
             foreach (NonServiceClass::moduleWide() as $category) {
                 $present[$category->value] = $category;
             }
@@ -152,7 +159,10 @@ final class NonServiceDiChecker
     }
 
     /**
-     * Non-service suffix types whose classes exist in the module tree.
+     * Non-service suffix types whose classes exist in the module tree and are
+     * not already excluded by this import: a class covered by an existing
+     * exclude pattern of the same config is not registered here and must not
+     * drive new mask requirements for it.
      *
      * @param list<ScannedClass> $classes
      *
@@ -160,6 +170,7 @@ final class NonServiceDiChecker
      */
     private function presentContentCategories(ModuleConfig $config, array $classes): array
     {
+        $glob = new GlobMatcher();
         $root = rtrim($config->resourceRoot, '/') . '/';
         $present = [];
         foreach ($classes as $class) {
@@ -168,12 +179,74 @@ final class NonServiceDiChecker
             }
 
             $category = NonServiceClass::classify($class->fqcn);
-            if ($category !== null && in_array($category, NonServiceClass::contentCategories(), true)) {
+            if ($category === null || !in_array($category, NonServiceClass::contentCategories(), true)) {
+                continue;
+            }
+
+            $excluded = false;
+            foreach ($config->excludePatterns as $pattern) {
+                if ($glob->covers($class->file, $pattern)) {
+                    $excluded = true;
+                    break;
+                }
+            }
+
+            if (!$excluded) {
                 $present[$category->value] = $category;
             }
         }
 
         return $present;
+    }
+
+    /**
+     * Presentation-layer classes (`*FormModel.php`, `*Constraint.php`) belong
+     * to `apps/*` modules. In a Common module their presence is a layering
+     * violation that must be fixed by moving the class, not by masking it.
+     *
+     * @param list<ScannedClass> $classes
+     */
+    private function checkCommonPresentationClasses(
+        VerificationResult $result,
+        ModuleConfig $config,
+        array $classes,
+        string $projectDir,
+    ): void {
+        if (!$config->isCommon) {
+            return;
+        }
+
+        $root = rtrim($config->resourceRoot, '/') . '/';
+        $found = [];
+        foreach ($classes as $class) {
+            if (!str_starts_with($class->file, $root)) {
+                continue;
+            }
+
+            $category = NonServiceClass::classify($class->fqcn);
+            if ($category === null || !in_array($category, NonServiceClass::presentationCategories(), true)) {
+                continue;
+            }
+
+            $found[$category->value]['count'] = ($found[$category->value]['count'] ?? 0) + 1;
+            $found[$category->value]['example'] ??= $this->relativeTo($class->file, $projectDir);
+        }
+
+        foreach ($found as $suffix => $details) {
+            $result->fail(
+                sprintf(
+                    '%s: module %s is Common and must not contain presentation-layer classes'
+                    . ' — found %d *%s.php (e.g. %s)',
+                    $this->relativeTo($config->configFile, $projectDir),
+                    rtrim($config->namespace, '\\'),
+                    $details['count'],
+                    $suffix,
+                    $details['example'],
+                ),
+                'Move the class to the apps/* module that owns this UI part;'
+                . ' an exclude mask would only hide the layering violation.',
+            );
+        }
     }
 
     private function suggestExclude(ModuleConfig $config, NonServiceClass $category): string
