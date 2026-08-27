@@ -241,12 +241,136 @@ final class CodingStandardDiCheckCommandTest extends TestCase
         );
     }
 
+    public function testPassesWhenAppModuleExcludesOnlyPresentTypes(): void
+    {
+        $this->createAppModule([
+            'exclude' => [
+                '%web.module.source.module_dir%/Resource/',
+                '%web.module.source.module_dir%/**/*Dto.php',
+                '%web.module.source.module_dir%/**/*Enum.php',
+                '%web.module.source.module_dir%/**/*Vo.php',
+                '%web.module.source.module_dir%/SourceModule.php',
+            ],
+        ]);
+
+        $result = $this->execute();
+
+        self::assertSame(0, $result['code'], $result['output']);
+        self::assertStringContainsString('exclude covers non-service types of module Task\\Web\\Module\\Source', $result['output']);
+    }
+
+    public function testFailsWhenAppModuleMissesMaskForPresentType(): void
+    {
+        $this->createAppModule([
+            'exclude' => [
+                '%web.module.source.module_dir%/Resource/',
+                '%web.module.source.module_dir%/**/*Dto.php',
+                '%web.module.source.module_dir%/**/*Enum.php',
+                '%web.module.source.module_dir%/**/*Vo.php',
+                '%web.module.source.module_dir%/SourceModule.php',
+            ],
+            'withEvent' => true,
+        ]);
+
+        $result = $this->execute();
+
+        self::assertSame(1, $result['code']);
+        self::assertSame(1, substr_count($result['output'], '[FAIL]'));
+        self::assertStringContainsString('exclude does not fully cover *Event.php', $result['output']);
+    }
+
+    public function testSkipsVendorResourceImports(): void
+    {
+        $this->writeFile(
+            'src/Module/Billing/Resource/config/services.yaml',
+            <<<YAML
+            services:
+              TInvest\\Core\\Component\\TInvest\\InstrumentsService\\:
+                resource: '%kernel.project_dir%/vendor/prikotov/t-invest-core/src/Component/TInvest/InstrumentsService/'
+                exclude:
+                  - '%kernel.project_dir%/vendor/prikotov/t-invest-core/src/Component/TInvest/InstrumentsService/Dto/'
+            YAML,
+        );
+
+        $result = $this->execute();
+
+        self::assertSame(0, $result['code'], $result['output']);
+        self::assertStringContainsString('no module services.yaml with a resource import found', $result['output']);
+    }
+
     public function testWarnsWhenNoModuleConfigExists(): void
     {
         $result = $this->execute();
 
         self::assertSame(0, $result['code'], $result['output']);
         self::assertStringContainsString('no module services.yaml with a resource import found', $result['output']);
+    }
+
+    /**
+     * @param array{exclude?: list<string>, withEvent?: bool} $options
+     */
+    private function createAppModule(array $options = []): void
+    {
+        $exclude = $options['exclude'] ?? [];
+        $excludeLines = $exclude === []
+            ? ''
+            : "    exclude:\n" . implode('', array_map(
+                static fn (string $entry): string => "      - '$entry'\n",
+                $exclude,
+            ));
+
+        $this->writeFile('apps/web/src/Module/Source/Resource/config/services.yaml', <<<YAML
+            parameters:
+              web.module.source.module_dir: '%kernel.project_dir%/apps/web/src/Module/Source'
+
+            services:
+              _defaults:
+                autowire: true
+                autoconfigure: true
+
+              Task\\Web\\Module\\Source\\:
+                resource: '%web.module.source.module_dir%/'
+            $excludeLines
+            YAML);
+
+        $this->writeClass(
+            'Task\\Web\\Module\\Source',
+            'SourceModule',
+            "final class SourceModule\n{\n}\n",
+            [],
+            'apps/web/src/Module/Source',
+        );
+        $this->writeClass(
+            'Task\\Web\\Module\\Source\\Application\\Dto',
+            'SourceDto',
+            "final readonly class SourceDto\n{\n    public function __construct(\n        public string \$id,\n    ) {\n    }\n}\n",
+            [],
+            'apps/web/src/Module/Source',
+        );
+        $this->writeClass(
+            'Task\\Web\\Module\\Source\\Domain\\Enum',
+            'SourceEnum',
+            "enum SourceEnum: string\n{\n    case Active = 'active';\n}\n",
+            [],
+            'apps/web/src/Module/Source',
+        );
+        $this->writeClass(
+            'Task\\Web\\Module\\Source\\Domain\\ValueObject',
+            'SourceVo',
+            "final readonly class SourceVo\n{\n    public function __construct(\n        public int \$value,\n    ) {\n    }\n}\n",
+            [],
+            'apps/web/src/Module/Source',
+        );
+
+        if ($options['withEvent'] ?? false) {
+            $this->writeClass(
+                'Task\\Web\\Module\\Source\\Domain\\Event',
+                'SourceEvent',
+                "final readonly class SourceEvent\n{\n}\n",
+                [],
+                'apps/web/src/Module/Source',
+            );
+        }
     }
 
     /**
@@ -343,7 +467,7 @@ final class CodingStandardDiCheckCommandTest extends TestCase
     }
 
     /** @param list<string> $uses */
-    private function writeClass(string $namespace, string $className, string $body, array $uses = []): void
+    private function writeClass(string $namespace, string $className, string $body, array $uses = [], string $baseDir = 'src/Module/Billing'): void
     {
         $modulePrefix = 'Task\\Common\\Module\\Billing';
         $insideModule = str_starts_with($namespace, $modulePrefix)
@@ -354,7 +478,7 @@ final class CodingStandardDiCheckCommandTest extends TestCase
             ? ''
             : implode('', array_map(static fn (string $use): string => "use $use;\n", $uses));
         $this->writeFile(
-            'src/Module/Billing/' . $relative,
+            rtrim($baseDir, '/') . '/' . $relative,
             "<?php\n\ndeclare(strict_types=1);\n\nnamespace $namespace;\n\n$useLines$body",
         );
     }

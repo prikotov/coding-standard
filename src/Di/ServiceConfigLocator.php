@@ -168,6 +168,12 @@ final class ServiceConfigLocator
             return null;
         }
 
+        if (str_contains($resourceRoot, '/vendor/')) {
+            // Third-party package imports follow the conventions of their own
+            // packages, not of the consumer project modules.
+            return null;
+        }
+
         $excludePatterns = [];
         foreach ($rawExcludes as $rawExclude) {
             if (!is_string($rawExclude) || $rawExclude === '') {
@@ -190,7 +196,14 @@ final class ServiceConfigLocator
             $excludePatterns[] = $resolved;
         }
 
-        return new ModuleConfig($file, $namespace, $resourceRoot, $resource, $excludePatterns);
+        return new ModuleConfig(
+            $file,
+            $namespace,
+            $resourceRoot,
+            $resource,
+            $excludePatterns,
+            str_contains($namespace, '\\Common\\Module\\'),
+        );
     }
 
     private function relativeTo(string $path, string $projectDir): string

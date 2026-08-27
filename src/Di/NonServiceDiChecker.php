@@ -16,6 +16,13 @@ use PrikotovCodingStandard\Verify\VerificationResult;
  *  2. no service injects an Application `Command`/`Query`, DTO or other
  *     non-service class through its constructor.
  *
+ * Common modules (`...\Common\Module\...`) must always carry the mandatory
+ * exclude minimum of the convention. Application modules (`...\Web\Module\...`,
+ * `...\Api\v1\Module\...`, application-wide imports) are checked against the
+ * non-service types that actually exist in their tree: a mask becomes
+ * required as soon as the first class of that type appears. Vendor package
+ * imports are not checked.
+ *
  * Symfony console commands live outside `Application\UseCase\Command|Query`
  * and therefore never trigger the checks.
  */
@@ -33,22 +40,33 @@ final class NonServiceDiChecker
             return $result;
         }
 
+        $classes = (new ConstructorDependencyCollector())->collect(
+            array_map(static fn (ModuleConfig $config): string => $config->resourceRoot, $configs),
+        );
+
         foreach ($configs as $config) {
-            $this->checkExcludeCoverage($result, $config, $projectDir);
+            $this->checkExcludeCoverage($result, $config, $classes, $projectDir);
         }
 
-        $this->checkConstructorDependencies($result, $configs, $projectDir);
+        $this->checkConstructorDependencies($result, $classes, $configs, $projectDir);
 
         return $result;
     }
 
-    private function checkExcludeCoverage(VerificationResult $result, ModuleConfig $config, string $projectDir): void
-    {
+    /**
+     * @param list<ScannedClass> $classes
+     */
+    private function checkExcludeCoverage(
+        VerificationResult $result,
+        ModuleConfig $config,
+        array $classes,
+        string $projectDir,
+    ): void {
         $glob = new GlobMatcher();
         $relativeFile = $this->relativeTo($config->configFile, $projectDir);
         $missing = [];
 
-        foreach ($this->coverageRequirements($config) as $suffix => $probes) {
+        foreach ($this->coverageRequirements($config, $classes) as $suffix => $probes) {
             foreach ($probes as $probe) {
                 $covered = false;
                 foreach ($config->excludePatterns as $pattern) {
@@ -89,17 +107,28 @@ final class NonServiceDiChecker
     }
 
     /**
-     * Virtual probe files prove that the exclude patterns cover every location
-     * of a non-service class — not only the files that exist today. A module
-     * without an `Application/UseCase/Command|Query` directory has no command
-     * or query requirement.
+     * Probe files prove that the exclude patterns cover every location of a
+     * non-service class — not only the files that exist today.
+     *
+     * Common modules always require the mandatory minimum of the convention.
+     * Application modules require a mask only for the non-service types that
+     * actually exist in their tree: the requirement appears together with the
+     * first class of that type, so new types cannot leak silently. Application
+     * commands and queries are required when the module has the corresponding
+     * use case directories.
+     *
+     * @param list<ScannedClass> $classes
      *
      * @return array<string, list<string>> non-service suffix => probe file paths
      */
-    private function coverageRequirements(ModuleConfig $config): array
+    private function coverageRequirements(ModuleConfig $config, array $classes): array
     {
         $requirements = [];
-        foreach (NonServiceClass::moduleWide() as $category) {
+        $present = $config->isCommon
+            ? NonServiceClass::moduleWide()
+            : $this->presentModuleWideCategories($config, $classes);
+
+        foreach ($present as $category) {
             $requirements[$category->value] = [
                 $config->resourceRoot . '/Probe' . $category->value . '.php',
                 $config->resourceRoot . '/Nested/Probe' . $category->value . '.php',
@@ -119,6 +148,31 @@ final class NonServiceDiChecker
         return $requirements;
     }
 
+    /**
+     * Non-service suffix types whose classes exist in the module tree.
+     *
+     * @param list<ScannedClass> $classes
+     *
+     * @return list<NonServiceClass>
+     */
+    private function presentModuleWideCategories(ModuleConfig $config, array $classes): array
+    {
+        $root = rtrim($config->resourceRoot, '/') . '/';
+        $present = [];
+        foreach ($classes as $class) {
+            if (!str_starts_with($class->file, $root)) {
+                continue;
+            }
+
+            $category = NonServiceClass::classify($class->fqcn);
+            if ($category !== null && in_array($category, NonServiceClass::moduleWide(), true)) {
+                $present[$category->value] = $category;
+            }
+        }
+
+        return array_values($present);
+    }
+
     private function suggestExclude(ModuleConfig $config, NonServiceClass $category): string
     {
         $base = rtrim($config->resourceExpression, '/');
@@ -130,36 +184,29 @@ final class NonServiceDiChecker
     }
 
     /**
+     * @param list<ScannedClass> $classes
      * @param list<ModuleConfig> $configs
      */
-    private function checkConstructorDependencies(VerificationResult $result, array $configs, string $projectDir): void
-    {
-        $roots = [];
-        foreach ($configs as $config) {
-            $roots[] = $config->resourceRoot;
-        }
-
-        $classes = (new ConstructorDependencyCollector())->collect($roots);
-
-        $categories = [];
+    private function checkConstructorDependencies(
+        VerificationResult $result,
+        array $classes,
+        array $configs,
+        string $projectDir,
+    ): void {
         foreach ($classes as $class) {
-            $category = NonServiceClass::classify($class->fqcn);
-            if ($category !== null) {
-                $categories[$class->fqcn] = $category;
-            }
-        }
-
-        foreach ($classes as $class) {
-            if (isset($categories[$class->fqcn]) || $this->isExcludedFromContainer($class->file, $configs)) {
-                // Non-service classes (DTO, entities, console helpers excluded
-                // from the container, ...) never get their constructor invoked
-                // by the container — composing other objects there is fine.
+            if (
+                NonServiceClass::classify($class->fqcn) !== null
+                || $this->isExcludedFromContainer($class->file, $configs)
+            ) {
+                // Non-service classes and classes excluded from the container
+                // (DTO, entities, ...) never get their constructor invoked by
+                // the container — composing other objects there is fine.
                 continue;
             }
 
             foreach ($class->constructorParams as $param) {
                 foreach ($param['typeFqcns'] as $typeFqcn) {
-                    $category = $categories[$typeFqcn] ?? null;
+                    $category = NonServiceClass::classify($typeFqcn);
                     if ($category === null) {
                         continue;
                     }
