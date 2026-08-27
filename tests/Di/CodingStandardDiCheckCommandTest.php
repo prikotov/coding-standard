@@ -249,14 +249,68 @@ final class CodingStandardDiCheckCommandTest extends TestCase
                 '%web.module.source.module_dir%/**/*Dto.php',
                 '%web.module.source.module_dir%/**/*Enum.php',
                 '%web.module.source.module_dir%/**/*Vo.php',
+                '%web.module.source.module_dir%/**/*FormModel.php',
+                '%web.module.source.module_dir%/**/*Constraint.php',
                 '%web.module.source.module_dir%/SourceModule.php',
             ],
+            'withFormModel' => true,
+            'withConstraint' => true,
         ]);
 
         $result = $this->execute();
 
         self::assertSame(0, $result['code'], $result['output']);
         self::assertStringContainsString('exclude covers non-service types of module Task\\Web\\Module\\Source', $result['output']);
+    }
+
+    public function testFailsWhenAppModuleMissesMaskForFormModel(): void
+    {
+        $this->createAppModule([
+            'exclude' => [
+                '%web.module.source.module_dir%/Resource/',
+                '%web.module.source.module_dir%/**/*Dto.php',
+                '%web.module.source.module_dir%/**/*Enum.php',
+                '%web.module.source.module_dir%/**/*Vo.php',
+                '%web.module.source.module_dir%/**/*Constraint.php',
+                '%web.module.source.module_dir%/SourceModule.php',
+            ],
+            'withFormModel' => true,
+            'withConstraint' => true,
+        ]);
+
+        $result = $this->execute();
+
+        self::assertSame(1, $result['code']);
+        self::assertSame(1, substr_count($result['output'], '[FAIL]'));
+        self::assertStringContainsString('exclude does not fully cover *FormModel.php', $result['output']);
+    }
+
+    public function testFailsWhenServiceInjectsFormModel(): void
+    {
+        $this->createAppModule([
+            'exclude' => [
+                '%web.module.source.module_dir%/Resource/',
+                '%web.module.source.module_dir%/**/*Dto.php',
+                '%web.module.source.module_dir%/**/*Enum.php',
+                '%web.module.source.module_dir%/**/*Vo.php',
+                '%web.module.source.module_dir%/**/*FormModel.php',
+                '%web.module.source.module_dir%/SourceModule.php',
+            ],
+            'withFormModel' => true,
+        ]);
+        $this->writeClass(
+            'Task\\Web\\Module\\Source\\Presentation\\Handler',
+            'EditSourceHandler',
+            "final class EditSourceHandler\n{\n    public function __construct(\n        private readonly EditFormModel \$form,\n    ) {\n    }\n}\n",
+            ['Task\\Web\\Module\\Source\\Presentation\\Form\\EditFormModel'],
+            'apps/web/src/Module/Source',
+            'Task\\Web\\Module\\Source',
+        );
+
+        $result = $this->execute();
+
+        self::assertSame(1, $result['code']);
+        self::assertStringContainsString('injects non-service Task\\Web\\Module\\Source\\Presentation\\Form\\EditFormModel (form model)', $result['output']);
     }
 
     public function testFailsWhenAppModuleMissesMaskForPresentType(): void
@@ -307,7 +361,7 @@ final class CodingStandardDiCheckCommandTest extends TestCase
     }
 
     /**
-     * @param array{exclude?: list<string>, withEvent?: bool} $options
+     * @param array{exclude?: list<string>, withEvent?: bool, withFormModel?: bool, withConstraint?: bool} $options
      */
     private function createAppModule(array $options = []): void
     {
@@ -339,6 +393,7 @@ final class CodingStandardDiCheckCommandTest extends TestCase
             "final class SourceModule\n{\n}\n",
             [],
             'apps/web/src/Module/Source',
+            'Task\\Web\\Module\\Source',
         );
         $this->writeClass(
             'Task\\Web\\Module\\Source\\Application\\Dto',
@@ -346,6 +401,7 @@ final class CodingStandardDiCheckCommandTest extends TestCase
             "final readonly class SourceDto\n{\n    public function __construct(\n        public string \$id,\n    ) {\n    }\n}\n",
             [],
             'apps/web/src/Module/Source',
+            'Task\\Web\\Module\\Source',
         );
         $this->writeClass(
             'Task\\Web\\Module\\Source\\Domain\\Enum',
@@ -353,6 +409,7 @@ final class CodingStandardDiCheckCommandTest extends TestCase
             "enum SourceEnum: string\n{\n    case Active = 'active';\n}\n",
             [],
             'apps/web/src/Module/Source',
+            'Task\\Web\\Module\\Source',
         );
         $this->writeClass(
             'Task\\Web\\Module\\Source\\Domain\\ValueObject',
@@ -360,6 +417,7 @@ final class CodingStandardDiCheckCommandTest extends TestCase
             "final readonly class SourceVo\n{\n    public function __construct(\n        public int \$value,\n    ) {\n    }\n}\n",
             [],
             'apps/web/src/Module/Source',
+            'Task\\Web\\Module\\Source',
         );
 
         if ($options['withEvent'] ?? false) {
@@ -369,6 +427,29 @@ final class CodingStandardDiCheckCommandTest extends TestCase
                 "final readonly class SourceEvent\n{\n}\n",
                 [],
                 'apps/web/src/Module/Source',
+                'Task\\Web\\Module\\Source',
+            );
+        }
+
+        if ($options['withFormModel'] ?? false) {
+            $this->writeClass(
+                'Task\\Web\\Module\\Source\\Presentation\\Form',
+                'EditFormModel',
+                "final class EditFormModel\n{\n    public function __construct(\n        private readonly ?string \$name = null,\n    ) {\n    }\n\n    public function getName(): ?string\n    {\n        return \$this->name;\n    }\n}\n",
+                [],
+                'apps/web/src/Module/Source',
+                'Task\\Web\\Module\\Source',
+            );
+        }
+
+        if ($options['withConstraint'] ?? false) {
+            $this->writeClass(
+                'Task\\Web\\Module\\Source\\Validation\\Constraint',
+                'SourceNameConstraint',
+                "#[Attribute(Attribute::TARGET_PROPERTY)]\nfinal class SourceNameConstraint extends Constraint\n{\n    public string \$message = 'The source name is invalid.';\n}\n",
+                ['Symfony\\Component\\Validator\\Constraint'],
+                'apps/web/src/Module/Source',
+                'Task\\Web\\Module\\Source',
             );
         }
     }
@@ -467,9 +548,14 @@ final class CodingStandardDiCheckCommandTest extends TestCase
     }
 
     /** @param list<string> $uses */
-    private function writeClass(string $namespace, string $className, string $body, array $uses = [], string $baseDir = 'src/Module/Billing'): void
-    {
-        $modulePrefix = 'Task\\Common\\Module\\Billing';
+    private function writeClass(
+        string $namespace,
+        string $className,
+        string $body,
+        array $uses = [],
+        string $baseDir = 'src/Module/Billing',
+        string $modulePrefix = 'Task\\Common\\Module\\Billing',
+    ): void {
         $insideModule = str_starts_with($namespace, $modulePrefix)
             ? substr($namespace, strlen($modulePrefix))
             : '\\' . $namespace;

@@ -11,6 +11,11 @@ namespace PrikotovCodingStandard\Di;
  * Application `Command`/`Query` are identified by both the suffix and the
  * conventional namespace part `\Application\UseCase\Command|Query\`, so
  * Symfony console commands living in the Presentation layer never match.
+ *
+ * `FormModel` (form data classes) and `Constraint` (custom Symfony validator
+ * constraints) are presentation-layer types: they are not part of the Common
+ * module mandatory minimum and are only required when such classes actually
+ * exist in the module tree.
  */
 enum NonServiceClass: string
 {
@@ -21,6 +26,8 @@ enum NonServiceClass: string
     case Exception = 'Exception';
     case Enum = 'Enum';
     case Vo = 'Vo';
+    case FormModel = 'FormModel';
+    case Constraint = 'Constraint';
 
     public function fileSuffix(): string
     {
@@ -37,13 +44,24 @@ enum NonServiceClass: string
             self::Exception => 'exception',
             self::Enum => 'enum',
             self::Vo => 'value object',
+            self::FormModel => 'form model',
+            self::Constraint => 'validation constraint',
         };
     }
 
-    /** @return self[] categories that require module-wide exclude coverage */
+    /** @return self[] mandatory exclude minimum for Common modules */
     public static function moduleWide(): array
     {
         return [self::Dto, self::Event, self::Exception, self::Enum, self::Vo];
+    }
+
+    /**
+     * @return self[] suffix categories proven by existing classes — a mask
+     * becomes required for any module kind once such a class appears in it
+     */
+    public static function contentCategories(): array
+    {
+        return [self::Dto, self::Event, self::Exception, self::Enum, self::Vo, self::FormModel, self::Constraint];
     }
 
     /**
@@ -62,7 +80,7 @@ enum NonServiceClass: string
             return self::Query;
         }
 
-        foreach ([self::Dto, self::Event, self::Exception, self::Enum, self::Vo] as $category) {
+        foreach (self::contentCategories() as $category) {
             if (str_ends_with($fqcn, $category->value)) {
                 return $category;
             }

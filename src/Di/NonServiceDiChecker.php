@@ -110,12 +110,12 @@ final class NonServiceDiChecker
      * Probe files prove that the exclude patterns cover every location of a
      * non-service class — not only the files that exist today.
      *
-     * Common modules always require the mandatory minimum of the convention.
-     * Application modules require a mask only for the non-service types that
-     * actually exist in their tree: the requirement appears together with the
-     * first class of that type, so new types cannot leak silently. Application
-     * commands and queries are required when the module has the corresponding
-     * use case directories.
+     * Every module requires a mask for the non-service types that actually
+     * exist in its tree — the requirement appears together with the first
+     * class of that type, so new types cannot leak silently. Common modules
+     * additionally carry the mandatory minimum of the convention regardless
+     * of their contents. Application commands and queries are required when
+     * the module has the corresponding use case directories.
      *
      * @param list<ScannedClass> $classes
      *
@@ -123,11 +123,14 @@ final class NonServiceDiChecker
      */
     private function coverageRequirements(ModuleConfig $config, array $classes): array
     {
-        $requirements = [];
-        $present = $config->isCommon
-            ? NonServiceClass::moduleWide()
-            : $this->presentModuleWideCategories($config, $classes);
+        $present = $this->presentContentCategories($config, $classes);
+        if ($config->isCommon) {
+            foreach (NonServiceClass::moduleWide() as $category) {
+                $present[$category->value] = $category;
+            }
+        }
 
+        $requirements = [];
         foreach ($present as $category) {
             $requirements[$category->value] = [
                 $config->resourceRoot . '/Probe' . $category->value . '.php',
@@ -153,9 +156,9 @@ final class NonServiceDiChecker
      *
      * @param list<ScannedClass> $classes
      *
-     * @return list<NonServiceClass>
+     * @return array<string, NonServiceClass>
      */
-    private function presentModuleWideCategories(ModuleConfig $config, array $classes): array
+    private function presentContentCategories(ModuleConfig $config, array $classes): array
     {
         $root = rtrim($config->resourceRoot, '/') . '/';
         $present = [];
@@ -165,12 +168,12 @@ final class NonServiceDiChecker
             }
 
             $category = NonServiceClass::classify($class->fqcn);
-            if ($category !== null && in_array($category, NonServiceClass::moduleWide(), true)) {
+            if ($category !== null && in_array($category, NonServiceClass::contentCategories(), true)) {
                 $present[$category->value] = $category;
             }
         }
 
-        return array_values($present);
+        return $present;
     }
 
     private function suggestExclude(ModuleConfig $config, NonServiceClass $category): string
