@@ -61,6 +61,37 @@ final class MetricsReportWriterTest extends TestCase
         self::assertSame('Metrics', $module['metrics']['module']['id']);
     }
 
+    public function testWritesSortedMemberSourcePathsForSnapshotModules(): void
+    {
+        $directory = sys_get_temp_dir() . '/metrics-writer-snapshot-' . uniqid();
+        $output = $directory . '/snapshot.json';
+        (new MetricsReportWriter())->writeSnapshot($output, [
+            'metadata' => ['project' => 'example/project'],
+            'metrics' => [
+                'modules' => [
+                    ['id' => 'Distributed', 'class_count' => 2],
+                    ['id' => 'Empty', 'class_count' => 0],
+                ],
+                'classes' => [
+                    ['id' => 'App\\Second', 'file' => 'packages/shared/Second.php', 'module' => 'Distributed'],
+                    ['id' => 'App\\First', 'file' => 'apps/api/src/First.php', 'module' => 'Distributed'],
+                ],
+                'methods' => [],
+            ],
+        ]);
+
+        try {
+            $snapshot = json_decode((string) file_get_contents($output), true, flags: JSON_THROW_ON_ERROR);
+            self::assertSame(
+                ['apps/api/src/First.php', 'packages/shared/Second.php'],
+                $snapshot['objects']['module']['Distributed']['attributes']['source_paths'],
+            );
+            self::assertSame([], $snapshot['objects']['module']['Empty']['attributes']['source_paths']);
+        } finally {
+            $this->removeDirectory($directory);
+        }
+    }
+
     public function testWritesApplicationModuleReportAtItsModuleDirectory(): void
     {
         $directory = sys_get_temp_dir() . '/metrics-writer-module-' . uniqid();

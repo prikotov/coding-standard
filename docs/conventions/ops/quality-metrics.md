@@ -53,6 +53,7 @@ description: Единая модель метрик поддерживаемос
 - Для покрытия выполняется только PHPUnit-suite из `metrics.phpunit_suite` (по умолчанию `unit`); интеграционные suite не запускаются.
 - `vendor/bin/coding-standard-metrics` записывает компактный снимок в `metrics.work_dir/snapshot.json`; по умолчанию это `var/metrics/snapshot.json`.
 - Снимок содержит `metadata` и объекты уровней `project`, `module`, `class` и `method`. Поля объектов — идентификатор, относительный путь, атрибуты и метрики, необходимые для сравнения.
+- Атрибут `source_paths` объекта модуля содержит отсортированные относительные пути всех входящих классов. Он дополняет необязательный единый `source_path` и позволяет сопоставлять с diff распределённые и удалённые модули.
 - Снимок не содержит зеркала путей, отчётов промежуточных каталогов, ссылок `children` и дублированных `findings`.
 - HTML-дашборд создаётся рядом со снимком и является представлением для человека, а не входом сравнения.
 
@@ -63,6 +64,7 @@ description: Единая модель метрик поддерживаемос
 - Команда создаёт временный Git worktree на merge-base, собирает baseline и current одинаковым пайплайном, затем удаляет временный worktree.
 - Результат — локальная дельта `var/metrics-review/comparison.json`, `summary.md` и `reproduction.json`; она не коммитится и не зависит от GitHub Actions.
 - Для каждого уровня `project`, `module`, `class` и `method` дельта содержит `added`, `removed`, `changed` и `unchanged_count`. Изменённая метрика содержит `before`, `after`, `delta`, `direction` и `informational`.
+- Модуль входит в изменённую область, когда путь хотя бы одного его класса из текущего или базового снимка присутствует в diff. Поле `matched_changed_paths` дельты объясняет совпадение; для старого снимка без `source_paths` используется единый `source_path` модуля.
 - `improved` означает уменьшение `CC`, `WMC`, `LCOM4`, `Ca`, `Ce`, внешней связанности или циклов либо рост связности модуля и покрытия. Обратное изменение получает `regressed`.
 - Общий размер, количество объектов, тестов и строк, churn, входящие зависимости модуля и изменения списков имеют направление `neutral`.
 - `project.command_handlers_without_event` — количество CommandHandler'ов без диспетчеризации события (`dispatch`); рост помечается `regressed`, класс-флаг — `missing_event_dispatch` (см. [Command Handler](../layers/application/command-handler.md)). Общее число хендлеров `project.command_handlers` — `neutral`.
