@@ -3,7 +3,7 @@ type: fix
 created: 2026-08-27 03:36:53 (1787801813)
 due:
 started: 2026-08-27 14:53:57 (1787842437)
-completed:
+completed: 2026-08-27 15:14:07 (1787843647)
 cancelled:
 value: V3
 complexity: C2
@@ -16,7 +16,7 @@ author: Аналитик (pi)
 assignee: Разработчик (pi)
 branch: task/metrics-module-changed-area-detection
 pr: https://github.com/prikotov/coding-standard/pull/120
-status: review
+status: done
 ---
 
 # TASK-metrics-module-changed-area-detection: корректно определять изменённую область для модульных метрик
@@ -109,8 +109,8 @@ php vendor/bin/todo-md validate todo/TASK-metrics-module-changed-area-detection.
 ## 8. Источники (Sources)
 
 - [x] [PR `prikotov/stocks2#198`](https://github.com/prikotov/stocks2/pull/198) — фактическое обнаружение проблемы.
-- [x] [`TASK-metrics-pr-review-workflow`](done/TASK-metrics-pr-review-workflow.todo.md) — контракт выделения изменённой области при ревью.
-- [x] [Конвенция метрик качества](../docs/conventions/ops/quality-metrics.md).
+- [x] [`TASK-metrics-pr-review-workflow`](TASK-metrics-pr-review-workflow.todo.md) — контракт выделения изменённой области при ревью.
+- [x] [Конвенция метрик качества](../../docs/conventions/ops/quality-metrics.md).
 
 ## 9. Комментарии (Comments)
 
