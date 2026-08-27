@@ -3,7 +3,7 @@ type: feat
 created: 2026-08-26 03:55:36 (1787716536)
 due:
 started: 2026-08-26 16:42:28 (1787762548)
-completed:
+completed: 2026-08-27 14:47:58 (1787842078)
 cancelled:
 value: V2
 complexity: C3
@@ -16,7 +16,7 @@ author: Team Lead (pi)
 assignee: Developer (pi)
 branch: task/di-non-service-exclude-validator
 pr: https://github.com/prikotov/coding-standard/pull/119
-status: review
+status: done
 ---
 
 # TASK-feat-di-non-service-exclude-validator: Проверка исключений несервисных классов из Symfony DI
@@ -104,7 +104,7 @@ php vendor/bin/todo-md validate todo/backlog/TASK-feat-di-non-service-exclude-va
 
 ## 8. Источники (Sources)
 
-- [Конфигурация модулей](../docs/conventions/modules/configuration.md)
+- [Конфигурация модулей](../../docs/conventions/modules/configuration.md)
 - [Контейнер сервисов Symfony](https://symfony.com/doc/current/service_container.html)
 
 ## 9. Результат (Result)
@@ -138,3 +138,4 @@ php vendor/bin/todo-md validate todo/backlog/TASK-feat-di-non-service-exclude-va
 | 2026-08-26 | Developer (pi) | Правка по ревью: требования exclude разделены по типам модулей (Common / приложения / vendor), инъекции классифицируются по суффиксу напрямую |
 | 2026-08-26 | Developer (pi) | Правка по ревью: добавлены несервисные presentation-суффиксы `*FormModel.php` и `*Constraint.php` (evidence-категории) |
 | 2026-08-26 | Developer (pi) | Правка по ревью: presentation-суффиксы ограничены импортами `apps/*`; в Common — ошибка слоистости с требованием переноса; evidence игнорирует классы, исключённые этим же импортом |
+| 2026-08-27 | Developer (pi) | Задача выполнена, PR #119 смержен |
