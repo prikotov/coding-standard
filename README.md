@@ -120,7 +120,7 @@ vendor/bin/coding-standard-metrics
 vendor/bin/coding-standard-metrics-review --base=origin/master
 ```
 
-`coding-standard-metrics` создаёт компактный `var/metrics/snapshot.json` и `var/metrics/index.html`. Команда review создаёт временный Git worktree на merge-base, повторно собирает baseline и записывает дельту в `var/metrics-review/comparison.json` и краткое резюме в `summary.md`. Агент читает дельту до создания PR; GitHub Actions может воспроизвести ту же команду, но не является источником результата.
+`coding-standard-metrics` создаёт компактный `var/metrics/snapshot.json` и `var/metrics/index.html`. Команда review создаёт временный Git worktree на merge-base, повторно собирает baseline и записывает дельту в `var/metrics-review/comparison.json` и краткое резюме в `summary.md`. Модуль считается частью изменённой области, если diff содержит путь хотя бы одного входящего в него класса; совпавшие пути перечислены в `matched_changed_paths`. Агент читает дельту до создания PR; GitHub Actions может воспроизвести ту же команду, но не является источником результата.
 
 Среди метрик — `project.command_handlers_without_event`: количество CommandHandler'ов без диспетчеризованного события `*Event` (правило — [конвенция Command Handler](docs/conventions/layers/application/command-handler.md)). Рост счётчика в дельте помечается регрессией: автор PR добавляет событие или обосновывает отклонение.
 

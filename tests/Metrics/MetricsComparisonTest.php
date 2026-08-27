@@ -86,6 +86,37 @@ final class MetricsComparisonTest extends TestCase
         self::assertSame(1, $result['summary']['neutral_metric_count']);
     }
 
+    public function testMarksModuleLifecycleAndRegressionByMemberSourcePaths(): void
+    {
+        $baseline = $this->snapshot([], [
+            'Changed' => $this->module('Changed', 1, ['apps/api/src/Changed.php']),
+            'Removed' => $this->module('Removed', 1, ['packages/shared/Removed.php']),
+            'Unrelated' => $this->module('Unrelated', 1, ['src/Unrelated.php']),
+        ]);
+        $current = $this->snapshot([], [
+            'Added' => $this->module('Added', 1, ['apps/worker/src/Added.php']),
+            'Changed' => $this->module('Changed', 2, ['apps/api/src/Changed.php']),
+            'Unrelated' => $this->module('Unrelated', 2, ['src/Unrelated.php']),
+        ]);
+
+        $result = (new MetricsComparison())->compare($baseline, $current, [
+            'apps/api/src/Changed.php',
+            'apps/worker/src/Added.php',
+            'packages/shared/Removed.php',
+        ]);
+        $modules = $result['scopes']['module'];
+
+        self::assertTrue($modules['added'][0]['changed_area']);
+        self::assertSame(['apps/worker/src/Added.php'], $modules['added'][0]['matched_changed_paths']);
+        self::assertTrue($modules['removed'][0]['changed_area']);
+        self::assertSame(['packages/shared/Removed.php'], $modules['removed'][0]['matched_changed_paths']);
+        self::assertTrue($modules['changed'][0]['changed_area']);
+        self::assertSame(['apps/api/src/Changed.php'], $modules['changed'][0]['matched_changed_paths']);
+        self::assertSame('regressed', $modules['changed'][0]['metric_changes'][0]['direction']);
+        self::assertFalse($modules['changed'][1]['changed_area']);
+        self::assertSame([], $modules['changed'][1]['matched_changed_paths']);
+    }
+
     #[DataProvider('incompatibleSnapshots')]
     public function testRejectsIncompatibleSnapshots(string $field, mixed $value): void
     {
@@ -116,7 +147,7 @@ final class MetricsComparisonTest extends TestCase
      * @param array<string, array<string, mixed>> $classes
      * @return array<string, mixed>
      */
-    private function snapshot(array $classes): array
+    private function snapshot(array $classes, array $modules = []): array
     {
         return [
             'schema_version' => '1.0',
@@ -128,10 +159,21 @@ final class MetricsComparisonTest extends TestCase
             ],
             'objects' => [
                 'project' => ['example/project' => $this->object('example/project', '.', [])],
-                'module' => [],
+                'module' => $modules,
                 'class' => $classes,
                 'method' => [],
             ],
+        ];
+    }
+
+    /** @param list<string> $sourcePaths @return array<string, mixed> */
+    private function module(string $id, int $outgoingDependencies, array $sourcePaths): array
+    {
+        return [
+            'id' => $id,
+            'source_path' => '',
+            'attributes' => ['source_paths' => $sourcePaths],
+            'metrics' => ['outgoing_dependencies' => $outgoingDependencies],
         ];
     }
 

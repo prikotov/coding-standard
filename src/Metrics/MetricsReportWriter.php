@@ -15,6 +15,7 @@ final class MetricsReportWriter
         $classes = $this->records($metrics, 'classes');
         $methods = $this->records($metrics, 'methods');
         $modules = $this->modules($this->records($metrics, 'modules'));
+        $moduleSourcePaths = $this->moduleSourcePaths($classes);
         $objects = ['project' => [], 'module' => [], 'class' => [], 'method' => []];
         $metadata = $this->metadata($full);
         $project = (string) ($metadata['project'] ?? '');
@@ -35,7 +36,7 @@ final class MetricsReportWriter
                 'id' => $identifier,
                 'source_path' => (string) ($module['path'] ?? ''),
                 'metrics' => array_diff_key($module, ['id' => true, 'path' => true]),
-                'attributes' => [],
+                'attributes' => ['source_paths' => $moduleSourcePaths[$identifier] ?? []],
             ];
         }
         foreach ($classes as $class) {
@@ -324,6 +325,27 @@ final class MetricsReportWriter
         $upper = (int) ceil($index);
 
         return $values[$lower] + ($values[$upper] - $values[$lower]) * ($index - $lower);
+    }
+
+    /** @param list<array<string, mixed>> $classes @return array<string, list<string>> */
+    private function moduleSourcePaths(array $classes): array
+    {
+        $paths = [];
+        foreach ($classes as $class) {
+            $module = $class['module'] ?? null;
+            if (!is_string($module) || $module === '') {
+                continue;
+            }
+            $paths[$module][$this->sourcePath($class['file'] ?? null)] = true;
+        }
+        foreach ($paths as &$modulePaths) {
+            $modulePaths = array_keys($modulePaths);
+            sort($modulePaths);
+        }
+        unset($modulePaths);
+        ksort($paths);
+
+        return $paths;
     }
 
     /** @param list<array<string, mixed>> $modules @return array<string, array<string, mixed>> */

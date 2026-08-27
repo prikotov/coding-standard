@@ -40,7 +40,10 @@ $snapshot = [
     'metadata' => ['project' => 'example/consumer', 'metric_definitions_version' => '1.0', 'configuration_hash' => 'sha256:configuration', 'input_hash' => hash('sha256', $source . $handlerSource), 'source_versions' => ['analyzer' => 'metrics-collector/1.0']],
     'objects' => [
         'project' => ['example/consumer' => ['id' => 'example/consumer', 'source_path' => '.', 'metrics' => ['project' => ['loc' => $loc, 'command_handlers' => 1, 'command_handlers_without_event' => $handlerMissing]], 'attributes' => []]],
-        'module' => [],
+        'module' => [
+            'Main' => ['id' => 'Main', 'source_path' => '', 'metrics' => ['cohesion' => $loc === 16 ? 0.7 : 0.8], 'attributes' => ['source_paths' => ['src/Foo.php', 'src/Handler.php']]],
+            'Untouched' => ['id' => 'Untouched', 'source_path' => '', 'metrics' => ['outgoing_dependencies' => $loc === 16 ? 2 : 1], 'attributes' => ['source_paths' => ['src/Untouched.php']]],
+        ],
         'class' => [
             'App\\Foo' => ['id' => 'App\\Foo', 'source_path' => 'src/Foo.php', 'metrics' => ['loc' => $loc], 'attributes' => ['kind' => 'class', 'module' => 'Main']],
             'App\\Handler' => ['id' => 'App\\Handler', 'source_path' => 'src/Handler.php', 'metrics' => ['missing_event_dispatch' => $handlerMissing], 'attributes' => ['kind' => 'class', 'module' => 'Main']],
@@ -92,6 +95,10 @@ PHP);
         $comparison = $this->json($output . '/comparison.json');
         self::assertTrue($comparison['scopes']['class']['changed'][0]['changed_area']);
         self::assertSame('regressed', $comparison['scopes']['method']['changed'][0]['metric_changes'][0]['direction']);
+        $modules = array_column($comparison['scopes']['module']['changed'], null, 'id');
+        self::assertTrue($modules['Main']['changed_area']);
+        self::assertSame(['src/Foo.php', 'src/Handler.php'], $modules['Main']['matched_changed_paths']);
+        self::assertFalse($modules['Untouched']['changed_area']);
         $handler = null;
         foreach ($comparison['scopes']['class']['changed'] as $changed) {
             if ($changed['id'] === 'App\\Handler') {
@@ -110,7 +117,10 @@ PHP);
         self::assertNotNull($projectMetric);
         self::assertSame('regressed', $projectMetric['direction']);
         self::assertSame(1, $projectMetric['delta']);
-        self::assertStringContainsString('command_handlers_without_event', (string) file_get_contents($output . '/summary.md'));
+        $summary = (string) file_get_contents($output . '/summary.md');
+        self::assertStringContainsString('command_handlers_without_event', $summary);
+        self::assertStringContainsString('`module` `Main` (`cohesion`', $summary);
+        self::assertStringNotContainsString('`module` `Untouched`', $summary);
 
         $firstHash = $this->directoryHash($output);
         $pipeline->run('HEAD^', 'HEAD', 'var/metrics-review');

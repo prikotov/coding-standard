@@ -148,17 +148,27 @@ final class MetricsComparison
                 $unchanged++;
                 continue;
             }
-            $changed[] = [
+            $sourcePath = (string) ($currentObject['source_path'] ?? $baselineObject['source_path'] ?? '');
+            $sourcePaths = array_values(array_unique([
+                ...$this->sourcePaths($baselineObject),
+                ...$this->sourcePaths($currentObject),
+            ]));
+            sort($sourcePaths);
+            $changedObject = [
                 'id' => $identifier,
-                'source_path' => $currentObject['source_path'] ?? $baselineObject['source_path'] ?? null,
-                'changed_area' => $this->changedArea(
-                    $kind,
-                    (string) ($currentObject['source_path'] ?? $baselineObject['source_path'] ?? ''),
-                    $changedPaths,
-                ),
+                'source_path' => $sourcePath,
+                'changed_area' => $this->changedArea($kind, $sourcePath, $sourcePaths, $changedPaths),
                 'attribute_changes' => $attributeChanges,
                 'metric_changes' => $metricChanges,
             ];
+            if ($kind === 'module') {
+                $changedObject['matched_changed_paths'] = $this->matchedChangedPaths(
+                    $sourcePath,
+                    $sourcePaths,
+                    $changedPaths,
+                );
+            }
+            $changed[] = $changedObject;
         }
 
         foreach ([$added, $removed, $changed] as &$items) {
@@ -314,16 +324,28 @@ final class MetricsComparison
     private function objectReference(string $kind, array $object, array $changedPaths): array
     {
         $sourcePath = (string) ($object['source_path'] ?? '');
-
-        return [
+        $sourcePaths = $this->sourcePaths($object);
+        $reference = [
             'id' => $object['id'] ?? null,
             'source_path' => $sourcePath,
-            'changed_area' => $this->changedArea($kind, $sourcePath, $changedPaths),
+            'changed_area' => $this->changedArea($kind, $sourcePath, $sourcePaths, $changedPaths),
         ];
+        if ($kind === 'module') {
+            $reference['matched_changed_paths'] = $this->matchedChangedPaths(
+                $sourcePath,
+                $sourcePaths,
+                $changedPaths,
+            );
+        }
+
+        return $reference;
     }
 
-    /** @param list<string> $changedPaths */
-    private function changedArea(string $kind, string $sourcePath, array $changedPaths): bool
+    /**
+     * @param list<string> $sourcePaths
+     * @param list<string> $changedPaths
+     */
+    private function changedArea(string $kind, string $sourcePath, array $sourcePaths, array $changedPaths): bool
     {
         if ($changedPaths === []) {
             return false;
@@ -331,15 +353,48 @@ final class MetricsComparison
         if ($kind === 'project') {
             return true;
         }
-        foreach ($changedPaths as $path) {
-            $insideModule = $kind === 'module'
-                && str_starts_with($path, rtrim($sourcePath, '/') . '/');
-            if ($path === $sourcePath || $insideModule) {
-                return true;
-            }
+        if ($kind === 'module') {
+            return $this->matchedChangedPaths($sourcePath, $sourcePaths, $changedPaths) !== [];
         }
 
-        return false;
+        return in_array($sourcePath, $changedPaths, true);
+    }
+
+    /**
+     * @param list<string> $sourcePaths
+     * @param list<string> $changedPaths
+     * @return list<string>
+     */
+    private function matchedChangedPaths(string $sourcePath, array $sourcePaths, array $changedPaths): array
+    {
+        if ($sourcePaths !== []) {
+            return array_values(array_intersect($changedPaths, $sourcePaths));
+        }
+        if ($sourcePath === '') {
+            return [];
+        }
+
+        return array_values(array_filter(
+            $changedPaths,
+            static fn (string $path): bool => $path === $sourcePath
+                || str_starts_with($path, rtrim($sourcePath, '/') . '/'),
+        ));
+    }
+
+    /** @param array<string, mixed> $object @return list<string> */
+    private function sourcePaths(array $object): array
+    {
+        $sourcePaths = $this->attributes($object)['source_paths'] ?? [];
+        if (!is_array($sourcePaths)) {
+            return [];
+        }
+        $paths = array_values(array_filter(
+            $sourcePaths,
+            static fn (mixed $path): bool => is_string($path) && $path !== '',
+        ));
+        sort($paths);
+
+        return array_values(array_unique($paths));
     }
 
     /** @param list<string> $paths @return list<string> */
