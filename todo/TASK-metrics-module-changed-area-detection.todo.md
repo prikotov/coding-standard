@@ -15,8 +15,8 @@ epic:
 author: Аналитик (pi)
 assignee: Разработчик (pi)
 branch: task/metrics-module-changed-area-detection
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/120
+status: review
 ---
 
 # TASK-metrics-module-changed-area-detection: корректно определять изменённую область для модульных метрик
