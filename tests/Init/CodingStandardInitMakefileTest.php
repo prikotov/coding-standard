@@ -22,7 +22,7 @@ final class CodingStandardInitMakefileTest extends TestCase
         $this->removeDirectory($this->directory);
     }
 
-    public function testWiresVerifyIntoExistingCheckTarget(): void
+    public function testWiresCheckCommandsIntoExistingCheckTarget(): void
     {
         $makefile = $this->directory . '/Makefile';
         $original = "# comment\n\n.PHONY: check\ncheck: ## Run all checks\n\t@echo running\n\n.PHONY: other\nother:\n\t@echo other\n";
@@ -32,7 +32,7 @@ final class CodingStandardInitMakefileTest extends TestCase
 
         $updated = (string) file_get_contents($makefile);
         self::assertStringContainsString(
-            "check: ## Run all checks\n\tvendor/bin/coding-standard-verify",
+            "check: ## Run all checks\n\tvendor/bin/coding-standard-verify\n\tvendor/bin/coding-standard-di-check",
             $updated,
         );
         self::assertStringContainsString("\t@echo running", $updated);
@@ -43,6 +43,19 @@ final class CodingStandardInitMakefileTest extends TestCase
     {
         $makefile = $this->directory . '/Makefile';
         $original = "check:\n\tvendor/bin/coding-standard-verify\n";
+        file_put_contents($makefile, $original);
+
+        $output = $this->runInit();
+
+        $updated = (string) file_get_contents($makefile);
+        self::assertSame(1, substr_count($updated, 'coding-standard-verify'));
+        self::assertStringContainsString("\tvendor/bin/coding-standard-di-check\n", $updated);
+    }
+
+    public function testSkipsWhenBothCheckCommandsAreAlreadyWired(): void
+    {
+        $makefile = $this->directory . '/Makefile';
+        $original = "check:\n\tvendor/bin/coding-standard-verify\n\tvendor/bin/coding-standard-di-check\n";
         file_put_contents($makefile, $original);
 
         $output = $this->runInit();
@@ -68,6 +81,7 @@ final class CodingStandardInitMakefileTest extends TestCase
         $output = $this->runInit();
 
         self::assertStringContainsString('coding-standard-verify', $output);
+        self::assertStringContainsString('coding-standard-di-check', $output);
         self::assertStringContainsString('make check', $output);
     }
 
