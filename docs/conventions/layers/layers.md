@@ -15,6 +15,7 @@ description: Правила зависимостей между слоями а�
 
 - Зависимости направлены **только внутрь**, к центру
 - Внутренние слои не зависят от внешних
+- Имена слоёв (`Domain`, `Application`, `Infrastructure`, `Integration`, `Presentation`) зарезервированы как сегменты пути: слой — это сегмент сразу после имени модуля; вложенных повторов имён слоёв в namespace быть не должно (например, `Domain\Service\Integration\...` запрещён)
 - Внешние слои зависят от внутренних через контракты (`interface`) и согласованные типы ([DTO](../core-patterns/dto.md), [VO](../core-patterns/value-object.md), [Enum](../core-patterns/enum.md)) в рамках разрешённых правил
 - DI-контейнер связывает интерфейсы с реализациями на уровне конфигурации
 
@@ -130,4 +131,5 @@ Presentation зависит только от Application:
 - [ ] Infrastructure реализует контракты Domain.
 - [ ] Integration обращается к Domain (только контракты) и Application.
 - [ ] Presentation обращается только к Application.
+- [ ] Имена слоёв не используются как вложенные сегменты namespace другого слоя.
 - [ ] Namespace следует паттерну `{ProjectName}\{AppGroup}\Module\...`.

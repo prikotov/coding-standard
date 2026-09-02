@@ -39,6 +39,34 @@ return [
         'errors' => [],
         'warnings' => [],
     ],
+    // ReservedLayerSegmentSniff — Integration group inside Domain layer (forbidden)
+    [
+        'file' => __DIR__ . '/Namespaces/ReservedLayerSegmentUnitTestIntegrationInDomain.inc',
+        'errors' => [
+            3 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // ReservedLayerSegmentSniff — Infrastructure group inside Domain layer (forbidden)
+    [
+        'file' => __DIR__ . '/Namespaces/ReservedLayerSegmentUnitTestInfrastructureInDomain.inc',
+        'errors' => [
+            3 => 1,
+        ],
+        'warnings' => [],
+    ],
+    // ReservedLayerSegmentSniff — domain group name inside Domain layer (valid)
+    [
+        'file' => __DIR__ . '/Namespaces/ReservedLayerSegmentUnitTestValidGroup.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // ReservedLayerSegmentSniff — Integration layer itself (valid)
+    [
+        'file' => __DIR__ . '/Namespaces/ReservedLayerSegmentUnitTestValidIntegrationLayer.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
     [
         'file' => __DIR__ . '/Application/CommandQueryStructureUnitTest.inc',
         'errors' => [

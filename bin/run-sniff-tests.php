@@ -37,6 +37,7 @@ $suites = [
             'PrikotovCodingStandard.Structure.ServiceStructure',
             'PrikotovCodingStandard.Structure.ValueObjectStructure',
             'PrikotovCodingStandard.Namespaces.PresentationLayerNamespace',
+            'PrikotovCodingStandard.Namespaces.ReservedLayerSegment',
         ],
         'fixtures' => require $packageRoot . '/tests/fixtures.php',
     ],
