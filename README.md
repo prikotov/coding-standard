@@ -72,6 +72,7 @@
 |---|---|
 | `ServiceContractDependencyRule` | Infrastructure зависит только от Domain-интерфейсов, не от конкретных классов |
 | `CrossModuleDomainRule` | Домен одного модуля не зависит от домена другого — только через Application DTO |
+| `ReservedLayerSegmentRule` | Имена слоёв зарезервированы как сегменты namespace: вложенный слой внутри другого слоя (например, `Domain\Service\Integration\...`) — ошибка на само существование класса, независимо от зависимостей |
 
 Готовый `depfile.yaml` с правилами для DDD-слоёв и модульных границ: [`config/deptrac/`](config/deptrac/). Копируется в проект через `coding-standard-init` или вручную.
 
