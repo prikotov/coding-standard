@@ -27,16 +27,11 @@ src/Module/{ModuleName}/Infrastructure/
 │   └── {EntityName}CriteriaMapper.php
 └── Component/
     └── {ComponentName}/
-        ├── {BaseName}ComponentInterface.php
-        ├── {BaseName}Component.php
+        ├── {ComponentName}ComponentInterface.php
+        ├── {ComponentName}Component.php
         ├── Dto/
         └── Mapper/
 ```
-
-- `{ComponentName}` — пространство имён компонента, например `TBusiness`; `{BaseName}` — имя контракта, например `TBusinessPayments`.
-- Интерфейс компонента обязателен; дополнительные реализации именуются `{BaseName}{Postfix}Component`.
-- DTO и мапперы при необходимости размещаются внутри компонента.
-- Именование и ограничения — в [правилах компонентов](../core-patterns/component.md).
 
 ## Описание
 
