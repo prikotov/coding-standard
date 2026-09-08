@@ -26,8 +26,11 @@ src/Module/{ModuleName}/Infrastructure/
 ├── CriteriaMapper/
 │   └── {EntityName}CriteriaMapper.php
 └── Component/
-    └── {ServiceName}/
-        └── {ServiceName}Component.php
+    └── {ComponentName}/
+        ├── {ComponentName}ComponentInterface.php
+        ├── {ComponentName}Component.php
+        ├── Dto/
+        └── Mapper/
 ```
 
 ## Описание
@@ -38,6 +41,7 @@ Infrastructure слой содержит технические детали р�
 
 - [CriteriaMapper](infrastructure/criteria-mapper.md) — паттерн маппинга критериев в `QueryBuilder`
 - [Репозитории](infrastructure/repository.md) — реализация репозиториев
+- [Компоненты](../core-patterns/component.md) — переносимые технические адаптеры к внешним API/SDK и ресурсам
 - Кэш — реализация кэширования
 - Внешние API — интеграция с внешними сервисами
 - Файловое хранилище — работа с файлами
