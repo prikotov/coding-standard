@@ -85,20 +85,61 @@ final class CodingStandardInitMakefileTest extends TestCase
         self::assertStringContainsString('make check', $output);
     }
 
-    private function runInit(): string
+    public function testCopiesConcurrencyConventionAndRefreshesItsLinks(): void
+    {
+        $relativePaths = [
+            'architecture/concurrency-control.md',
+            'architecture/index.md',
+            'architecture/events/transactions.md',
+            'index.md',
+        ];
+        $sourceDocs = dirname(__DIR__, 2) . '/docs/conventions';
+        $targetDocs = $this->directory . '/docs/conventions';
+
+        $this->runInit();
+
+        foreach ($relativePaths as $path) {
+            self::assertFileEquals($sourceDocs . '/' . $path, $targetDocs . '/' . $path);
+        }
+        self::assertStringContainsString(
+            '(concurrency-control.md)',
+            (string) file_get_contents($targetDocs . '/architecture/index.md'),
+        );
+        self::assertStringContainsString(
+            '(architecture/concurrency-control.md)',
+            (string) file_get_contents($targetDocs . '/index.md'),
+        );
+        self::assertStringContainsString(
+            '(../concurrency-control.md)',
+            (string) file_get_contents($targetDocs . '/architecture/events/transactions.md'),
+        );
+
+        unlink($targetDocs . '/architecture/concurrency-control.md');
+        file_put_contents($targetDocs . '/architecture/index.md', '# Old index');
+        file_put_contents($targetDocs . '/index.md', '# Old index');
+        $this->runInit(['--force']);
+        $this->runInit(['--force']);
+
+        foreach ($relativePaths as $path) {
+            self::assertFileEquals($sourceDocs . '/' . $path, $targetDocs . '/' . $path);
+        }
+    }
+
+    /** @param list<string> $arguments */
+    private function runInit(array $arguments = []): string
     {
         $command = [
             PHP_BINARY,
             dirname(__DIR__, 2) . '/bin/coding-standard-init',
-            $this->directory,
             '--no-deptrac',
             '--no-exceptions',
+            ...$arguments,
         ];
         $process = proc_open($command, [
             0 => ['file', '/dev/null', 'r'],
             1 => ['pipe', 'w'],
             2 => ['pipe', 'w'],
-        ], $pipes);
+        ], $pipes, $this->directory);
         self::assertIsResource($process);
         $output = (string) stream_get_contents($pipes[1]);
         $error = (string) stream_get_contents($pipes[2]);

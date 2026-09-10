@@ -53,6 +53,7 @@ description: Индекс всех конвенций проекта
     - [Событие (Event)](layers/application/event.md)
 - [Архитектура](architecture/index.md)
     - [События и транзакции БД](architecture/events/transactions.md)
+    - [Управление конкурентностью](architecture/concurrency-control.md)
 - [Слой Домена (Domain)](layers/domain.md)
     - [Сущность (Entity)](layers/domain/entity.md)
     - [Критерий (Criteria)](layers/domain/criteria.md)
