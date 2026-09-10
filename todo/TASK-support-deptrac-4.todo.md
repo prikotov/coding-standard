@@ -15,8 +15,8 @@ epic:
 author: Бэкендер Левша (pi)
 assignee: Бэкендер Левша (pi)
 branch: task/support-deptrac-4
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/125
+status: review
 ---
 
 # TASK-support-deptrac-4: Поддержать Deptrac 4
