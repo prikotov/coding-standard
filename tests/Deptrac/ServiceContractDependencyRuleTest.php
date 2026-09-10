@@ -6,19 +6,20 @@ namespace PrikotovCodingStandard\Tests\Deptrac;
 
 use PHPUnit\Framework\TestCase;
 use PrikotovCodingStandard\Deptrac\ServiceContractDependencyRule;
-use Qossmic\Deptrac\Contract\Analyser\AnalysisResult;
-use Qossmic\Deptrac\Contract\Analyser\EventHelper;
-use Qossmic\Deptrac\Contract\Analyser\ProcessEvent;
-use Qossmic\Deptrac\Contract\Ast\DependencyContext;
-use Qossmic\Deptrac\Contract\Ast\DependencyType;
-use Qossmic\Deptrac\Contract\Ast\FileOccurrence;
-use Qossmic\Deptrac\Contract\Layer\LayerProvider;
-use Qossmic\Deptrac\Contract\Result\RuleInterface;
-use Qossmic\Deptrac\Contract\Result\SkippedViolation;
-use Qossmic\Deptrac\Contract\Result\Violation;
-use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeReference;
-use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeToken;
-use Qossmic\Deptrac\Core\Dependency\Dependency;
+use Deptrac\Deptrac\Contract\Analyser\AnalysisResult;
+use Deptrac\Deptrac\Contract\Analyser\EventHelper;
+use Deptrac\Deptrac\Contract\Analyser\ProcessEvent;
+use Deptrac\Deptrac\Contract\Ast\AstMap\DependencyContext;
+use Deptrac\Deptrac\Contract\Ast\AstMap\DependencyType;
+use Deptrac\Deptrac\Contract\Ast\AstMap\FileOccurrence;
+use Deptrac\Deptrac\Core\Layer\LayerProvider;
+use Deptrac\Deptrac\Contract\OutputFormatter\BaselineMapperInterface;
+use Deptrac\Deptrac\Contract\Result\RuleInterface;
+use Deptrac\Deptrac\Contract\Result\SkippedViolation;
+use Deptrac\Deptrac\Contract\Result\Violation;
+use Deptrac\Deptrac\Contract\Ast\AstMap\ClassLikeReference;
+use Deptrac\Deptrac\Contract\Ast\AstMap\ClassLikeToken;
+use Deptrac\Deptrac\DefaultBehavior\Dependency\Helpers\Dependency;
 
 /**
  * @see ServiceContractDependencyRule
@@ -618,11 +619,11 @@ final class ServiceContractDependencyRuleTest extends TestCase
             'App\Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
             DependencyType::PARAMETER,
         );
-        $rule = new ServiceContractDependencyRule(new EventHelper([
+        $rule = new ServiceContractDependencyRule($this->createEventHelper([
             'App\Common\Module\Billing\Integration\Service\User\FindUserService' => [
                 'App\Common\Module\User\Domain\Service\Account\FindAccountServiceInterface',
             ],
-        ], new LayerProvider([])));
+        ]));
 
         $rule->onProcessEvent($event);
 
@@ -633,7 +634,16 @@ final class ServiceContractDependencyRuleTest extends TestCase
     /** @param array<string, list<string>> $skippedViolations */
     private function createRule(array $skippedViolations = []): ServiceContractDependencyRule
     {
-        return new ServiceContractDependencyRule(new EventHelper($skippedViolations, new LayerProvider([])));
+        return new ServiceContractDependencyRule($this->createEventHelper($skippedViolations));
+    }
+
+    /** @param array<string, list<string>> $skippedViolations */
+    private function createEventHelper(array $skippedViolations): EventHelper
+    {
+        $baselineMapper = $this->createStub(BaselineMapperInterface::class);
+        $baselineMapper->method('loadViolations')->willReturn($skippedViolations);
+
+        return new EventHelper(new LayerProvider([]), $baselineMapper);
     }
 
     private function createProcessEvent(

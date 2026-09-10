@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace PrikotovCodingStandard\Deptrac;
 
-use Qossmic\Deptrac\Contract\Analyser\EventHelper;
-use Qossmic\Deptrac\Contract\Analyser\ProcessEvent;
-use Qossmic\Deptrac\Contract\Analyser\ViolationCreatingInterface;
-use Qossmic\Deptrac\Contract\Ast\DependencyType;
+use Deptrac\Deptrac\Contract\Analyser\EventHelper;
+use Deptrac\Deptrac\Contract\Analyser\ProcessEvent;
+use Deptrac\Deptrac\Contract\Analyser\ViolationCreatingInterface;
+use Deptrac\Deptrac\Contract\Ast\AstMap\DependencyType;
 
 /**
  * Custom Deptrac rule that forbids cross-module access entirely,

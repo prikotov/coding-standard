@@ -6,12 +6,12 @@ namespace PrikotovCodingStandard\Tests\Deptrac;
 
 use PHPUnit\Framework\TestCase;
 use PrikotovCodingStandard\Deptrac\ReservedLayerSegmentRule;
-use Qossmic\Deptrac\Contract\Analyser\AnalysisResult;
-use Qossmic\Deptrac\Contract\Analyser\PostProcessEvent;
-use Qossmic\Deptrac\Core\Ast\AstMap\AstMap;
-use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeReference;
-use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeToken;
-use Qossmic\Deptrac\Core\Ast\AstMapExtractor;
+use Deptrac\Deptrac\Contract\Analyser\AnalysisResult;
+use Deptrac\Deptrac\Contract\Analyser\PostProcessEvent;
+use Deptrac\Deptrac\Core\Ast\AstMap;
+use Deptrac\Deptrac\Contract\Ast\AstMap\ClassLikeReference;
+use Deptrac\Deptrac\Contract\Ast\AstMap\ClassLikeToken;
+use Deptrac\Deptrac\Core\Ast\AstMapExtractor;
 
 /**
  * @see ReservedLayerSegmentRule
