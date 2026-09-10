@@ -31,7 +31,7 @@
     ],
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
-        "deptrac/deptrac": "^2.0",
+        "deptrac/deptrac": "^4.7",
         "php-code-archeology/php-code-archeology": "^2.11",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^10.5",

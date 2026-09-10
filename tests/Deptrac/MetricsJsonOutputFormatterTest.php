@@ -6,18 +6,18 @@ namespace PrikotovCodingStandard\Tests\Deptrac;
 
 use PHPUnit\Framework\TestCase;
 use PrikotovCodingStandard\Deptrac\MetricsJsonOutputFormatter;
-use Qossmic\Deptrac\Contract\Analyser\AnalysisResult;
-use Qossmic\Deptrac\Contract\Ast\DependencyContext;
-use Qossmic\Deptrac\Contract\Ast\DependencyType;
-use Qossmic\Deptrac\Contract\Ast\FileOccurrence;
-use Qossmic\Deptrac\Contract\OutputFormatter\OutputFormatterInput;
-use Qossmic\Deptrac\Contract\OutputFormatter\OutputFormatterInterface;
-use Qossmic\Deptrac\Contract\OutputFormatter\OutputInterface;
-use Qossmic\Deptrac\Contract\OutputFormatter\OutputStyleInterface;
-use Qossmic\Deptrac\Contract\Result\Allowed;
-use Qossmic\Deptrac\Contract\Result\OutputResult;
-use Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeToken;
-use Qossmic\Deptrac\Core\Dependency\Dependency;
+use Deptrac\Deptrac\Contract\Analyser\AnalysisResult;
+use Deptrac\Deptrac\Contract\Ast\AstMap\DependencyContext;
+use Deptrac\Deptrac\Contract\Ast\AstMap\DependencyType;
+use Deptrac\Deptrac\Contract\Ast\AstMap\FileOccurrence;
+use Deptrac\Deptrac\Contract\OutputFormatter\OutputFormatterInput;
+use Deptrac\Deptrac\Contract\OutputFormatter\OutputFormatterInterface;
+use Deptrac\Deptrac\Contract\OutputFormatter\OutputInterface;
+use Deptrac\Deptrac\Contract\OutputFormatter\OutputStyleInterface;
+use Deptrac\Deptrac\Contract\Result\Allowed;
+use Deptrac\Deptrac\Contract\Result\OutputResult;
+use Deptrac\Deptrac\Contract\Ast\AstMap\ClassLikeToken;
+use Deptrac\Deptrac\DefaultBehavior\Dependency\Helpers\Dependency;
 use RuntimeException;
 
 final class MetricsJsonOutputFormatterTest extends TestCase

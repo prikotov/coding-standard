@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace PrikotovCodingStandard\Deptrac;
 
-use Qossmic\Deptrac\Contract\Analyser\PostProcessEvent;
-use Qossmic\Deptrac\Contract\Analyser\ViolationCreatingInterface;
-use Qossmic\Deptrac\Contract\Result\Error;
-use Qossmic\Deptrac\Core\Ast\AstMapExtractor;
+use Deptrac\Deptrac\Contract\Analyser\PostProcessEvent;
+use Deptrac\Deptrac\Contract\Analyser\ViolationCreatingInterface;
+use Deptrac\Deptrac\Contract\Result\Error;
+use Deptrac\Deptrac\Core\Ast\AstMapExtractor;
 
 /**
  * Custom Deptrac rule that forbids reserved layer names as nested namespace segments.
