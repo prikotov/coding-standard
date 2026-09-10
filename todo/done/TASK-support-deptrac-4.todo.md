@@ -3,7 +3,7 @@ type: refactor
 created: 2026-09-10 03:49:39 (1789012179)
 due: 
 started: 2026-09-10 03:49:39 (1789012179)
-completed: 
+completed: 2026-09-10 03:54:01 (1789012441)
 cancelled: 
 value: V2
 complexity: C2
@@ -16,7 +16,7 @@ author: Бэкендер Левша (pi)
 assignee: Бэкендер Левша (pi)
 branch: task/support-deptrac-4
 pr: https://github.com/prikotov/coding-standard/pull/125
-status: review
+status: done
 ---
 
 # TASK-support-deptrac-4: Поддержать Deptrac 4
