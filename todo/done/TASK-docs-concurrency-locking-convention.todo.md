@@ -4,7 +4,7 @@ created: 2026-09-09 15:25:30 (1788967530)
 updated: 2026-09-10
 due:
 started: 2026-09-10 02:31:02 (1789007462)
-completed:
+completed: 2026-09-10 03:18:49 (1789010329)
 cancelled:
 value: V2
 complexity: C2
@@ -17,7 +17,7 @@ author: Аналитик (pi)
 assignee: Разработчик (pi)
 branch: task/docs-concurrency-locking-convention
 pr: https://github.com/prikotov/coding-standard/pull/124
-status: review
+status: done
 ---
 
 # TASK-docs-concurrency-locking-convention: Добавить общую конвенцию управления конкурентностью и блокировками
@@ -46,7 +46,7 @@ status: review
 ## 2. Контекст и Границы (Context and Scope)
 
 - **Где делаем:** новый документ `docs/conventions/architecture/concurrency-control.md`, индексы `docs/conventions/architecture/index.md` и `docs/conventions/index.md`; при необходимости — перекрёстная ссылка из `docs/conventions/architecture/events/transactions.md`.
-- **Текущее поведение:** [конвенция событий и транзакций](../docs/conventions/architecture/events/transactions.md) определяет порядок `flush()` и `dispatch()`, но не описывает выбор lock/CAS, поведение после ожидания блокировки и конкурентные проверки.
+- **Текущее поведение:** [конвенция событий и транзакций](../../docs/conventions/architecture/events/transactions.md) определяет порядок `flush()` и `dispatch()`, но не описывает выбор lock/CAS, поведение после ожидания блокировки и конкурентные проверки.
 - **Границы (Out of Scope):** реализация универсального lock-компонента, PHPCS sniff (снифф), изменение прикладного кода проектов-потребителей, выбор конкретного production backend (хранилища production) для Symfony Lock, миграции БД и изменение публичных контрактов пакета.
 
 ## 3. Требования, MoSCoW (Requirements)
@@ -82,7 +82,7 @@ status: review
 
 ## 4. План реализации (Implementation Plan)
 
-1. [x] Сопоставить новую конвенцию с текущими правилами событий, транзакций и [обработчиков команд](../docs/conventions/layers/application/command-handler.md), исключив противоречия.
+1. [x] Сопоставить новую конвенцию с текущими правилами событий, транзакций и [обработчиков команд](../../docs/conventions/layers/application/command-handler.md), исключив противоречия.
 2. [x] Создать `docs/conventions/architecture/concurrency-control.md` с матрицей выбора, правилами, реальным PHP-примером и checklist.
 3. [x] Обновить архитектурный и корневой индексы, добавить перекрёстную ссылку из документа о транзакциях.
 4. [x] Проверить копирование документа через `coding-standard-init` в disposable fixture (одноразовую фикстуру) или существующий автоматический сценарий.
@@ -119,8 +119,8 @@ php vendor/bin/todo-md validate todo/TASK-docs-concurrency-locking-convention.to
 - [Symfony Lock](https://symfony.com/doc/current/lock.html)
 - [Doctrine ORM: Transactions and Concurrency](https://www.doctrine-project.org/projects/doctrine-orm/en/current/reference/transactions-and-concurrency.html)
 - [PostgreSQL: Explicit Locking](https://www.postgresql.org/docs/current/explicit-locking.html)
-- [События и транзакции БД](../docs/conventions/architecture/events/transactions.md)
-- [Обработчик команд](../docs/conventions/layers/application/command-handler.md)
+- [События и транзакции БД](../../docs/conventions/architecture/events/transactions.md)
+- [Обработчик команд](../../docs/conventions/layers/application/command-handler.md)
 
 ## 9. Комментарии (Comments)
 
@@ -138,7 +138,7 @@ php vendor/bin/todo-md validate todo/TASK-docs-concurrency-locking-convention.to
 
 ### Результат и проверки
 
-- Добавлена [конвенция управления конкурентностью](../docs/conventions/architecture/concurrency-control.md), обновлены оба индекса и ссылка из конвенции транзакций.
+- Добавлена [конвенция управления конкурентностью](../../docs/conventions/architecture/concurrency-control.md), обновлены оба индекса и ссылка из конвенции транзакций.
 - Добавлен автоматический сценарий проекта-потребителя в `tests/Init/CodingStandardInitMakefileTest.php`, публичный init запускается из его корня. Тесты Init: 6 тестов, 55 проверок.
 - `composer check` проходит: PHPUnit, сниффы, документация, внутренние ссылки, язык, задачи, PHPStan и PHPCS.
 - PHP-пример извлечён из Markdown: `php -l` и PHPCS PSR-12 проходят. Дополнительно выполнены проверки с реальными Symfony Lock 8.0.14 и DBAL 4.4.3: успех, старая версия, отсутствующая строка, отказ захвата, запрет внешней транзакции, освобождение после SQL-ошибки.
