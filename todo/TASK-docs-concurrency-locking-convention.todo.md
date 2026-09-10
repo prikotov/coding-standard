@@ -16,8 +16,8 @@ epic:
 author: Аналитик (pi)
 assignee: Разработчик (pi)
 branch: task/docs-concurrency-locking-convention
-pr:
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/124
+status: review
 ---
 
 # TASK-docs-concurrency-locking-convention: Добавить общую конвенцию управления конкурентностью и блокировками
