@@ -15,8 +15,8 @@ epic:
 author: Бэкендер Тони (pi)
 assignee: Бэкендер Тони (pi)
 branch: task/md-links-html-anchors
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/126
+status: review
 ---
 
 # TASK-fix-md-links-html-anchors: validate-md-links — распознавать явные HTML-якоря
