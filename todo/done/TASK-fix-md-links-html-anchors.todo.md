@@ -3,7 +3,7 @@ type: fix
 created: 2026-09-21 23:25:00 (1790007900)
 due: 
 started: 2026-09-21 23:25:30 (1790007930)
-completed: 
+completed: 2026-09-21 16:28:27 (1790008107)
 cancelled: 
 value: V2
 complexity: C1
@@ -16,7 +16,7 @@ author: Бэкендер Тони (pi)
 assignee: Бэкендер Тони (pi)
 branch: task/md-links-html-anchors
 pr: https://github.com/prikotov/coding-standard/pull/126
-status: review
+status: done
 ---
 
 # TASK-fix-md-links-html-anchors: validate-md-links — распознавать явные HTML-якоря
@@ -89,3 +89,4 @@ php bin/validate-md-links <git-workflow>/docs/git-workflow/
 | 2026-09-21 23:25:00 (1790007900) | Бэкендер Тони (pi) | Создание задачи |
 | 2026-09-21 23:26:00 (1790007960) | Бэкендер Тони (pi) | Старт задачи, заполнение постановки |
 | 2026-09-21 23:30:00 (1790008200) | Бэкендер Тони (pi) | Реализация, фикстуры, тесты, документация; проверки зелёные |
+| 2026-09-21 23:40:00 (1790008800) | Бэкендер Тони (pi) | PR #126 создан, CI зелёный, задача закрыта |
