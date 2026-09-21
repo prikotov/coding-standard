@@ -9,6 +9,8 @@ declare(strict_types=1);
  * Checks that internal links (relative paths and anchors) in Markdown files
  * point to existing files and valid anchors. External URLs, mailto: and
  * images are skipped. Links inside fenced code blocks are ignored.
+ * Valid anchor targets are ATX headings (# ...) and explicit HTML anchors
+ * (<a id="..."> / <a name="...">), both GitHub-compatible.
  *
  * Usage:
  *   php bin/validate-md-links.php [options]
@@ -266,6 +268,21 @@ function generateSlug(string $heading): string
 }
 
 /**
+ * Extract explicit HTML anchor ids from a line: <a id="..."> or <a name="...">.
+ * GitHub honours both forms as link targets, so the validator must too.
+ *
+ * @return list<string>
+ */
+function extractHtmlAnchors(string $line): array
+{
+    if (!preg_match_all('/<a\s[^>]*?\b(?:id|name)\s*=\s*(["\'])([^"\'>]+)\1/i', $line, $m)) {
+        return [];
+    }
+
+    return array_values(array_filter($m[2]));
+}
+
+/**
  * Build an anchor index from file content.
  * Returns map: [slug => true] (all anchors including deduplicated ones).
  *
@@ -281,6 +298,11 @@ function buildAnchorIndex(string $content): array
     $slugCounts = [];
 
     foreach (explode("\n", $content) as $line) {
+        // Explicit HTML anchors: <a id="..."> / <a name="...">, used as-is
+        foreach (extractHtmlAnchors($line) as $id) {
+            $anchors[$id] = true;
+        }
+
         // Match ATX headings: # ... ######
         if (!preg_match('/^#{1,6}\s+(.+)$/', $line, $m)) {
             continue;

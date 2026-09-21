@@ -118,9 +118,23 @@ final class MdLinksValidatorTest extends TestCase
         $this->assertStringNotContainsString('second-id', self::$fixtureOutput);
     }
 
+    public function testRecognizesExplicitHtmlAnchors(): void
+    {
+        // Explicit <a id="..."> / <a name="..."> anchors are GitHub-valid targets
+        $this->assertStringNotContainsString('#explicit-term', self::$fixtureOutput);
+        $this->assertStringNotContainsString('#shared-term', self::$fixtureOutput);
+        $this->assertStringNotContainsString('#legacy-anchor', self::$fixtureOutput);
+    }
+
+    public function testDetectsBrokenExplicitAnchor(): void
+    {
+        $this->assertStringContainsString('root.md', self::$fixtureOutput);
+        $this->assertStringContainsString('anchor not found: #no-such-explicit', self::$fixtureOutput);
+    }
+
     public function testReportsCorrectErrorCount(): void
     {
-        $this->assertStringContainsString('Found 5 broken link(s)', self::$fixtureOutput);
+        $this->assertStringContainsString('Found 6 broken link(s)', self::$fixtureOutput);
     }
 
     public function testNoFailOptionExitsZero(): void

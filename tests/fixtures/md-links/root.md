@@ -42,3 +42,17 @@ More content.
 A link to [duplicate heading](#duplicate-heading-1).
 
 A link to [russian anchor](subdir/target.md#русский-заголовок).
+
+## Explicit HTML anchors
+
+<a id="explicit-term"></a>
+**Explicit term** — definition with an explicit anchor.
+
+A [local explicit anchor](#explicit-term) in this file.
+
+A [cross-file explicit anchor](subdir/target.md#shared-term).
+
+<a name="legacy-anchor"></a>
+A [legacy name anchor](#legacy-anchor).
+
+A [broken explicit anchor](#no-such-explicit).
