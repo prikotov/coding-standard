@@ -4,7 +4,7 @@ created: 2026-09-21 23:25:00 (1790007900)
 due: 
 started: 2026-09-21 23:25:30 (1790007930)
 completed: 2026-09-21 16:28:27 (1790008107)
-cancelled: 
+cancelled: 2026-09-22 00:38:39 (1790037519)
 value: V2
 complexity: C1
 priority: P2
@@ -16,7 +16,7 @@ author: Бэкендер Тони (pi)
 assignee: Бэкендер Тони (pi)
 branch: task/md-links-html-anchors
 pr: https://github.com/prikotov/coding-standard/pull/126
-status: done
+status: cancelled
 ---
 
 # TASK-fix-md-links-html-anchors: validate-md-links — распознавать явные HTML-якоря
@@ -81,6 +81,7 @@ php bin/validate-md-links <git-workflow>/docs/git-workflow/
 - Документация `prikotov/git-workflow` (`docs/git-workflow/glossary.md`) — исходный кейс с `<a id>`.
 
 ## 9. Комментарии (Comments)
+- Отклонено владельцем пакета: принята политика чистого Markdown (якоря только через заголовки ATX, сырой HTML не используется). PR #126 закрыт; проблема решается в prikotov/git-workflow переделкой глоссария на заголовки.
 - Обнаружено при обновлении `prikotov/git-workflow` до v0.4.0 в проекте `prikotov/task-orchestrator` (PR #404).
 
 ## История изменений (Change History)
@@ -90,3 +91,4 @@ php bin/validate-md-links <git-workflow>/docs/git-workflow/
 | 2026-09-21 23:26:00 (1790007960) | Бэкендер Тони (pi) | Старт задачи, заполнение постановки |
 | 2026-09-21 23:30:00 (1790008200) | Бэкендер Тони (pi) | Реализация, фикстуры, тесты, документация; проверки зелёные |
 | 2026-09-21 23:40:00 (1790008800) | Бэкендер Тони (pi) | PR #126 создан, CI зелёный, задача закрыта |
+| 2026-09-21 23:55:00 (1790009700) | Бэкендер Тони (pi) | Отмена: политика чистого Markdown, PR #126 закрыт |
