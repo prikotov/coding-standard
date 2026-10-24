@@ -189,23 +189,16 @@ final class MetricsSnapshotMetadata
     /** @param list<string> $arguments */
     private function gitValue(array $arguments): ?string
     {
-        $process = proc_open(
+        $result = (new ProcessRunner())->run(
             ['git', '-C', $this->projectRoot, ...$arguments],
-            [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
-            $pipes,
+            ['pipe', 'r'],
         );
-        if (is_resource($process)) {
-            fclose($pipes[0]);
-            $value = trim((string) stream_get_contents($pipes[1]));
-            fclose($pipes[1]);
-            fclose($pipes[2]);
-            $code = proc_close($process);
-            if ($code === 0 && $value !== '') {
-                return $value;
-            }
+        if ($result === null || $result[0] !== 0) {
+            return null;
         }
+        $value = trim($result[1]);
 
-        return null;
+        return $value === '' ? null : $value;
     }
 
     private function remoteIdentifier(string $remote): string

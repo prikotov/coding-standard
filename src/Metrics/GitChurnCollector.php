@@ -55,26 +55,14 @@ final class GitChurnCollector
     /** @param list<string> $arguments */
     private function command(string $projectRoot, array $arguments): ?string
     {
-        $process = proc_open(
+        $result = (new ProcessRunner())->run(
             ['git', '-C', $projectRoot, '-c', 'core.quotepath=false', ...$arguments],
-            [
-                0 => ['file', '/dev/null', 'r'],
-                1 => ['pipe', 'w'],
-                2 => ['pipe', 'w'],
-            ],
-            $pipes,
+            ['file', '/dev/null', 'r'],
         );
-        if (!is_resource($process)) {
-            return null;
-        }
-        $output = stream_get_contents($pipes[1]);
-        stream_get_contents($pipes[2]);
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-        if (proc_close($process) !== 0 || $output === false) {
+        if ($result === null || $result[0] !== 0) {
             return null;
         }
 
-        return $output;
+        return $result[1];
     }
 }
