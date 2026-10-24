@@ -2,7 +2,7 @@
 type: fix
 created: 2026-10-24 06:32:28 (1792823548)
 due: 
-started: 
+started: 2026-10-24 06:40:58 (1792824058)
 completed: 
 cancelled: 
 value: V2
@@ -13,10 +13,10 @@ cost_fact:
 depends_on: 
 epic: 
 author: Лид Арагорн (pi)
-assignee: 
+assignee: Разработчик Фродо (pi)
 branch: task/metrics-review-stderr-deadlock
 pr: 
-status: todo
+status: in_progress
 ---
 
 # TASK-metrics-review-stderr-deadlock: Устранить дедлок чтения пайпов в запуске процессов (MetricsReviewPipeline::process и git-хелперы)
@@ -51,24 +51,24 @@ status: todo
 
 ## 3. Требования, MoSCoW (Requirements)
 ### 🔴 Обязательно (Must Have)
-- [ ] `MetricsReviewPipeline::process()` не блокируется, когда дочерний процесс пишет в stderr больше размера буфера пайпа; контракт возвращаемого значения сохранён.
-- [ ] Тот же helper/подход применён в `GitChurnCollector::command()` и `MetricsSnapshotMetadata::gitValue()`.
-- [ ] Регрессионный тест с дочерним процессом, пишущим >64 КБ в stderr при пустом stdout, зелёный.
-- [ ] `composer check` зелёный.
+- [x] `MetricsReviewPipeline::process()` не блокируется, когда дочерний процесс пишет в stderr больше размера буфера пайпа; контракт возвращаемого значения сохранён.
+- [x] Тот же helper/подход применён в `GitChurnCollector::command()` и `MetricsSnapshotMetadata::gitValue()`.
+- [x] Регрессионный тест с дочерним процессом, пишущим >64 КБ в stderr при пустом stdout, зелёный.
+- [x] `composer check` зелёный.
 ### ⚫ Won't Have (Не будем делать)
 - Не меняем логику пайплайна метрик и формат артефактов; не вводим внешние зависимости (Symfony Process и т.п.).
 
 ## 4. План реализации (Implementation Plan)
-1. [ ] Вынести helper чтения двух пайпов через `stream_select` (накопление stdout/stderr до EOF, затем `proc_close`).
-2. [ ] Применить helper в `MetricsReviewPipeline::process()`, `GitChurnCollector::command()`, `MetricsSnapshotMetadata::gitValue()`.
-3. [ ] Регрессионный тест (proc_open на PHP-скрипт: stdout пуст, stderr >64 КБ; ограничить по времени, чтобы падение было быстрым, а не зависанием).
-4. [ ] `composer check`; при возможности — проверка пайплайна на проекте-потребителе (stocks2) без изменения его отслеживаемых файлов.
+1. [x] Вынести helper чтения двух пайпов через `stream_select` (накопление stdout/stderr до EOF, затем `proc_close`).
+2. [x] Применить helper в `MetricsReviewPipeline::process()`, `GitChurnCollector::command()`, `MetricsSnapshotMetadata::gitValue()`.
+3. [x] Регрессионный тест (proc_open на PHP-скрипт: stdout пуст, stderr >64 КБ; ограничить по времени, чтобы падение было быстрым, а не зависанием).
+4. [x] `composer check`; при возможности — проверка пайплайна на проекте-потребителе (stocks2) без изменения его отслеживаемых файлов.
 5. [ ] Патч-релиз; в stocks2 после релиза: `composer update prikotov/coding-standard` и снятие временной обходки.
 
 ## 5. Критерии приёмки (Definition of Done)
-- [ ] Три места запуска процессов используют параллельное чтение пайпов.
-- [ ] Регрессионный тест добавлен и зелёный.
-- [ ] `composer check` зелёный; CI PR зелёный.
+- [x] Три места запуска процессов используют параллельное чтение пайпов.
+- [x] Регрессионный тест добавлен и зелёный.
+- [x] `composer check` зелёный; CI PR зелёный.
 - [ ] Патч-релиз выпущен, потребитель (stocks2) подтвердил прохождение `coding-standard-metrics-review` без обходок.
 
 ## 6. Самопроверка (Verification)
@@ -97,3 +97,4 @@ vendor/bin/phpunit --filter Deadlock
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-10-24 06:32:28 (1792823548) | Лид Арагорн (pi) | Создание задачи |
+| 2026-10-24 14:10:00 | Разработчик Фродо (pi) | Реализация: новый `ProcessRunner` с параллельным чтением stdout/stderr через `stream_select`, применён в трёх местах; регрессионный тест с форк-дедлайном (на последовательном чтении падает за 60с, на фиксе проходит за 0.2с); `composer check` зелёный (291 тест); проверка на stocks2 (ветка task/unpin-twig-329): пайплайн прошёл до конца за ~1м47с, отслеживаемые файлы не изменены |
