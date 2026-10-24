@@ -161,22 +161,16 @@ final class MetricsReviewPipeline
     /** @param list<string> $command @return array{int, string, string} */
     private function process(array $command, ?string $workingDirectory = null): array
     {
-        $process = proc_open(
+        $result = (new ProcessRunner())->run(
             $command,
-            [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
-            $pipes,
+            ['pipe', 'r'],
             $workingDirectory ?? $this->projectRoot,
         );
-        if (!is_resource($process)) {
+        if ($result === null) {
             throw new RuntimeException('Cannot start process.');
         }
-        fclose($pipes[0]);
-        $stdout = stream_get_contents($pipes[1]);
-        $stderr = stream_get_contents($pipes[2]);
-        fclose($pipes[1]);
-        fclose($pipes[2]);
 
-        return [proc_close($process), $stdout, $stderr];
+        return $result;
     }
 
     /** @return list<string> */
