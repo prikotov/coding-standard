@@ -3,7 +3,7 @@ type: fix
 created: 2026-10-24 06:32:28 (1792823548)
 due: 
 started: 2026-10-24 06:40:58 (1792824058)
-completed: 
+completed: 2026-10-24 08:16:22 (1792829782)
 cancelled: 
 value: V2
 complexity: C2
@@ -16,7 +16,7 @@ author: Лид Арагорн (pi)
 assignee: Разработчик Фродо (pi)
 branch: task/metrics-review-stderr-deadlock
 pr: https://github.com/prikotov/coding-standard/pull/128
-status: review
+status: done
 ---
 
 # TASK-metrics-review-stderr-deadlock: Устранить дедлок чтения пайпов в запуске процессов (MetricsReviewPipeline::process и git-хелперы)
