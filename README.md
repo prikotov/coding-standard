@@ -119,9 +119,12 @@ includes:
 vendor/bin/coding-standard-init --project-name=ProjectName
 vendor/bin/coding-standard-metrics
 vendor/bin/coding-standard-metrics-review --base=origin/master
+vendor/bin/coding-standard-metrics-review --base=origin/master --with-phpantom
 ```
 
 `coding-standard-metrics` создаёт компактный `var/metrics/snapshot.json` и `var/metrics/index.html`. Команда review создаёт временный Git worktree на merge-base, повторно собирает baseline и записывает дельту в `var/metrics-review/comparison.json` и краткое резюме в `summary.md`. Модуль считается частью изменённой области, если diff содержит путь хотя бы одного входящего в него класса; совпавшие пути перечислены в `matched_changed_paths`. Агент читает дельту до создания PR; GitHub Actions может воспроизвести ту же команду, но не является источником результата.
+
+Флаг `--with-phpantom` дополнительно запускает один и тот же `phpantom_lsp analyze --format=json` для baseline и current по production-корням Composer. Требуется `phpantom_lsp` в `PATH` или путь в `PHPANTOM_SERVER_PATH`. Результат дописывается в `summary.md` и сохраняется в `phpantom-comparison.json`; исходные нормализованные отчёты — в `phpantom-baseline.json` и `phpantom-current.json`. Сравнение показывает только новые и устранённые диагностики, поэтому существующие ошибки проекта не блокируют текущее ревью. Номера строк не участвуют в сопоставлении, чтобы сдвиг кода не создавал ложные изменения. PHPantom дополняет PHPStan/Psalm, но не заменяет их и `make check`.
 
 Среди метрик — `project.command_handlers_without_event`: количество CommandHandler'ов без диспетчеризованного события `*Event` (правило — [конвенция Command Handler](docs/conventions/layers/application/command-handler.md)). Рост счётчика в дельте помечается регрессией: автор PR добавляет событие или обосновывает отклонение.
 
