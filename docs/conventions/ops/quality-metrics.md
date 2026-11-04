@@ -63,8 +63,9 @@ description: Единая модель метрик поддерживаемос
 - Перед PR агент запускает `vendor/bin/coding-standard-metrics-review --base=<target>` из корня проекта.
 - Команда создаёт временный Git worktree на merge-base, собирает baseline и current одинаковым пайплайном, затем удаляет временный worktree.
 - Результат — локальная дельта `var/metrics-review/comparison.json`, `summary.md` и `reproduction.json`; она не коммитится и не зависит от GitHub Actions.
-- Флаг `--with-phpantom` дополнительно сравнивает диагностики PHPantom между baseline и current. Обе версии анализируются одним бинарником `phpantom_lsp` из `PATH` или `PHPANTOM_SERVER_PATH`, по production-корням Composer и с текущей конфигурацией `.phpantom.toml`.
-- PHPantom-отчёты сохраняются в `phpantom-baseline.json`, `phpantom-current.json` и `phpantom-comparison.json`; сводка добавляется в `summary.md`. Числовая схема метрик от этого не зависит.
+- Настройка `metrics.phpantom => true` добавляет PHPantom в основной пайплайн `coding-standard-metrics`. Бинарник `phpantom_lsp` берётся из `PATH` или `PHPANTOM_SERVER_PATH`; анализируются production-корни Composer.
+- Нормализованный вход сохраняется в `metrics.work_dir/phpantom.json`, диагностики включаются в общий `snapshot.json`, а версия — в `metadata.source_versions.phpantom`. Отдельный набор каталогов и артефактов ревью не создаётся.
+- Команда ревью автоматически сравнивает диагностики из готовых снимков baseline и current и добавляет дельту в общие `comparison.json` и `summary.md`. Базовый снимок использует текущую конфигурацию `.phpantom.toml` для совместимости результатов.
 - Диагностики сопоставляются по относительному пути, severity, идентификатору и тексту без номера строки. Повторяющиеся диагностики сравниваются по количеству.
 - Новая диагностика PHPantom требует разбора при ревью, включая ошибку в неизменённом вызывающем файле. Существующая диагностика из baseline не блокирует PR; ложное срабатывание документируется, а не скрывается ослаблением проверки.
 - PHPantom не заменяет PHPStan, Psalm, тесты и обязательный `make check` проекта.

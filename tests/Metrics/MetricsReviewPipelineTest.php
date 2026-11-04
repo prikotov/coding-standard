@@ -40,7 +40,7 @@ $handlerSource = (string) @file_get_contents($project . '/src/Handler.php');
 $handlerMissing = $handlerSource !== '' && !str_contains($handlerSource, 'dispatch') ? 1 : 0;
 $snapshot = [
     'schema_version' => '1.0',
-    'metadata' => ['project' => 'example/consumer', 'metric_definitions_version' => '1.0', 'configuration_hash' => 'sha256:configuration', 'input_hash' => hash('sha256', $source . $handlerSource), 'source_versions' => ['analyzer' => 'metrics-collector/1.0']],
+    'metadata' => ['project' => 'example/consumer', 'metric_definitions_version' => '1.0', 'configuration_hash' => 'sha256:configuration', 'input_hash' => hash('sha256', $source . $handlerSource), 'source_versions' => ['analyzer' => 'metrics-collector/1.0', 'phpantom' => '0.11.1']],
     'objects' => [
         'project' => ['example/consumer' => ['id' => 'example/consumer', 'source_path' => '.', 'metrics' => ['project' => ['loc' => $loc, 'command_handlers' => 1, 'command_handlers_without_event' => $handlerMissing]], 'attributes' => []]],
         'module' => [
@@ -54,29 +54,18 @@ $snapshot = [
         'method' => ['App\\Foo::run' => ['id' => 'App\\Foo::run', 'source_path' => 'src/Foo.php', 'metrics' => ['loc' => 5, 'cc' => $cc], 'attributes' => []]],
     ],
 ];
+$config = require $project . '/.coding-standard.php';
+if (($config['metrics']['phpantom'] ?? false) === true) {
+    $diagnostic = str_contains($source, 'run')
+        ? ['path' => 'src/Foo.php', 'line' => 16, 'severity' => 'error', 'identifier' => 'type_mismatch_return', 'message' => 'Wrong return.']
+        : ['path' => 'src/Foo.php', 'line' => 2, 'severity' => 'warning', 'identifier' => 'deprecated_usage', 'message' => 'Old warning.'];
+    $snapshot['phpantom'] = ['schema_version' => '1.0', 'tool_version' => '0.11.1', 'diagnostics' => [$diagnostic]];
+} else {
+    unset($snapshot['metadata']['source_versions']['phpantom']);
+}
 @mkdir($project . '/var/metrics', 0777, true);
 file_put_contents($project . '/var/metrics/snapshot.json', json_encode($snapshot));
 PHP);
-        file_put_contents($this->package . '/bin/phpantom-fake', <<<'PHP'
-#!/usr/bin/env php
-<?php
-if (($argv[1] ?? '') === '--version') {
-    echo "phpantom_lsp 0.11.1\n";
-    exit(0);
-}
-$source = (string) file_get_contents(getcwd() . '/src/Foo.php');
-$current = str_contains($source, 'run');
-$diagnostic = $current
-    ? ['message' => 'Wrong return.', 'line' => 16, 'severity' => 'error', 'identifier' => 'type_mismatch_return']
-    : ['message' => 'Old warning.', 'line' => 2, 'severity' => 'warning', 'identifier' => 'deprecated_usage'];
-echo json_encode([
-    'totals' => ['errors' => 0, 'file_errors' => 1],
-    'files' => [getcwd() . '/src/Foo.php' => ['errors' => 1, 'messages' => [$diagnostic]]],
-    'errors' => [],
-]);
-exit($current ? 1 : 0);
-PHP);
-        chmod($this->package . '/bin/phpantom-fake', 0755);
         $this->git('init');
         $this->git('config user.email metrics@example.com');
         $this->git('config user.name Metrics');
@@ -150,32 +139,30 @@ PHP);
         self::assertSame($firstHash, $this->directoryHash($output));
     }
 
-    public function testAddsPhpantomDiagnosticDeltaWhenRequested(): void
+    public function testAddsPhpantomDiagnosticDeltaFromSnapshotsWhenEnabled(): void
     {
+        file_put_contents(
+            $this->project . '/.coding-standard.php',
+            "<?php return ['metrics' => ['work_dir' => 'var/metrics', 'phpantom' => true]];",
+        );
         file_put_contents($this->project . '/src/Foo.php', '<?php final class Foo {}');
         $this->git('add .');
         $this->git('commit -m baseline');
         file_put_contents($this->project . '/src/Foo.php', '<?php final class Foo { public function run() {} }');
         $this->git('add .');
         $this->git('commit -m current');
-        putenv('PHPANTOM_SERVER_PATH=' . $this->package . '/bin/phpantom-fake');
-
-        try {
-            (new MetricsReviewPipeline($this->package, $this->project))
-                ->run('HEAD^', 'HEAD', 'var/metrics-review', true);
-        } finally {
-            putenv('PHPANTOM_SERVER_PATH');
-        }
+        (new MetricsReviewPipeline($this->package, $this->project))
+            ->run('HEAD^', 'HEAD', 'var/metrics-review');
 
         $output = $this->project . '/var/metrics-review';
-        self::assertFileExists($output . '/phpantom-baseline.json');
-        self::assertFileExists($output . '/phpantom-current.json');
-        $comparison = $this->json($output . '/phpantom-comparison.json');
-        self::assertSame('0.11.1', $comparison['tool_version']);
-        self::assertSame('src/Foo.php', $comparison['added'][0]['path']);
-        self::assertTrue($comparison['added'][0]['changed_area']);
-        self::assertSame('Old warning.', $comparison['resolved'][0]['message']);
-        self::assertSame(0, $comparison['unchanged_count']);
+        $comparison = $this->json($output . '/comparison.json');
+        $phpantom = $comparison['phpantom'];
+        self::assertSame('0.11.1', $phpantom['tool_version']);
+        self::assertSame('src/Foo.php', $phpantom['added'][0]['path']);
+        self::assertTrue($phpantom['added'][0]['changed_area']);
+        self::assertSame('Old warning.', $phpantom['resolved'][0]['message']);
+        self::assertSame(0, $phpantom['unchanged_count']);
+        self::assertFileDoesNotExist($output . '/phpantom-comparison.json');
         $summary = (string) file_get_contents($output . '/summary.md');
         self::assertStringContainsString('## PHPantom', $summary);
         self::assertStringContainsString('Wrong return.', $summary);

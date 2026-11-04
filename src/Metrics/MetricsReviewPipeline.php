@@ -14,7 +14,7 @@ final class MetricsReviewPipeline
     ) {
     }
 
-    public function run(string $base, string $head, string $output, bool $withPhpantom = false): void
+    public function run(string $base, string $head, string $output): void
     {
         if (!is_file($this->projectRoot . '/composer.json')) {
             throw new RuntimeException(
@@ -31,36 +31,32 @@ final class MetricsReviewPipeline
         $mergeBase = trim($this->git(['merge-base', $baseCommit, $headCommit]));
         $changedPaths = $this->changedPaths($mergeBase, $output);
         $worktree = $this->projectRoot . '/var/metrics-worktree-' . bin2hex(random_bytes(8));
-        $phpantom = $withPhpantom ? new PhpantomAnalyzer() : null;
-        $phpantom?->version();
 
         try {
             $this->buildSnapshot($this->projectRoot);
             $current = $this->snapshotPath($this->projectRoot);
-            $phpantomCurrent = $phpantom?->analyze($this->projectRoot);
             $this->git(['worktree', 'add', '--detach', $worktree, $mergeBase]);
             $this->copyMetricsConfiguration($worktree);
             $this->copyPhpantomConfiguration($worktree);
             $this->installDependencies($worktree);
             $this->buildSnapshot($worktree);
             $baseline = $this->snapshotPath($worktree);
-            $phpantomBaseline = $phpantom?->analyze($worktree);
+            $reader = new MetricsSnapshotReader();
+            $baselineSnapshot = $reader->read($baseline);
+            $currentSnapshot = $reader->read($current);
             $comparison = (new MetricsComparison())->compare(
-                (new MetricsSnapshotReader())->read($baseline),
-                (new MetricsSnapshotReader())->read($current),
+                $baselineSnapshot,
+                $currentSnapshot,
                 $changedPaths,
             );
-            (new MetricsComparisonWriter())->write($output, $comparison);
-            if ($phpantomCurrent !== null && $phpantomBaseline !== null) {
-                $this->writeJson($output . '/phpantom-baseline.json', $phpantomBaseline);
-                $this->writeJson($output . '/phpantom-current.json', $phpantomCurrent);
-                $phpantomComparison = (new PhpantomComparison())->compare(
-                    $phpantomBaseline,
-                    $phpantomCurrent,
+            if (isset($baselineSnapshot['phpantom'], $currentSnapshot['phpantom'])) {
+                $comparison['phpantom'] = (new PhpantomComparison())->compare(
+                    $baselineSnapshot['phpantom'],
+                    $currentSnapshot['phpantom'],
                     $changedPaths,
                 );
-                (new PhpantomComparisonWriter())->write($output, $phpantomComparison);
             }
+            (new MetricsComparisonWriter())->write($output, $comparison);
             $this->writeJson($output . '/reproduction.json', [
                 'schema_version' => '1.0',
                 'base_ref' => $base,
@@ -78,9 +74,6 @@ final class MetricsReviewPipeline
         }
 
         fwrite(STDOUT, 'Metrics delta: ' . $this->relativePath($output . '/comparison.json') . "\n");
-        if ($withPhpantom) {
-            fwrite(STDOUT, 'PHPantom delta: ' . $this->relativePath($output . '/phpantom-comparison.json') . "\n");
-        }
     }
 
     private function copyMetricsConfiguration(string $worktree): void
