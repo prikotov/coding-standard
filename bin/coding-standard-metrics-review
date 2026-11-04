@@ -16,14 +16,19 @@ try {
     foreach (array_slice($argv, 1) as $argument) {
         if ($argument === '--help') {
             fwrite(STDOUT, <<<'TEXT'
-Usage: coding-standard-metrics-review --base=<ref> [--head=<ref>] [--output=<dir>]
+Usage: coding-standard-metrics-review --base=<ref> [--head=<ref>] [--output=<dir>] [--with-phpantom]
 
-  --base    Target branch or commit used to calculate merge-base (required).
-  --head    Current checked out commit (default: HEAD).
-  --output  Review artifact directory (default: var/metrics-review).
+  --base           Target branch or commit used to calculate merge-base (required).
+  --head           Current checked out commit (default: HEAD).
+  --output         Review artifact directory (default: var/metrics-review).
+  --with-phpantom  Compare PHPantom diagnostics between baseline and current.
 
 TEXT);
             exit(0);
+        }
+        if ($argument === '--with-phpantom') {
+            $options['with-phpantom'] = true;
+            continue;
         }
         if (preg_match('/^--(base|head|output)=(.+)$/', $argument, $match) !== 1) {
             throw new InvalidArgumentException("Unknown or incomplete option: $argument");
@@ -37,6 +42,7 @@ TEXT);
         $options['base'],
         $options['head'] ?? 'HEAD',
         $options['output'] ?? 'var/metrics-review',
+        isset($options['with-phpantom']),
     );
 } catch (Throwable $exception) {
     fwrite(STDERR, "coding-standard-metrics-review: {$exception->getMessage()}\n");

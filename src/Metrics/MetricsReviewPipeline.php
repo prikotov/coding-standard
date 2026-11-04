@@ -14,7 +14,7 @@ final class MetricsReviewPipeline
     ) {
     }
 
-    public function run(string $base, string $head, string $output): void
+    public function run(string $base, string $head, string $output, bool $withPhpantom = false): void
     {
         if (!is_file($this->projectRoot . '/composer.json')) {
             throw new RuntimeException(
@@ -22,6 +22,7 @@ final class MetricsReviewPipeline
             );
         }
         $output = $this->projectPath($output);
+        $this->removePhpantomArtifacts($output);
         $baseCommit = $this->commit($base);
         $headCommit = $this->commit($head);
         if ($headCommit !== $this->commit('HEAD')) {
@@ -30,21 +31,36 @@ final class MetricsReviewPipeline
         $mergeBase = trim($this->git(['merge-base', $baseCommit, $headCommit]));
         $changedPaths = $this->changedPaths($mergeBase, $output);
         $worktree = $this->projectRoot . '/var/metrics-worktree-' . bin2hex(random_bytes(8));
+        $phpantom = $withPhpantom ? new PhpantomAnalyzer() : null;
+        $phpantom?->version();
 
         try {
             $this->buildSnapshot($this->projectRoot);
             $current = $this->snapshotPath($this->projectRoot);
+            $phpantomCurrent = $phpantom?->analyze($this->projectRoot);
             $this->git(['worktree', 'add', '--detach', $worktree, $mergeBase]);
             $this->copyMetricsConfiguration($worktree);
+            $this->copyPhpantomConfiguration($worktree);
             $this->installDependencies($worktree);
             $this->buildSnapshot($worktree);
             $baseline = $this->snapshotPath($worktree);
+            $phpantomBaseline = $phpantom?->analyze($worktree);
             $comparison = (new MetricsComparison())->compare(
                 (new MetricsSnapshotReader())->read($baseline),
                 (new MetricsSnapshotReader())->read($current),
                 $changedPaths,
             );
             (new MetricsComparisonWriter())->write($output, $comparison);
+            if ($phpantomCurrent !== null && $phpantomBaseline !== null) {
+                $this->writeJson($output . '/phpantom-baseline.json', $phpantomBaseline);
+                $this->writeJson($output . '/phpantom-current.json', $phpantomCurrent);
+                $phpantomComparison = (new PhpantomComparison())->compare(
+                    $phpantomBaseline,
+                    $phpantomCurrent,
+                    $changedPaths,
+                );
+                (new PhpantomComparisonWriter())->write($output, $phpantomComparison);
+            }
             $this->writeJson($output . '/reproduction.json', [
                 'schema_version' => '1.0',
                 'base_ref' => $base,
@@ -62,6 +78,9 @@ final class MetricsReviewPipeline
         }
 
         fwrite(STDOUT, 'Metrics delta: ' . $this->relativePath($output . '/comparison.json') . "\n");
+        if ($withPhpantom) {
+            fwrite(STDOUT, 'PHPantom delta: ' . $this->relativePath($output . '/phpantom-comparison.json') . "\n");
+        }
     }
 
     private function copyMetricsConfiguration(string $worktree): void
@@ -70,6 +89,28 @@ final class MetricsReviewPipeline
         $target = $worktree . '/.coding-standard.php';
         if (!copy($source, $target)) {
             throw new RuntimeException('Cannot copy the current metrics configuration to the baseline worktree.');
+        }
+    }
+
+    private function copyPhpantomConfiguration(string $worktree): void
+    {
+        $source = $this->projectRoot . '/.phpantom.toml';
+        $target = $worktree . '/.phpantom.toml';
+        if (is_file($source) && !copy($source, $target)) {
+            throw new RuntimeException('Cannot copy the current PHPantom configuration to the baseline worktree.');
+        }
+        if (!is_file($source) && is_file($target) && !unlink($target)) {
+            throw new RuntimeException('Cannot remove the outdated PHPantom configuration from the baseline worktree.');
+        }
+    }
+
+    private function removePhpantomArtifacts(string $output): void
+    {
+        foreach (['phpantom-baseline.json', 'phpantom-current.json', 'phpantom-comparison.json'] as $file) {
+            $path = $output . '/' . $file;
+            if (is_file($path) && !unlink($path)) {
+                throw new RuntimeException("Cannot replace PHPantom review artifact: $path");
+            }
         }
     }
 

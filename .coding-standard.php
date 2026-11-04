@@ -61,7 +61,7 @@ return [
         // Разрешённые термины (имена собственные и аббревиатуры).
         'allowlist' => [
             // 1. Внешние утилиты (инструменты разработки и анализа).
-            'PHPUnit', 'PHPStan', 'PHPMD', 'Deptrac', 'Composer', 'CodeSniffer',
+            'PHPUnit', 'PHPStan', 'PHPantom', 'PHPMD', 'Deptrac', 'Composer', 'CodeSniffer',
             // 2. Технологии, сервисы, библиотеки.
             'Symfony', 'Doctrine', 'Twig', 'Panther',
             'Git', 'GitHub', 'Docker',
