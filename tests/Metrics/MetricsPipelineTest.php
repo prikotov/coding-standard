@@ -22,6 +22,7 @@ return ['metrics' => [
     'work_dir' => 'var/quality',
     'deptrac_config' => 'config/deptrac.yaml',
     'phpunit_config' => 'phpunit.xml.dist',
+    'phpantom' => true,
 ]];
 PHP);
         $this->write($project . '/config/deptrac.yaml', 'deptrac: {}');
@@ -45,11 +46,19 @@ PHP));
         $this->executable($package . '/bin/metrics-coverage', $this->phpStub(<<<'PHP'
 writeFile($argv[1], '<coverage/>');
 PHP));
+        $this->write($package . '/bin/metrics-phpantom', $this->phpStub(<<<'PHP'
+writeFile(argument('--output='), json_encode([
+    'schema_version' => '1.0',
+    'tool_version' => '0.11.1',
+    'diagnostics' => [],
+]));
+PHP));
         $this->write($package . '/bin/metrics-aggregate.php', $this->phpStub(<<<'PHP'
 writeFile(argument('--output='), json_encode([
     'schema_version' => '1.0',
     'scope' => ['kind' => 'project'],
     'metrics' => ['project' => []],
+    'phpantom' => json_decode(file_get_contents(argument('--phpantom=')), true),
 ]));
 PHP));
         $this->write($package . '/bin/metrics-dashboard.php', $this->phpStub(<<<'PHP'
@@ -62,6 +71,9 @@ PHP));
             self::assertFileExists($project . '/var/quality/snapshot.json');
             self::assertFileExists($project . '/var/quality/index.html');
             self::assertSame('<!doctype html>', file_get_contents($project . '/var/quality/index.html'));
+            self::assertFileExists($project . '/var/quality/phpantom.json');
+            $snapshot = json_decode(file_get_contents($project . '/var/quality/snapshot.json'), true);
+            self::assertSame([], $snapshot['phpantom']['diagnostics']);
         } finally {
             $this->removeDirectory($directory);
         }

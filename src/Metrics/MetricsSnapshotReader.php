@@ -15,7 +15,8 @@ final class MetricsSnapshotReader
      * @return array{
      *     schema_version: string,
      *     metadata: array<string, mixed>,
-     *     objects: array<string, array<string, array<string, mixed>>>
+     *     objects: array<string, array<string, array<string, mixed>>>,
+     *     phpantom?: array<string, mixed>
      * }
      */
     public function read(string $directory): array
@@ -164,11 +165,24 @@ final class MetricsSnapshotReader
             ksort($objects[$kind]);
         }
 
-        return [
+        $result = [
             'schema_version' => '1.0',
             'metadata' => $this->rootMetadata($snapshot, $path),
             'objects' => $objects,
         ];
+        if (array_key_exists('phpantom', $snapshot)) {
+            $phpantom = $snapshot['phpantom'];
+            if (
+                !is_array($phpantom)
+                || !is_string($phpantom['tool_version'] ?? null)
+                || !is_array($phpantom['diagnostics'] ?? null)
+            ) {
+                throw new RuntimeException("Metrics snapshot has invalid PHPantom diagnostics: $path");
+            }
+            $result['phpantom'] = $phpantom;
+        }
+
+        return $result;
     }
 
     /** @return array<string, mixed> */

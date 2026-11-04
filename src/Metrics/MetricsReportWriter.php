@@ -67,11 +67,15 @@ final class MetricsReportWriter
         }
         unset($items);
 
-        $this->writeJson($output, [
+        $snapshot = [
             'schema_version' => '1.0',
             'metadata' => $metadata,
             'objects' => $objects,
-        ]);
+        ];
+        if (is_array($full['phpantom'] ?? null)) {
+            $snapshot['phpantom'] = $full['phpantom'];
+        }
+        $this->writeJson($output, $snapshot);
     }
 
     /** @param array<string, mixed> $full */

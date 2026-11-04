@@ -51,6 +51,9 @@ final class MetricsComparisonWriter
         $lines[] = '';
         $this->changeSection($lines, 'Регрессии в изменённой области', $scopes, 'regressed');
         $this->changeSection($lines, 'Улучшения в изменённой области', $scopes, 'improved');
+        if (is_array($comparison['phpantom'] ?? null)) {
+            $this->phpantomSection($lines, $comparison['phpantom']);
+        }
 
         return implode("\n", $lines) . "\n";
     }
@@ -113,6 +116,58 @@ final class MetricsComparisonWriter
         }
         if (count($changes) > 20) {
             $lines[] = sprintf('- Ещё изменений: %d; полный список — в `comparison.json`.', count($changes) - 20);
+        }
+        $lines[] = '';
+    }
+
+    /** @param list<string> $lines @param array<string, mixed> $comparison */
+    private function phpantomSection(array &$lines, array $comparison): void
+    {
+        $added = is_array($comparison['added'] ?? null) ? $comparison['added'] : [];
+        $resolved = is_array($comparison['resolved'] ?? null) ? $comparison['resolved'] : [];
+        $lines[] = '## PHPantom';
+        $lines[] = '';
+        $lines[] = sprintf(
+            '- Версия: `%s`; новых диагностик: **%d**; устранено: **%d**; без изменений: %d.',
+            (string) ($comparison['tool_version'] ?? ''),
+            count($added),
+            count($resolved),
+            (int) ($comparison['unchanged_count'] ?? 0),
+        );
+        $lines[] = '';
+        $this->phpantomDiagnostics($lines, 'Новые диагностики PHPantom', $added, 50);
+        $this->phpantomDiagnostics($lines, 'Устранённые диагностики PHPantom', $resolved, 20);
+    }
+
+    /** @param list<string> $lines @param array<mixed> $diagnostics */
+    private function phpantomDiagnostics(array &$lines, string $title, array $diagnostics, int $limit): void
+    {
+        $lines[] = "### $title";
+        $lines[] = '';
+        if ($diagnostics === []) {
+            $lines[] = '- Нет.';
+            $lines[] = '';
+
+            return;
+        }
+        foreach (array_slice($diagnostics, 0, $limit) as $diagnostic) {
+            if (!is_array($diagnostic)) {
+                continue;
+            }
+            $lines[] = sprintf(
+                '- `%s` `%s:%d` `%s`: %s',
+                strtoupper((string) ($diagnostic['severity'] ?? '')),
+                $diagnostic['path'] ?? '',
+                (int) ($diagnostic['line'] ?? 0),
+                $diagnostic['identifier'] ?? '',
+                $diagnostic['message'] ?? '',
+            );
+        }
+        if (count($diagnostics) > $limit) {
+            $lines[] = sprintf(
+                '- Ещё диагностик: %d; полный список — в `comparison.json`.',
+                count($diagnostics) - $limit,
+            );
         }
         $lines[] = '';
     }

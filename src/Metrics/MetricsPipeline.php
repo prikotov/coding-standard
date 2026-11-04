@@ -35,6 +35,10 @@ final class MetricsPipeline
             throw new RuntimeException('Project configuration must return an array: .coding-standard.php');
         }
         $metrics = is_array($config['metrics'] ?? null) ? $config['metrics'] : [];
+        $phpantomEnabled = $metrics['phpantom'] ?? false;
+        if (!is_bool($phpantomEnabled)) {
+            throw new RuntimeException('metrics.phpantom must be a boolean.');
+        }
         if (array_key_exists('report_dir', $metrics)) {
             throw new RuntimeException(
                 'metrics.report_dir is no longer supported; rename it to metrics.work_dir. '
@@ -125,7 +129,16 @@ final class MetricsPipeline
                 $phpunitConfig,
                 $phpunitSuite,
             ]);
-            $this->stage('Report aggregation', [
+            $phpantomReport = $workDirectory . '/phpantom.json';
+            if ($phpantomEnabled) {
+                $this->stage('PHPantom diagnostics', [
+                    PHP_BINARY,
+                    $this->packageRoot . '/bin/metrics-phpantom',
+                    '--project-root=' . $this->projectRoot,
+                    '--output=' . $phpantomReport,
+                ]);
+            }
+            $aggregation = [
                 PHP_BINARY,
                 $this->packageRoot . '/bin/metrics-aggregate.php',
                 '--project-root=' . $this->projectRoot,
@@ -139,7 +152,11 @@ final class MetricsPipeline
                 '--tests=' . $workDirectory . '/test-stats.json',
                 '--clover=' . $workDirectory . '/clover.xml',
                 '--output=' . $candidateSnapshot,
-            ]);
+            ];
+            if ($phpantomEnabled) {
+                $aggregation[] = '--phpantom=' . $phpantomReport;
+            }
+            $this->stage('Report aggregation', $aggregation);
 
             $currentHash = is_file($snapshot) ? hash_file('sha256', $snapshot) : null;
             $candidateHash = hash_file('sha256', $candidateSnapshot);

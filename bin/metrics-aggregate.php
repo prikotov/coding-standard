@@ -15,7 +15,7 @@ use PrikotovCodingStandard\Metrics\MetricsSnapshotMetadata;
 
 $options = getopt('', [
     'project-root::', 'config::', 'deptrac-config::', 'phpunit-config::', 'analyzer::', 'deptrac::',
-    'scc::', 'scc-version::', 'tests::', 'clover::', 'output::',
+    'scc::', 'scc-version::', 'tests::', 'clover::', 'phpantom::', 'output::',
 ]);
 $projectRoot = $options['project-root'] ?? getcwd();
 $configPath = $options['config'] ?? '.coding-standard.php';
@@ -28,6 +28,7 @@ $scc = $options['scc'] ?? 'var/metrics/scc.json';
 $sccVersion = $options['scc-version'] ?? dirname($scc) . '/scc-version.txt';
 $tests = $options['tests'] ?? 'var/metrics/test-stats.json';
 $clover = $options['clover'] ?? 'var/metrics/clover.xml';
+$phpantom = $options['phpantom'] ?? null;
 
 try {
     $sources = [
@@ -65,7 +66,22 @@ try {
     if (!is_string($projectRoot) || !is_string($deptracConfig) || !is_string($phpunitConfig)) {
         throw new RuntimeException('Fingerprint paths must be strings.');
     }
-    $full = (new MetricsSnapshotMetadata($projectRoot))->addFingerprints(
+    if ($phpantom !== null) {
+    if (!is_string($phpantom) || !is_file($phpantom) || filesize($phpantom) === 0) {
+        throw new RuntimeException('PHPantom report is missing or empty.');
+    }
+    $phpantomData = json_decode((string) file_get_contents($phpantom), true, flags: JSON_THROW_ON_ERROR);
+    if (
+        !is_array($phpantomData)
+        || !is_string($phpantomData['tool_version'] ?? null)
+        || !is_array($phpantomData['diagnostics'] ?? null)
+    ) {
+        throw new RuntimeException('PHPantom report has an invalid format.');
+    }
+    $full['phpantom'] = $phpantomData;
+    $full['metadata']['source_versions']['phpantom'] = $phpantomData['tool_version'];
+}
+$full = (new MetricsSnapshotMetadata($projectRoot))->addFingerprints(
         $full,
         $analyzerData,
         $sccData,

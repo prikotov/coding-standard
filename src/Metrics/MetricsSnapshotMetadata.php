@@ -39,6 +39,7 @@ final class MetricsSnapshotMetadata
             'files' => $this->inputFiles($analyzer, $scc, $workDirectory),
             'metrics' => is_array($report['metrics'] ?? null) ? $report['metrics'] : [],
             'findings' => is_array($report['findings'] ?? null) ? $report['findings'] : [],
+            'phpantom' => is_array($report['phpantom'] ?? null) ? $report['phpantom'] : null,
         ];
         $metadata = is_array($report['metadata'] ?? null) ? $report['metadata'] : [];
         $project = $this->projectIdentifier($composer);
