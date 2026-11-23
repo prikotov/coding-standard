@@ -3,7 +3,7 @@ type: docs
 created: 2026-11-23 16:30:00 (1795451400)
 due: 
 started: 2026-11-23 14:32:00 (1795444320)
-completed: 
+completed: 2026-11-23 14:43:46 (1795445026)
 cancelled: 
 value: V2
 complexity: C2
@@ -20,7 +20,7 @@ approver:
 informed: []
 branch: task/convention-vo-accessor-naming
 pr: https://github.com/prikotov/coding-standard/pull/132
-status: review
+status: done
 ---
 
 # TASK-convention-vo-accessor-naming: Конвенция value-object.md: зафиксировать именование аксессоров VO — геттеры get*/is*/has*, мутации только with*
@@ -64,7 +64,7 @@ status: review
 3. [x] PR в master пакета — #132.
 
 ## 5. Критерии приёмки (Definition of Done)
-- [ ] Формулировка одобрена владельцем пакета (PR-ревью).
+- [x] Формулировка одобрена владельцем пакета (PR-ревью).
 - [x] Валидация пакета зелёная.
 
 ## 6. Самопроверка (Verification)
@@ -89,3 +89,4 @@ php vendor/bin/todo-md validate
 | 2026-11-23 16:30:00 (1795451400) | Архитектор (pi) | Создание задачи |
 | 2026-11-23 21:35:46 (1795444546) | Разработчик (pi) | Взята в работу (`in_progress`), ветка `task/convention-vo-accessor-naming`; правка `value-object.md` внесена, валидация зелёная |
 | 2026-11-23 21:35:46 (1795444546) | Разработчик (pi) | Создан PR #132, задача переведена в `review`; ожидается одобрение формулировки владельцем |
+| 2026-11-23 21:43:24 (1795445004) | Разработчик (pi) | Владелец одобрил формулировку и подтвердил merge PR #132; задача переведена в `done` |
