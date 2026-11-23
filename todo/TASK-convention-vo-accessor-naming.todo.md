@@ -19,8 +19,8 @@ reviewer:
 approver: 
 informed: []
 branch: task/convention-vo-accessor-naming
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/132
+status: review
 ---
 
 # TASK-convention-vo-accessor-naming: Конвенция value-object.md: зафиксировать именование аксессоров VO — геттеры get*/is*/has*, мутации только with*
@@ -61,7 +61,7 @@ status: in_progress
 ## 4. План реализации (Implementation Plan)
 1. [x] Внести правку в value-object.md (правила + пример + чек-лист).
 2. [x] Проверка линков и валидация пакета.
-3. [ ] PR в master пакета.
+3. [x] PR в master пакета — #132.
 
 ## 5. Критерии приёмки (Definition of Done)
 - [ ] Формулировка одобрена владельцем пакета (PR-ревью).
@@ -88,3 +88,4 @@ php vendor/bin/todo-md validate
 | :--- | :--- | :--- |
 | 2026-11-23 16:30:00 (1795451400) | Архитектор (pi) | Создание задачи |
 | 2026-11-23 21:35:46 (1795444546) | Разработчик (pi) | Взята в работу (`in_progress`), ветка `task/convention-vo-accessor-naming`; правка `value-object.md` внесена, валидация зелёная |
+| 2026-11-23 21:35:46 (1795444546) | Разработчик (pi) | Создан PR #132, задача переведена в `review`; ожидается одобрение формулировки владельцем |
