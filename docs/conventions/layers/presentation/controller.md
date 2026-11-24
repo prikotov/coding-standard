@@ -118,7 +118,7 @@ final class CreateController extends AbstractController
 
 ## Обработка загрузки файлов
 
-Для загрузки файлов через формы используется стандартный подход Symfony с сохранением в `var/uploads/`. Для API-эндпоинтов без формы.
+Для загрузки файлов через формы используется стандартный подход Symfony с сохранением в `var/uploads/`. Для API-эндпоинтов без формы — `#[MapUploadedFile]`.
 
 ### Паттерн загрузки
 
@@ -210,4 +210,4 @@ if ($formModel->uploadFile instanceof UploadedFile) {
 - [ ] Валидация входных данных выполняется до вызова UseCase.
 - [ ] Возврат идёт через рендер/редирект, исключения обрабатывает `ExceptionSubscriber`.
 - [ ] Загрузка файлов использует валидацию через ограничения (constraints) и безопасное именование.
-- [ ] API multipart-эндпоинт обходит `#[MapRequestPayload]`: файл — `#[MapUploadedFile]`, form-поля — `<Name>RequestResolver`.
+- [ ] В API файл принимает аргумент с `#[MapUploadedFile]`, form-поля — `<Name>RequestResolver`.
