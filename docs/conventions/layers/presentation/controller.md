@@ -118,7 +118,7 @@ final class CreateController extends AbstractController
 
 ## Обработка загрузки файлов
 
-Для загрузки файлов через формы используется стандартный подход Symfony с сохранением в `var/uploads/`.
+Для загрузки файлов через формы используется стандартный подход Symfony с сохранением в `var/uploads/`. Для API-эндпоинтов без формы — см. [«Загрузка файлов в API (multipart)»](#загрузка-файлов-в-api-multipart).
 
 ### Паттерн загрузки
 
@@ -194,6 +194,12 @@ if ($formModel->uploadFile instanceof UploadedFile) {
 - **Размер:** через `maxSize` (например, `100M`).
 - **Обработка ошибок:** `FileException` пробрасывается или логируется.
 
+### Загрузка файлов в API (multipart)
+
+- Форму не строим: файл принимает аргумент контроллера с `#[MapUploadedFile]` (ограничения в `constraints`, `validationFailedStatusCode: Response::HTTP_BAD_REQUEST`), опциональные form-поля биндит локальный `<Name>RequestResolver` рядом с Request DTO.
+- `#[MapRequestPayload]` для таких эндпоинтов не применяем: запрос только с файлом завершается 400.
+- Паттерн, контракт ошибок и пример — в [Request DTO, «Multipart file-запросы (API)»](request-dto.md#multipart-file-запросы-api).
+
 ## Чек-лист для проведения ревью кода
 
 - [ ] Контроллер хранится в каталоге Presentation и объявлен `final`.
@@ -202,3 +208,4 @@ if ($formModel->uploadFile instanceof UploadedFile) {
 - [ ] Валидация входных данных выполняется до вызова UseCase.
 - [ ] Возврат идёт через рендер/редирект, исключения обрабатывает `ExceptionSubscriber`.
 - [ ] Загрузка файлов использует валидацию через ограничения (constraints) и безопасное именование.
+- [ ] API multipart-эндпоинт обходит `#[MapRequestPayload]`: файл — `#[MapUploadedFile]`, form-поля — `<Name>RequestResolver`.
