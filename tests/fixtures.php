@@ -248,12 +248,14 @@ return [
         'errors' => [
             5  => 1, // FinalReadonlyRequired
             7  => 1, // ForbiddenMembers — trait
-            11 => 1, // NonReadonlyProperty
-            13 => 2, // NonReadonlyProperty + ForbiddenPropertyType
-            20 => 1, // ForbiddenMagicMethod
-            24 => 1, // VoidReturnForbidden
-            33 => 1, // ToReturnSelfForbidden
-            38 => 1, // ForbiddenStaticMethod
+            11 => 2, // NonReadonlyProperty + NonPrivateProperty (classic public)
+            13 => 2, // NonReadonlyProperty + NonPrivateProperty (classic protected)
+            15 => 2, // NonReadonlyProperty + ForbiddenPropertyType (classic private)
+            17 => 4, // promoted public + promoted protected: NonReadonlyProperty + NonPrivateProperty each
+            22 => 1, // ForbiddenMagicMethod
+            26 => 1, // VoidReturnForbidden
+            35 => 1, // ToReturnSelfForbidden
+            40 => 1, // ForbiddenStaticMethod
         ],
         'warnings' => [
             3 => 1, // NamespaceMismatch
