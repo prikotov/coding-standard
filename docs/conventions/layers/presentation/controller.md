@@ -118,7 +118,7 @@ final class CreateController extends AbstractController
 
 ## Обработка загрузки файлов
 
-Для загрузки файлов через формы используется стандартный подход Symfony с сохранением в `var/uploads/`.
+Для загрузки файлов через формы используется стандартный подход Symfony с сохранением в `var/uploads/`. Для API-эндпоинтов без формы — `#[MapUploadedFile]`.
 
 ### Паттерн загрузки
 
@@ -194,6 +194,14 @@ if ($formModel->uploadFile instanceof UploadedFile) {
 - **Размер:** через `maxSize` (например, `100M`).
 - **Обработка ошибок:** `FileException` пробрасывается или логируется.
 
+### Загрузка файлов в API (multipart)
+
+1. Файл принимает контроллер — аргументом с атрибутом `#[MapUploadedFile]`.
+2. Опциональные form-поля принимает `<Name>RequestResolver` рядом с Request DTO.
+3. `#[MapRequestPayload]` не используем: запрос только с файлом завершается 400.
+
+Паттерн и пример — в [Резолвер запроса](request-resolver.md).
+
 ## Чек-лист для проведения ревью кода
 
 - [ ] Контроллер хранится в каталоге Presentation и объявлен `final`.
@@ -202,3 +210,4 @@ if ($formModel->uploadFile instanceof UploadedFile) {
 - [ ] Валидация входных данных выполняется до вызова UseCase.
 - [ ] Возврат идёт через рендер/редирект, исключения обрабатывает `ExceptionSubscriber`.
 - [ ] Загрузка файлов использует валидацию через ограничения (constraints) и безопасное именование.
+- [ ] В API файл принимает аргумент с `#[MapUploadedFile]`, form-поля — `<Name>RequestResolver`.

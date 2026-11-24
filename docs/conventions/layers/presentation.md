@@ -17,6 +17,7 @@ description: Слой представления: приём/отдача дан
 - Исключения маппятся в ответы/сообщения через обработчики уровня Presentation (listeners/subscribers/exception mappers).
 - Для transport DTO и пользовательских валидаторов используем профильные правила:
   [Request DTO](presentation/request-dto.md),
+  [Request Resolver](presentation/request-resolver.md),
   [Query DTO](presentation/query-dto.md),
   [Response DTO](presentation/response-dto.md),
   [Validator](presentation/validator.md).
@@ -50,6 +51,7 @@ apps/{web|api|console}/src/...
 - `TwigComponent`: переиспользуемые UI-компоненты Symfony UX. [Twig Component](presentation/twig-component.md)
 - `Forms`: FormType и FormModel для валидации входа. [Формы](presentation/forms.md)
 - Request DTO / Query DTO / Response DTO: transport-контракты HTTP-привязки и ответа. [Request DTO](presentation/request-dto.md), [Query DTO](presentation/query-dto.md), [Response DTO](presentation/response-dto.md)
+- `RequestResolver`: привязка данных запроса к Request DTO вне декларативных атрибутов. [Request Resolver](presentation/request-resolver.md)
 - `Validator`: пользовательская пара `Constraint` / `ConstraintValidator` для проверки связанных полей и переиспользуемой валидации. [Validator](presentation/validator.md)
 - `Authorization`: Permission Enum, Action Enum, Rule, Voter, Grant. [Авторизация](presentation/authorization.md), [Permission Enum](presentation/permission-enum.md), [Правило](presentation/rule.md), [Voter](presentation/voter.md), [Grant](presentation/grant.md)
 
@@ -75,6 +77,7 @@ apps/{web|api|console}/src/...
 - [Голосующий объект](presentation/voter.md)
 - [Формы](presentation/forms.md)
 - [Request DTO](presentation/request-dto.md)
+- [Request Resolver](presentation/request-resolver.md)
 - [Query DTO](presentation/query-dto.md)
 - [Response DTO](presentation/response-dto.md)
 - [Validator](presentation/validator.md)

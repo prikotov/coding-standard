@@ -21,6 +21,7 @@ description: Правила создания Request DTO презентацио�
 - Внутри Request DTO не используем `#[Assert\Callback]`, `validate*()` и другие императивные хуки валидации (imperative validation hooks).
 - Правила для связанных полей, переиспользуемые и отдельно именуемые, выносим во внешнюю пару валидаторов (validator pair) (`*Constraint` / `*ConstraintValidator`).
 - Бизнес-правила, авторизация и обращения к сервисам/репозиториям/HTTP/очередям в Request DTO запрещены.
+- Для API-эндпоинта «файл + form-поля» `#[MapRequestPayload]` не подходит — см. [Multipart file-запросы (API)](#multipart-file-запросы-api).
 
 ## Зависимости
 
@@ -69,6 +70,12 @@ final readonly class RegisterUserRequestDto
 Request DTO остаётся чисто транспортной (transport-only): поля и метаданные. Если `password` и `confirmPassword` должны совпадать,
 это правило выносим во внешнее ограничение уровня класса (class-level constraint), а не реализуем внутри DTO.
 
+## Multipart file-запросы (API)
+
+- Для эндпоинта «файл + опциональные form-поля» `#[MapRequestPayload]` не используем: запрос только с файлом завершается 400.
+- Файл — аргумент контроллера с `#[MapUploadedFile]`.
+- Form-поля — [Резолвер запроса](request-resolver.md).
+
 ## Чек-лист код-ревью
 
 - [ ] DTO объявлен как `final readonly class`.
@@ -76,3 +83,4 @@ Request DTO остаётся чисто транспортной (transport-only
 - [ ] Нет `Callback`, `validate*()`, логики в конструкторе и нормализации.
 - [ ] Межполевое правило вынесено во внешнюю пару валидаторов.
 - [ ] DTO зависит только от разрешённых transport-типов и presentation-метаданных.
+- [ ] Для API-эндпоинта «файл + form-поля» `#[MapRequestPayload]` не используется: form-поля принимает `<Name>RequestResolver`.

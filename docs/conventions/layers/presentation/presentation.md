@@ -13,8 +13,9 @@ description: Детальное описание слоя представлен
 
 - Контроллеры, консольные команды и HTTP-эндпоинты обращаются **только** к UseCase/Handler из Application слоя.
 - Публичные контракты Presentation формируют входные данные в `Request` DTO/Command/Query и принимают `Response` DTO.
-- Для transport DTO и пользовательских валидаторов (custom validators) используем профильные документы:
+- Для transport DTO, их привязки и пользовательских валидаторов (custom validators) используем профильные документы:
   [`Request DTO`](request-dto.md),
+  [`Request Resolver`](request-resolver.md),
   [`Query DTO`](query-dto.md),
   [`Response DTO`](response-dto.md),
   [`Validator`](validator.md).
@@ -150,6 +151,7 @@ apps/
 - [Консольная команда (Console Command)](console-command.md)
 - [Формы (Forms)](forms.md)
 - [`Request DTO`](request-dto.md)
+- [`Request Resolver`](request-resolver.md)
 - [`Query DTO`](query-dto.md)
 - [`Response DTO`](response-dto.md)
 - [Маршруты (Route)](route.md)
