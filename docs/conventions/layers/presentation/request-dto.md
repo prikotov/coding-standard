@@ -21,7 +21,7 @@ description: Правила создания Request DTO презентацио�
 - Внутри Request DTO не используем `#[Assert\Callback]`, `validate*()` и другие императивные хуки валидации (imperative validation hooks).
 - Правила для связанных полей, переиспользуемые и отдельно именуемые, выносим во внешнюю пару валидаторов (validator pair) (`*Constraint` / `*ConstraintValidator`).
 - Бизнес-правила, авторизация и обращения к сервисам/репозиториям/HTTP/очередям в Request DTO запрещены.
-- API multipart-эндпоинт «файл + form-поля» не биндим через `#[MapRequestPayload]`: файл — `#[MapUploadedFile]`, form-поля — `<Name>RequestResolver` рядом с DTO (см. [Multipart file-запросы (API)](#multipart-file-запросы-api)).
+- Для API-эндпоинта «файл + form-поля» `#[MapRequestPayload]` не подходит — см. [Multipart file-запросы (API)](#multipart-file-запросы-api).
 
 ## Зависимости
 
@@ -46,7 +46,7 @@ description: Правила создания Request DTO презентацио�
 apps/<app>/src/Module/<ModuleName>/Controller/<Context>/Request/<Name>RequestDto.php
 ```
 
-- Резолвер form-полей multipart-запроса — рядом с DTO (см. [Multipart file-запросы (API)](#multipart-file-запросы-api)):
+- `<Name>RequestResolver` — рядом с DTO (см. [Multipart file-запросы (API)](#multipart-file-запросы-api)):
 
 ```
 apps/<app>/src/Module/<ModuleName>/Controller/<Context>/Request/<Name>RequestResolver.php
@@ -78,17 +78,20 @@ Request DTO остаётся чисто транспортной (transport-only
 
 ## Multipart file-запросы (API)
 
-API-эндпоинт «файл + опциональные form-поля» (`multipart/form-data`) не биндим через `#[MapRequestPayload]` — даже с `nullable`-аргументом или значением по умолчанию. В запросе без form-полей `$request->request->all()` пуст, резолвер ядра подставляет вместо него сырое тело запроса (`Request::getContent()`) и для формата `form` отклоняет его с 400 (`RequestPayloadValueResolver::mapRequestPayload`, проверено на Symfony 8.0 и 8.1). Запрос только с файлом от существующих клиентов завершится ошибкой.
+Эндпоинт «файл + опциональные form-поля» (`multipart/form-data`) принимаем по отдельности: файл — аргумент контроллера с `#[MapUploadedFile]`, form-поля — резолвер рядом с DTO. `#[MapRequestPayload]` здесь не подходит: запрос только с файлом он отклоняет с 400.
 
 ### Паттерн
 
-- Файл — аргумент контроллера с [`#[MapUploadedFile]`](https://symfony.com/doc/current/controller.html#mapping-uploaded-files): ограничения (`File`, `Image`) передаём в `constraints`, статус ошибки валидации — `validationFailedStatusCode: Response::HTTP_BAD_REQUEST`.
-- Form-поля — локальный Presentation-резолвер (controller-local) `<Name>RequestResolver` рядом с Request DTO: `final readonly class`, зависимости `DenormalizerInterface` и `ValidatorInterface`, единственный публичный метод `create(Request $request): ?<Name>RequestDto`.
-- Нет form-полей → `null`: запрос только с файлом остаётся допустимым, значения по умолчанию задаём в контроллере через `?->` при передаче в Command.
-- Булевы form-поля нормализуем в резолвере явно — в `multipart/form-data` нет типов: `filter_var($value, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE)`; нераспознанное значение → 400.
-- Денормализация DTO: `NotNormalizableValueException` → 400 (`BadRequestHttpException`).
-- Ограничения DTO проверяем вручную: при нарушениях бросаем `HttpException::fromStatusCode(400, …, new ValidationFailedException($dto, $violations))` — как у `#[MapRequestPayload(validationFailedStatusCode: 400)]`.
-- Кастомный `ValueResolverInterface` с маркер-атрибутом не вводим, пока таких эндпоинтов меньше двух. Триггеры пересмотра: второй такой эндпоинт либо изменение `mapRequestPayload` в Symfony.
+1. Файл — аргумент контроллера с [`#[MapUploadedFile]`](https://symfony.com/doc/current/controller.html#mapping-uploaded-files): ограничения (`File`, `Image`) — в `constraints`, ошибки валидации — `validationFailedStatusCode: Response::HTTP_BAD_REQUEST`.
+2. Form-поля — резолвер `<Name>RequestResolver` рядом с Request DTO: `final readonly class`, зависимости `DenormalizerInterface` и `ValidatorInterface`, один публичный метод `create(Request $request): ?<Name>RequestDto`.
+3. В резолвере:
+   - нет form-полей → `null` (запрос только с файлом допустим, значения по умолчанию задаёт контроллер через `?->`);
+   - булевы поля приводим явно — `filter_var($value, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE)`, нераспознанное значение → 400;
+   - денормализуем DTO: `NotNormalizableValueException` → 400 (`BadRequestHttpException`);
+   - проверяем ограничения: при нарушениях — `HttpException::fromStatusCode(400, …, new ValidationFailedException($dto, $violations))`, как у `#[MapRequestPayload(validationFailedStatusCode: 400)]`.
+4. Кастомный `ValueResolverInterface` с маркер-атрибутом не вводим, пока таких эндпоинтов меньше двух; пересматриваем на втором таком эндпоинте или при изменении `mapRequestPayload` в Symfony.
+
+> Почему не `#[MapRequestPayload]`: в запросе без form-полей `$request->request->all()` пуст, и `RequestPayloadValueResolver::mapRequestPayload` подставляет вместо него сырое тело запроса (`Request::getContent()`), которое для формата `form` отклоняет с 400 — `nullable`-аргумент и значение по умолчанию не помогают (проверено на Symfony 8.0 и 8.1).
 
 ### Пример
 
@@ -250,4 +253,4 @@ final readonly class CreateFileController
 - [ ] Нет `Callback`, `validate*()`, логики в конструкторе и нормализации.
 - [ ] Межполевое правило вынесено во внешнюю пару валидаторов.
 - [ ] DTO зависит только от разрешённых transport-типов и presentation-метаданных.
-- [ ] API-эндпоинт «файл + form-поля»: `#[MapRequestPayload]` не используется; файл — `#[MapUploadedFile]`, form-поля — `<Name>RequestResolver`, запрос только с файлом даёт `null`.
+- [ ] Для API-эндпоинта «файл + form-поля» `#[MapRequestPayload]` не используется: form-поля принимает `<Name>RequestResolver`.
