@@ -15,8 +15,8 @@ epic:
 author: Лид Арагорн (pi)
 assignee: Лид Арагорн (pi)
 branch: task/vo-sniff-property-visibility
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/135
+status: review
 ---
 
 # TASK-feat-vo-sniff-property-visibility: ValueObjectStructureSniff: проверка видимости свойств VO — только private
