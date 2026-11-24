@@ -59,7 +59,7 @@ status: review
 
 ## 2. Контекст и Границы (Context and Scope)
 
-*   **Где делаем:** `docs/conventions/layers/presentation/request-dto.md`, `docs/conventions/layers/presentation/controller.md`.
+*   **Где делаем:** `docs/conventions/layers/presentation/request-resolver.md` (выделен в отдельную конвенцию по ходу ревью), `request-dto.md`, `controller.md`, индексы (`index.md`, `layers/presentation.md`, `layers/presentation/presentation.md`).
 *   **Референс реализации:** проект TasK — `apps/api/src/v1/Module/Source/Controller/Source/Request/CreateByFileRequestResolver.php` + `CreateFileController.php` ([PR #3053](https://github.com/prikotov/TasK/pull/3053), эпик api-rag-context-control, [PR #3051](https://github.com/prikotov/TasK/pull/3051));Symfony 8.0.15.
 *   **Out of Scope:** реализация ValueResolver-варианта; изменения web-формового раздела; правки ядра Symfony (апстрим-предложение — отдельное решение).
 
@@ -106,6 +106,7 @@ php vendor/bin/todo-md validate todo/TASK-api-multipart-request-binding.todo.md
 - 2026-11-24 — Правка владельца по ревью PR #133: из вводной раздела «Обработка загрузки файлов» в `controller.md` убрана перекрёстная ссылка на подраздел «Загрузка файлов в API (multipart)».
 - 2026-11-24 — Правка владельца по ревью PR #133: подраздел «Загрузка файлов в API (multipart)» в `controller.md` упрощён — нумерованный список из трёх коротких шагов и ссылка на `request-dto.md`; подробности (`constraints`, код ошибки) остались в `request-dto.md`.
 - 2026-11-24 — Правка владельца по ревью PR #133: раздел «Multipart file-запросы (API)» в `request-dto.md` перестроен для читаемости — короткая вводка (что делаем и почему не `#[MapRequestPayload]`), нумерованные шаги по ходу запроса (файл → резолвер → действия в резолвере → граница), объяснение поведения ядра вынесено врезкой; указатели в «Общих правилах», «Расположении» и чек-листе сокращены до одной мысли. Код примеров не менялся.
+- 2026-11-24 11:39:23 (1795495163) — Решение владельца по ревью PR #133: `<Name>RequestResolver` — отдельная сущность, ей своя конвенция. Создан `docs/conventions/layers/presentation/request-resolver.md` (определение, правила, зависимости, расположение, «как используем», примеры DTO + резолвер + контроллер, чек-лист), зарегистрирован в `index.md`, `layers/presentation.md`, `layers/presentation/presentation.md`. В `request-dto.md` остался только подраздел «Multipart file-запросы (API)» с «почему» и указателем (было +178 строк, стало +8); `controller.md` ссылается на новую конвенцию. Примеры и правила перенесены без изменения сути; прогоны сценариев на Symfony 8.1.11 повторены на новом документе — все пройдены; `coding-standard-init` копирует новый файл.
 
 ## История изменений (Change History)
 | Дата | Автор (роль) | Изменение |
@@ -116,3 +117,4 @@ php vendor/bin/todo-md validate todo/TASK-api-multipart-request-binding.todo.md
 | 2026-11-24 08:45:06 (1795484706) | Разработчик (pi) | Создан PR #133, задача переведена в `review`; ожидается одобрение формулировок владельцем (в т.ч. решение по нюансу тела ответа для ошибок типа) |
 | 2026-11-24 09:39:35 (1795487975) | Разработчик (pi) | Уточнён раздел про булевы поля и контракт ошибок: убрано неверное «та же семантика булевых», зафиксированы два отличия резолвера от `#[MapRequestPayload]` |
 | 2026-11-24 10:29:56 (1795490996) | Разработчик (pi) | Проверены мапперы исключений потребителя; текст правил сокращён до коротких пунктов без сравнений с ядром, код примера — как в референсе |
+| 2026-11-24 11:39:23 (1795495163) | Разработчик (pi) | По ревью владельца: `<Name>RequestResolver` вынесен в отдельную конвенцию `request-resolver.md`; `request-dto.md` разгружен до «почему» и указателя; индексы обновлены |
