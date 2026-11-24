@@ -19,13 +19,13 @@ reviewer:
 approver:
 informed: []
 branch: task/api-multipart-binding-convention
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/133
+status: review
 ---
 
 # TASK-api-multipart-request-binding: Добавить конвенцию биндинга multipart-запросов в API (MapUploadedFile + Request-резолвер)
 
-> **Статус: предложение принято владельцем 2026-11-23 (PR #127).** Задача готова к реализации: внести текст в `request-dto.md` и `controller.md` по формулировкам из Solution Sketch.
+> **Статус: предложение принято владельцем 2026-11-23 (PR #127); текст конвенции внесён 2026-11-24 — на ревью в PR #133.**
 
 ## 0. Простое описание (Human Brief)
 
@@ -108,3 +108,4 @@ php vendor/bin/todo-md validate todo/TASK-api-multipart-request-binding.todo.md
 | 2026-10-12 09:53:12 (1791773592) | Лид Арагорн (pi) | Создание задачи-предложения по указанию владельца проекта TasK; реализация не начинается до решения по конвенции |
 | 2026-11-23 21:57:14 (1795445834) | Разработчик (pi) | Решение владельца: предложение принято (PR #127); задача готова к реализации, поле `branch` очищено |
 | 2026-11-24 08:45:06 (1795484706) | Разработчик (pi) | Взята в работу (`in_progress`), ветка `task/api-multipart-binding-convention`; текст конвенции внесён, проверка на Symfony 8.1.11 пройдена, `composer check` зелёный |
+| 2026-11-24 08:45:06 (1795484706) | Разработчик (pi) | Создан PR #133, задача переведена в `review`; ожидается одобрение формулировок владельцем (в т.ч. решение по нюансу тела ответа для ошибок типа) |
