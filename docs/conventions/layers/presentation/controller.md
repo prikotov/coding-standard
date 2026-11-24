@@ -196,9 +196,11 @@ if ($formModel->uploadFile instanceof UploadedFile) {
 
 ### Загрузка файлов в API (multipart)
 
-- Форму не строим: файл принимает аргумент контроллера с `#[MapUploadedFile]` (ограничения в `constraints`, `validationFailedStatusCode: Response::HTTP_BAD_REQUEST`), опциональные form-поля биндит локальный `<Name>RequestResolver` рядом с Request DTO.
-- `#[MapRequestPayload]` для таких эндпоинтов не применяем: запрос только с файлом завершается 400.
-- Паттерн, контракт ошибок и пример — в [Request DTO, «Multipart file-запросы (API)»](request-dto.md#multipart-file-запросы-api).
+1. Файл принимает контроллер — аргументом с атрибутом `#[MapUploadedFile]`.
+2. Опциональные form-поля принимает `<Name>RequestResolver` рядом с Request DTO.
+3. `#[MapRequestPayload]` не используем: запрос только с файлом завершается 400.
+
+Паттерн и пример — в [Request DTO, «Multipart file-запросы (API)»](request-dto.md#multipart-file-запросы-api).
 
 ## Чек-лист для проведения ревью кода
 
