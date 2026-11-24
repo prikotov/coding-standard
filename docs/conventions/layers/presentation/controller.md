@@ -200,7 +200,7 @@ if ($formModel->uploadFile instanceof UploadedFile) {
 2. Опциональные form-поля принимает `<Name>RequestResolver` рядом с Request DTO.
 3. `#[MapRequestPayload]` не используем: запрос только с файлом завершается 400.
 
-Паттерн и пример — в [Request DTO, «Multipart file-запросы (API)»](request-dto.md#multipart-file-запросы-api).
+Паттерн и пример — в [Резолвер запроса](request-resolver.md).
 
 ## Чек-лист для проведения ревью кода
 

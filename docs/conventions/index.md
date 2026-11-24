@@ -74,6 +74,7 @@ description: Индекс всех конвенций проекта
     - [Формы (Forms)](layers/presentation/forms.md)
     - [Grant](layers/presentation/grant.md)
     - [Контроллер списка (List Controller)](layers/presentation/list-controller.md)
+    - [Резолвер запроса (Request Resolver)](layers/presentation/request-resolver.md)
     - [Перечисление разрешений (Permission Enum)](layers/presentation/permission-enum.md)
     - [Маршруты (Route)](layers/presentation/route.md)
     - [Twig-компонент (Twig Component)](layers/presentation/twig-component.md)
