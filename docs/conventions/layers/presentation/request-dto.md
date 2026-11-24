@@ -72,9 +72,9 @@ Request DTO остаётся чисто транспортной (transport-only
 
 ## Multipart file-запросы (API)
 
-Для API-эндпоинта «файл + опциональные form-поля» (`multipart/form-data`) `#[MapRequestPayload]` не подходит: запрос только с файлом он отклоняет с 400. Файл принимает контроллер — аргументом с `#[MapUploadedFile]`, form-поля — [Резолвер запроса](request-resolver.md).
-
-> Почему не `#[MapRequestPayload]`: в запросе без form-полей `$request->request->all()` пуст, и `RequestPayloadValueResolver::mapRequestPayload` подставляет вместо него сырое тело запроса (`Request::getContent()`), которое для формата `form` отклоняет с 400 — `nullable`-аргумент и значение по умолчанию не помогают (проверено на Symfony 8.0 и 8.1).
+- Для эндпоинта «файл + опциональные form-поля» `#[MapRequestPayload]` не используем: запрос только с файлом завершается 400.
+- Файл — аргумент контроллера с `#[MapUploadedFile]`.
+- Form-поля — [Резолвер запроса](request-resolver.md).
 
 ## Чек-лист код-ревью
 
