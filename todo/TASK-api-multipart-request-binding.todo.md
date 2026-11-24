@@ -2,7 +2,7 @@
 type: docs
 created: 2026-10-12 09:53:12 (1791773592)
 due:
-started:
+started: 2026-11-24 01:33:31 (1795484011)
 completed:
 cancelled:
 value: V2
@@ -13,14 +13,14 @@ cost_fact:
 depends_on:
 epic:
 author: Лид Арагорн (pi)
-assignee:
+assignee: Разработчик (pi)
 consultants: []
 reviewer:
 approver:
 informed: []
-branch: 
+branch: task/api-multipart-binding-convention
 pr: 
-status: todo
+status: in_progress
 ---
 
 # TASK-api-multipart-request-binding: Добавить конвенцию биндинга multipart-запросов в API (MapUploadedFile + Request-резолвер)
@@ -71,10 +71,10 @@ status: todo
 
 ## 4. План реализации (Implementation Plan)
 1. [x] Владелец рассматривает предложение: принять / отклонить / доработать. — принято.
-2. [ ] При принятии — внести текст подраздела и блока по формулировкам из Solution Sketch; прогнать `composer check` (включая `validate-docs`).
+2. [x] При принятии — внести текст подраздела и блока по формулировкам из Solution Sketch; прогнать `composer check` (включая `validate-docs`).
 
 ## 5. Критерии приёмки (Definition of Done)
-- [ ] Решение зафиксировано; при принятии — текст в конвенциях, `composer check` зелёный, копия конвенций в проектах-потребителях обновляется штатным `coding-standard-init`.
+- [x] Решение зафиксировано; при принятии — текст в конвенциях, `composer check` зелёный, копия конвенций в проектах-потребителях обновляется штатным `coding-standard-init`.
 
 ## 6. Самопроверка (Verification)
 ```bash
@@ -89,14 +89,22 @@ php vendor/bin/todo-md validate todo/TASK-api-multipart-request-binding.todo.md
 ## 8. Источники (Sources)
 - [ ] TasK, PR [#3053](https://github.com/prikotov/TasK/pull/3053) (CreateByFileRequestResolver — референс-реализация) и [#3051](https://github.com/prikotov/TasK/pull/3051) (эпик).
 - [ ] `vendor/symfony/http-kernel/Controller/ArgumentResolver/RequestPayloadValueResolver.php` (Symfony 8.0.15) — точка отказа для file-only multipart; контекст `filter_bool` для form.
+- [Там же в Symfony 8.1.11](https://github.com/symfony/http-kernel/blob/v8.1.11/Controller/ArgumentResolver/RequestPayloadValueResolver.php) — перепроверено при реализации: поведение не изменилось.
+- [Symfony Controller: Mapping Uploaded Files](https://symfony.com/doc/current/controller.html#mapping-uploaded-files).
 
 ## 9. Комментарии (Comments)
 - Архитектурная проверка (Локи, проект TasK): минимально достаточное решение — explicit-резолвер; ValueResolver — строгое надмножество сложности без прироста поведения при N=1; триггеры пересмотра зафиксированы.
 - Терминологическое: в конвенции «Обработка загрузки файлов» описывает web-формы; предлагаемый блок — про API; пересечение только тематическое.
 - 2026-11-23 — Решение владельца (PR #127): предложение **принято**. Задача вливается в `master` готовой к реализации (п.2 плана — отдельной веткой). Поле `branch` очищено: ветка предложения удаляется после merge.
+- 2026-11-24 — Reverse Briefing (Разработчик (pi)): план автора ясен, реализован по Solution Sketch без расширения scope. Внесено: раздел «Multipart file-запросы (API)» в `request-dto.md` (обоснование, паттерн, пример из DTO + резолвера + контроллера, пункт чек-листа, указатель в «Общих правилах», путь резолвера в «Расположении»); блок «Загрузка файлов в API (multipart)» и пункт чек-листа в `controller.md`.
+- 2026-11-24 — Отличие примера от референса: аргумент файла объявлен `UploadedFile $file` (не `UploadedFile|array`) без проверки `instanceof` — отсутствующий файл ядро отклоняет с 400 по `validationFailedStatusCode` ещё до тела контроллера.
+- 2026-11-24 — Проверка на реальном коде (скрипт в `/tmp`, vendor TasK Symfony 8.1.11, отслеживаемые файлы TasK не менялись): PHP-блоки загружены из документа и прогнаны в 10 сценариях — `#[MapRequestPayload]` + запрос только с файлом даёт 400 (в т.ч. с `nullable` и `mapWhenEmpty: true`); с form-полями биндится; паттерн отрабатывает file-only → `null`, булевы/enum/строка, `garbage` → 400, неизвестный enum → 400, нарушение ограничения → 400 + `ValidationFailedException`; `#[MapUploadedFile]`: файл есть → `UploadedFile`, файла нет → 400. Все сценарии пройдены.
+- 2026-11-24 — Нюанс для владельца (не менял — вне scope): контракт «400 + violations» совпадает у резолвера и `#[MapRequestPayload]` для нарушений ограничений; для ошибок типа (например, неизвестный enum) ядро возвращает 400 со списком violations (`collect_denormalization_errors`), а резолвер — 400 без списка. Статус одинаков, тело ответа для ошибок типа различается. При необходимости выровнять — денормализовать с `collect_denormalization_errors => true` и собирать violations, как ядро.
+- 2026-11-24 — `composer check` зелёный (293 теста, 797 утверждений); `coding-standard-init` в чистый каталог копирует оба файла байт-в-байт.
 
 ## История изменений (Change History)
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-10-12 09:53:12 (1791773592) | Лид Арагорн (pi) | Создание задачи-предложения по указанию владельца проекта TasK; реализация не начинается до решения по конвенции |
 | 2026-11-23 21:57:14 (1795445834) | Разработчик (pi) | Решение владельца: предложение принято (PR #127); задача готова к реализации, поле `branch` очищено |
+| 2026-11-24 08:45:06 (1795484706) | Разработчик (pi) | Взята в работу (`in_progress`), ветка `task/api-multipart-binding-convention`; текст конвенции внесён, проверка на Symfony 8.1.11 пройдена, `composer check` зелёный |
