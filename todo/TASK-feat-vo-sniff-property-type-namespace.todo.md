@@ -15,8 +15,8 @@ epic:
 author: Лид Арагорн (pi)
 assignee: Лид Арагорн (pi)
 branch: task/vo-sniff-type-namespace-task
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/136
+status: review
 ---
 
 # TASK-feat-vo-sniff-property-type-namespace: ValueObjectStructureSniff: проверка типов свойств VO по namespace зависимостей
