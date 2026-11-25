@@ -33,7 +33,7 @@ description: Правила создания и использования об�
 
 - Разрешены примитивы, `DateTimeImmutable`, `Uuid`, `Enum` и другие VO того же слоя.
 - Разрешены общие (модуль-независимые) `Enum` и VO из `{ProjectName}\Common\Enum`, `{ProjectName}\Common\Component\…` и `{ProjectName}\Common\ValueObject`.
-- Запрещена зависимость от Embeddable VO (`Domain\Entity\ValueObject\…`): они несут ORM-маппинг и являются persistence-частью сущности, а не доменным типом.
+- Запрещена зависимость от Embeddable VO (`Domain\Entity\ValueObject\…`) — они являются частью сущности, см. [Entity](../layers/domain/entity.md#общие-правила).
 - Запрещены Infrastructure, ORM/DB, внешние SDK, контейнер DI и любое глобальное состояние.
 - Запрещены зависимости от других модулей и других слоёв.
 
@@ -45,7 +45,7 @@ description: Правила создания и использования об�
 {ProjectName}\Common\Module\{ModuleName}\Domain\ValueObject\{Name}Vo
 ```
 
-- Встраиваемые VO для ORM (Embeddable), применяемые внутри моделей сущностей — это persistence-часть сущности, не доменный тип (см. [Зависимости](#зависимости)):
+- Встраиваемые VO для ORM (Embeddable), применяемые внутри моделей сущностей:
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Domain\Entity\ValueObject\{Name}Vo
