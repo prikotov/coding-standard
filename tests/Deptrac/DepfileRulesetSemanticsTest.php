@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PrikotovCodingStandard\Tests\Deptrac;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use PrikotovCodingStandard\Metrics\ProcessRunner;
 
@@ -189,6 +190,44 @@ final class DepfileRulesetSemanticsTest extends TestCase
         );
     }
 
+    /**
+     * The Domain layer is "entities only"; every other domain type must land in a
+     * dedicated layer. A class under Domain\ that matches no layer is never checked.
+     * Deptrac reports "uncovered" only for referenced classes, so each probe class
+     * is referenced by an Application service.
+     */
+    #[DataProvider('provideDomainTypesOutsideEntities')]
+    public function testEveryDomainTypeOutsideEntitiesIsCovered(string $relativePath, string $declaration, string $shortName): void
+    {
+        $this->writeClass($relativePath, $declaration);
+        // An Application DTO may not depend on any Domain layer: a covered probe
+        // becomes a violation, an uncovered one is reported as "uncovered".
+        $this->writeClass(
+            'Application/Dto/Probe/LeakyDto.php',
+            'final readonly class LeakyDto',
+            'public function __construct(public readonly ' . $shortName . ' $dependency) {}',
+            [$shortName => str_replace('/', '\\', dirname($relativePath)) . '\\' . $shortName],
+        );
+
+        $report = $this->analyseReport();
+
+        self::assertSame(0, $report['Uncovered'], 'domain type without a layer: ' . $relativePath);
+        self::assertSame(1, $report['Violations'], 'covered domain type referenced from an Application DTO must be a violation: ' . $relativePath);
+    }
+
+    /** @return iterable<string, array{string, string, string}> */
+    public static function provideDomainTypesOutsideEntities(): iterable
+    {
+        yield 'service interface' => ['Domain/Service/Pay/PayServiceInterface.php', 'interface PayServiceInterface', 'PayServiceInterface'];
+        yield 'service implementation' => ['Domain/Service/Pay/PayService.php', 'final class PayService', 'PayService'];
+        yield 'find criteria' => ['Domain/Repository/Payment/Criteria/PaymentFindCriteria.php', 'final class PaymentFindCriteria', 'PaymentFindCriteria'];
+        yield 'calculator' => ['Domain/Calculator/RateCalculator.php', 'final readonly class RateCalculator', 'RateCalculator'];
+        yield 'normalizer in domain root' => ['Domain/FieldNormalizer.php', 'final class FieldNormalizer', 'FieldNormalizer'];
+        yield 'exception' => ['Domain/Exception/InvalidAmountException.php', 'final class InvalidAmountException', 'InvalidAmountException'];
+        yield 'value object interface without Vo suffix' => ['Domain/ValueObject/Parameters/ParametersInterface.php', 'interface ParametersInterface', 'ParametersInterface'];
+        yield 'value object without Vo suffix' => ['Domain/ValueObject/CleanupList.php', 'final class CleanupList', 'CleanupList'];
+    }
+
     public function testDomainValueObjectMayThrowDomainException(): void
     {
         $this->writeClass('Domain/Exception/InvalidAmountException.php', 'final class InvalidAmountException extends \\InvalidArgumentException');
@@ -329,6 +368,44 @@ final class DepfileRulesetSemanticsTest extends TestCase
         }
 
         return $messages;
+    }
+
+    /**
+     * @return array{Violations: int, Uncovered: int, Errors: int}
+     */
+    private function analyseReport(): array
+    {
+        $result = (new ProcessRunner())->run(
+            [
+                PHP_BINARY,
+                dirname(self::DEPFILE, 3) . '/vendor/bin/deptrac',
+                'analyse',
+                '--config-file=' . $this->probeDepfile,
+                '--no-progress',
+                '--no-ansi',
+                '--formatter=json',
+            ],
+            ['pipe', 'r'],
+        );
+
+        self::assertNotNull($result, 'deptrac process could not start');
+        [, $stdout, $stderr] = $result;
+
+        $decoded = json_decode($stdout, true);
+        self::assertIsArray($decoded, 'deptrac json output expected; stdout: ' . $stdout . ' stderr: ' . $stderr);
+        $report = $decoded['Report'] ?? null;
+        self::assertIsArray($report);
+        self::assertSame(0, $report['Errors'] ?? 1, 'deptrac reported errors: ' . $stdout . $stderr);
+
+        foreach (['Violations', 'Uncovered', 'Errors'] as $key) {
+            self::assertIsInt($report[$key] ?? null, 'deptrac report field missing: ' . $key);
+        }
+
+        return [
+            'Violations' => $report['Violations'],
+            'Uncovered'  => $report['Uncovered'],
+            'Errors'     => $report['Errors'],
+        ];
     }
 
     /**

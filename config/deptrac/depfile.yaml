@@ -126,7 +126,7 @@ deptrac:
             - type: classLike
               value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Entity\\.*
             - type: classLike
-              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\ValueObject\\.*
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\ValueObject\\.*Vo$
             - type: classLike
               value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Enum\\.*
             - type: classLike
