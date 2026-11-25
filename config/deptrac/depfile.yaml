@@ -395,3 +395,6 @@ services:
     autowire: true
     tags:
       - { name: kernel.event_subscriber }
+  - class: PrikotovCodingStandard\Deptrac\InheritanceAndCatchDependencyRule
+    tags:
+      - { name: kernel.event_subscriber }
