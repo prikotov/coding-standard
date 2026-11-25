@@ -401,6 +401,6 @@ services:
     autowire: true
     tags:
       - { name: kernel.event_subscriber }
-  - class: PrikotovCodingStandard\Deptrac\InheritanceAndCatchDependencyRule
+  - class: PrikotovCodingStandard\Deptrac\PolymorphismDependencyRule
     tags:
       - { name: kernel.event_subscriber }

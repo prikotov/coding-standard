@@ -19,8 +19,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * - INHERIT (implements/extends): a Value Object implementing a domain interface
  *   (`StaticChainDefinitionVo implements ChainDefinitionInterface`) is the point of
  *   the interface. The VO layer does not "call" the contract — it fulfils it.
- * - CATCH: catching a domain exception is how outer layers handle domain errors;
- *   the exception layer is not a dependency they are coupled to.
  * - PARAMETER, when the dependent layer is ApplicationCommand or ApplicationQuery:
  *   a handler delegating to strategies that receive the command as data
  *   (`execute(ChainInfoVo $info, OrchestrateChainCommand $command)`) is composition
@@ -31,15 +29,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * Register in depfile.yaml:
  *   services:
- *     - class: PrikotovCodingStandard\Deptrac\InheritanceAndCatchDependencyRule
+ *     - class: PrikotovCodingStandard\Deptrac\PolymorphismDependencyRule
  *       tags:
  *         - { name: kernel.event_subscriber }
  */
-final class InheritanceAndCatchDependencyRule implements EventSubscriberInterface
+final class PolymorphismDependencyRule implements EventSubscriberInterface
 {
     private const IGNORED_TYPES = [
         DependencyType::INHERIT,
-        DependencyType::CATCH,
     ];
 
     /**

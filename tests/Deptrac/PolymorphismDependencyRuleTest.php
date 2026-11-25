@@ -16,9 +16,9 @@ use Deptrac\Deptrac\Contract\Result\Violation;
 use Deptrac\Deptrac\DefaultBehavior\Dependency\Helpers\Dependency;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use PrikotovCodingStandard\Deptrac\InheritanceAndCatchDependencyRule;
+use PrikotovCodingStandard\Deptrac\PolymorphismDependencyRule;
 
-final class InheritanceAndCatchDependencyRuleTest extends TestCase
+final class PolymorphismDependencyRuleTest extends TestCase
 {
     private const DEPENDER = 'TaskOrchestrator\Common\Module\ChainDefinition\Domain\ValueObject\StaticChainDefinitionVo';
     private const CONTRACT = 'TaskOrchestrator\Common\Module\ChainDefinition\Domain\ChainDefinitionInterface';
@@ -53,7 +53,6 @@ final class InheritanceAndCatchDependencyRuleTest extends TestCase
     public static function provideRemoved(): iterable
     {
         yield 'VO implements a domain interface' => [DependencyType::INHERIT, self::DEPENDER, self::CONTRACT, 'DomainContract'];
-        yield 'service catches a domain exception' => [DependencyType::CATCH, self::SERVICE, 'Task\Common\Module\X\Domain\Exception\YException', 'DomainException'];
         yield 'strategy receives the command as a parameter' => [DependencyType::PARAMETER, self::SERVICE, self::COMMAND, 'ApplicationCommand'];
         yield 'strategy receives the query as a parameter' => [DependencyType::PARAMETER, self::SERVICE, self::COMMAND . 'Query', 'ApplicationQuery'];
     }
@@ -80,7 +79,7 @@ final class InheritanceAndCatchDependencyRuleTest extends TestCase
             $result->addRule($violation);
         }
 
-        (new InheritanceAndCatchDependencyRule())->onPostProcessEvent(new PostProcessEvent($result));
+        (new PolymorphismDependencyRule())->onPostProcessEvent(new PostProcessEvent($result));
 
         $kept = [];
         foreach ($result->rules() as $violations) {

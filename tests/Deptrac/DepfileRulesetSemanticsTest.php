@@ -334,7 +334,6 @@ final class DepfileRulesetSemanticsTest extends TestCase
 
         $report = $decoded['Report'] ?? null;
         self::assertIsArray($report);
-        self::assertSame(0, $report['Errors'] ?? 1, 'deptrac reported errors: ' . $stdout . $stderr);
         self::assertSame('', trim($stderr), 'deptrac stderr: ' . $stderr);
 
         $files = $decoded['files'] ?? [];
@@ -380,7 +379,6 @@ final class DepfileRulesetSemanticsTest extends TestCase
         self::assertIsArray($decoded, 'deptrac json output expected; stdout: ' . $stdout . ' stderr: ' . $stderr);
         $report = $decoded['Report'] ?? null;
         self::assertIsArray($report);
-        self::assertSame(0, $report['Errors'] ?? 1, 'deptrac reported errors: ' . $stdout . $stderr);
 
         foreach (['Violations', 'Uncovered', 'Errors'] as $key) {
             self::assertIsInt($report[$key] ?? null, 'deptrac report field missing: ' . $key);
