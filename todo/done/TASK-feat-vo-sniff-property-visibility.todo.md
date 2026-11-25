@@ -2,8 +2,8 @@
 type: feat
 created: 2026-11-24 12:44:28 (1795524268)
 due: 
-started: 
-completed: 
+started: 2026-11-24 17:00:03 (1795539603)
+completed: 2026-11-25 01:02:47 (1795568567)
 cancelled: 
 value: V3
 complexity: C2
@@ -13,10 +13,10 @@ cost_fact:
 depends_on: 
 epic: 
 author: Лид Арагорн (pi)
-assignee: 
-branch: 
-pr: 
-status: todo
+assignee: Лид Арагорн (pi)
+branch: task/vo-sniff-property-visibility
+pr: https://github.com/prikotov/coding-standard/pull/135
+status: done
 ---
 
 # TASK-feat-vo-sniff-property-visibility: ValueObjectStructureSniff: проверка видимости свойств VO — только private
@@ -24,7 +24,7 @@ status: todo
 ## 0. Простое описание (Human Brief)
 
 ### Проблема простыми словами (Problem)
-- Конвенция [value-object.md](../docs/conventions/core-patterns/value-object.md) требует: «свойства приватные и строго типизированные». Сниффер (автопроверка стиля) `ValueObjectStructureSniff` это правило не проверяет: объект-значение (Value Object, VO) с публичным или защищённым свойством проходит `phpcs` без единой ошибки.
+- Конвенция [value-object.md](../../docs/conventions/core-patterns/value-object.md) требует: «свойства приватные и строго типизированные». Сниффер (автопроверка стиля) `ValueObjectStructureSniff` это правило не проверяет: объект-значение (Value Object, VO) с публичным или защищённым свойством проходит `phpcs` без единой ошибки.
 - Проверено прогонами на v0.34.2 (коммит `7f8fb61`, PHP_CodeSniffer 4.0.4) командой `vendor/bin/phpcs --standard=ruleset.xml --sniffs=PrikotovCodingStandard.Structure.ValueObjectStructure`:
   - публичные свойства в конструкторе (promoted) — `public function __construct(public string $ticker) {}` — 0 ошибок;
   - защищённое promoted-свойство (`protected string $ticker`) — 0 ошибок;
@@ -55,33 +55,38 @@ status: todo
   1. Promoted-свойства не проверяются целиком. `belongsToClass()` сравнивает с указателем класса последний элемент `conditions` токена; у токенов внутри метода последний элемент — сама функция, поэтому для параметров конструктора проверка возвращает `false`, и `assertProperties()` делает `continue`. Косвенное подтверждение — в негативной фикстуре строка 17 (`public function __construct(public string $value)` в не-readonly классе) не имеет ожидаемой ошибки.
   2. Для классических свойств проверяются только `is_readonly` и суффиксы типа; поле `scope` из `getMemberProperties()` не используется.
 - **Побочное наблюдение (решить команде пакета):** классическое свойство без слова `readonly` внутри `readonly class` (по PHP оно неявно readonly) помечается ошибкой «ValueObject properties must be readonly» — `private string $ticker;` в `final readonly class`. Это либо ложное срабатывание (тогда исправить), либо требование явного ключевого слова (тогда оставить и закрепить тестом).
+  - **Решение (исполнитель, 2026-11-24):** трактовано как ложное срабатывание и исправлено. Обоснование: по PHP все свойства `readonly`-класса неявно readonly; конвенция требует `final readonly` класса (проверяется `FinalReadonlyRequired`), значит явное ключевое слово у свойства избыточно. Проверка `NonReadonlyProperty` теперь срабатывает только в классах без `readonly`. Валидные фикстуры пакета и пример конвенции используют promoted-свойства без явного `readonly` — иное решение дало бы ложные срабатывания на них (нарушение Must Have). Закреплено позитивной фикстурой (`AmountVo`).
 - **Типы свойств (выходят за рамки обязательного):** проверка идёт по суффиксам `Entity`/`Repository`/`Service`. Проходят без ошибок `private Closure $loader` и свойство типа ORM-модели (`private TickerModel $model`). В stocks2 так «VO» с замыканием и зависимостью от ORM-модели прошло все проверки.
 - **Границы (Out of Scope):** другие сниффы; автоисправления (fixer); изменение текста конвенции.
 
 ## 3. Требования, MoSCoW (Requirements)
 ### 🔴 Обязательно (Must Have)
-- [ ] Новая ошибка (код вида `NonPrivateProperty`) за каждое свойство VO с видимостью `public` или `protected` — для классических и для promoted-свойств; в тексте ошибки — ссылка на `docs/conventions/core-patterns/value-object.md`.
-- [ ] Существующие проверки `readonly` и типов свойств распространены на promoted-свойства (сейчас они пропускаются целиком) — без ложных срабатываний на корректных приватных promoted-свойствах.
-- [ ] Тесты: в негативной фикстуре — `public` и `protected` в обоих видах (классическое и promoted); в позитивной — `private` и `private readonly` в обоих видах; ожидания в `tests/fixtures.php` обновлены.
-- [ ] Валидные фикстуры пакета (в том числе `tests/fixtures/src/Module/Example/Domain/ValueObject/EmailVo.inc`) и примеры кода в `docs/conventions/` новых ошибок не дают.
-- [ ] `composer check` зелёный.
+- [x] Новая ошибка (код вида `NonPrivateProperty`) за каждое свойство VO с видимостью `public` или `protected` — для классических и для promoted-свойств; в тексте ошибки — ссылка на `docs/conventions/core-patterns/value-object.md`.
+- [x] Существующие проверки `readonly` и типов свойств распространены на promoted-свойства (сейчас они пропускаются целиком) — без ложных срабатываний на корректных приватных promoted-свойствах.
+- [x] Тесты: в негативной фикстуре — `public` и `protected` в обоих видах (классическое и promoted); в позитивной — `private` и `private readonly` в обоих видах; ожидания в `tests/fixtures.php` обновлены.
+- [x] Валидные фикстуры пакета (в том числе `tests/fixtures/src/Module/Example/Domain/ValueObject/EmailVo.inc`) и примеры кода в `docs/conventions/` новых ошибок не дают.
+- [x] `composer check` зелёный.
 
 ### 🟡 Should Have (Желательно)
-- [ ] Типы свойств — по списку разрешённых (примитивы, `\DateTimeImmutable`, `UnitEnum`, другие VO и Enum), а не по суффиксам запрещённых: так ловятся `Closure` и ORM-модели. Если команда предпочитает отдельную задачу — вынести без потери находки.
+- [ ] Типы свойств — по списку разрешённых (примитивы, `\DateTimeImmutable`, `UnitEnum`, другие VO и Enum), а не по суффиксам запрещённых: так ловятся `Closure` и ORM-модели. Если команда предпочитает отдельную задачу — вынести без потери находки. → Вынесено: в этой задаче не делалось, найти отдельной задачей при необходимости.
 
 ### ⚫ Won't Have (Не будем делать)
 - Изменение других сниффов и конвенции; автоисправления.
 
 ## 4. План реализации (Implementation Plan)
-1. [ ] Воспроизвести пропуски пробами из раздела 9 на текущем master.
-2. [ ] Исправить обход свойств: учитывать promoted-параметры конструктора (принадлежность классу проверять по вхождению класса в `conditions`, а не по последнему элементу).
-3. [ ] Добавить проверку видимости (`scope === 'private'`) с новым кодом ошибки.
-4. [ ] Обновить фикстуры и ожидания; при решении по неявному `readonly` — закрепить тестом.
-5. [ ] `composer check`; обновить CHANGELOG по регламенту релизов (новая проверка может упасть у потребителей — оценить как minor по SemVer на усмотрение команды).
+1. [x] Воспроизвести пропуски пробами из раздела 9 на текущем master.
+2. [x] Исправить обход свойств: учитывать promoted-параметры конструктора (принадлежность классу проверять по вхождению класса в `conditions`, а не по последнему элементу).
+3. [x] Добавить проверку видимости (`scope === 'private'`) с новым кодом ошибки.
+4. [x] Обновить фикстуры и ожидания; при решении по неявному `readonly` — закрепить тестом.
+5. [x] `composer check`; обновить CHANGELOG по регламенту релизов (новая проверка может упасть у потребителей — оценить как minor по SemVer на усмотрение команды).
+
+**Заметки по реализации:**
+- Причина пропусков в задаче локализована точнее, чем предполагалось: у promoted-параметров `conditions` содержит только класс (параметры не входят в тело функции), поэтому `belongsToClass()` для них TRUE — но `getMemberProperties()` бросает «not a class member var» на promoted-параметрах, и `catch (RuntimeException) { continue; }` глотал его. Промотированные параметры теперь разбираются через `File::getMethodParameters()` (PHPCS 4 возвращает `property_visibility`, `property_readonly`, `type_hint`); классические свойства отделены от переменных тела/параметров проверкой `nested_parenthesis` (паттерн из `RepositoryStructureSniff::isClassProperty()`).
+- CHANGELOG в пакете не ведётся вручную — генерируется при релизе (`make release` по регламенту git-workflow). Предупреждение о новой проверке (breaking-эффект у потребителей) вынесено в сообщение коммита (`BREAKING CHANGE`-блок) и PR.
 
 ## 5. Критерии приёмки (Definition of Done)
-- [ ] Все пробы из раздела 9 дают ожидаемый результат: `public`/`protected` — ошибка, `private` — без ошибок.
-- [ ] Тесты на оба вида свойств проходят; `composer check` зелёный.
+- [x] Все пробы из раздела 9 дают ожидаемый результат: `public`/`protected` — ошибка, `private` — без ошибок.
+- [x] Тесты на оба вида свойств проходят; `composer check` зелёный.
 - [ ] После обновления пакета в stocks2 (`composer update prikotov/coding-standard`) `make check` либо зелёный, либо показывает только реальные нарушения вида `NonPrivateProperty` (проверяет команда stocks2, не эта задача).
 
 ## 6. Самопроверка (Verification)
@@ -93,11 +98,11 @@ vendor/bin/phpcs --standard=ruleset.xml --sniffs=PrikotovCodingStandard.Structur
 ## 7. Риски и зависимости (Risks and Dependencies)
 - Новая проверка у потребителей может «сломать» их `phpcs` на существующем коде — это ожидаемый эффект; упомянуть в CHANGELOG.
 - Ложные срабатывания на VO с публичными константами недопустимы: константы (public — для доменных ограничений) разрешены конвенцией и проверяться не должны.
-- Зависит от конвенции `docs/conventions/core-patterns/value-object.md`; исходная задача сниффера — [TASK-feat-value-object-structure-sniff](done/TASK-feat-value-object-structure-sniff.todo.md).
+- Зависит от конвенции `docs/conventions/core-patterns/value-object.md`; исходная задача сниффера — [TASK-feat-value-object-structure-sniff](TASK-feat-value-object-structure-sniff.todo.md).
 
 ## 8. Источники (Sources)
 - Конвенция: `docs/conventions/core-patterns/value-object.md` (раздел «Общие правила»).
-- Исходная задача: [TASK-feat-value-object-structure-sniff](done/TASK-feat-value-object-structure-sniff.todo.md).
+- Исходная задача: [TASK-feat-value-object-structure-sniff](TASK-feat-value-object-structure-sniff.todo.md).
 - stocks2: [ретроспектива эпика EPIC-refactor-vo-conventions](https://github.com/prikotov/stocks2/blob/master/docs/agents/team-retro/2026-11-24_18-59-refactor-vo-conventions-epic.md), PR [prikotov/stocks2#466](https://github.com/prikotov/stocks2/pull/466).
 
 ## 9. Комментарии (Comments)
@@ -154,3 +159,4 @@ final readonly class PrivateVo
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-11-24 12:44:28 (1795524268) | Лид Арагорн (pi) | Создание задачи |
+| 2026-11-25 00:09:18 (1795540158) | Лид Арагорн (pi) | Взятие в работу (pi); реализация проверки `NonPrivateProperty` для классических и promoted-свойств, распространение проверок на promoted, решение по неявному `readonly` (ложное срабатывание исправлено), фикстуры и ожидания обновлены, `composer check` зелёный |

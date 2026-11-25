@@ -53,3 +53,27 @@ final readonly class MoneyVo
         return new self(0, 'USD');
     }
 }
+
+final readonly class AmountVo
+{
+    public const int MAX_CENTS = 100000000;
+
+    private string $currency;
+
+    private readonly int $cents;
+
+    public function __construct(
+        private string $code,
+        private readonly int $amount,
+        int $cents,
+        string $currency,
+    ) {
+        $this->cents = $cents;
+        $this->currency = $currency;
+    }
+
+    public function getAmount(): int
+    {
+        return $this->amount;
+    }
+}

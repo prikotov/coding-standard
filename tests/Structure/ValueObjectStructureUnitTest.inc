@@ -10,9 +10,11 @@ class BadVo
 
     public string $name;
 
+    protected string $code;
+
     private UserEntity $entity;
 
-    public function __construct(public string $value)
+    public function __construct(public string $value, protected int $count)
     {
         $this->name = $value;
     }

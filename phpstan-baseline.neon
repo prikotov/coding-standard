@@ -895,6 +895,18 @@ parameters:
 			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
 
 		-
+			message: '#^Parameter \#1 \$tokens of method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:isClassProperty\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
+			message: '#^Parameter \#2 \$tokens of method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:findConstructorPtr\(\) expects array\<int, array\<string, mixed\>\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Sniffs/Structure/ValueObjectStructureSniff.php
+
+		-
 			message: '#^Parameter \#3 \$scopeStart of method PrikotovCodingStandard\\Sniffs\\Structure\\ValueObjectStructureSniff\:\:assertMethods\(\) expects int, mixed given\.$#'
 			identifier: argument.type
 			count: 1
