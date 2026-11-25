@@ -19,8 +19,8 @@ reviewer:
 approver: 
 informed: []
 branch: task/deptrac-embeddable-layer
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/139
+status: review
 ---
 
 # TASK-feat-deptrac-embeddable-layer: Deptrac: выделить Embeddable VO в слой DomainEmbeddable и изолировать от Application/Presentation
