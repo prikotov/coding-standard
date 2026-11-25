@@ -3,7 +3,7 @@ type: feat
 created: 2026-11-24 12:44:28 (1795524268)
 due: 
 started: 2026-11-24 17:00:03 (1795539603)
-completed: 
+completed: 2026-11-25 01:02:47 (1795568567)
 cancelled: 
 value: V3
 complexity: C2
@@ -16,7 +16,7 @@ author: Лид Арагорн (pi)
 assignee: Лид Арагорн (pi)
 branch: task/vo-sniff-property-visibility
 pr: https://github.com/prikotov/coding-standard/pull/135
-status: review
+status: done
 ---
 
 # TASK-feat-vo-sniff-property-visibility: ValueObjectStructureSniff: проверка видимости свойств VO — только private
@@ -24,7 +24,7 @@ status: review
 ## 0. Простое описание (Human Brief)
 
 ### Проблема простыми словами (Problem)
-- Конвенция [value-object.md](../docs/conventions/core-patterns/value-object.md) требует: «свойства приватные и строго типизированные». Сниффер (автопроверка стиля) `ValueObjectStructureSniff` это правило не проверяет: объект-значение (Value Object, VO) с публичным или защищённым свойством проходит `phpcs` без единой ошибки.
+- Конвенция [value-object.md](../../docs/conventions/core-patterns/value-object.md) требует: «свойства приватные и строго типизированные». Сниффер (автопроверка стиля) `ValueObjectStructureSniff` это правило не проверяет: объект-значение (Value Object, VO) с публичным или защищённым свойством проходит `phpcs` без единой ошибки.
 - Проверено прогонами на v0.34.2 (коммит `7f8fb61`, PHP_CodeSniffer 4.0.4) командой `vendor/bin/phpcs --standard=ruleset.xml --sniffs=PrikotovCodingStandard.Structure.ValueObjectStructure`:
   - публичные свойства в конструкторе (promoted) — `public function __construct(public string $ticker) {}` — 0 ошибок;
   - защищённое promoted-свойство (`protected string $ticker`) — 0 ошибок;
@@ -98,11 +98,11 @@ vendor/bin/phpcs --standard=ruleset.xml --sniffs=PrikotovCodingStandard.Structur
 ## 7. Риски и зависимости (Risks and Dependencies)
 - Новая проверка у потребителей может «сломать» их `phpcs` на существующем коде — это ожидаемый эффект; упомянуть в CHANGELOG.
 - Ложные срабатывания на VO с публичными константами недопустимы: константы (public — для доменных ограничений) разрешены конвенцией и проверяться не должны.
-- Зависит от конвенции `docs/conventions/core-patterns/value-object.md`; исходная задача сниффера — [TASK-feat-value-object-structure-sniff](done/TASK-feat-value-object-structure-sniff.todo.md).
+- Зависит от конвенции `docs/conventions/core-patterns/value-object.md`; исходная задача сниффера — [TASK-feat-value-object-structure-sniff](TASK-feat-value-object-structure-sniff.todo.md).
 
 ## 8. Источники (Sources)
 - Конвенция: `docs/conventions/core-patterns/value-object.md` (раздел «Общие правила»).
-- Исходная задача: [TASK-feat-value-object-structure-sniff](done/TASK-feat-value-object-structure-sniff.todo.md).
+- Исходная задача: [TASK-feat-value-object-structure-sniff](TASK-feat-value-object-structure-sniff.todo.md).
 - stocks2: [ретроспектива эпика EPIC-refactor-vo-conventions](https://github.com/prikotov/stocks2/blob/master/docs/agents/team-retro/2026-11-24_18-59-refactor-vo-conventions-epic.md), PR [prikotov/stocks2#466](https://github.com/prikotov/stocks2/pull/466).
 
 ## 9. Комментарии (Comments)
