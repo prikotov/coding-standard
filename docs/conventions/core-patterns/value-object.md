@@ -31,7 +31,7 @@ description: Правила создания и использования об�
 
 ## Зависимости
 
-- Разрешены примитивы, `DateTimeImmutable`, `Uuid` (любая реализация: `Symfony\Component\Uid\Uuid`, `Ramsey\Uuid\UuidInterface`), `Enum` и другие VO того же слоя.
+- Разрешены примитивы, `DateTimeImmutable`, `Uuid`, `Enum` и другие VO того же слоя.
 - Разрешены общий (модуль-независимые) `Enum` и VO из `{ProjectName}\Common\Enum`, `{ProjectName}\Common\Component\…` и `{ProjectName}\Common\ValueObject`.
 - Разрешены Embeddable VO своего модуля (`Domain\Entity\ValueObject\…`) — см. [Расположение](#расположение).
 - Запрещены Infrastructure, ORM/DB (`Domain\Entity\…Model`), `Domain\Service`, внешние SDK, контейнер DI и любое глобальное состояние.
