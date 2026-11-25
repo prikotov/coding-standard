@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PrikotovCodingStandard\Tests\Deptrac;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -68,9 +69,7 @@ final class DepfileVersionedNamespaceRegexTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideVersionedAppNamespaceClasses
-     */
+    #[DataProvider('provideVersionedAppNamespaceClasses')]
     public function testPresentationCollectsAppNamespaceClass(string $className): void
     {
         self::assertTrue(
@@ -92,9 +91,7 @@ final class DepfileVersionedNamespaceRegexTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideNonAppNamespaceClasses
-     */
+    #[DataProvider('provideNonAppNamespaceClasses')]
     public function testPresentationIgnoresNonAppNamespaceClass(string $className): void
     {
         self::assertFalse(
