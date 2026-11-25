@@ -32,9 +32,9 @@ description: Правила создания и использования об�
 ## Зависимости
 
 - Разрешены примитивы, `DateTimeImmutable`, `Uuid`, `Enum` и другие VO того же слоя.
-- Разрешены общий (модуль-независимые) `Enum` и VO из `{ProjectName}\Common\Enum`, `{ProjectName}\Common\Component\…` и `{ProjectName}\Common\ValueObject`.
-- Запрещена зависимость от Embeddable VO (`Domain\Entity\ValueObject\…`): они несут ORM-маппинг и являются persistence-частью сущности, а не доменным типом. Использовать их вне своей сущности нельзя.
-- Запрещены Infrastructure, ORM/DB (`Domain\Entity\…Model`), `Domain\Service`, внешние SDK, контейнер DI и любое глобальное состояние.
+- Разрешены общие (модуль-независимые) `Enum` и VO из `{ProjectName}\Common\Enum`, `{ProjectName}\Common\Component\…` и `{ProjectName}\Common\ValueObject`.
+- Запрещена зависимость от Embeddable VO (`Domain\Entity\ValueObject\…`): они несут ORM-маппинг и являются persistence-частью сущности, а не доменным типом.
+- Запрещены Infrastructure, ORM/DB, внешние SDK, контейнер DI и любое глобальное состояние. Список не исчерпывающий: разрешено только то, что перечислено выше.
 - Запрещены зависимости от других модулей и других слоёв (в т.ч. Infrastructure-VO → Domain-типы): VO одного слоя и модуля, зависимости — того же слоя и модуля.
 - Автопроверка зависимостей — снифф `ValueObjectStructureSniff` (код `ForbiddenPropertyType`): тип свойства резолвится в FQCN по `use`-импортам и классифицируется по namespace.
 
@@ -46,7 +46,7 @@ description: Правила создания и использования об�
 {ProjectName}\Common\Module\{ModuleName}\Domain\ValueObject\{Name}Vo
 ```
 
-- Встраиваемые VO для ORM (Embeddable), применяемые **только внутри моделей сущностей** — это persistence-часть сущности, не доменный тип (см. [Зависимости](#зависимости)):
+- Встраиваемые VO для ORM (Embeddable), применяемые внутри моделей сущностей — это persistence-часть сущности, не доменный тип (см. [Зависимости](#зависимости)):
 
 ```
 {ProjectName}\Common\Module\{ModuleName}\Domain\Entity\ValueObject\{Name}Vo
@@ -142,7 +142,7 @@ final readonly class EmailVo
 - [ ] Класс `final readonly`, без побочных эффектов и сеттеров: изменение значения — только новым экземпляром через `withXxx()`.
 - [ ] Именование с постфиксом `Vo`; корректное расположение в соответствующем слое.
 - [ ] Валидация и нормализация данных выполняются при создании; при ошибке — `InvalidArgumentException`.
-- [ ] Зависимости только примитивы, `DateTimeImmutable`, `Uuid`, `Enum` и другие VO этого слоя и модуля; общий (`Common\Enum`, `Common\Component`) — разрешены; нет ссылок на `Entity`, Embeddable VO, `Service`, другие слои/модули/Infrastructure/ORM/SDK.
+- [ ] Зависимости — только перечисленное в «Зависимости»: примитивы, `DateTimeImmutable`, `Uuid`, `Enum`, другие VO и общие типы (`Common\Enum`, `Common\Component`) того же слоя и модуля; ничего сверх списка.
 - [ ] VO слоя Application не содержат бизнес-логики домена и не выражают доменные инварианты — только форматирование и преобразование данных.
 - [ ] Если тип возвращается/передаётся в Domain как часть бизнес-решения и требует инвариантов, выбран VO, а не DTO.
 - [ ] Методы чистые (pure); не изменяют состояние объекта и не зависят от внешнего контекста.
