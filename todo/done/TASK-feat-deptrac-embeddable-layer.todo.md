@@ -3,7 +3,7 @@ type: feat
 created: 2026-11-25 05:56:08 (1795586168)
 due: 
 started: 2026-11-25 05:56:08 (1795586168)
-completed: 
+completed: 2026-11-25 10:03:40 (1795601020)
 cancelled: 
 value: V3
 complexity: C3
@@ -20,7 +20,7 @@ approver:
 informed: []
 branch: task/deptrac-embeddable-layer
 pr: https://github.com/prikotov/coding-standard/pull/139
-status: review
+status: done
 ---
 
 # TASK-feat-deptrac-embeddable-layer: Deptrac: выделить Embeddable VO в слой DomainEmbeddable и изолировать от Application/Presentation
@@ -28,7 +28,7 @@ status: review
 ## 0. Простое описание (Human Brief)
 
 ### Проблема простыми словами (Problem)
-- Embeddable VO (`Domain\Entity\ValueObject\*Vo`) — persistence-часть сущности (конвенция [Entity](../docs/conventions/layers/domain/entity.md)), но в поставляемом depfile они попадали в общий слой `DomainVo` через regex `Domain\(Entity\\)?ValueObject\\…` и были доступны везде, где `DomainVo`. В TasK 4 Embeddable утекли в **25+ файлов**: Application-сервисы и их интерфейсы, мапперы, CommandHandler, Domain Strategy.
+- Embeddable VO (`Domain\Entity\ValueObject\*Vo`) — persistence-часть сущности (конвенция [Entity](../../docs/conventions/layers/domain/entity.md)), но в поставляемом depfile они попадали в общий слой `DomainVo` через regex `Domain\(Entity\\)?ValueObject\\…` и были доступны везде, где `DomainVo`. В TasK 4 Embeddable утекли в **25+ файлов**: Application-сервисы и их интерфейсы, мапперы, CommandHandler, Domain Strategy.
 - Сниффер ловит только типы **свойств** VO; утечка идёт через параметры/возвраты/контракты — нужен архитектурный gate.
 - ❗ При реализации вскрылась **вторая, более крупная дыра**: `Application: [+ApplicationCommandHandler]`. В Deptrac 4 `+Layer` — **транзитивное замыкание**: весь Application-слой наследовал все зависимости handler'ов (`Domain`, `DomainEnum`, `DomainVo`, `Presentation`…). Поэтому violation'ы на `Application → Domain` не выдавались вообще, а слой `Domain` в ruleset для `Application` был прописан пустым (`Application: [Application]`) — всё держалось на `+`. В TasK это скрывало 82 прямые зависимости мапперов/сервисов на сущности.
 
@@ -97,7 +97,7 @@ vendor/bin/phpunit tests/Deptrac/DepfileRulesetSemanticsTest.php
 - Зависит от #138; связана с TasK#3221 (задача в потребителе создана до нахождения причины — закрыть как устранённую).
 
 ## 8. Источники (Sources)
-- [Entity](../docs/conventions/layers/domain/entity.md) — Embeddable как часть сущности; [Value Object](../docs/conventions/core-patterns/value-object.md).
+- [Entity](../../docs/conventions/layers/domain/entity.md) — Embeddable как часть сущности; [Value Object](../../docs/conventions/core-patterns/value-object.md).
 - Deptrac 4: `LayerProvider::getTransitiveDependencies` — семантика `+Layer`.
 - Аудит: `~/MyProjects/TasK/Development`, `vendor/bin/deptrac analyse --config-file=depfile.yaml` с подменённым vendor-depfile.
 
