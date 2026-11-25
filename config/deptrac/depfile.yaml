@@ -28,7 +28,11 @@ deptrac:
               value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\.*
           must_not:
             - type: classLike
-              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Entity\\)?ValueObject\\.*Vo$
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\ValueObject\\.*Vo$
+            - type: classLike
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Entity\\ValueObject\\.*Vo$
+            - type: classLike
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Service|Repository|Strategy|Provider|Criteria|Helper)\\.*
             - type: classLike
               value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Specification\\.*
             - type: classLike
@@ -110,7 +114,28 @@ deptrac:
     - name: DomainVo
       collectors:
         - type: classLike
-          value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Entity\\)?ValueObject\\.*Vo$
+          value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\ValueObject\\.*Vo$
+
+    # Domain contracts (interfaces of services, repositories, strategies, providers):
+    # the only part of Domain the Application layer may call directly.
+    - name: DomainContract
+      collectors:
+        - type: bool
+          must:
+            - type: classLike
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Service|Repository|Strategy|Provider|Criteria|Helper)\\.*
+          must_not:
+            - type: classNameRegex
+              value: '/.*Model$/'
+            - type: classNameRegex
+              value: '/.*Entity$/'
+
+    # Embeddable VO are a persistence part of entities: isolated like Domain (entities),
+    # not shared like DomainVo. See docs/conventions/layers/domain/entity.md.
+    - name: DomainEmbeddable
+      collectors:
+        - type: classLike
+          value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Entity\\ValueObject\\.*Vo$
 
     - name: DomainEnum
       collectors:
@@ -178,13 +203,26 @@ deptrac:
     # DTO boundary
     Domain:
       - Domain
+      - DomainContract
       - DomainDto
       - DomainEnum
       - DomainSpecification
       - DomainVo
+      - DomainEmbeddable
     DomainVo:
       - Domain
       - DomainEnum
+      - DomainVo
+
+    DomainEmbeddable:
+      - DomainEnum
+
+    DomainContract:
+      - Domain
+      - DomainContract
+      - DomainDto
+      - DomainEnum
+      - DomainSpecification
       - DomainVo
     DomainEnum:
       - DomainEnum
@@ -199,6 +237,7 @@ deptrac:
       - IntegrationDto
     InfrastructureDto:
       - Domain
+      - DomainEmbeddable
       - DomainDto
       - DomainEnum
       - DomainVo
@@ -207,11 +246,14 @@ deptrac:
       - InfrastructureDto
     DomainDto:
       - Domain
+      - DomainContract
+      - DomainEmbeddable
       - DomainDto
       - DomainEnum
       - DomainVo
     DomainSpecification:
       - Domain
+      - DomainEmbeddable
       - DomainDto
       - DomainEnum
       - DomainSpecification
@@ -236,6 +278,7 @@ deptrac:
       - DomainEnum
       - DomainSpecification
       - DomainVo
+      - DomainContract
     ApplicationQueryHandler:
       - Application
       - +ApplicationQuery
@@ -244,6 +287,7 @@ deptrac:
       - DomainEnum
       - DomainSpecification
       - DomainVo
+      - DomainContract
 
     # Layer dependencies
     Presentation:
@@ -252,14 +296,26 @@ deptrac:
       - +ApplicationQuery
       - ApplicationCommandHandler
       - ApplicationQueryHandler
+    # Application (services, mappers, factories) works with DTO/Enum of its own layer and
+    # with Domain value types. Entities are reached through handlers and repositories only.
+    # No `+Layer` here: it is a transitive closure and would grant the handlers' dependencies.
     Application:
       - Application
-      - +ApplicationCommandHandler
-      - +ApplicationQueryHandler
+      - ApplicationCommandHandler
+      - ApplicationQueryHandler
+      - ApplicationDto
+      - ApplicationCommonDto
+      - ApplicationEnum
+      - DomainDto
+      - DomainEnum
+      - DomainVo
+      - DomainSpecification
+      - DomainContract
     Integration:
       - Integration
       - IntegrationDto
       - Application
+      - DomainContract
       - ApplicationCommand
       - ApplicationQuery
       - ApplicationCommandHandler
@@ -268,6 +324,7 @@ deptrac:
       - ApplicationCommonDto
       - ApplicationEnum
       - Domain
+      - DomainEmbeddable
       - DomainDto
       - DomainEnum
       - DomainVo
@@ -277,6 +334,8 @@ deptrac:
       - InfrastructureDto
       - InfrastructureEnum
       - Domain
+      - DomainContract
+      - DomainEmbeddable
       - DomainDto
       - DomainEnum
       - DomainVo
