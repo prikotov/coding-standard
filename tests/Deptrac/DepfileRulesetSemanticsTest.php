@@ -153,12 +153,12 @@ final class DepfileRulesetSemanticsTest extends TestCase
 
     public function testEntityStaysInDomainLayer(): void
     {
-        $this->writeClass('Domain/Repository/Payment/PaymentModel.php', 'final class PaymentModel');
+        $this->writeClass('Domain/Entity/PaymentModel.php', 'final class PaymentModel');
         $this->writeClass(
             'Application/Service/LeakyService.php',
             'final class LeakyService',
             'public function __construct(private readonly PaymentModel $model) {}',
-            ['PaymentModel' => 'Domain\Repository\Payment\PaymentModel'],
+            ['PaymentModel' => 'Domain\Entity\PaymentModel'],
         );
 
         self::assertSame(['Application\Service\LeakyService on Domain'], $this->edges($this->analyse(), 'LeakyService'));
@@ -187,6 +187,41 @@ final class DepfileRulesetSemanticsTest extends TestCase
             ['Domain\Specification\HasDeviceSpecification on DomainEmbeddable'],
             $this->edges($violations, 'HasDeviceSpecification'),
         );
+    }
+
+    public function testDomainValueObjectMayThrowDomainException(): void
+    {
+        $this->writeClass('Domain/Exception/InvalidAmountException.php', 'final class InvalidAmountException extends \\InvalidArgumentException');
+        $this->writeClass(
+            'Domain/ValueObject/AmountVo.php',
+            'final readonly class AmountVo',
+            "public function __construct(private int \$amount) { if (\$amount < 0) { throw new InvalidAmountException(); } }",
+            ['InvalidAmountException' => 'Domain\Exception\InvalidAmountException'],
+        );
+
+        self::assertSame([], $this->edges($this->analyse(), 'AmountVo'));
+    }
+
+    public function testEntityAndDomainServiceMayThrowDomainException(): void
+    {
+        $this->writeClass('Domain/Exception/InvalidAmountException.php', 'final class InvalidAmountException extends \\InvalidArgumentException');
+        $this->writeClass(
+            'Domain/Entity/PaymentModel.php',
+            'final class PaymentModel',
+            "public function __construct(private int \$amount) { if (\$amount < 0) { throw new InvalidAmountException(); } }",
+            ['InvalidAmountException' => 'Domain\Exception\InvalidAmountException'],
+        );
+        $this->writeClass(
+            'Domain/Service/PayService.php',
+            'final class PayService',
+            "public function pay(PaymentModel \$m): void { if (\$m->amount < 0) { throw new InvalidAmountException(); } }",
+            ['InvalidAmountException' => 'Domain\Exception\InvalidAmountException', 'PaymentModel' => 'Domain\Entity\PaymentModel'],
+        );
+
+        $violations = $this->analyse();
+
+        self::assertSame([], $this->edges($violations, 'PaymentModel'));
+        self::assertSame([], $this->edges($violations, 'PayService'));
     }
 
     public function testDomainValueObjectMustNotDependOnEmbeddable(): void
