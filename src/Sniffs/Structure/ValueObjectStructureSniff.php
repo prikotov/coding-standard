@@ -46,10 +46,18 @@ final class ValueObjectStructureSniff implements Sniff
 
     private const ALLOWED_VENDOR_NAMESPACE_PREFIXES = [
         'ramsey\\uuid\\',
+        'symfony\\component\\uid\\',
     ];
 
     private const ALLOWED_DEPENDENCY_GROUPS = [
         'dto',
+        'enum',
+        'valueobject',
+    ];
+
+    // Module-independent shared types (convention: enum.md, `ProjectName\Common\Enum`).
+    private const SHARED_TYPE_SEGMENTS = [
+        'component',
         'enum',
         'valueobject',
     ];
@@ -431,6 +439,12 @@ final class ValueObjectStructureSniff implements Sniff
             }
         }
 
+        // Module-independent shared types: `{Project}\Common\Enum`, `{Project}\Common\Component\...`,
+        // `{Project}\Common\ValueObject` — the same for every module and layer by definition.
+        if ($this->isSharedType($fqcn) === true) {
+            return true;
+        }
+
         // Classes outside convention paths (vendor, legacy) are forbidden.
         $scope = $this->resolveDependencyScope($fqcn);
         if ($scope['module'] === null || $scope['layer'] === null) {
@@ -459,10 +473,35 @@ final class ValueObjectStructureSniff implements Sniff
     }
 
     /**
+     * `{Project}\Common\{Enum|Component|ValueObject}\…` — the namespace has a `Common`
+     * segment followed by a shared-type segment and no `Module` segment.
+     */
+    private function isSharedType(string $fqcn): bool
+    {
+        $segments = explode('\\', $fqcn);
+
+        foreach ($segments as $index => $segment) {
+            if (strtolower($segment) !== 'common') {
+                continue;
+            }
+
+            $next = $segments[$index + 1] ?? null;
+            if ($next === null || in_array(strtolower($next), self::SHARED_TYPE_SEGMENTS, true) === false) {
+                return false;
+            }
+
+            // A `Module` segment later in the path means a regular module type.
+            return in_array('module', array_map('strtolower', $segments), true) === false;
+        }
+
+        return false;
+    }
+
+    /**
      * Resolves `{ProjectName}\…\Module\{ModuleName}\{Layer}\{Group}\…` — the last
-     * `Module` segment wins. `group` is the segment right after the layer
-     * (`ValueObject`, `Enum`, `Dto`, `Entity`, …) or `null` for classes directly
-     * inside the layer namespace.
+     * `Module` segment wins. `group` is the category segment closest to the class
+     * name (`ValueObject`, `Enum`, `Dto`, `Entity`, …), so Embeddable VO in
+     * `Domain\Entity\ValueObject\` resolve to `valueobject`, not `entity`.
      *
      * @return array{module: ?string, layer: ?string, group: ?string}
      */
@@ -486,10 +525,20 @@ final class ValueObjectStructureSniff implements Sniff
             return ['module' => null, 'layer' => null, 'group' => null];
         }
 
+        // Group: the last known category segment after the layer, before the class name.
+        $categorySegments = array_merge(self::ALLOWED_DEPENDENCY_GROUPS, ['entity', 'service', 'repository']);
+        $group            = null;
+        $pathSegments     = array_slice($segments, $moduleIndex + 3, -1);
+        foreach ($pathSegments as $segment) {
+            if (in_array(strtolower($segment), $categorySegments, true) === true) {
+                $group = $segment;
+            }
+        }
+
         return [
             'module' => $segments[$moduleIndex + 1],
             'layer'  => $segments[$moduleIndex + 2],
-            'group'  => $segments[$moduleIndex + 3] ?? null,
+            'group'  => $group,
         ];
     }
 
