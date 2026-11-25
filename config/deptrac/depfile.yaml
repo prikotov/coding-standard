@@ -232,7 +232,7 @@ deptrac:
       - IntegrationDto
     InfrastructureDto:
       - Domain
-      - DomainEmbeddable
+      - DomainContract
       - DomainDto
       - DomainEnum
       - DomainVo
@@ -242,13 +242,12 @@ deptrac:
     DomainDto:
       - Domain
       - DomainContract
-      - DomainEmbeddable
       - DomainDto
       - DomainEnum
       - DomainVo
     DomainSpecification:
       - Domain
-      - DomainEmbeddable
+      - DomainContract
       - DomainDto
       - DomainEnum
       - DomainSpecification

@@ -138,6 +138,31 @@ final class DepfileRulesetSemanticsTest extends TestCase
         self::assertSame([], $this->edges($this->analyse(), 'LeakyService'));
     }
 
+    public function testDomainValueTypesMustNotOwnEmbeddable(): void
+    {
+        $this->writeClass('Domain/Entity/ValueObject/DeviceVo.php', 'final readonly class DeviceVo');
+        $this->writeClass(
+            'Domain/Dto/SessionDto.php',
+            'final readonly class SessionDto',
+            'public function __construct(public readonly DeviceVo $device) {}',
+            ['DeviceVo' => 'Domain\Entity\ValueObject\DeviceVo'],
+        );
+        $this->writeClass(
+            'Domain/Specification/HasDeviceSpecification.php',
+            'final class HasDeviceSpecification',
+            'public function __construct(private readonly DeviceVo $device) {}',
+            ['DeviceVo' => 'Domain\Entity\ValueObject\DeviceVo'],
+        );
+
+        $violations = $this->analyse();
+
+        self::assertSame(['Domain\Dto\SessionDto on DomainEmbeddable'], $this->edges($violations, 'SessionDto'));
+        self::assertSame(
+            ['Domain\Specification\HasDeviceSpecification on DomainEmbeddable'],
+            $this->edges($violations, 'HasDeviceSpecification'),
+        );
+    }
+
     public function testDomainValueObjectMustNotDependOnEmbeddable(): void
     {
         $this->writeClass('Domain/Entity/ValueObject/DeviceVo.php', 'final readonly class DeviceVo');
