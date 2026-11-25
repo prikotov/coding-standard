@@ -3,7 +3,7 @@ type: fix
 created: 2026-11-25 10:50:00 (1795578600)
 due: 
 started: 2026-11-25 10:50:00 (1795578600)
-completed: 
+completed: 2026-11-25 05:34:03 (1795584843)
 cancelled: 
 value: V3
 complexity: C2
@@ -16,7 +16,7 @@ author: Лид Арагорн (pi)
 assignee: Лид Арагорн (pi)
 branch: task/vo-sniff-dependency-false-positives
 pr: https://github.com/prikotov/coding-standard/pull/137
-status: review
+status: done
 ---
 
 # TASK-fix-vo-sniff-dependency-false-positives: ValueObjectStructureSniff: ложные срабатывания ForbiddenPropertyType на Uid и общих Enum; запрет Embeddable VO
@@ -24,7 +24,7 @@ status: review
 ## 0. Простое описание (Human Brief)
 
 ### Проблема простыми словами (Problem)
-- После внедрения проверки типов свойств VO по namespace ([TASK-feat-vo-sniff-property-type-namespace](done/TASK-feat-vo-sniff-property-type-namespace.todo.md)) прогон на проекте-потребителе TasK дал 41 ошибку `ForbiddenPropertyType`. Аудит показал: **25 — ложные срабатывания** (сниффер строже конвенции), **16 — честные**.
+- После внедрения проверки типов свойств VO по namespace ([TASK-feat-vo-sniff-property-type-namespace](TASK-feat-vo-sniff-property-type-namespace.todo.md)) прогон на проекте-потребителе TasK дал 41 ошибку `ForbiddenPropertyType`. Аудит показал: **25 — ложные срабатывания** (сниффер строже конвенции), **16 — честные**.
 - Кейс 1 (ложное) — `Symfony\Component\Uid\Uuid` (22): конвенция разрешает «`Uuid`», а allowlist вендорных префиксов знал только `Ramsey\Uuid`. При этом примеры самих конвенций пакета (`layers/infrastructure/repository.md`) используют Symfony Uid.
 - Кейс 3 (ложное) — модуль-независимые Enum (3): конвенция `enum.md` разрешает `ProjectName\Common\Enum`, но пути без `Module\{Name}\` давали `module === null` → запрет. Пострадавшие: `Task\Common\Component\ProcessingActivity\ProcessingActivityTargetEnum`, `ScopeEnum`, `ValueTypeEnum`.
 - **Кейс 2 — Embeddable VO `Domain\Entity\ValueObject\{Name}Vo` (2) — по ходу задачи переквалифицирован из «ложного» в честное нарушение.** Первоначально сниффер был «исправлен» в сторону разрешения (конвенция же разрешает такое *расположение*), но владелец поставил вопрос: «это часть сущности — стоит ли разрешать?». Разбор подтвердил: Embeddable несут Doctrine-маппинг (`#[Embeddable]`, `#[Column]`, `Doctrine\DBAL\Types`) и являются persistence-частью сущности, а не доменным типом. Зависимость доменного VO от них нарушает «Запрещены ORM/DB» транзитивно. В TasK это видно: `DeviceVo`/`UtmVo` используются в 5+ файлах Application (мапперы, интерфейсы сервисов), `ClientCostVo` — в Command Handler. **Решение: запретить.** Ошибка первой версии фикса — склейка двух разных правил: «где хранить» (расположение) и «что можно инжектить в другой VO» (зависимости).
@@ -98,7 +98,7 @@ vendor/bin/phpcs --standard=ruleset.xml --sniffs=PrikotovCodingStandard.Structur
 - `{Project}\Common\…` без `Module` — эвристика по сегменту `Common`; проекты с другим корнем общих типов потребуют расширения `SHARED_TYPE_SEGMENTS`.
 - Запрет Embeddable — новое правило конвенции: у потребителей существующие зависимости VO от Embeddable (TasK: 2) станут ошибками после обновления.
 - Сниффер проверяет только типы **свойств** VO; утечка Embeddable в параметры/возвраты методов и в контракты Application — вне этой задачи.
-- Связанные: [TASK-feat-vo-sniff-property-type-namespace](done/TASK-feat-vo-sniff-property-type-namespace.todo.md) (внедрение проверки), [TASK-feat-vo-sniff-property-visibility](done/TASK-feat-vo-sniff-property-visibility.todo.md).
+- Связанные: [TASK-feat-vo-sniff-property-type-namespace](TASK-feat-vo-sniff-property-type-namespace.todo.md) (внедрение проверки), [TASK-feat-vo-sniff-property-visibility](TASK-feat-vo-sniff-property-visibility.todo.md).
 
 ## 8. Источники (Sources)
 - Конвенции: `docs/conventions/core-patterns/value-object.md` («Зависимости», «Расположение»), `docs/conventions/core-patterns/enum.md` (расположение общих Enum), `docs/conventions/layers/infrastructure/repository.md` (пример с `Symfony\Component\Uid\Uuid`).
