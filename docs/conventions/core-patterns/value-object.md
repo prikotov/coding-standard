@@ -31,8 +31,12 @@ description: Правила создания и использования об�
 
 ## Зависимости
 
-- Разрешены примитивы, `DateTimeImmutable`, `Uuid`, `Enum` и другие VO того же слоя.
-- Запрещены Infrastructure, ORM/DB, внешние SDK, контейнер DI и любое глобальное состояние.
+- Разрешены примитивы, `DateTimeImmutable`, `Uuid` (любая реализация: `Symfony\Component\Uid\Uuid`, `Ramsey\Uuid\UuidInterface`), `Enum` и другие VO того же слоя.
+- Разрешены общий (модуль-независимые) `Enum` и VO из `{ProjectName}\Common\Enum`, `{ProjectName}\Common\Component\…` и `{ProjectName}\Common\ValueObject`.
+- Разрешены Embeddable VO своего модуля (`Domain\Entity\ValueObject\…`) — см. [Расположение](#расположение).
+- Запрещены Infrastructure, ORM/DB (`Domain\Entity\…Model`), `Domain\Service`, внешние SDK, контейнер DI и любое глобальное состояние.
+- Запрещены зависимости от других модулей и других слоёв (в т.ч. Infrastructure-VO → Domain-типы): VO одного слоя и модуля, зависимости — того же слоя и модуля.
+- Автопроверка зависимостей — снифф `ValueObjectStructureSniff` (код `ForbiddenPropertyType`): тип свойства резолвится в FQCN по `use`-импортам и классифицируется по namespace.
 
 ## Расположение
 
@@ -138,7 +142,7 @@ final readonly class EmailVo
 - [ ] Класс `final readonly`, без побочных эффектов и сеттеров: изменение значения — только новым экземпляром через `withXxx()`.
 - [ ] Именование с постфиксом `Vo`; корректное расположение в соответствующем слое.
 - [ ] Валидация и нормализация данных выполняются при создании; при ошибке — `InvalidArgumentException`.
-- [ ] Зависимости только примитивы, `DateTimeImmutable`, `Uuid`, `Enum` и другие VO этого слоя; нет ссылок на другие слои/Infrastructure/ORM/SDK.
+- [ ] Зависимости только примитивы, `DateTimeImmutable`, `Uuid`, `Enum` и другие VO этого слоя и модуля; общий (`Common\Enum`, `Common\Component`) и Embeddable VO — разрешены; нет ссылок на `Entity`, `Service`, другие слои/модули/Infrastructure/ORM/SDK.
 - [ ] VO слоя Application не содержат бизнес-логики домена и не выражают доменные инварианты — только форматирование и преобразование данных.
 - [ ] Если тип возвращается/передаётся в Domain как часть бизнес-решения и требует инвариантов, выбран VO, а не DTO.
 - [ ] Методы чистые (pure); не изменяют состояние объекта и не зависят от внешнего контекста.
