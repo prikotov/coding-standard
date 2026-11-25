@@ -462,6 +462,13 @@ final class ValueObjectStructureSniff implements Sniff
             return false;
         }
 
+        // Embeddable VO (`Domain\Entity\ValueObject\…`) are a persistence part of the entity
+        // (they carry Doctrine mapping attributes), not domain types: a domain VO must not
+        // depend on them. Any `Entity` segment in the path makes the type an entity part.
+        if (in_array('entity', $scope['path'], true) === true) {
+            return false;
+        }
+
         // Inside the same layer only VO/Enum/DTO groups are convention dependencies;
         // Domain\Entity (ORM), Domain\Service and similar are not.
         $group = $scope['group'];
@@ -500,10 +507,11 @@ final class ValueObjectStructureSniff implements Sniff
     /**
      * Resolves `{ProjectName}\…\Module\{ModuleName}\{Layer}\{Group}\…` — the last
      * `Module` segment wins. `group` is the category segment closest to the class
-     * name (`ValueObject`, `Enum`, `Dto`, `Entity`, …), so Embeddable VO in
-     * `Domain\Entity\ValueObject\` resolve to `valueobject`, not `entity`.
+     * name (`ValueObject`, `Enum`, `Dto`, `Entity`, …); `path` is the lowercased
+     * segments between the layer and the class name, so callers can detect an
+     * `entity` part anywhere in it (Embeddable VO).
      *
-     * @return array{module: ?string, layer: ?string, group: ?string}
+     * @return array{module: ?string, layer: ?string, group: ?string, path: list<string>}
      */
     private function resolveDependencyScope(string $fqcn): array
     {
@@ -522,13 +530,14 @@ final class ValueObjectStructureSniff implements Sniff
             || $segments[$moduleIndex + 1] === ''
             || $segments[$moduleIndex + 2] === ''
         ) {
-            return ['module' => null, 'layer' => null, 'group' => null];
+            return ['module' => null, 'layer' => null, 'group' => null, 'path' => []];
         }
 
         // Group: the last known category segment after the layer, before the class name.
         $categorySegments = array_merge(self::ALLOWED_DEPENDENCY_GROUPS, ['entity', 'service', 'repository']);
         $group            = null;
         $pathSegments     = array_slice($segments, $moduleIndex + 3, -1);
+        $path             = array_map('strtolower', $pathSegments);
         foreach ($pathSegments as $segment) {
             if (in_array(strtolower($segment), $categorySegments, true) === true) {
                 $group = $segment;
@@ -539,6 +548,7 @@ final class ValueObjectStructureSniff implements Sniff
             'module' => $segments[$moduleIndex + 1],
             'layer'  => $segments[$moduleIndex + 2],
             'group'  => $group,
+            'path'   => $path,
         ];
     }
 

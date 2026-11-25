@@ -6,7 +6,6 @@ use DateTimeImmutable;
 use Project\Common\Component\Billing\BillingModeEnum;
 use Project\Common\Enum\LanguageEnum;
 use Project\Common\Module\User\Domain\Enum\UserStatus;
-use Project\Common\Module\User\Domain\Entity\ValueObject\AuditStampVo;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Uid\Uuid;
 
@@ -102,13 +101,12 @@ final readonly class CustomerVo
     }
 }
 
-// Uid from Symfony, shared (module-independent) enums and Embeddable VO are valid dependencies.
+// Uid from Symfony and shared (module-independent) enums are valid dependencies.
 final readonly class SessionVo
 {
     public function __construct(
         private Uuid $uuid,
         private LanguageEnum $language,
         private BillingModeEnum $billingMode,
-        private AuditStampVo $auditStamp,
     ) {}
 }
