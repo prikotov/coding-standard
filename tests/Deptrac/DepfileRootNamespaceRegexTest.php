@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PrikotovCodingStandard\Tests\Deptrac;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -140,9 +141,7 @@ final class DepfileRootNamespaceRegexTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideDigitRootNamespaceClasses
-     */
+    #[DataProvider('provideDigitRootNamespaceClasses')]
     public function testLayerCollectsDigitRootNamespaceClass(string $layerName, string $className): void
     {
         self::assertTrue(

@@ -143,10 +143,10 @@ final class ReservedLayerSegmentRuleTest extends TestCase
             $references[] = new ClassLikeReference(ClassLikeToken::fromFQCN($className));
         }
 
-        $astMap = $this->createMock(AstMap::class);
+        $astMap = $this->createStub(AstMap::class);
         $astMap->method('getClassLikeReferences')->willReturn($references);
 
-        $extractor = $this->createMock(AstMapExtractor::class);
+        $extractor = $this->createStub(AstMapExtractor::class);
         $extractor->method('extract')->willReturn($astMap);
 
         return new ReservedLayerSegmentRule($extractor);
