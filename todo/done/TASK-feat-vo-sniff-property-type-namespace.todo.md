@@ -3,7 +3,7 @@ type: feat
 created: 2026-11-25 02:27:09 (1795573629)
 due: 
 started: 2026-11-25 03:25:40 (1795577140)
-completed: 
+completed: 2026-11-25 03:43:15 (1795578195)
 cancelled: 
 value: V2
 complexity: C3
@@ -16,7 +16,7 @@ author: Лид Арагорн (pi)
 assignee: Лид Арагорн (pi)
 branch: task/vo-sniff-type-namespace-task
 pr: https://github.com/prikotov/coding-standard/pull/136
-status: review
+status: done
 ---
 
 # TASK-feat-vo-sniff-property-type-namespace: ValueObjectStructureSniff: проверка типов свойств VO по namespace зависимостей
@@ -25,10 +25,10 @@ status: review
 
 ### Проблема простыми словами (Problem)
 - Сниффер `ValueObjectStructureSniff` проверяет типы свойств VO по **чёрному списку суффиксов** (`Entity`/`Repository`/`Service`): ошибка только если имя типа заканчивается на запрещённый суффикс. Это эвристика «по плохому имени», а не по сути зависимости.
-- Конвенция [value-object.md](../docs/conventions/core-patterns/value-object.md) разрешает зависимостям VO только примитивы, `DateTimeImmutable`, `Uuid`, `Enum` и другие VO **того же слоя**; запрещены Infrastructure, ORM/DB, внешние SDK. Но суффикс-проверка пропускает:
+- Конвенция [value-object.md](../../docs/conventions/core-patterns/value-object.md) разрешает зависимостям VO только примитивы, `DateTimeImmutable`, `Uuid`, `Enum` и другие VO **того же слоя**; запрещены Infrastructure, ORM/DB, внешние SDK. Но суффикс-проверка пропускает:
   - `private Closure $loader;` — замыкание, суффикса нет;
   - `private TickerModel $model;` — ORM-модель: по конвенции живёт в `{Module}\Domain\Entity\`, суффикс `Model` в чёрный список не входит.
-- Оба случая реально прошли все проверки в stocks2 (см. [ретроспективу эпика](https://github.com/prikotov/stocks2/blob/master/docs/agents/team-retro/2026-11-24_18-59-refactor-vo-conventions-epic.md)); находка зафиксирована в [TASK-feat-vo-sniff-property-visibility](done/TASK-feat-vo-sniff-property-visibility.todo.md) как Should Have и вынесена сюда.
+- Оба случая реально прошли все проверки в stocks2 (см. [ретроспективу эпика](https://github.com/prikotov/stocks2/blob/master/docs/agents/team-retro/2026-11-24_18-59-refactor-vo-conventions-epic.md)); находка зафиксирована в [TASK-feat-vo-sniff-property-visibility](TASK-feat-vo-sniff-property-visibility.todo.md) как Should Have и вынесена сюда.
 
 ### Варианты или путь решения (Solution Sketch)
 - Отклонено — белый список **имён типов** (`string`, `DateTimeImmutable`, … по списку): не выражает «другие VO и DTO того же слоя» без резолва имён, превращается в догонялки за списком.
@@ -112,7 +112,7 @@ vendor/bin/phpcs --standard=ruleset.xml --sniffs=PrikotovCodingStandard.Structur
 
 ## 8. Источники (Sources)
 - Конвенция: `docs/conventions/core-patterns/value-object.md` (разделы «Общие правила», «Зависимости», «Расположение»).
-- Предшественник: [TASK-feat-vo-sniff-property-visibility](done/TASK-feat-vo-sniff-property-visibility.todo.md) (раздел 2, «Типы свойств» — побочное наблюдение).
+- Предшественник: [TASK-feat-vo-sniff-property-visibility](TASK-feat-vo-sniff-property-visibility.todo.md) (раздел 2, «Типы свойств» — побочное наблюдение).
 - Паттерн резолва: `src/Sniffs/Structure/RepositoryStructureSniff.php` (`extractFqcnFromUse`, `resolveFqcn`).
 - stocks2: [ретроспектива эпика EPIC-refactor-vo-conventions](https://github.com/prikotov/stocks2/blob/master/docs/agents/team-retro/2026-11-24_18-59-refactor-vo-conventions-epic.md).
 
