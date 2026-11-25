@@ -46,10 +46,18 @@ final class ValueObjectStructureSniff implements Sniff
 
     private const ALLOWED_VENDOR_NAMESPACE_PREFIXES = [
         'ramsey\\uuid\\',
+        'symfony\\component\\uid\\',
     ];
 
     private const ALLOWED_DEPENDENCY_GROUPS = [
         'dto',
+        'enum',
+        'valueobject',
+    ];
+
+    // Module-independent shared types (convention: enum.md, `ProjectName\Common\Enum`).
+    private const SHARED_TYPE_SEGMENTS = [
+        'component',
         'enum',
         'valueobject',
     ];
@@ -431,6 +439,12 @@ final class ValueObjectStructureSniff implements Sniff
             }
         }
 
+        // Module-independent shared types: `{Project}\Common\Enum`, `{Project}\Common\Component\...`,
+        // `{Project}\Common\ValueObject` — the same for every module and layer by definition.
+        if ($this->isSharedType($fqcn) === true) {
+            return true;
+        }
+
         // Classes outside convention paths (vendor, legacy) are forbidden.
         $scope = $this->resolveDependencyScope($fqcn);
         if ($scope['module'] === null || $scope['layer'] === null) {
@@ -448,6 +462,13 @@ final class ValueObjectStructureSniff implements Sniff
             return false;
         }
 
+        // Embeddable VO (`Domain\Entity\ValueObject\…`) are a persistence part of the entity
+        // (they carry Doctrine mapping attributes), not domain types: a domain VO must not
+        // depend on them. Any `Entity` segment in the path makes the type an entity part.
+        if (in_array('entity', $scope['path'], true) === true) {
+            return false;
+        }
+
         // Inside the same layer only VO/Enum/DTO groups are convention dependencies;
         // Domain\Entity (ORM), Domain\Service and similar are not.
         $group = $scope['group'];
@@ -459,12 +480,38 @@ final class ValueObjectStructureSniff implements Sniff
     }
 
     /**
+     * `{Project}\Common\{Enum|Component|ValueObject}\…` — the namespace has a `Common`
+     * segment followed by a shared-type segment and no `Module` segment.
+     */
+    private function isSharedType(string $fqcn): bool
+    {
+        $segments = explode('\\', $fqcn);
+
+        foreach ($segments as $index => $segment) {
+            if (strtolower($segment) !== 'common') {
+                continue;
+            }
+
+            $next = $segments[$index + 1] ?? null;
+            if ($next === null || in_array(strtolower($next), self::SHARED_TYPE_SEGMENTS, true) === false) {
+                return false;
+            }
+
+            // A `Module` segment later in the path means a regular module type.
+            return in_array('module', array_map('strtolower', $segments), true) === false;
+        }
+
+        return false;
+    }
+
+    /**
      * Resolves `{ProjectName}\…\Module\{ModuleName}\{Layer}\{Group}\…` — the last
-     * `Module` segment wins. `group` is the segment right after the layer
-     * (`ValueObject`, `Enum`, `Dto`, `Entity`, …) or `null` for classes directly
-     * inside the layer namespace.
+     * `Module` segment wins. `group` is the category segment closest to the class
+     * name (`ValueObject`, `Enum`, `Dto`, `Entity`, …); `path` is the lowercased
+     * segments between the layer and the class name, so callers can detect an
+     * `entity` part anywhere in it (Embeddable VO).
      *
-     * @return array{module: ?string, layer: ?string, group: ?string}
+     * @return array{module: ?string, layer: ?string, group: ?string, path: list<string>}
      */
     private function resolveDependencyScope(string $fqcn): array
     {
@@ -483,13 +530,25 @@ final class ValueObjectStructureSniff implements Sniff
             || $segments[$moduleIndex + 1] === ''
             || $segments[$moduleIndex + 2] === ''
         ) {
-            return ['module' => null, 'layer' => null, 'group' => null];
+            return ['module' => null, 'layer' => null, 'group' => null, 'path' => []];
+        }
+
+        // Group: the last known category segment after the layer, before the class name.
+        $categorySegments = array_merge(self::ALLOWED_DEPENDENCY_GROUPS, ['entity', 'service', 'repository']);
+        $group            = null;
+        $pathSegments     = array_slice($segments, $moduleIndex + 3, -1);
+        $path             = array_map('strtolower', $pathSegments);
+        foreach ($pathSegments as $segment) {
+            if (in_array(strtolower($segment), $categorySegments, true) === true) {
+                $group = $segment;
+            }
         }
 
         return [
             'module' => $segments[$moduleIndex + 1],
             'layer'  => $segments[$moduleIndex + 2],
-            'group'  => $segments[$moduleIndex + 3] ?? null,
+            'group'  => $group,
+            'path'   => $path,
         ];
     }
 

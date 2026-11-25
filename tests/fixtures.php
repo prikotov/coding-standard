@@ -246,18 +246,19 @@ return [
     [
         'file' => __DIR__ . '/Structure/ValueObjectStructureUnitTest.inc',
         'errors' => [
-            8  => 1, // FinalReadonlyRequired
-            10 => 1, // ForbiddenMembers — trait
-            14 => 2, // NonReadonlyProperty + NonPrivateProperty (classic public)
-            16 => 2, // NonReadonlyProperty + NonPrivateProperty (classic protected)
-            18 => 2, // NonReadonlyProperty + ForbiddenPropertyType — UserEntity of Domain\Entity
-            20 => 2, // NonReadonlyProperty + ForbiddenPropertyType — global Closure
-            22 => 2, // NonReadonlyProperty + ForbiddenPropertyType — other module MoneyVo
-            24 => 4, // promoted public + promoted protected: NonReadonlyProperty + NonPrivateProperty each
-            29 => 1, // ForbiddenMagicMethod
-            33 => 1, // VoidReturnForbidden
-            42 => 1, // ToReturnSelfForbidden
-            47 => 1, // ForbiddenStaticMethod
+            9  => 1, // FinalReadonlyRequired
+            11 => 1, // ForbiddenMembers — trait
+            15 => 2, // NonReadonlyProperty + NonPrivateProperty (classic public)
+            17 => 2, // NonReadonlyProperty + NonPrivateProperty (classic protected)
+            19 => 2, // NonReadonlyProperty + ForbiddenPropertyType — UserEntity of Domain\Entity
+            21 => 2, // NonReadonlyProperty + ForbiddenPropertyType — global Closure
+            23 => 2, // NonReadonlyProperty + ForbiddenPropertyType — Embeddable VO (entity part)
+            25 => 2, // NonReadonlyProperty + ForbiddenPropertyType — other module MoneyVo
+            27 => 4, // promoted public + promoted protected: NonReadonlyProperty + NonPrivateProperty each
+            32 => 1, // ForbiddenMagicMethod
+            36 => 1, // VoidReturnForbidden
+            45 => 1, // ToReturnSelfForbidden
+            50 => 1, // ForbiddenStaticMethod
         ],
         'warnings' => [
             3 => 1, // NamespaceMismatch

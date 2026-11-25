@@ -3,8 +3,11 @@
 namespace Project\Common\Module\User\Domain\ValueObject;
 
 use DateTimeImmutable;
+use Project\Common\Component\Billing\BillingModeEnum;
+use Project\Common\Enum\LanguageEnum;
 use Project\Common\Module\User\Domain\Enum\UserStatus;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Uid\Uuid;
 
 final readonly class EmailVo
 {
@@ -96,4 +99,14 @@ final readonly class CustomerVo
     {
         return $this->status;
     }
+}
+
+// Uid from Symfony and shared (module-independent) enums are valid dependencies.
+final readonly class SessionVo
+{
+    public function __construct(
+        private Uuid $uuid,
+        private LanguageEnum $language,
+        private BillingModeEnum $billingMode,
+    ) {}
 }

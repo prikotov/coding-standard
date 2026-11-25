@@ -3,6 +3,7 @@
 namespace App\Module\User\Domain\Service;
 
 use App\Module\User\Domain\Entity\UserEntity;
+use App\Module\User\Domain\Entity\ValueObject\AuditStampVo;
 use Other\Module\Billing\Domain\ValueObject\MoneyVo;
 
 class BadVo
@@ -18,6 +19,8 @@ class BadVo
     private UserEntity $entity;
 
     private \Closure $loader;
+
+    private AuditStampVo $auditStamp;
 
     private MoneyVo $price;
 
