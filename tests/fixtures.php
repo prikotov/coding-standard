@@ -246,16 +246,18 @@ return [
     [
         'file' => __DIR__ . '/Structure/ValueObjectStructureUnitTest.inc',
         'errors' => [
-            5  => 1, // FinalReadonlyRequired
-            7  => 1, // ForbiddenMembers — trait
-            11 => 2, // NonReadonlyProperty + NonPrivateProperty (classic public)
-            13 => 2, // NonReadonlyProperty + NonPrivateProperty (classic protected)
-            15 => 2, // NonReadonlyProperty + ForbiddenPropertyType (classic private)
-            17 => 4, // promoted public + promoted protected: NonReadonlyProperty + NonPrivateProperty each
-            22 => 1, // ForbiddenMagicMethod
-            26 => 1, // VoidReturnForbidden
-            35 => 1, // ToReturnSelfForbidden
-            40 => 1, // ForbiddenStaticMethod
+            8  => 1, // FinalReadonlyRequired
+            10 => 1, // ForbiddenMembers — trait
+            14 => 2, // NonReadonlyProperty + NonPrivateProperty (classic public)
+            16 => 2, // NonReadonlyProperty + NonPrivateProperty (classic protected)
+            18 => 2, // NonReadonlyProperty + ForbiddenPropertyType — UserEntity of Domain\Entity
+            20 => 2, // NonReadonlyProperty + ForbiddenPropertyType — global Closure
+            22 => 2, // NonReadonlyProperty + ForbiddenPropertyType — other module MoneyVo
+            24 => 4, // promoted public + promoted protected: NonReadonlyProperty + NonPrivateProperty each
+            29 => 1, // ForbiddenMagicMethod
+            33 => 1, // VoidReturnForbidden
+            42 => 1, // ToReturnSelfForbidden
+            47 => 1, // ForbiddenStaticMethod
         ],
         'warnings' => [
             3 => 1, // NamespaceMismatch
@@ -264,6 +266,12 @@ return [
     // ValueObjectStructureSniff — valid cases
     [
         'file' => __DIR__ . '/Structure/ValueObjectStructureUnitTestValid.inc',
+        'errors' => [],
+        'warnings' => [],
+    ],
+    // ValueObjectStructureSniff — Application VO with same-layer DTO — valid
+    [
+        'file' => __DIR__ . '/Structure/ValueObjectStructureUnitTestValidApp.inc',
         'errors' => [],
         'warnings' => [],
     ],

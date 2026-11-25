@@ -2,6 +2,9 @@
 
 namespace App\Module\User\Domain\Service;
 
+use App\Module\User\Domain\Entity\UserEntity;
+use Other\Module\Billing\Domain\ValueObject\MoneyVo;
+
 class BadVo
 {
     use SomeTrait;
@@ -13,6 +16,10 @@ class BadVo
     protected string $code;
 
     private UserEntity $entity;
+
+    private \Closure $loader;
+
+    private MoneyVo $price;
 
     public function __construct(public string $value, protected int $count)
     {

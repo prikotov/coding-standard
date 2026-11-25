@@ -2,6 +2,10 @@
 
 namespace Project\Common\Module\User\Domain\ValueObject;
 
+use DateTimeImmutable;
+use Project\Common\Module\User\Domain\Enum\UserStatus;
+use Ramsey\Uuid\UuidInterface;
+
 final readonly class EmailVo
 {
     private const int MAX_LENGTH = 255;
@@ -75,5 +79,21 @@ final readonly class AmountVo
     public function getAmount(): int
     {
         return $this->amount;
+    }
+}
+
+final readonly class CustomerVo
+{
+    public function __construct(
+        private UuidInterface $id,
+        private EmailVo $email,
+        private UserStatus $status,
+        private DateTimeImmutable $registeredAt,
+        private string $note,
+    ) {}
+
+    public function getStatus(): UserStatus
+    {
+        return $this->status;
     }
 }

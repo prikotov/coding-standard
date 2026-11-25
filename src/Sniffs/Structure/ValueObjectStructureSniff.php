@@ -32,10 +32,26 @@ final class ValueObjectStructureSniff implements Sniff
         '__wakeup',
     ];
 
-    private const FORBIDDEN_PROPERTY_TYPE_SUFFIXES = [
-        'Entity',
-        'Repository',
-        'Service',
+    private const ALLOWED_GLOBAL_PROPERTY_TYPES = [
+        'array',
+        'bool',
+        'datetimeimmutable',
+        'float',
+        'int',
+        'parent',
+        'self',
+        'static',
+        'string',
+    ];
+
+    private const ALLOWED_VENDOR_NAMESPACE_PREFIXES = [
+        'ramsey\\uuid\\',
+    ];
+
+    private const ALLOWED_DEPENDENCY_GROUPS = [
+        'dto',
+        'enum',
+        'valueobject',
     ];
 
     public function register(): array
@@ -119,6 +135,8 @@ final class ValueObjectStructureSniff implements Sniff
         $tokens          = $phpcsFile->getTokens();
         $isReadonlyClass = $this->isReadonlyClass($phpcsFile, $classPtr);
         $constructorPtr  = $this->findConstructorPtr($phpcsFile, $tokens, $classPtr, $scopeStart, $scopeEnd);
+        $useMap          = $this->buildUseMap($phpcsFile, $classPtr);
+        $ownScope        = $this->resolveOwnScope($phpcsFile);
         $pointer         = $scopeStart;
 
         while (($pointer = $phpcsFile->findNext(T_VARIABLE, $pointer + 1, $scopeEnd)) !== false) {
@@ -133,9 +151,9 @@ final class ValueObjectStructureSniff implements Sniff
                     $pointer,
                     $promoted['visibility'],
                     $promoted['is_readonly'],
-                    $promoted['type'],
                     $isReadonlyClass,
                 );
+                $this->assertPropertyTypeAllowed($phpcsFile, $pointer, $promoted['type'], $useMap, $ownScope);
 
                 continue;
             }
@@ -162,12 +180,32 @@ final class ValueObjectStructureSniff implements Sniff
                 $pointer,
                 is_string($scope) === true ? $scope : 'public',
                 ($member['is_readonly'] ?? false) === true,
-                is_string($memberType) === true && $memberType !== '' ? $memberType : null,
                 $isReadonlyClass,
+            );
+            $this->assertPropertyTypeAllowed(
+                $phpcsFile,
+                $pointer,
+                is_string($memberType) === true && $memberType !== '' ? $memberType : null,
+                $useMap,
+                $ownScope,
             );
         }
     }
 
+    /**
+     * @return array{namespace: ?string, module: ?string, layer: ?string}
+     */
+    private function resolveOwnScope(File $phpcsFile): array
+    {
+        $namespace = $this->resolveNamespace($phpcsFile)['name'];
+        $scope     = $this->resolveDependencyScope((string) ($namespace ?? ''));
+
+        return [
+            'namespace' => $namespace,
+            'module'    => $scope['module'],
+            'layer'     => $scope['layer'],
+        ];
+    }
     private function isReadonlyClass(File $phpcsFile, int $classPtr): bool
     {
         $properties = $phpcsFile->getClassProperties($classPtr);
@@ -266,7 +304,6 @@ final class ValueObjectStructureSniff implements Sniff
         int $propertyPtr,
         string $visibility,
         bool $isReadonly,
-        ?string $type,
         bool $isReadonlyClass,
     ): void {
         if ($visibility !== 'private') {
@@ -289,23 +326,35 @@ final class ValueObjectStructureSniff implements Sniff
                 self::ERROR_NON_READONLY_PROPERTY,
             );
         }
-
-        $this->assertPropertyTypeAllowed($phpcsFile, $propertyPtr, $type);
     }
 
-    private function assertPropertyTypeAllowed(File $phpcsFile, int $propertyPtr, ?string $type): void
-    {
+    /**
+     * Dependency types are classified by resolved namespace, not by name suffixes:
+     * globals from the allowlist, vendor namespaces from the allowlist, and classes
+     * of the same module and layer (VO, DTO, Enum of the same layer) are allowed.
+     *
+     * @param array<string, string> $useMap
+     * @param array{namespace: ?string, module: ?string, layer: ?string} $ownScope
+     */
+    private function assertPropertyTypeAllowed(
+        File $phpcsFile,
+        int $propertyPtr,
+        ?string $type,
+        array $useMap,
+        array $ownScope,
+    ): void {
         if ($type === null || $type === '') {
             return;
         }
 
-        foreach (self::FORBIDDEN_PROPERTY_TYPE_SUFFIXES as $suffix) {
-            if (str_ends_with($type, $suffix)) {
+        foreach ($this->extractTypeNames($type) as $name) {
+            if ($this->isAllowedDependencyType($name, $useMap, $ownScope) === false) {
                 $phpcsFile->addError(
                     sprintf(
                         'ValueObject properties must not depend on %s.'
-                        . ' Only primitives, DateTimeImmutable, Enum, and other VO are allowed.' . self::DOC_REF,
-                        $type,
+                        . ' Allowed: primitives, DateTimeImmutable, Uuid,'
+                        . ' and classes of the same module and layer.' . self::DOC_REF,
+                        $name,
                     ),
                     $propertyPtr,
                     self::ERROR_FORBIDDEN_PROPERTY_TYPE,
@@ -314,6 +363,218 @@ final class ValueObjectStructureSniff implements Sniff
                 return;
             }
         }
+    }
+
+    /**
+     * Splits a property type into candidate names: nullable marker, union/intersection
+     * parts, and generic heads (`array<int, TickerVo>` → array, int, TickerVo).
+     *
+     * @return list<string>
+     */
+    private function extractTypeNames(string $type): array
+    {
+        $found = preg_match_all('/[A-Za-z_][A-Za-z0-9_\\\\]*/', ltrim($type, '?'), $matches);
+        if ($found === false) {
+            return [];
+        }
+
+        return $matches[0];
+    }
+
+    /**
+     * @param array<string, string> $useMap
+     * @param array{namespace: ?string, module: ?string, layer: ?string} $ownScope
+     */
+    private function isAllowedDependencyType(string $name, array $useMap, array $ownScope): bool
+    {
+        $clean = ltrim($name, '\\');
+        if ($clean === '') {
+            return true;
+        }
+
+        if (str_contains($clean, '\\') === false) {
+            $resolved = $useMap[$clean] ?? null;
+            if ($resolved !== null) {
+                // An imported global (e.g. `use DateTimeImmutable;`) stays a global name.
+                return str_contains($resolved, '\\') === false
+                    ? in_array(strtolower($resolved), self::ALLOWED_GLOBAL_PROPERTY_TYPES, true) === true
+                    : $this->isAllowedDependencyFqcn($resolved, $ownScope);
+            }
+
+            $lower = strtolower($clean);
+            if (in_array($lower, self::ALLOWED_GLOBAL_PROPERTY_TYPES, true) === true) {
+                return true;
+            }
+
+            // PHP resolves unqualified `Closure` to the global class even inside namespaces.
+            if ($lower === 'closure') {
+                return false;
+            }
+
+            // Remaining short names follow PHP semantics: current namespace.
+            return $ownScope['namespace'] !== null
+                && $this->isAllowedDependencyFqcn($ownScope['namespace'] . '\\' . $clean, $ownScope);
+        }
+
+        return $this->isAllowedDependencyFqcn($clean, $ownScope);
+    }
+
+    /**
+     * @param array{namespace: ?string, module: ?string, layer: ?string} $ownScope
+     */
+    private function isAllowedDependencyFqcn(string $fqcn, array $ownScope): bool
+    {
+        $lower = strtolower($fqcn);
+        foreach (self::ALLOWED_VENDOR_NAMESPACE_PREFIXES as $prefix) {
+            if (str_starts_with($lower, $prefix) === true) {
+                return true;
+            }
+        }
+
+        // Classes outside convention paths (vendor, legacy) are forbidden.
+        $scope = $this->resolveDependencyScope($fqcn);
+        if ($scope['module'] === null || $scope['layer'] === null) {
+            return false;
+        }
+
+        if ($ownScope['module'] === null || $ownScope['layer'] === null) {
+            return false;
+        }
+
+        if (
+            strtolower($scope['module']) !== strtolower($ownScope['module'])
+            || strtolower($scope['layer']) !== strtolower($ownScope['layer'])
+        ) {
+            return false;
+        }
+
+        // Inside the same layer only VO/Enum/DTO groups are convention dependencies;
+        // Domain\Entity (ORM), Domain\Service and similar are not.
+        $group = $scope['group'];
+        if ($group === null) {
+            return false;
+        }
+
+        return in_array(strtolower($group), self::ALLOWED_DEPENDENCY_GROUPS, true) === true;
+    }
+
+    /**
+     * Resolves `{ProjectName}\…\Module\{ModuleName}\{Layer}\{Group}\…` — the last
+     * `Module` segment wins. `group` is the segment right after the layer
+     * (`ValueObject`, `Enum`, `Dto`, `Entity`, …) or `null` for classes directly
+     * inside the layer namespace.
+     *
+     * @return array{module: ?string, layer: ?string, group: ?string}
+     */
+    private function resolveDependencyScope(string $fqcn): array
+    {
+        $segments    = explode('\\', $fqcn);
+        $moduleIndex = null;
+
+        foreach ($segments as $index => $segment) {
+            if (strtolower($segment) === 'module') {
+                $moduleIndex = $index;
+            }
+        }
+
+        if (
+            $moduleIndex === null
+            || isset($segments[$moduleIndex + 1], $segments[$moduleIndex + 2]) === false
+            || $segments[$moduleIndex + 1] === ''
+            || $segments[$moduleIndex + 2] === ''
+        ) {
+            return ['module' => null, 'layer' => null, 'group' => null];
+        }
+
+        return [
+            'module' => $segments[$moduleIndex + 1],
+            'layer'  => $segments[$moduleIndex + 2],
+            'group'  => $segments[$moduleIndex + 3] ?? null,
+        ];
+    }
+
+    /**
+     * Builds a map of short class names to FQCNs from file-level use-statements.
+     *
+     * @return array<string, string>
+     */
+    private function buildUseMap(File $phpcsFile, int $classPtr): array
+    {
+        $tokens = $phpcsFile->getTokens();
+        $useMap = [];
+
+        for ($i = 0; $i < $classPtr; $i++) {
+            $row = $tokens[$i] ?? null;
+            if (is_array($row) === false || ($row['code'] ?? null) !== T_USE) {
+                continue;
+            }
+
+            $useEnd = $phpcsFile->findNext(T_SEMICOLON, $i + 1);
+            if ($useEnd === false) {
+                continue;
+            }
+
+            $fqcn = $this->extractFqcnFromUse($phpcsFile, $i + 1, $useEnd);
+            if ($fqcn === null) {
+                continue;
+            }
+
+            $useMap[$this->extractShortName($fqcn)] = $fqcn;
+        }
+
+        return $useMap;
+    }
+
+    private function extractFqcnFromUse(File $phpcsFile, int $start, int $end): ?string
+    {
+        $tokens = $phpcsFile->getTokens();
+
+        for ($i = $start; $i < $end; $i++) {
+            $row = $tokens[$i] ?? null;
+            if (is_array($row) === false) {
+                continue;
+            }
+
+            $code    = $row['code'] ?? null;
+            $content = $row['content'] ?? null;
+            if (is_string($content) === false) {
+                continue;
+            }
+
+            if ($code === T_NAME_QUALIFIED || $code === T_NAME_FULLY_QUALIFIED) {
+                return ltrim($content, '\\');
+            }
+        }
+
+        $parts = [];
+        for ($i = $start; $i < $end; $i++) {
+            $row = $tokens[$i] ?? null;
+            if (is_array($row) === false) {
+                continue;
+            }
+
+            $code    = $row['code'] ?? null;
+            $content = $row['content'] ?? null;
+            if (is_string($content) === true && ($code === T_STRING || $code === T_NS_SEPARATOR)) {
+                $parts[] = $content;
+            }
+        }
+
+        if ($parts === []) {
+            return null;
+        }
+
+        return implode('', $parts);
+    }
+
+    private function extractShortName(string $fqcn): string
+    {
+        $pos = strrpos($fqcn, '\\');
+        if ($pos === false) {
+            return $fqcn;
+        }
+
+        return substr($fqcn, $pos + 1);
     }
 
     private function assertMethods(File $phpcsFile, int $classPtr, int $scopeStart, int $scopeEnd): void
