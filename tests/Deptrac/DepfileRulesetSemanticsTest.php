@@ -221,15 +221,24 @@ final class DepfileRulesetSemanticsTest extends TestCase
         // The json formatter reports to stdout; diagnostics (syntax errors etc.) go to stderr.
         $decoded = json_decode($stdout, true);
         self::assertIsArray($decoded, 'deptrac json output expected; stdout: ' . $stdout . ' stderr: ' . $stderr);
-        self::assertSame(0, $decoded['Report']['Errors'] ?? 1, 'deptrac reported errors: ' . $stdout . $stderr);
+
+        $report = $decoded['Report'] ?? null;
+        self::assertIsArray($report);
+        self::assertSame(0, $report['Errors'] ?? 1, 'deptrac reported errors: ' . $stdout . $stderr);
         self::assertSame('', trim($stderr), 'deptrac stderr: ' . $stderr);
 
+        $files = $decoded['files'] ?? [];
+        self::assertIsArray($files);
+
         $messages = [];
-        foreach ($decoded['files'] ?? [] as $file) {
+        foreach ($files as $file) {
             self::assertIsArray($file);
-            foreach ($file['messages'] ?? [] as $message) {
+            $fileMessages = $file['messages'] ?? [];
+            self::assertIsArray($fileMessages);
+            foreach ($fileMessages as $message) {
                 self::assertIsArray($message);
-                $messages[] = $message;
+                self::assertIsString($message['message'] ?? null);
+                $messages[] = ['message' => $message['message']];
             }
         }
 
@@ -249,7 +258,7 @@ final class DepfileRulesetSemanticsTest extends TestCase
         $prefix = self::MODULE . '\\';
         $edges  = [];
         foreach ($violations as $violation) {
-            $message = (string) ($violation['message'] ?? '');
+            $message = $violation['message'];
             if (preg_match('/^(?<from>\S+) must not depend on \S+ \([^)]+ on (?<target>[^)]+)\)$/', $message, $m) !== 1) {
                 continue;
             }

@@ -32,7 +32,7 @@ deptrac:
             - type: classLike
               value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Entity\\ValueObject\\.*Vo$
             - type: classLike
-              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Service|Repository|Strategy|Provider|Criteria|Helper)\\.*
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Service|Repository|Strategy|Provider|Criteria|Helper)\\.*Interface$
             - type: classLike
               value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Specification\\.*
             - type: classLike
@@ -123,12 +123,7 @@ deptrac:
         - type: bool
           must:
             - type: classLike
-              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Service|Repository|Strategy|Provider|Criteria|Helper)\\.*
-          must_not:
-            - type: classNameRegex
-              value: '/.*Model$/'
-            - type: classNameRegex
-              value: '/.*Entity$/'
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Service|Repository|Strategy|Provider|Criteria|Helper)\\.*Interface$
 
     # Embeddable VO are a persistence part of entities: isolated like Domain (entities),
     # not shared like DomainVo. See docs/conventions/layers/domain/entity.md.
