@@ -32,7 +32,7 @@ deptrac:
             - type: classLike
               value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Entity\\ValueObject\\.*Vo$
             - type: classLike
-              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Service|Repository|Strategy|Provider|Criteria|Helper)\\.*Interface$
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Service|Repository|Strategy|Provider|Criteria|Helper)\\(?!\S*Model$).*
             - type: classLike
               value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Specification\\.*
             - type: classLike
@@ -116,14 +116,15 @@ deptrac:
         - type: classLike
           value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\ValueObject\\.*Vo$
 
-    # Domain contracts (interfaces of services, repositories, strategies, providers):
-    # the only part of Domain the Application layer may call directly.
+    # Domain contracts and pure value types (service/repository interfaces, find criteria,
+    # helpers, strategies) — everything under Domain\{Service,Repository,…} except entities
+    # (*Model): the only part of Domain the Application layer may use directly.
     - name: DomainContract
       collectors:
         - type: bool
           must:
             - type: classLike
-              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Service|Repository|Strategy|Provider|Criteria|Helper)\\.*Interface$
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Service|Repository|Strategy|Provider|Criteria|Helper)\\(?!\S*Model$).*
 
     # Embeddable VO are a persistence part of entities: isolated like Domain (entities),
     # not shared like DomainVo. See docs/conventions/layers/domain/entity.md.

@@ -138,6 +138,32 @@ final class DepfileRulesetSemanticsTest extends TestCase
         self::assertSame([], $this->edges($this->analyse(), 'LeakyService'));
     }
 
+    public function testApplicationServiceMayBuildRepositoryFindCriteria(): void
+    {
+        $this->writeClass('Domain/Repository/Payment/Criteria/PaymentFindCriteria.php', 'final class PaymentFindCriteria');
+        $this->writeClass(
+            'Application/Service/LeakyService.php',
+            'final class LeakyService',
+            'public function find(): PaymentFindCriteria { return new PaymentFindCriteria(); }',
+            ['PaymentFindCriteria' => 'Domain\Repository\Payment\Criteria\PaymentFindCriteria'],
+        );
+
+        self::assertSame([], $this->edges($this->analyse(), 'LeakyService'));
+    }
+
+    public function testEntityStaysInDomainLayer(): void
+    {
+        $this->writeClass('Domain/Repository/Payment/PaymentModel.php', 'final class PaymentModel');
+        $this->writeClass(
+            'Application/Service/LeakyService.php',
+            'final class LeakyService',
+            'public function __construct(private readonly PaymentModel $model) {}',
+            ['PaymentModel' => 'Domain\Repository\Payment\PaymentModel'],
+        );
+
+        self::assertSame(['Application\Service\LeakyService on Domain'], $this->edges($this->analyse(), 'LeakyService'));
+    }
+
     public function testDomainValueTypesMustNotOwnEmbeddable(): void
     {
         $this->writeClass('Domain/Entity/ValueObject/DeviceVo.php', 'final readonly class DeviceVo');
