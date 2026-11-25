@@ -88,21 +88,32 @@ final class DepfileRulesetSemanticsTest extends TestCase
         );
     }
 
-    public function testApplicationServiceMustNotDependOnDomainEntities(): void
+    public function testApplicationMayUseDomainEntities(): void
     {
+        // docs/conventions/layers/application.md: Application orchestrates services,
+        // repositories and entities; core-patterns/mapper.md: mappers take Entity as input.
         $this->writeClass('Domain/Entity/PaymentModel.php', 'final class PaymentModel');
         $this->writeClass(
-            'Application/Service/LeakyService.php',
-            'final class LeakyService',
-            'public function __construct(private readonly PaymentModel $model) {}',
+            'Application/Mapper/PaymentDtoMapper.php',
+            'final readonly class PaymentDtoMapper',
+            'public function map(PaymentModel $model): string { return $model->name; }',
             ['PaymentModel' => 'Domain\Entity\PaymentModel'],
         );
 
-        self::assertSame(
-            ['Application\Service\LeakyService on Domain'],
-            $this->edges($this->analyse(), 'LeakyService'),
-            '`Application: [+ApplicationCommandHandler]` is a transitive closure and used to allow this.',
+        self::assertSame([], $this->edges($this->analyse(), 'PaymentDtoMapper'));
+    }
+
+    public function testApplicationServiceMayBuildRepositoryFindCriteria(): void
+    {
+        $this->writeClass('Domain/Repository/Payment/Criteria/PaymentFindCriteria.php', 'final class PaymentFindCriteria');
+        $this->writeClass(
+            'Application/Service/LeakyService.php',
+            'final class LeakyService',
+            'public function find(): PaymentFindCriteria { return new PaymentFindCriteria(); }',
+            ['PaymentFindCriteria' => 'Domain\Repository\Payment\Criteria\PaymentFindCriteria'],
         );
+
+        self::assertSame([], $this->edges($this->analyse(), 'LeakyService'));
     }
 
     public function testCommandHandlerMayUseEntitiesButNotEmbeddable(): void
@@ -137,32 +148,6 @@ final class DepfileRulesetSemanticsTest extends TestCase
         );
 
         self::assertSame([], $this->edges($this->analyse(), 'LeakyService'));
-    }
-
-    public function testApplicationServiceMayBuildRepositoryFindCriteria(): void
-    {
-        $this->writeClass('Domain/Repository/Payment/Criteria/PaymentFindCriteria.php', 'final class PaymentFindCriteria');
-        $this->writeClass(
-            'Application/Service/LeakyService.php',
-            'final class LeakyService',
-            'public function find(): PaymentFindCriteria { return new PaymentFindCriteria(); }',
-            ['PaymentFindCriteria' => 'Domain\Repository\Payment\Criteria\PaymentFindCriteria'],
-        );
-
-        self::assertSame([], $this->edges($this->analyse(), 'LeakyService'));
-    }
-
-    public function testEntityStaysInDomainLayer(): void
-    {
-        $this->writeClass('Domain/Entity/PaymentModel.php', 'final class PaymentModel');
-        $this->writeClass(
-            'Application/Service/LeakyService.php',
-            'final class LeakyService',
-            'public function __construct(private readonly PaymentModel $model) {}',
-            ['PaymentModel' => 'Domain\Entity\PaymentModel'],
-        );
-
-        self::assertSame(['Application\Service\LeakyService on Domain'], $this->edges($this->analyse(), 'LeakyService'));
     }
 
     public function testDomainValueTypesMustNotOwnEmbeddable(): void

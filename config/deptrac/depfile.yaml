@@ -313,9 +313,10 @@ deptrac:
       - +ApplicationQuery
       - ApplicationCommandHandler
       - ApplicationQueryHandler
-    # Application (services, mappers, factories) works with DTO/Enum of its own layer and
-    # with Domain value types. Entities are reached through handlers and repositories only.
-    # No `+Layer` here: it is a transitive closure and would grant the handlers' dependencies.
+    # Application orchestrates domain services, repositories and entities
+    # (docs/conventions/layers/application.md, core-patterns/mapper.md: mappers take Entity).
+    # Embeddable stay behind entities — not granted. No `+Layer` here: it is a transitive
+    # closure and would grant the handlers' dependencies.
     Application:
       - Application
       - ApplicationCommandHandler
@@ -323,6 +324,7 @@ deptrac:
       - ApplicationDto
       - ApplicationCommonDto
       - ApplicationEnum
+      - Domain
       - DomainDto
       - DomainEnum
       - DomainVo
