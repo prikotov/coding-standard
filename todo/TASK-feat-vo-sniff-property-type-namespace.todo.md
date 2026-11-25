@@ -2,7 +2,7 @@
 type: feat
 created: 2026-11-25 02:27:09 (1795573629)
 due: 
-started: 
+started: 2026-11-25 03:25:40 (1795577140)
 completed: 
 cancelled: 
 value: V2
@@ -13,10 +13,10 @@ cost_fact:
 depends_on: 
 epic: 
 author: Лид Арагорн (pi)
-assignee: 
-branch: 
+assignee: Лид Арагорн (pi)
+branch: task/vo-sniff-type-namespace-task
 pr: 
-status: todo
+status: in_progress
 ---
 
 # TASK-feat-vo-sniff-property-type-namespace: ValueObjectStructureSniff: проверка типов свойств VO по namespace зависимостей
@@ -59,35 +59,44 @@ status: todo
   - другой слой того же модуля (`Domain\Entity\`, `Infrastructure\`, `Presentation\`, `Application\` для Domain-VO) → ошибка;
   - другой модуль → ошибка;
   - имя не резолвится через `use` и не глобальное (опечатка, missing import) → ошибка (безопаснее в сторону запрета; закрепить тестом).
-- **Известные ограничения (документировать в коде):** дженерики (`array<int, TickerVo>`) и union/intersection типы на старте не классифицируются поэлементно — решаем по «голому» строковому типу как есть (или фиксируем осознанное ограничение тестом).
+
+  > Уточнено исполнителем при реализации (см. заметки в разделе 4): для кратких имён без `use` действует семантика PHP — текущий namespace; внутри слоя разрешены только группы `ValueObject`/`Enum`/`Dto` (`ALLOWED_DEPENDENCY_GROUPS`), `Domain\Entity` внутри Domain — запрещён.
+- **Известные ограничения (документировать в коде):** дженерики (`array<int, TickerVo>`) и union/intersection типы — при реализации классифицируются поэлементно регэксп-разбором строки типа (Should Have закрыт больше запланированного).
 - **Границы (Out of Scope):** другие сниффы (DTO/Entity), проверка типов параметров и возвращаемых значений методов, автоисправления (fixer), замена Deptrac (сниффер даёт локальный фидбек на строке свойства, Deptrac — архитектурный контроль; они дополняют друг друга).
 
 ## 3. Требования, MoSCoW (Requirements)
 ### 🔴 Обязательно (Must Have)
-- [ ] Резолв «голого» типа свойства (классическое и promoted) в FQCN через `use`-импорты файла; глобальные типы — без `use`.
-- [ ] Удалена суффикс-логика `FORBIDDEN_PROPERTY_TYPE_SUFFIXES`; класс ошибки `ForbiddenPropertyType` сохранён (текст со ссылкой на `docs/conventions/core-patterns/value-object.md`).
-- [ ] Ошибка за глобальные типы вне allowlist (минимум `Closure` — проба из stocks2).
-- [ ] Ошибка за проектные классы другого слоя (минимум ORM-модель из `Domain\Entity\` — проба `TickerModel`) и другого модуля.
-- [ ] Без ошибок: примитивы, `DateTimeImmutable`, `Uuid`, классы того же модуля и слоя (VO/DTO/Enum).
-- [ ] Фикстуры: негативные (Closure, Entity-тип по FQCN, чужой модуль) и позитивные (same-layer VO/DTO/Enum, примитивы, `DateTimeImmutable`, `Uuid`); ожидания в `tests/fixtures.php` обновлены; пример в конвенции и валидные фикстуры пакета зелёные.
-- [ ] `composer check` зелёный.
+- [x] Резолв «голого» типа свойства (классическое и promoted) в FQCN через `use`-импорты файла; глобальные типы — без `use`.
+- [x] Удалена суффикс-логика `FORBIDDEN_PROPERTY_TYPE_SUFFIXES`; класс ошибки `ForbiddenPropertyType` сохранён (текст со ссылкой на `docs/conventions/core-patterns/value-object.md`).
+- [x] Ошибка за глобальные типы вне allowlist (минимум `Closure` — проба из stocks2).
+- [x] Ошибка за проектные классы другого слоя (минимум ORM-модель из `Domain\Entity\` — проба `TickerModel`) и другого модуля.
+- [x] Без ошибок: примитивы, `DateTimeImmutable`, `Uuid`, классы того же модуля и слоя (VO/DTO/Enum).
+- [x] Фикстуры: негативные (Closure, Entity-тип по FQCN, чужой модуль) и позитивные (same-layer VO/DTO/Enum, примитивы, `DateTimeImmutable`, `Uuid`); ожидания в `tests/fixtures.php` обновлены; пример в конвенции и валидные фикстуры пакета зелёные.
+- [x] `composer check` зелёный.
 
 ### 🟡 Should Have (Желательно)
-- [ ] Поэлементная классификация union/intersection типов и дженериков (`array<int, TickerVo>`).
+- [x] Поэлементная классификация union/intersection типов и дженериков (`array<int, TickerVo>`). → Сделано: регэксп-разбор строки типа на идентификаторы.
 
 ### ⚫ Won't Have (Не будем делать)
 - Проверки в других сниффах, автоисправления, замена Deptrac.
 
 ## 4. План реализации (Implementation Plan)
-1. [ ] Воспроизвести пропуски пробами (`Closure`, `TickerModel` с корректным `use` на `Domain\Entity\…`) на текущем master.
-2. [ ] Перенести/переиспользовать механику резолва FQCN (use-map) из `RepositoryStructureSniff` в `ValueObjectStructureSniff`.
-3. [ ] Реализовать классификацию namespace (глобальные allowlist / тот же слой / другой слой / другой модуль / не резолвится) и заменить `assertPropertyTypeAllowed()`.
-4. [ ] Обновить фикстуры и ожидания; закрепить решение по неразрешимым именам и дженерикам тестами.
-5. [ ] `composer check`; отметить в коммите breaking-эффект (у потребителей могут появиться новые `ForbiddenPropertyType`).
+1. [x] Воспроизвести пропуски пробами (`Closure`, `TickerModel` с корректным `use` на `Domain\Entity\…`) на текущем master.
+2. [x] Перенести/переиспользовать механику резолва FQCN (use-map) из `RepositoryStructureSniff` в `ValueObjectStructureSniff`.
+3. [x] Реализовать классификацию namespace (глобальные allowlist / тот же слой / другой слой / другой модуль / не резолвится) и заменить `assertPropertyTypeAllowed()`.
+4. [x] Обновить фикстуры и ожидания; закрепить решение по неразрешимым именам и дженерикам тестами.
+5. [x] `composer check`; отметить в коммите breaking-эффект (у потребителей могут появиться новые `ForbiddenPropertyType`).
+
+**Заметки по реализации:**
+- Резолв кратких имён: точное следование семантике PHP — не найден в `use`-карте и не глобальный → относится к **текущему namespace** файла (так делает и PHP). Пункт раздела 2 «не резолвится → ошибка» скорректирован: fail-strict действует на **квалифицированные** FQCN вне конвенционных путей `Module\{Module}\{Layer}\` и на глобальные вне allowlist. Same-namespace ссылка на соседний VO без `use` (например, `EmailVo`) обязана оставаться разрешённой — закреплено позитивной фикстурой `CustomerVo`.
+- Слой внутри модуля различается по группе: разрешены только группы `ValueObject`, `Enum`, `Dto` (константа `ALLOWED_DEPENDENCY_GROUPS`); `Domain\Entity` (ORM), `Domain\Service` и классы прямо в namespace слоя — запрещены. Именно это ловит `TickerModel` из `Domain\Entity` независимо от суффикса.
+- Дженерики/union/intersection: строка типа разбивается регэкспом на идентификаторы (`array<int, TickerVo>` → `array`, `int`, `TickerVo`) — элементы union и дженериков классифицируются поэлементно (Should Have закрыт больше запланированного).
+- `use DateTimeImmutable;` (импорт глобального) корректно остаётся глобальным именем, а не проектным FQCN.
+- Фикстуры: негативная — `UserEntity` (`Domain\Entity`), `\Closure`, чужой модуль (`Other\Module\Billing\Domain\ValueObject\MoneyVo`); позитивная — `UuidInterface` (vendor), same-namespace `EmailVo`, `Domain\Enum\UserStatus`, `DateTimeImmutable`, примитивы; отдельная Application-фикстура `UserProfileVo` с same-layer `Application\Dto\ProfileDto`.
 
 ## 5. Критерии приёмки (Definition of Done)
-- [ ] Пробы дают ожидаемый результат: `Closure` и `TickerModel` → ошибка, same-layer VO/DTO/Enum и примитивы → чисто.
-- [ ] Тесты обоих видов фикстур проходят; `composer check` зелёный.
+- [x] Пробы дают ожидаемый результат: `Closure` и `TickerModel` → ошибка, same-layer VO/DTO/Enum и примитивы → чисто.
+- [x] Тесты обоих видов фикстур проходят; `composer check` зелёный.
 - [ ] После обновления пакета в stocks2 (`composer update prikotov/coding-standard`) `make check` либо зелёный, либо показывает только реальные нарушения `ForbiddenPropertyType` (проверяет команда stocks2, не эта задача).
 
 ## 6. Самопроверка (Verification)
@@ -108,7 +117,7 @@ vendor/bin/phpcs --standard=ruleset.xml --sniffs=PrikotovCodingStandard.Structur
 - stocks2: [ретроспектива эпика EPIC-refactor-vo-conventions](https://github.com/prikotov/stocks2/blob/master/docs/agents/team-retro/2026-11-24_18-59-refactor-vo-conventions-epic.md).
 
 ## 9. Комментарии (Comments)
-Образцы для воспроизведения (в каталоге `ValueObject`, к которому применён сниффер):
+Образцы для воспроизведения (в каталоге `ValueObject`, к которому применён сниффер) — проверены 2026-11-25, обе пробы дают ожидаемый результат:
 
 ```php
 <?php
@@ -150,3 +159,4 @@ final readonly class GoodDependencyVo
 | Дата | Автор (роль) | Изменение |
 | :--- | :--- | :--- |
 | 2026-11-25 02:27:09 (1795573629) | Лид Арагорн (pi) | Создание задачи |
+| 2026-11-25 10:35:17 (1795577717) | Лид Арагорн (pi) | Взятие в работу (pi); реализация проверки типов свойств VO по namespace (резолв FQCN через use-map, группы ValueObject/Enum/Dto внутри слоя, allowlist глобальных и Ramsey\Uuid), фикстуры и ожидания обновлены, Should Have по union/дженерикам закрыт, `composer check` зелёный |
