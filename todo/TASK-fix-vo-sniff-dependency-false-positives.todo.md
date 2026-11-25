@@ -15,8 +15,8 @@ epic:
 author: Лид Арагорн (pi)
 assignee: Лид Арагорн (pi)
 branch: task/vo-sniff-dependency-false-positives
-pr: 
-status: in_progress
+pr: https://github.com/prikotov/coding-standard/pull/137
+status: review
 ---
 
 # TASK-fix-vo-sniff-dependency-false-positives: ValueObjectStructureSniff: ложные срабатывания ForbiddenPropertyType на Uid, Embeddable VO и общих Enum
