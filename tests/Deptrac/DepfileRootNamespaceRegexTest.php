@@ -131,7 +131,9 @@ final class DepfileRootNamespaceRegexTest extends TestCase
     public static function provideDigitRootNamespaceClasses(): array
     {
         return [
-            'Domain service' => ['Domain', 'Stocks2\Common\Module\Billing\Domain\Service\Invoice\CreateInvoiceService'],
+            'Domain entity' => ['Domain', 'Stocks2\Common\Module\Billing\Domain\Entity\Invoice\InvoiceModel'],
+            'Domain service (its interface is the contract)' => ['DomainContract', 'Stocks2\Common\Module\Billing\Domain\Service\Invoice\CreateInvoiceServiceInterface'],
+            'Domain repository find criteria' => ['DomainContract', 'Stocks2\Common\Module\Billing\Domain\Repository\Invoice\Criteria\InvoiceFindCriteria'],
             'Application service' => ['Application', 'Stocks2\Common\Module\Billing\Application\Service\Invoice\PrepareInvoiceService'],
             'Application command handler' => ['ApplicationCommandHandler', 'Stocks2\Common\Module\Billing\Application\UseCase\Command\Invoice\Create\CreateCommandHandler'],
             'Infrastructure' => ['Infrastructure', 'Stocks2\Common\Module\Billing\Infrastructure\Repository\Invoice\InvoiceRepository'],

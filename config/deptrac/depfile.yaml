@@ -20,21 +20,13 @@ deptrac:
   layers:
     # --- Main layers ---
 
+    # Entities only (Domain\Entity\*Model, except Embeddable VO); everything else under
+    # Domain lives in its own layer: DomainContract, DomainVo, DomainEnum, DomainDto,
+    # DomainSpecification, DomainEmbeddable.
     - name: Domain
       collectors:
-        - type: bool
-          must:
-            - type: classLike
-              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\.*
-          must_not:
-            - type: classLike
-              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Entity\\)?ValueObject\\.*Vo$
-            - type: classLike
-              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Specification\\.*
-            - type: classLike
-              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Enum\\.*
-            - type: classLike
-              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\.*Dto$
+        - type: classLike
+          value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Entity\\(?!ValueObject\\).*$
 
     - name: Application
       collectors:
@@ -110,7 +102,46 @@ deptrac:
     - name: DomainVo
       collectors:
         - type: classLike
-          value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\(Entity\\)?ValueObject\\.*Vo$
+          value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\ValueObject\\.*Vo$
+
+    # Domain exceptions: thrown by any domain type, caught by the layers that call domain
+    # services. Not a "contract" — VO, DTO and specifications may use them.
+    - name: DomainException
+      collectors:
+        - type: classLike
+          value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Exception\\.*
+
+    # Domain contracts and pure domain types: everything under Domain that is not an
+    # entity, value object, enum, DTO or specification — service/repository interfaces
+    # and implementations, find criteria, calculators, helpers, normalizers, exceptions.
+    # This is the only part of Domain the Application layer may use directly;
+    # entities (Domain, DomainEmbeddable) stay behind handlers and repositories.
+    - name: DomainContract
+      collectors:
+        - type: bool
+          must:
+            - type: classLike
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\.*
+          must_not:
+            - type: classLike
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Entity\\.*
+            - type: classLike
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\ValueObject\\.*Vo$
+            - type: classLike
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Enum\\.*
+            - type: classLike
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\.*Dto$
+            - type: classLike
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Specification\\.*
+            - type: classLike
+              value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Exception\\.*
+
+    # Embeddable VO are a persistence part of entities: isolated like Domain (entities),
+    # not shared like DomainVo. See docs/conventions/layers/domain/entity.md.
+    - name: DomainEmbeddable
+      collectors:
+        - type: classLike
+          value: ^(?:[A-Za-z_][A-Za-z0-9_]*\\)?Common\\Module\\[^\\]+\\Domain\\Entity\\ValueObject\\.*Vo$
 
     - name: DomainEnum
       collectors:
@@ -177,14 +208,35 @@ deptrac:
   ruleset:
     # DTO boundary
     Domain:
+      - DomainException
       - Domain
+      - DomainContract
       - DomainDto
       - DomainEnum
       - DomainSpecification
       - DomainVo
+      - DomainEmbeddable
     DomainVo:
+      - DomainException
       - Domain
       - DomainEnum
+      - DomainVo
+
+    DomainEmbeddable:
+      - DomainEnum
+
+    DomainException:
+      - DomainException
+      - DomainContract
+      - DomainVo
+      - DomainEnum
+    DomainContract:
+      - DomainException
+      - Domain
+      - DomainContract
+      - DomainDto
+      - DomainEnum
+      - DomainSpecification
       - DomainVo
     DomainEnum:
       - DomainEnum
@@ -199,6 +251,8 @@ deptrac:
       - IntegrationDto
     InfrastructureDto:
       - Domain
+      - DomainContract
+      - DomainException
       - DomainDto
       - DomainEnum
       - DomainVo
@@ -207,11 +261,14 @@ deptrac:
       - InfrastructureDto
     DomainDto:
       - Domain
+      - DomainContract
       - DomainDto
       - DomainEnum
       - DomainVo
     DomainSpecification:
       - Domain
+      - DomainContract
+      - DomainException
       - DomainDto
       - DomainEnum
       - DomainSpecification
@@ -236,6 +293,8 @@ deptrac:
       - DomainEnum
       - DomainSpecification
       - DomainVo
+      - DomainContract
+      - DomainException
     ApplicationQueryHandler:
       - Application
       - +ApplicationQuery
@@ -244,6 +303,8 @@ deptrac:
       - DomainEnum
       - DomainSpecification
       - DomainVo
+      - DomainContract
+      - DomainException
 
     # Layer dependencies
     Presentation:
@@ -252,16 +313,12 @@ deptrac:
       - +ApplicationQuery
       - ApplicationCommandHandler
       - ApplicationQueryHandler
+    # Application orchestrates domain services, repositories and entities
+    # (docs/conventions/layers/application.md, core-patterns/mapper.md: mappers take Entity).
+    # Embeddable stay behind entities — not granted. No `+Layer` here: it is a transitive
+    # closure and would grant the handlers' dependencies.
     Application:
       - Application
-      - +ApplicationCommandHandler
-      - +ApplicationQueryHandler
-    Integration:
-      - Integration
-      - IntegrationDto
-      - Application
-      - ApplicationCommand
-      - ApplicationQuery
       - ApplicationCommandHandler
       - ApplicationQueryHandler
       - ApplicationDto
@@ -271,12 +328,36 @@ deptrac:
       - DomainDto
       - DomainEnum
       - DomainVo
+      - DomainSpecification
+      - DomainContract
+      - DomainException
+    Integration:
+      - Integration
+      - IntegrationDto
+      - Application
+      - DomainContract
+      - DomainException
+      - ApplicationCommand
+      - ApplicationQuery
+      - ApplicationCommandHandler
+      - ApplicationQueryHandler
+      - ApplicationDto
+      - ApplicationCommonDto
+      - ApplicationEnum
+      - Domain
+      - DomainEmbeddable
+      - DomainDto
+      - DomainEnum
+      - DomainVo
     Infrastructure:
       - Infrastructure
       - InfrastructureComponent
       - InfrastructureDto
       - InfrastructureEnum
       - Domain
+      - DomainContract
+      - DomainException
+      - DomainEmbeddable
       - DomainDto
       - DomainEnum
       - DomainVo
@@ -314,5 +395,12 @@ services:
       - { name: kernel.event_subscriber }
   - class: PrikotovCodingStandard\Deptrac\CrossModuleDomainRule
     autowire: true
+    tags:
+      - { name: kernel.event_subscriber }
+  - class: PrikotovCodingStandard\Deptrac\DomainTypeCatalogRule
+    autowire: true
+    tags:
+      - { name: kernel.event_subscriber }
+  - class: PrikotovCodingStandard\Deptrac\PolymorphismDependencyRule
     tags:
       - { name: kernel.event_subscriber }
